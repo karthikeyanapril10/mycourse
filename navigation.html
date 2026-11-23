@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Navigation - All Files</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .search-box {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1em;
+            border: 2px solid #667eea;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        .search-box input:focus {
+            border-color: #764ba2;
+        }
+
+        .category {
+            margin-bottom: 40px;
+        }
+
+        .category h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+            font-size: 1.8em;
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+            padding-left: 40px;
+            transition: all 0.3s;
+        }
+
+        .category h2:hover {
+            color: #764ba2;
+            background: #f8f9fa;
+            padding: 10px;
+            padding-left: 40px;
+            border-radius: 8px;
+        }
+
+        .category h2::before {
+            content: '▼';
+            position: absolute;
+            left: 10px;
+            transition: transform 0.3s;
+            font-size: 0.8em;
+        }
+
+        .category h2.collapsed::before {
+            transform: rotate(-90deg);
+        }
+
+        .file-grid.collapsed {
+            display: none;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: flex-end;
+        }
+
+        .control-btn {
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .control-btn:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .file-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .file-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            cursor: pointer;
+            border-left: 5px solid #667eea;
+        }
+
+        .file-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 12px rgba(0,0,0,0.2);
+        }
+
+        .file-card.new {
+            border-left-color: #28a745;
+            background: linear-gradient(135deg, #f8fff9 0%, #f0fff4 100%);
+        }
+
+        .file-card.priority {
+            border-left-color: #dc3545;
+            background: linear-gradient(135deg, #fff8f8 0%, #fff0f0 100%);
+        }
+
+        .file-card h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .file-card h3 a {
+            color: #667eea;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .file-card h3 a:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+
+        .file-card p {
+            color: #666;
+            margin-bottom: 15px;
+            font-size: 0.95em;
+        }
+
+        .file-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #ddd;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+
+        .badge.new {
+            background: #28a745;
+            color: white;
+        }
+
+        .badge.priority {
+            background: #dc3545;
+            color: white;
+        }
+
+        .badge.guide {
+            background: #667eea;
+            color: white;
+        }
+
+        .badge.quiz {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .file-size {
+            color: #999;
+            font-size: 0.85em;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+            border-top: 4px solid #667eea;
+        }
+
+        .stat-card h3 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .stat-card p {
+            color: #666;
+            font-size: 1em;
+        }
+
+        footer {
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #667eea;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+        .back-to-top:hover {
+            background: #764ba2;
+            transform: translateY(-5px);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Dark Mode Styles */
+        body.dark-mode {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        }
+
+        body.dark-mode .container {
+            background: #0f3460;
+        }
+
+        body.dark-mode header {
+            background: linear-gradient(135deg, #16213e 0%, #0f3460 100%);
+        }
+
+        body.dark-mode .search-box {
+            background: #1a1a2e;
+        }
+
+        body.dark-mode .search-box input {
+            background: #0f3460;
+            color: white;
+            border-color: #667eea;
+        }
+
+        body.dark-mode .category h2 {
+            color: #9fa8ff;
+            border-bottom-color: #9fa8ff;
+        }
+
+        body.dark-mode .category h2:hover {
+            background: #1a1a2e;
+        }
+
+        body.dark-mode .file-card {
+            background: #1a1a2e;
+            color: #e9ecef;
+            border-left-color: #667eea;
+        }
+
+        body.dark-mode .file-card.new {
+            background: #0a3d1a;
+            border-left-color: #28a745;
+        }
+
+        body.dark-mode .file-card.priority {
+            background: #3d0a0a;
+            border-left-color: #dc3545;
+        }
+
+        body.dark-mode .file-card h3 {
+            color: #e9ecef;
+        }
+
+        body.dark-mode .file-card h3 a {
+            color: #9fa8ff;
+        }
+
+        body.dark-mode .file-card p {
+            color: #b8b8b8;
+        }
+
+        body.dark-mode .file-meta {
+            border-top-color: #444;
+        }
+
+        body.dark-mode .stat-card {
+            background: #1a1a2e;
+            color: #e9ecef;
+        }
+
+        body.dark-mode .stat-card h3 {
+            color: #9fa8ff;
+        }
+
+        body.dark-mode .stat-card p {
+            color: #b8b8b8;
+        }
+
+        body.dark-mode footer {
+            background: #0f0f0f;
+        }
+
+        /* Dark Mode Toggle Button */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #667eea;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+        }
+
+        body.dark-mode .theme-toggle {
+            background: #ffd700;
+        }
+    </style>
+</head>
+<body>
+    <!-- Dark Mode Toggle -->
+    <div class="theme-toggle" onclick="toggleDarkMode()" title="Toggle Dark Mode">
+        <span id="theme-icon">🌙</span>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>📚 Full-Stack AI Developer Course</h1>
+            <p>Complete File Navigation - All 42 Resources</p>
+            <p>12 Weeks to Staff Engineer Role | Chennai/Bengaluru</p>
+        </header>
+
+        <div class="content">
+            <!-- Stats Dashboard -->
+            <div class="stats">
+                <div class="stat-card">
+                    <h3>60</h3>
+                    <p>Total Files</p>
+                </div>
+                <div class="stat-card">
+                    <h3>17</h3>
+                    <p>NEW Critical Modules</p>
+                </div>
+                <div class="stat-card">
+                    <h3>133+</h3>
+                    <p>Interview Questions</p>
+                </div>
+                <div class="stat-card">
+                    <h3>8</h3>
+                    <p>Weeks to Job Offer</p>
+                </div>
+            </div>
+
+            <!-- Search Box -->
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="🔍 Search files by name or description..." onkeyup="searchFiles()">
+            </div>
+
+            <!-- Expand/Collapse Controls -->
+            <div class="controls">
+                <button class="control-btn" onclick="expandAll()">📂 Expand All</button>
+                <button class="control-btn" onclick="collapseAll()">📁 Collapse All</button>
+            </div>
+
+            <!-- Category: START HERE -->
+            <div class="category">
+                <h2>🚀 START HERE - Core Files (Read First)</h2>
+                <div class="file-grid">
+                    <div class="file-card priority">
+                        <h3><a href="index.html" target="_blank">📊 Interactive Dashboard</a></h3>
+                        <p>Main course landing page with overview, modules breakdown, and quick links to all resources.</p>
+                        <div class="file-meta">
+                            <span class="badge priority">⭐ START HERE</span>
+                            <span class="file-size">40 KB</span>
+                        </div>
+                    </div>
+
+                    <div class="file-card priority">
+                        <h3><a href="progress-dashboard.html" target="_blank">📊 Progress Dashboard</a></h3>
+                        <p>Track your overall progress across all 41 files, study streak, module completion, and achievements. Your motivation hub!</p>
+                        <div class="file-meta">
+                            <span class="badge new">✨ NEW</span>
+                            <span class="file-size">25 KB</span>
+                        </div>
+                    </div>
+
+                    <div class="file-card priority">
+                        <h3>📌 START HERE</h3>
+                        <p>Complete navigation guide - which files to read in what order, week-by-week study plan, progress tracking options.</p>
+                        <div class="file-meta">
+                            <a href="src/START_HERE.html" target="_blank" class="badge priority" style="text-decoration:none;">📖 VIEW HTML</a>
+                            <a href="src/START_HERE.md" target="_blank" class="badge" style="background:#6c757d;text-decoration:none;">📝 EDIT MD</a>
+                        </div>
+                    </div>
+
+                    <div class="file-card new">
+                        <h3>🎯 Industry Expectations (12+ Years)</h3>
+                        <p>What companies expect from 12+ years Full-Stack developers in 2026. 10 critical areas, your strengths vs gaps, action plan, salary negotiation.</p>
+                        <div class="file-meta">
+                            <a href="src/Industry_Expectations_12Plus_Years.html" target="_blank" class="badge new" style="text-decoration:none;">📖 VIEW HTML</a>
+                            <a href="src/Industry_Expectations_12Plus_Years.md" target="_blank" class="badge" style="background:#6c757d;text-decoration:none;">📝 EDIT MD</a>
+                        </div>
+                    </div>
+
+                    <div class="file-card new">
+                        <h3>📋 NJQRT Work Context (Last 2.5 Years)</h3>
+                        <p>Your actual work for 2.5 years: 8 repos (EIC, CC, CSR, WCL, MPay, AMAPI, Biscuit, Payment), 5-phase workflow, 500+ tickets, one-liners for interviews.</p>
+                        <div class="file-meta">
+                            <a href="src/NJQRT_Work_Context_Last_2.5_Years.html" target="_blank" class="badge new" style="text-decoration:none;">📖 VIEW HTML</a>
+                            <a href="src/NJQRT_Work_Context_Last_2.5_Years.md" target="_blank" class="badge" style="background:#6c757d;text-decoration:none;">📝 EDIT MD</a>
+                        </div>
+                    </div>
+
+                    <div class="file-card new">
+                        <h3>🗺️ Architecture Diagrams (All Repos)</h3>
+                        <p>Mermaid diagrams for all 8 repos. Database sharding (EIC), 3-layer caching (CSR), idempotency (MPay), AI skills (Biscuit), webhook validation (Payment).</p>
+                        <div class="file-meta">
+                            <a href="src/Architecture_Diagrams_All_Repos.html" target="_blank" class="badge new" style="text-decoration:none;">📖 VIEW HTML</a>
+                            <a href="src/Architecture_Diagrams_All_Repos.md" target="_blank" class="badge" style="background:#6c757d;text-decoration:none;">📝 EDIT MD</a>
+                        </div>
+                    </div>
+
+                    <div class="file-card new">
+                        <h3>🛠️ My Billtrust Workflow & Tools</h3>
+                        <p>HOW I ACTUALLY WORK: Context files (CLAUDE.md), Docker DB gateway, 7 custom skills (/karthik-triage, /fraud-investigator), global rules (RC-5), Checkmarx pre-commit, Confluence pages, fraud investigation patterns. Interview-ready answers included.</p>
+                        <div class="file-meta">
+                            <a href="src/My_Billtrust_Workflow_and_Tools.html" target="_blank" class="badge new" style="text-decoration:none;">📖 VIEW HTML</a>
+                            <a href="src/My_Billtrust_Workflow_and_Tools.md" target="_blank" class="badge" style="background:#6c757d;text-decoration:none;">📝 EDIT MD</a>
+                            <span class="file-size">95 KB</span>
+                        </div>
+                    </div>
+
+                    <div class="file-card priority">
+                        <h3>📖 README</h3>
+                        <p>Course overview: what you'll learn, 6 modules breakdown, deliverables, completion checklist, target roles.</p>
+                        <div class="file-meta">
+                            <a href="src/README.html" target="_blank" class="badge guide" style="text-decoration:none;">📖 VIEW HTML</a>
+                            <a href="src/README.md" target="_blank" class="badge" style="background:#6c757d;text-decoration:none;">📝 EDIT MD</a>
+                        </div>
+                    </div>
+
+                    <div class="file-card priority">
+                        <h3>📋 Course Syllabus</h3>
+                        <p>12-week detailed schedule (hours/week), learning outcomes per module, assessment criteria (80% = Pass, 95% = A+), grading scale.</p>
+                        <div class="file-meta">
+                            <a href="src/COURSE_SYLLABUS.html" target="_blank" class="badge guide" style="text-decoration:none;">📖 VIEW HTML</a>
+                            <a href="src/COURSE_SYLLABUS.md" target="_blank" class="badge" style="background:#6c757d;text-decoration:none;">📝 EDIT MD</a>
+                        </div>
+                    </div>
+
+                    <div class="file-card new">
+                        <h3>🎯 Job Roles You Can Apply</h3>
+                        <p>Tier 1 primary targets (Staff Engineer, SRE, Platform Engineer, Payment Engineer) + Tier 2 strong fit roles. 20 target companies, salary ranges, job search keywords, resume headlines, 2-week action plan.</p>
+                        <div class="file-meta">
+                            <a href="src/Job_Roles_You_Can_Apply.html" target="_blank" class="badge new" style="text-decoration:none;">📖 VIEW HTML</a>
+                            <a href="src/Job_Roles_You_Can_Apply.md" target="_blank" class="badge" style="background:#6c757d;text-decoration:none;">📝 EDIT MD</a>
+                            <span class="file-size">42 KB</span>
+                        </div>
+                    </div>
+
+                    <div class="file-card priority">
+                        <h3>📝 Master Interview Cheatsheet (ALL Topics)</h3>
+                        <p>60-sec intro, OOP quick ref (SOLID + 5 patterns), 5 system designs 2-min answers, 3 STAR stories, RabbitMQ vs Kafka, AWS 5 services, MySQL, CI/CD, security, salary scripts, common questions, interview day checklist. REVIEW 1 HOUR BEFORE INTERVIEW.</p>
+                        <div class="file-meta">
+                            <a href="src/Master_Interview_Cheatsheet_All_Topics.html" target="_blank" class="badge priority" style="text-decoration:none;">📖 VIEW HTML</a>
+                            <a href="src/Master_Interview_Cheatsheet_All_Topics.md" target="_blank" class="badge" style="background:#6c757d;text-decoration:none;">📝 EDIT MD</a>
+                            <span class="file-size">48 KB</span>
+                        </div>
+                    </div>
+
+                    <div class="file-card new">
+                        <h3>🔐 Auth Email Verification Flow (EIC - Your Real Feature)</h3>
+                        <p>End-to-end documentation of the email change verification feature YOU built in EIC (eInvoice Connect): Email change triggers 6-digit code (10-min expiry, one-time use) → 3 tables updated (fsiocuser, fsionlinecustomer, fsiuser) → Email template included → Security features (rate limiting, ACID transactions) → Edge cases handled → Interview 2-min answer.</p>
+                        <div class="file-meta">
+                            <a href="src/Auth_Email_Verification_Flow_EIC.html" target="_blank" class="badge new" style="text-decoration:none;">📖 VIEW HTML</a>
+                            <a href="src/Auth_Email_Verification_Flow_EIC.md" target="_blank" class="badge" style="background:#6c757d;text-decoration:none;">📝 EDIT MD</a>
+                            <span class="file-size">71 KB</span>
+                        </div>
+                    </div>
+
+                    <div class="file-card new">
+                        <h3>🎯 ATS Resume vs JD Match Analyzer</h3>
+                        <p>Beat the robots, land interviews: How ATS works (75% of resumes filtered), keyword extraction from JD, gap analysis template, industry-specific keywords (Fintech/SaaS/DevOps), before/after examples, format checklist, ATS score calculator. Your resume is already 88/100 optimized - customize it for every job in 15 minutes.</p>
+                        <div class="file-meta">
+                            <a href="src/ATS_Resume_JD_Match_Analyzer.html" target="_blank" class="badge new" style="text-decoration:none;">📖 VIEW HTML</a>
+                            <a href="src/ATS_Resume_JD_Match_Analyzer.md" target="_blank" class="badge" style="background:#6c757d;text-decoration:none;">📝 EDIT MD</a>
+                            <span class="file-size">43 KB</span>
+                        </div>
+                    </div>
+
+                    <div class="file-card priority">
+                        <h3>⭐ My Interview Storylines - STAR Method</h3>
+                        <p>5 ready-to-use stories from YOUR actual Billtrust work: $500k revenue loss prevention, cross-team fraud investigation, mentoring juniors (8h→2h), 200+ database changes (100% success), email verification feature. Each story answers 10+ behavioral questions. MEMORIZE THESE - they answer 80% of "Tell me about a time when..." questions.</p>
+                        <div class="file-meta">
+                            <a href="src/My_Interview_Storylines_STAR_Method.html" target="_blank" class="badge priority" style="text-decoration:none;">📖 VIEW HTML</a>
+                            <a href="src/My_Interview_Storylines_STAR_Method.md" target="_blank" class="badge" style="background:#6c757d;text-decoration:none;">📝 EDIT MD</a>
+                            <span class="file-size">45 KB</span>
+                        </div>
+                    </div>
+
+                    <div class="file-card priority">
+                        <h3>💬 Communication & Interview Mastery</h3>
+                        <p>HOW TO TALK IN INTERVIEWS: Self-introduction (3 versions: 30-sec, 1-min, 2-min) | HR round (salary, weakness, why leaving) | Manager round (what they evaluate) | CTO round (strategic thinking) | How to politely say "I don't know" | Business requirements translation | Surviving IT industry | Body language & tone | 10 common mistakes. THE SOFT SKILLS THAT MAKE OR BREAK YOUR INTERVIEW.</p>
+                        <div class="file-meta">
+                            <a href="src/Communication_Interview_Mastery.html" target="_blank" class="badge priority" style="text-decoration:none;">📖 VIEW HTML</a>
+                            <a href="src/Communication_Interview_Mastery.md" target="_blank" class="badge" style="background:#6c757d;text-decoration:none;">📝 EDIT MD</a>
+                            <span class="file-size">58 KB</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category: Resume & LinkedIn -->
+            <div class="category">
+                <h2>📄 MODULE 1: Resume & LinkedIn (Week 1)</h2>
+                <div class="file-grid">
+                    <div class="file-card">
+                        <h3><a href="src/Karthikeyan_Sekar_Resume_Beautiful.html" target="_blank">📄 Beautiful Resume</a></h3>
+                        <p>Your ATS-optimized resume showcasing 8 projects (EIC, CC, CSR, WCL, MPay, AMAPI, Whitelabel, Incident Tracker) with AI + Security + Leadership.</p>
+                        <div class="file-meta">
+                            <span class="badge guide">RESUME</span>
+                            <span class="file-size">28 KB</span>
+                        </div>
+                    </div>
+
+                    <div class="file-card">
+                        <h3><a href="src/CREATE_PDF_NOW.html" target="_blank">📄 Create PDF Now</a></h3>
+                        <p>3-step instructions to convert HTML resume to PDF (Ctrl+P → Save as PDF → Verify). Simple and fast!</p>
+                        <div class="file-meta">
+                            <span class="badge guide">GUIDE</span>
+                            <span class="file-size">2 KB</span>
+                        </div>
+                    </div>
+
+                    <div class="file-card">
+                        <h3><a href="src/LinkedIn_Profile_Update_Guide.html" target="_blank">🔗 LinkedIn Profile Update Guide</a></h3>
+                        <p>12-section comprehensive guide: headline, about section, 50+ skills optimization, Open to Work badge, Creator mode, networking tips.</p>
+                        <div class="file-meta">
+                            <span class="badge guide">GUIDE</span>
+                            <span class="file-size">16 KB</span>
+                        </div>
+                    </div>
+
+                    <div class="file-card">
+                        <h3><a href="src/Karthikeyan_Sekar_Resume_ATS_Optimized.html" target="_blank">📄 ATS-Optimized Resume</a></h3>
+                        <p>Alternate ATS-focused resume version (simpler formatting, keyword-heavy).</p>
+                        <div class="file-meta">
+                            <span class="badge guide">RESUME</span>
+                            <span class="file-size">14 KB</span>
+                        </div>
+                    </div>
+
+                    <div class="file-card">
+                        <h3><a href="src/Cover_Letter_Template.html" target="_blank">✍️ Cover Letter Template</a></h3>
+                        <p>Customizable cover letter template with examples for different companies and checklist before sending.</p>
+                        <div class="file-meta">
+                            <span class="badge guide">TEMPLATE</span>
+                            <span class="file-size">6 KB</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category: Interview Prep -->
+            <div class="category">
+                <h2>🎤 MODULE 2: Technical Interview Mastery (Week 2-4)</h2>
+                <div class="file-grid">
+                    <div class="file-card priority">
+                        <h3><a href="src/Technical_Interview_QA_Resume_Projects.html" target="_blank">📘 Technical Interview Q&A (Resume Projects)</a></h3>
+                        <p>Part 1: 50+ questions covering EIC (database sharding), CC (supplier portal), CSR (3-layer caching), WCL (connection pooling), MPay (idempotency), AMAPI.</p>
+                        <div class="file-meta">
+                            <span class="badge priority">PRIORITY</span>
+                            <span class="file-size">85 KB</span>
+                        </div>
+                    </div>
+
+                    <div class="file-card priority">
+                        <h3><a href="src/Technical_Interview_QA_Resume_Projects_Part2.html" target="_blank">📗 Technical Interview Q&A (Part 2)</a></h3>
+                        <p>Part 2: 45+ questions covering Database Design, Leadership, Debugging, Security Investigations, On-Call Support, Agile/Scrum, Code Review.</p>
+                        <div class="file-meta">
+                            <span class="badge priority">PRIORITY</span>
+                            <span class="file-size">64 KB</span>
+                        </div>
+                    </div>
+
+                    <div class="file-card">
+                        <h3><a href="src/Mock_Interview_Questions.html" target="_blank">🎤 Mock Interview Questions</a></h3>
+                        <p>3 complete mock interviews: Technical Phone Screen (45 min), System Design (60 min), Behavioral + Leadership (60 min). Practice with timing!</p>
+                        <div class="file-meta">
+                            <span class="badge quiz">MOCK</span>
+                            <span class="file-size">38 KB</span>
+                        </div>
+                    </div>
+
+                    <div class="file-card">
+                        <h3><a href="src/Behavioral_Interview_STAR_Method.html" target="_blank">⭐ Behavioral Interview: STAR Method</a></h3>
+                        <p>10 STAR stories from your NJQRT work: Root cause investigation, scaling, mentoring, failure, conflict resolution. Record yourself practicing!</p>
+                        <div class="file-meta">
+                            <span class="badge new">NEW</span>
+                            <span class="badge priority">CRITICAL</span>
+                            <span class="file-size">45 KB</span>
+                        </div>
+                    </div>
+
+                    <div class="file-card">
+                        <h3><a href="src/System_Design_Practice_Whiteboard.html" target="_blank">📐 System Design Practice: Whiteboard</a></h3>
+                        <p>5 system designs from your experience: Invoice delivery, payment processing, SSO auth, fraud detection, notifications. Draw + explain!</p>
+                        <div class="file-meta">
+                            <span class="badge new">NEW</span>
+                            <span class="badge priority">CRITICAL</span>
+                            <span class="file-size">42 KB</span>
+                        </div>
+                    </div>
+
+                    <div class="file-card">
+                        <h3><a href="src/Mock_Interview_Practice_Guide.html" target="_blank">📹 Mock Interview Practice Guide</a></h3>
+                        <p>How to record yourself, practice delivery, reduce filler words. 4-week practice schedule. Solo + peer + professional mock interviews.</p>
+                        <div class="file-meta">
+                            <span class="badge new">NEW</span>
+                            <span class="badge priority">CRITICAL</span>
+                            <span class="file-size">28 KB</span>
+                        </div>
+                    </div>
+
+                    <div class="file-card">
+                        <h3><a href="src/Salary_Negotiation_Guide.html" target="_blank">💰 Salary Negotiation Guide</a></h3>
+                        <p>How to negotiate from offer to acceptance. Deflect current salary questions, counter-offer templates, total comp breakdown. Market research strategies.</p>
+                        <div class="file-meta">
+                            <span class="badge new">NEW</span>
+                            <span class="badge priority">CRITICAL</span>
+                            <span class="file-size">24 KB</span>
+                        </div>
+                    </div>
+
+                    <div class="file-card">
+                        <h3><a href="src/Job_Search_Strategy_Action_Plan.html" target="_blank">🚀 Job Search Strategy: 8-Week Action Plan</a></h3>
+                        <p>Week-by-week roadmap: Prepare → Apply → Interview → Negotiate. 20 target companies (fintech/SaaS/product). Referral outreach templates. Tracking spreadsheet.</p>
+                        <div class="file-meta">
+                            <span class="badge new">NEW</span>
+                            <span class="badge priority">CRITICAL</span>
+                            <span class="file-size">35 KB</span>
+                        </div>
+                    </div>
+
+                    <div class="file-card">
+                        <h3><a href="src/OOP_Concepts_and_Design_Patterns.html" target="_blank">🏗️ OOP Concepts & Design Patterns</a></h3>
+                        <p>18 interview Q&A: 4 OOP pillars, SOLID principles, 7 design patterns (Factory, Singleton, Observer, Repository, Strategy, Decorator, Facade). Real PHP/.NET examples from Billtrust.</p>
+                        <div class="file-meta">
+                            <span class="badge new">NEW</span>
+                            <span class="badge priority">CRITICAL</span>
+                            <span class="file-size">58 KB</span>
+                        </div>
+                    </div>
+
+                    <div class="file-card">
+                        <h3><a href="src/Scenario_Based_Case_Studies.html" target="_blank">📊 Scenario-Based Case Studies</a></h3>
+                        <p>5 real-world scenarios: Database Performance Crisis, Memory Leak, Security Incident (API Key Leaked), Traffic Spike (100x), Malicious Actor Investigation.</p>
+                        <div class="file-meta">
+                            <span class="badge quiz">CASE STUDY</span>
+                            <span class="file-size">31 KB</span>
+                        </div>
+                    </div>
+
+                    <div class="file-card">
+                        <h3><a href="src/Code_Examples_Practice.html" target="_blank">💻 Code Examples & Practice</a></h3>
+                        <p>10+ hands-on coding challenges: Idempotency for Payment API, 3-Layer Caching, Circuit Breaker, Optimize Slow SQL Query, Rate Limiting (Token Bucket).</p>
+                        <div class="file-meta">
+                            <span class="badge quiz">CODING</span>
+                            <span class="file-size">25 KB</span>
+                        </div>
+                    </div>
+
+                    <div class="file-card">
+                        <h3><a href="src/Interview_Prep_Master_Plan.html" target="_blank">📅 Interview Prep Master Plan</a></h3>
+                        <p>Complete 2-week study plan with daily breakdowns (Day 1-14). Deep understanding checklist (8 projects × 7 questions), key metrics to memorize.</p>
+                        <div class="file-meta">
+                            <span class="badge guide">PLAN</span>
+                            <span class="file-size">20 KB</span>
+                        </div>
+                    </div>
+
+                    <div class="file-card">
+                        <h3><a href="src/Interview_Preparation_Guide.html" target="_blank">🎯 Interview Preparation Guide</a></h3>
+                        <p>2-minute pitch, STAR format answers, questions to ask interviewers, salary negotiation strategies, follow-up templates.</p>
+                        <div class="file-meta">
+                            <span class="badge guide">GUIDE</span>
+                            <span class="file-size">13 KB</span>
+                        </div>
+                    </div>
+
+                    <div class="file-card new">
+                        <h3><a href="src/DSA_Module_Blind75_Easy_to_Medium.html" target="_blank">🧠 DSA Module: Blind 75 (Easy to Medium)</a></h3>
+                        <p>55 LeetCode problems across 12 patterns (Two Pointers, Sliding Window, Hash Map, Binary Search, DFS/BFS, DP). 8-week study plan with Python solutions. Big O analysis for each.</p>
+                        <div class="file-meta">
+                            <span class="badge new">✨ NEW</span>
+                            <span class="file-size">72 KB</span>
+                        </div>
+                    </div>
+
+                    <div class="file-card new">
+                        <h3><a href="src/Cypress_Automation_Testing_Module.html" target="_blank">🧪 Cypress Automation Testing</a></h3>
+                        <p>Complete E2E automation guide: Cypress fundamentals, Billtrust's Page Object Model, Test Data API integration, custom commands, debugging flaky tests, CI/CD. Top 10 interview questions + practical exercise.</p>
+                        <div class="file-meta">
+                            <span class="badge new">✨ NEW</span>
+                            <span class="file-size">68 KB</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category: System Design & Advanced Topics -->
+            <div class="category">
+                <h2>🗺️ Advanced Topics: System Design & Architecture</h2>
+                <div class="file-grid">
+                    <div class="file-card">
+                        <h3><a href="src/System_Design_Interview_Guide.html" target="_blank">🗺️ System Design Interview Guide</a></h3>
+                        <p>7-step framework, 10 key concepts (CAP theorem, sharding, caching), 5 solved problems (URL shortener, Rate Limiter, etc.), practice exercises.</p>
+                        <div class="file-meta">
+                            <span class="badge guide">GUIDE</span>
+                            <span class="file-size">31 KB</span>
+                        </div>
+                    </div>
+
+                    <div class="file-card new">
+                        <h3><a href="src/System_Design_Deep_Dive_Famous_Apps.html" target="_blank">🏗️ System Design Deep Dive: 5 Famous Apps</a></h3>
+                        <p>MASTER system design by studying the giants: Email Notification System (100M emails/day), Spotify (400M users), WhatsApp (2B users), Instagram (500M DAU), URL Shortener (bit.ly). Each with capacity estimation, API design, database schema, architecture, bottlenecks, and 2-min interview answers.</p>
+                        <div class="file-meta">
+                            <span class="badge new">✨ NEW</span>
+                            <span class="file-size">96 KB</span>
+                        </div>
+                    </div>
+
+                    <div class="file-card">
+                        <h3><a href="src/Microservices_Architecture_Guide.html" target="_blank">🔧 Microservices Architecture Guide</a></h3>
+                        <p>Microservices patterns, service discovery, API gateway, event-driven architecture, distributed tracing, monitoring.</p>
+                        <div class="file-meta">
+                            <span class="badge guide">GUIDE</span>
+                            <span class="file-size">19 KB</span>
+                        </div>
+                    </div>
+
+                    <div class="file-card">
+                        <h3><a href="src/AWS_Services_and_Architecture_Guide.html" target="_blank">☁️ AWS Services & Architecture Guide</a></h3>
+                        <p>AWS services overview (EC2, RDS, S3, Lambda, CloudFront), architecture best practices, cost optimization, interview questions.</p>
+                        <div class="file-meta">
+                            <span class="badge guide">GUIDE</span>
+                            <span class="file-size">35 KB</span>
+                        </div>
+                    </div>
+
+                    <div class="file-card">
+                        <h3><a href="src/API_Design_REST_Guide.html" target="_blank">🔌 API Design & REST Guide</a></h3>
+                        <p>REST API best practices, versioning, authentication (JWT, OAuth), rate limiting, pagination, error handling, OpenAPI/Swagger.</p>
+                        <div class="file-meta">
+                            <span class="badge guide">GUIDE</span>
+                            <span class="file-size">17 KB</span>
+                        </div>
+                    </div>
+
+                    <div class="file-card new">
+                        <h3><a href="src/API_Development_Local_to_Production.html" target="_blank">🚀 API Development: Local to Production</a></h3>
+                        <p>Complete journey of building and deploying a REST API with Docker: Local Dev (Docker Compose, hot reload) → Testing (Unit/Integration/E2E) → CI/CD Pipeline (GitHub Actions 6 jobs) → Staging → Production (Blue-Green deployment) → Monitoring & Rollback. Includes interview 2-min answers.</p>
+                        <div class="file-meta">
+                            <span class="badge new">✨ NEW</span>
+                            <span class="file-size">67 KB</span>
+                        </div>
+                    </div>
+
+                    <div class="file-card">
+                        <h3><a href="src/Payment_Gateway_End_to_End_Flow.html" target="_blank">💳 Payment Gateway End-to-End Flow</a></h3>
+                        <p>Complete payment flow: authorization, capture, refund, webhooks, PCI compliance, 3D Secure, fraud detection, reconciliation.</p>
+                        <div class="file-meta">
+                            <span class="badge guide">GUIDE</span>
+                            <span class="file-size">35 KB</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category: Technology Deep Dives -->
+            <div class="category">
+                <h2>🔧 Technology Deep Dives</h2>
+                <div class="file-grid">
+                    <div class="file-card">
+                        <h3><a href="src/Redis_Memcache_Interview_Guide.html" target="_blank">⚡ Redis & Memcache Interview Guide</a></h3>
+                        <p>Redis data structures (String, Hash, List, Set, Sorted Set), caching strategies (Cache-Aside, Write-Through), pub/sub, clustering.</p>
+                        <div class="file-meta">
+                            <span class="badge guide">GUIDE</span>
+                            <span class="file-size">40 KB</span>
+                        </div>
+                    </div>
+
+                    <div class="file-card">
+                        <h3><a href="src/Kafka_RabbitMQ_Messaging_Guide.html" target="_blank">📨 Kafka & RabbitMQ Messaging Guide</a></h3>
+                        <p>Kafka architecture (topics, partitions, consumer groups), RabbitMQ exchanges, messaging patterns (Pub/Sub, Work Queue), exactly-once delivery.</p>
+                        <div class="file-meta">
+                            <span class="badge guide">GUIDE</span>
+                            <span class="file-size">48 KB</span>
+                        </div>
+                    </div>
+
+                    <div class="file-card">
+                        <h3><a href="src/Elasticsearch_Search_Systems_Guide.html" target="_blank">🔍 Elasticsearch & Search Systems Guide</a></h3>
+                        <p>Full-text search, inverted indexes, analyzers, aggregations, mapping, scaling, performance tuning, common interview questions.</p>
+                        <div class="file-meta">
+                            <span class="badge guide">GUIDE</span>
+                            <span class="file-size">23 KB</span>
+                        </div>
+                    </div>
+
+                    <div class="file-card">
+                        <h3><a href="src/Kubernetes_Deep_Dive_Guide.html" target="_blank">☸️ Kubernetes Deep Dive Guide</a></h3>
+                        <p>K8s architecture (pods, services, deployments, StatefulSets), networking, storage, autoscaling, helm charts, monitoring.</p>
+                        <div class="file-meta">
+                            <span class="badge guide">GUIDE</span>
+                            <span class="file-size">12 KB</span>
+                        </div>
+                    </div>
+
+                    <div class="file-card">
+                        <h3><a href="src/CICD_DevOps_Guide.html" target="_blank">🔄 CI/CD & DevOps Guide</a></h3>
+                        <p>CI/CD pipelines (Jenkins, GitHub Actions, GitLab CI), Docker, containerization, infrastructure as code (Terraform), GitOps.</p>
+                        <div class="file-meta">
+                            <span class="badge guide">GUIDE</span>
+                            <span class="file-size">22 KB</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category: AI & Full-Stack -->
+            <div class="category">
+                <h2>🤖 MODULE 3-5: AI/ML & Full-Stack (Week 5-10)</h2>
+                <div class="file-grid">
+                    <div class="file-card">
+                        <h3><a href="src/AI_Agentic_Workflows_Interview_Guide.html" target="_blank">🤖 AI Agentic Workflows Interview Guide</a></h3>
+                        <p>Multi-agent architectures, 3 real systems you built (Biscuit), agentic AI concepts (function calling, RAG), 2-minute elevator pitch.</p>
+                        <div class="file-meta">
+                            <span class="badge guide">AI</span>
+                            <span class="file-size">20 KB</span>
+                        </div>
+                    </div>
+
+                    <div class="file-card">
+                        <h3><a href="src/Python_FastAPI_Interview_Guide.html" target="_blank">🐍 Python & FastAPI Interview Guide</a></h3>
+                        <p>Python basics, FastAPI framework (async endpoints, Pydantic validation), REST API design, authentication, testing, deployment.</p>
+                        <div class="file-meta">
+                            <span class="badge guide">GUIDE</span>
+                            <span class="file-size">18 KB</span>
+                        </div>
+                    </div>
+
+                    <div class="file-card">
+                        <h3><a href="src/ReactJS_Frontend_Interview_Guide.html" target="_blank">⚛️ ReactJS Frontend Interview Guide</a></h3>
+                        <p>React fundamentals (components, hooks, state), TypeScript, context API, performance optimization, testing (Jest, React Testing Library).</p>
+                        <div class="file-meta">
+                            <span class="badge guide">GUIDE</span>
+                            <span class="file-size">20 KB</span>
+                        </div>
+                    </div>
+
+                    <div class="file-card">
+                        <h3><a href="src/LEARNING_PATH_FullStack_AI.html" target="_blank">📚 Learning Path: Full-Stack AI</a></h3>
+                        <p>8-week roadmap integrating Python/FastAPI and React.js with your existing PHP expertise. 3 portfolio projects with interview pitches.</p>
+                        <div class="file-meta">
+                            <span class="badge guide">ROADMAP</span>
+                            <span class="file-size">13 KB</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category: Advanced Framework Questions -->
+            <div class="category">
+                <h2>🎯 ADVANCED: Framework Deep Dives (100+ Questions Each)</h2>
+                <div class="file-grid">
+                    <div class="file-card">
+                        <h3><a href="src/Laravel_Advanced_Interview_Questions.html" target="_blank">🔥 Laravel Advanced Interview Questions</a></h3>
+                        <p>100+ advanced questions: Service Container & DI, Eloquent ORM advanced, N+1 query problem, query optimization, Events & Queues, security, testing, architecture patterns.</p>
+                        <div class="file-meta">
+                            <span class="badge new">NEW</span>
+                            <span class="file-size">95 KB</span>
+                        </div>
+                    </div>
+
+                    <div class="file-card">
+                        <h3><a href="src/ReactJS_Advanced_Interview_Questions.html" target="_blank">⚛️ ReactJS Advanced Interview Questions</a></h3>
+                        <p>80+ advanced questions: React 18+ features, Concurrent Rendering, Custom Hooks patterns, Performance optimization, Server Components (Next.js 13+), TypeScript, testing.</p>
+                        <div class="file-meta">
+                            <span class="badge new">NEW</span>
+                            <span class="file-size">60 KB</span>
+                        </div>
+                    </div>
+
+                    <div class="file-card">
+                        <h3><a href="src/Python_FastAPI_Advanced_Interview_Questions.html" target="_blank">🐍 Python FastAPI Advanced Interview Questions</a></h3>
+                        <p>70+ advanced questions: Dependency Injection system, Background Tasks & async/await, WebSockets, Pydantic advanced validators, SQLAlchemy async, JWT authentication, testing.</p>
+                        <div class="file-meta">
+                            <span class="badge new">NEW</span>
+                            <span class="file-size">55 KB</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category: Additional Resources -->
+            <div class="category">
+                <h2>📚 Additional Study Guides</h2>
+                <div class="file-grid">
+                    <div class="file-card">
+                        <h3><a href="src/Technical_Interview_QA.html" target="_blank">📘 Technical Interview Q&A</a></h3>
+                        <p>General technical Q&A: PHP, Laravel, database optimization, security (OWASP, PCI, HIPAA), architecture patterns.</p>
+                        <div class="file-meta">
+                            <span class="badge guide">GUIDE</span>
+                            <span class="file-size">13 KB</span>
+                        </div>
+                    </div>
+
+                    <div class="file-card">
+                        <h3><a href="src/Karthikeyan_Sekar_Resume.html" target="_blank">📄 Resume (Markdown Version)</a></h3>
+                        <p>Markdown version of comprehensive 3-page resume.</p>
+                        <div class="file-meta">
+                            <span class="badge guide">RESUME</span>
+                            <span class="file-size">11 KB</span>
+                        </div>
+                    </div>
+
+                    <div class="file-card">
+                        <h3><a href="src/Karthikeyan_Sekar_Resume_OnePage.html" target="_blank">📄 Resume (One Page)</a></h3>
+                        <p>Condensed 1-page resume version for fast-moving companies.</p>
+                        <div class="file-meta">
+                            <span class="badge guide">RESUME</span>
+                            <span class="file-size">5 KB</span>
+                        </div>
+                    </div>
+
+                    <div class="file-card">
+                        <h3><a href="src/README_Interview_Prep.html" target="_blank">📖 README: Interview Prep</a></h3>
+                        <p>Original interview prep package overview with 4-week timeline.</p>
+                        <div class="file-meta">
+                            <span class="badge guide">README</span>
+                            <span class="file-size">13 KB</span>
+                        </div>
+                    </div>
+
+                    <div class="file-card">
+                        <h3><a href="src/AGENT-RULES-PORTABLE.html" target="_blank">🤖 Agent Rules (Portable)</a></h3>
+                        <p>AI agent configuration rules (portable to any AI tool).</p>
+                        <div class="file-meta">
+                            <span class="badge guide">CONFIG</span>
+                            <span class="file-size">17 KB</span>
+                        </div>
+                    </div>
+
+                    <div class="file-card">
+                        <h3><a href="src/Karthikeyan_Sekar_Resume_ATS_Optimized.html" target="_blank">📄 ATS Resume (Markdown)</a></h3>
+                        <p>Markdown version of ATS-optimized resume.</p>
+                        <div class="file-meta">
+                            <span class="badge guide">RESUME</span>
+                            <span class="file-size">7 KB</span>
+                        </div>
+                    </div>
+
+                    <div class="file-card">
+                        <h3><a href="src/HOW_TO_CREATE_PDF.html" target="_blank">📄 How to Create PDF</a></h3>
+                        <p>Detailed PDF creation instructions (alternative to CREATE_PDF_NOW.md).</p>
+                        <div class="file-meta">
+                            <span class="badge guide">GUIDE</span>
+                            <span class="file-size">4 KB</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>&copy; 2026 Karthikeyan Sekar | Full-Stack AI Developer Course</p>
+            <p>60 Files | 12 Weeks to Staff Engineer | Chennai/Bengaluru</p>
+        </footer>
+    </div>
+
+    <a href="#" class="back-to-top">↑</a>
+
+    <script>
+        // LocalStorage key for collapsed state
+        const STORAGE_KEY = 'navigation_collapsed_sections';
+
+        // Load collapsed state from localStorage
+        function loadCollapsedState() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            return saved ? JSON.parse(saved) : {};
+        }
+
+        // Save collapsed state to localStorage
+        function saveCollapsedState(state) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        }
+
+        // Toggle category visibility
+        function toggleCategory(categoryIndex) {
+            const categories = document.querySelectorAll('.category');
+            const category = categories[categoryIndex];
+            const h2 = category.querySelector('h2');
+            const grid = category.querySelector('.file-grid');
+
+            // Toggle classes
+            h2.classList.toggle('collapsed');
+            grid.classList.toggle('collapsed');
+
+            // Save state
+            const state = loadCollapsedState();
+            state[categoryIndex] = h2.classList.contains('collapsed');
+            saveCollapsedState(state);
+        }
+
+        // Expand all categories
+        function expandAll() {
+            const categories = document.querySelectorAll('.category');
+            categories.forEach((category, index) => {
+                const h2 = category.querySelector('h2');
+                const grid = category.querySelector('.file-grid');
+
+                h2.classList.remove('collapsed');
+                grid.classList.remove('collapsed');
+            });
+
+            // Clear saved state
+            saveCollapsedState({});
+        }
+
+        // Collapse all categories
+        function collapseAll() {
+            const categories = document.querySelectorAll('.category');
+            const state = {};
+
+            categories.forEach((category, index) => {
+                const h2 = category.querySelector('h2');
+                const grid = category.querySelector('.file-grid');
+
+                h2.classList.add('collapsed');
+                grid.classList.add('collapsed');
+                state[index] = true;
+            });
+
+            saveCollapsedState(state);
+        }
+
+        // Initialize collapsible functionality
+        function initializeCollapsible() {
+            const categories = document.querySelectorAll('.category');
+            const state = loadCollapsedState();
+
+            categories.forEach((category, index) => {
+                const h2 = category.querySelector('h2');
+                const grid = category.querySelector('.file-grid');
+
+                // Add click handler
+                h2.addEventListener('click', () => toggleCategory(index));
+
+                // Restore saved state
+                if (state[index]) {
+                    h2.classList.add('collapsed');
+                    grid.classList.add('collapsed');
+                }
+            });
+        }
+
+        // Search functionality
+        function searchFiles() {
+            const input = document.getElementById('searchInput');
+            const filter = input.value.toLowerCase();
+            const fileCards = document.querySelectorAll('.file-card');
+
+            // If searching, expand all categories to show results
+            if (filter.length > 0) {
+                expandAll();
+            }
+
+            fileCards.forEach(card => {
+                const title = card.querySelector('h3').textContent.toLowerCase();
+                const description = card.querySelector('p').textContent.toLowerCase();
+
+                if (title.includes(filter) || description.includes(filter)) {
+                    card.style.display = '';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Smooth scroll for back to top
+        document.querySelector('.back-to-top').addEventListener('click', function(e) {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Dark Mode Functions
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+
+            // Update icon
+            document.getElementById('theme-icon').textContent = isDark ? '☀️' : '🌙';
+
+            // Save preference
+            localStorage.setItem('dark_mode', isDark ? 'enabled' : 'disabled');
+        }
+
+        function loadDarkModePreference() {
+            const darkMode = localStorage.getItem('dark_mode');
+            if (darkMode === 'enabled') {
+                document.body.classList.add('dark-mode');
+                document.getElementById('theme-icon').textContent = '☀️';
+            }
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeCollapsible();
+            loadDarkModePreference();
+        });
+    </script>
+</body>
+</html>

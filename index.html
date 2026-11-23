@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Full-Stack AI Developer Course - Karthikeyan Sekar</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .progress-dashboard {
+            padding: 40px;
+            background: #f8f9fa;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .progress-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .stat-card p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .progress-bar-container {
+            background: #e9ecef;
+            border-radius: 10px;
+            height: 30px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .modules {
+            padding: 40px;
+        }
+
+        .module {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .module h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .module-content {
+            margin-top: 20px;
+        }
+
+        .checklist {
+            list-style: none;
+        }
+
+        .checklist li {
+            padding: 15px;
+            background: white;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .checklist li:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .checklist li.completed {
+            background: #d4edda;
+            text-decoration: line-through;
+            color: #666;
+        }
+
+        .checklist input[type="checkbox"] {
+            margin-right: 15px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 1em;
+            transition: transform 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-content h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .quiz-question {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+
+        .quiz-question h4 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .quiz-options {
+            list-style: none;
+        }
+
+        .quiz-options li {
+            padding: 10px;
+            background: white;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .quiz-options li:hover {
+            border-color: #667eea;
+        }
+
+        .quiz-options li.selected {
+            background: #667eea;
+            color: white;
+        }
+
+        .quiz-options li.correct {
+            background: #28a745;
+            color: white;
+        }
+
+        .quiz-options li.incorrect {
+            background: #dc3545;
+            color: white;
+        }
+
+        .flashcard {
+            background: white;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .flashcard-front, .flashcard-back {
+            backface-visibility: hidden;
+            position: absolute;
+        }
+
+        .flashcard-back {
+            transform: rotateY(180deg);
+        }
+
+        .close-modal {
+            float: right;
+            font-size: 2em;
+            font-weight: bold;
+            color: #999;
+            cursor: pointer;
+        }
+
+        .close-modal:hover {
+            color: #333;
+        }
+
+        footer {
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .one-liner-box {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+
+        .one-liner-box strong {
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎓 Full-Stack AI Developer Course</h1>
+            <p>From Senior PHP Developer to AI-First Full-Stack Engineer</p>
+            <p>12 Weeks | Staff Engineer Target | Chennai/Bengaluru</p>
+        </header>
+
+        <div class="progress-dashboard">
+            <h2 style="margin-bottom: 20px;">📊 Your Progress</h2>
+            <div class="progress-stats">
+                <div class="stat-card">
+                    <h3 id="completed-tasks">0</h3>
+                    <p>Tasks Completed</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="total-tasks">30</h3>
+                    <p>Total Tasks</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="completion-percent">0%</h3>
+                    <p>Course Completion</p>
+                </div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="main-progress-bar" style="width: 0%">0%</div>
+            </div>
+        </div>
+
+        <!-- MODULE 1: Professional Branding -->
+        <div class="modules">
+            <div class="module">
+                <h2>📄 Module 1: Professional Branding (Week 1)</h2>
+                <div class="one-liner-box">
+                    <strong>One-Liner:</strong> "Get interview-ready with an ATS-optimized resume showcasing 12+ years experience across 8 projects (EIC, CC, CSR, WCL, MPay, AMAPI, Whitelabel, Incident Tracker) plus AI + Security + Leadership skills."
+                </div>
+                <div class="module-content">
+                    <ul class="checklist" id="module1-checklist">
+                        <li><input type="checkbox"> Create PDF resume from Beautiful.html</li>
+                        <li><input type="checkbox"> Update LinkedIn profile (50+ skills, Open to Work)</li>
+                        <li><input type="checkbox"> Practice 2-minute elevator pitch</li>
+                        <li><input type="checkbox"> Update GitHub profile with AI projects</li>
+                        <li><input type="checkbox"> Review Industry Expectations (Senior/Staff positioning)</li>
+                    </ul>
+                    <button class="btn" onclick="openQuiz('module1')">📝 Take Quiz (5 Questions)</button>
+                    <button class="btn btn-secondary" onclick="openFlashcards('module1')">🃏 Flashcards (10 Cards)</button>
+                </div>
+            </div>
+
+            <!-- MODULE 2: Technical Interview Prep -->
+            <div class="module">
+                <h2>🎤 Module 2: Technical Interview Mastery (Week 2-4)</h2>
+                <div class="one-liner-box">
+                    <strong>One-Liner:</strong> "Master 95+ senior-level interview questions covering EIC database sharding, CSR 3-layer caching, MPay idempotency, security investigations, cross-team collaboration, and system design."
+                </div>
+                <div class="module-content">
+                    <ul class="checklist" id="module2-checklist">
+                        <li><input type="checkbox"> Read Technical_Interview_QA Part 1 (Q1-Q50)</li>
+                        <li><input type="checkbox"> Read Technical_Interview_QA Part 2 (Q51-Q72)</li>
+                        <li><input type="checkbox"> Practice explaining EIC, CC, CSR (3 min each)</li>
+                        <li><input type="checkbox"> Practice explaining WCL, MPay, AMAPI (3 min each)</li>
+                        <li><input type="checkbox"> Complete Mock Interview #1 (Technical Phone Screen)</li>
+                        <li><input type="checkbox"> Complete Mock Interview #2 (System Design)</li>
+                        <li><input type="checkbox"> Complete Mock Interview #3 (Behavioral)</li>
+                        <li><input type="checkbox"> Solve 5+ Code_Examples_Practice challenges</li>
+                        <li><input type="checkbox"> Review all 5 Scenario_Based_Case_Studies</li>
+                    </ul>
+                    <button class="btn" onclick="openQuiz('module2')">📝 Take Quiz (10 Questions)</button>
+                    <button class="btn btn-secondary" onclick="openFlashcards('module2')">🃏 Flashcards (20 Cards)</button>
+                </div>
+            </div>
+
+            <!-- MODULE 3: AI/ML Fundamentals -->
+            <div class="module">
+                <h2>🤖 Module 3: AI/ML Fundamentals (Week 5-6)</h2>
+                <div class="one-liner-box">
+                    <strong>One-Liner:</strong> "Understand LLMs (tokens, context window, temperature), vector databases (embeddings, semantic search), and build your first chatbot API (FastAPI + OpenAI) to prove AI-first positioning."
+                </div>
+                <div class="module-content">
+                    <ul class="checklist" id="module3-checklist">
+                        <li><input type="checkbox"> Complete AI_LLM_Fundamentals.md guide</li>
+                        <li><input type="checkbox"> Complete AI_Vector_Databases.md guide</li>
+                        <li><input type="checkbox"> Build chatbot API (FastAPI + OpenAI)</li>
+                        <li><input type="checkbox"> Build semantic search API (ChromaDB)</li>
+                        <li><input type="checkbox"> Deploy chatbot to Render/AWS</li>
+                    </ul>
+                    <button class="btn" onclick="openQuiz('module3')">📝 Take Quiz (8 Questions)</button>
+                    <button class="btn btn-secondary" onclick="openFlashcards('module3')">🃏 Flashcards (15 Cards)</button>
+                </div>
+            </div>
+
+            <!-- MODULE 4: RAG & Agentic AI -->
+            <div class="module">
+                <h2>🛠️ Module 4: RAG & Agentic AI (Week 7-8)</h2>
+                <div class="one-liner-box">
+                    <strong>One-Liner:</strong> "Build production AI apps: 'Chat with Invoices' (RAG system querying 100K invoices) and 'Invoice Assistant Agent' (3+ function-calling tools) — this is what separates you from 'just used ChatGPT.'"
+                </div>
+                <div class="module-content">
+                    <ul class="checklist" id="module4-checklist">
+                        <li><input type="checkbox"> Complete AI_RAG_Guide.md</li>
+                        <li><input type="checkbox"> Complete AI_Agentic_Workflows.md</li>
+                        <li><input type="checkbox"> Build "Chat with Invoices" RAG app</li>
+                        <li><input type="checkbox"> Build Invoice Assistant Agent (3+ tools)</li>
+                        <li><input type="checkbox"> Deploy RAG app to production</li>
+                    </ul>
+                    <button class="btn" onclick="openQuiz('module4')">📝 Take Quiz (8 Questions)</button>
+                    <button class="btn btn-secondary" onclick="openFlashcards('module4')">🃏 Flashcards (15 Cards)</button>
+                </div>
+            </div>
+
+            <!-- MODULE 5: Full-Stack AI Project -->
+            <div class="module">
+                <h2>🚀 Module 5: Full-Stack AI Application (Week 9-10)</h2>
+                <div class="one-liner-box">
+                    <strong>One-Liner:</strong> "Build 'InvoiceGPT' — complete AI app with FastAPI backend (RAG + Agents + LangChain), React frontend (TypeScript + Hooks), and deployment (Docker + AWS) — your portfolio showcase."
+                </div>
+                <div class="module-content">
+                    <ul class="checklist" id="module5-checklist">
+                        <li><input type="checkbox"> Design InvoiceGPT architecture</li>
+                        <li><input type="checkbox"> Build FastAPI backend (RAG + Agents)</li>
+                        <li><input type="checkbox"> Build React frontend (TypeScript)</li>
+                        <li><input type="checkbox"> Integrate backend + frontend</li>
+                        <li><input type="checkbox"> Deploy to AWS/Render (public URL)</li>
+                        <li><input type="checkbox"> Record 5-min demo video</li>
+                        <li><input type="checkbox"> Push to GitHub (clean README)</li>
+                    </ul>
+                    <button class="btn" onclick="openQuiz('module5')">📝 Take Quiz (8 Questions)</button>
+                    <button class="btn btn-secondary" onclick="openFlashcards('module5')">🃏 Flashcards (15 Cards)</button>
+                </div>
+            </div>
+
+            <!-- MODULE 6: Interview Prep & Job Search -->
+            <div class="module">
+                <h2>🎯 Module 6: Interview Prep & Job Search (Week 11-12)</h2>
+                <div class="one-liner-box">
+                    <strong>One-Liner:</strong> "Apply to 20+ senior roles (Chennai/Bengaluru), complete 3+ company interviews, and land a Senior/Staff Engineer offer — armed with 95+ Q&A practiced, 1 live AI project, and updated resume/LinkedIn."
+                </div>
+                <div class="module-content">
+                    <ul class="checklist" id="module6-checklist">
+                        <li><input type="checkbox"> Review all 95+ technical Q&A one last time</li>
+                        <li><input type="checkbox"> Record yourself explaining 8 projects (3 min each)</li>
+                        <li><input type="checkbox"> Apply to 20+ companies (Naukri, LinkedIn, direct)</li>
+                        <li><input type="checkbox"> Customize resume per job (highlight relevant skills)</li>
+                        <li><input type="checkbox"> Follow up on applications (email/LinkedIn DM)</li>
+                        <li><input type="checkbox"> Schedule 5+ interviews</li>
+                        <li><input type="checkbox"> Complete 3+ company interviews</li>
+                        <li><input type="checkbox"> Job offer received! 🎉</li>
+                    </ul>
+                    <button class="btn" onclick="openQuiz('module6')">📝 Take Quiz (8 Questions)</button>
+                    <button class="btn btn-secondary" onclick="openFlashcards('module6')">🃏 Flashcards (10 Cards)</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz Modal -->
+        <div class="modal" id="quiz-modal">
+            <div class="modal-content">
+                <span class="close-modal" onclick="closeQuiz()">&times;</span>
+                <h2 id="quiz-title">Quiz</h2>
+                <div id="quiz-content"></div>
+                <button class="btn" onclick="submitQuiz()">Submit Answers</button>
+                <div id="quiz-result" style="margin-top: 20px; font-weight: bold;"></div>
+            </div>
+        </div>
+
+        <!-- Flashcard Modal -->
+        <div class="modal" id="flashcard-modal">
+            <div class="modal-content">
+                <span class="close-modal" onclick="closeFlashcards()">&times;</span>
+                <h2 id="flashcard-title">Flashcards</h2>
+                <div id="flashcard-content"></div>
+                <div style="margin-top: 20px;">
+                    <button class="btn" onclick="prevFlashcard()">← Previous</button>
+                    <button class="btn" onclick="nextFlashcard()">Next →</button>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>&copy; 2026 Karthikeyan Sekar | Full-Stack AI Developer Course</p>
+            <p>12 Weeks to Staff Engineer | Chennai/Bengaluru</p>
+        </footer>
+    </div>
+
+    <script>
+        // Progress tracking
+        function updateProgress() {
+            const checkboxes = document.querySelectorAll('.checklist input[type="checkbox"]');
+            const totalTasks = checkboxes.length;
+            const completedTasks = document.querySelectorAll('.checklist input[type="checkbox"]:checked').length;
+            const percent = Math.round((completedTasks / totalTasks) * 100);
+
+            document.getElementById('completed-tasks').textContent = completedTasks;
+            document.getElementById('total-tasks').textContent = totalTasks;
+            document.getElementById('completion-percent').textContent = percent + '%';
+            document.getElementById('main-progress-bar').style.width = percent + '%';
+            document.getElementById('main-progress-bar').textContent = percent + '%';
+
+            // Save progress to localStorage
+            localStorage.setItem('courseProgress', JSON.stringify(getCheckboxStates()));
+        }
+
+        function getCheckboxStates() {
+            const checkboxes = document.querySelectorAll('.checklist input[type="checkbox"]');
+            const states = [];
+            checkboxes.forEach((cb, index) => {
+                states.push(cb.checked);
+            });
+            return states;
+        }
+
+        function restoreCheckboxStates() {
+            const saved = localStorage.getItem('courseProgress');
+            if (saved) {
+                const states = JSON.parse(saved);
+                const checkboxes = document.querySelectorAll('.checklist input[type="checkbox"]');
+                checkboxes.forEach((cb, index) => {
+                    if (states[index]) {
+                        cb.checked = true;
+                        cb.parentElement.classList.add('completed');
+                    }
+                });
+                updateProgress();
+            }
+        }
+
+        // Checkbox toggle
+        document.querySelectorAll('.checklist li').forEach(item => {
+            item.addEventListener('click', function(e) {
+                if (e.target.tagName !== 'INPUT') {
+                    const checkbox = this.querySelector('input[type="checkbox"]');
+                    checkbox.checked = !checkbox.checked;
+                }
+                this.classList.toggle('completed');
+                updateProgress();
+            });
+        });
+
+        // Quiz data
+        const quizzes = {
+            module1: [
+                {
+                    q: "What is the target salary range for a 12+ years Full-Stack AI Developer in Bengaluru?",
+                    options: ["Junior Level", "Mid Level", "Senior Level", "Staff Level"],
+                    correct: 2
+                },
+                {
+                    q: "Which keyword is MISSING from your resume that hiring managers search for?",
+                    options: ["PHP", "Laravel", "RAG (Retrieval-Augmented Generation)", "MySQL"],
+                    correct: 2
+                },
+                {
+                    q: "What is the most important ATS optimization for your resume?",
+                    options: ["Fancy design with graphics", "Keywords matching job description", "Long paragraphs", "Many pages"],
+                    correct: 1
+                },
+                {
+                    q: "What does '99.9% uptime' mean in production support?",
+                    options: ["Database is fast", "No bugs", "43 min downtime/month allowed", "Users are happy"],
+                    correct: 2
+                },
+                {
+                    q: "What's the #1 gap in your resume right now?",
+                    options: ["Too long", "No AI keywords (RAG, LLM, Vector DB)", "No experience", "Bad formatting"],
+                    correct: 1
+                }
+            ],
+            module2: [
+                {
+                    q: "What does EIC use database sharding for?",
+                    options: ["Faster queries", "Separate high-volume customers (Stack1) from standard (Stack2)", "Backups", "Security"],
+                    correct: 1
+                },
+                {
+                    q: "What is CSR's 3-layer caching strategy?",
+                    options: ["MySQL → Redis → APCu", "APCu → Redis → MySQL", "Redis → MySQL → Disk", "Memory → Disk → Cloud"],
+                    correct: 1
+                },
+                {
+                    q: "What problem does MPay's idempotency pattern solve?",
+                    options: ["Slow queries", "Duplicate charges from retry requests", "Security bugs", "Memory leaks"],
+                    correct: 1
+                },
+                {
+                    q: "What is MTTR and what's your target?",
+                    options: ["Mean Time To Resolution, <15 min for P1 incidents", "Mean Time To Retry", "Maximum Time To Restart", "Minimum Time To Rollback"],
+                    correct: 0
+                },
+                {
+                    q: "How many monitoring systems do you use for security investigations?",
+                    options: ["1 (Datadog)", "3 (Datadog, Splunk, MySQL)", "5 (Datadog, Splunk, Pendo, SendGrid, MySQL)", "10+"],
+                    correct: 2
+                }
+            ],
+            module3: [
+                {
+                    q: "What is a 'token' in LLM context?",
+                    options: ["A word", "~4 characters or sub-word unit", "A sentence", "An API key"],
+                    correct: 1
+                },
+                {
+                    q: "What does 'context window' mean?",
+                    options: ["Browser window size", "Maximum tokens the LLM can process in one request", "Cache size", "Database connection pool"],
+                    correct: 1
+                },
+                {
+                    q: "What are embeddings used for?",
+                    options: ["Authentication", "Converting text to numbers for semantic search", "Database indexing", "Caching"],
+                    correct: 1
+                },
+                {
+                    q: "What's the difference between GPT-4 and Claude?",
+                    options: ["No difference", "Claude has 200K context (GPT-4 has 128K)", "Claude is free", "GPT-4 is for coding only"],
+                    correct: 1
+                }
+            ],
+            module4: [
+                {
+                    q: "What does RAG stand for?",
+                    options: ["Random Access Generator", "Retrieval-Augmented Generation", "Redis And GPU", "Real-time API Gateway"],
+                    correct: 1
+                },
+                {
+                    q: "When should you use RAG instead of fine-tuning?",
+                    options: ["Always use RAG", "When you need to query private/dynamic data not in training set", "Never", "Only for chatbots"],
+                    correct: 1
+                },
+                {
+                    q: "What is an 'agent' in AI context?",
+                    options: ["A person", "An LLM that can call functions/tools to take actions", "A database", "A server"],
+                    correct: 1
+                },
+                {
+                    q: "What's the difference between a chatbot and an agent?",
+                    options: ["No difference", "Agent can take actions (call APIs, update DB), chatbot just responds", "Chatbot is smarter", "Agent is offline"],
+                    correct: 1
+                }
+            ],
+            module5: [
+                {
+                    q: "What tech stack is InvoiceGPT built with?",
+                    options: ["PHP + jQuery", "Python + FastAPI + React + TypeScript", "Java + Spring Boot", ".NET + Angular"],
+                    correct: 1
+                },
+                {
+                    q: "Why is building InvoiceGPT important for interviews?",
+                    options: ["Just for fun", "Proves you can build full-stack AI apps, not just use ChatGPT", "Employer requirement", "Mandatory certification"],
+                    correct: 1
+                },
+                {
+                    q: "What database is used for vector search in InvoiceGPT?",
+                    options: ["MySQL", "MongoDB", "PostgreSQL + pgvector", "Redis"],
+                    correct: 2
+                }
+            ],
+            module6: [
+                {
+                    q: "How many companies should you apply to?",
+                    options: ["5", "10", "20+", "50+"],
+                    correct: 2
+                },
+                {
+                    q: "What's the first thing you should do when you receive a job offer?",
+                    options: ["Accept immediately", "Reject it", "Thank them and ask for time to consider (2-3 days)", "Ask for double salary"],
+                    correct: 2
+                },
+                {
+                    q: "What's your negotiation strategy for Senior/Staff roles?",
+                    options: ["₹25 LPA", "₹30 LPA", "₹38-40 LPA", "₹50 LPA"],
+                    correct: 2
+                }
+            ]
+        };
+
+        // Flashcard data
+        const flashcards = {
+            module1: [
+                { q: "Target salary for 12+ years Full-Stack AI Developer?", a: "Market rate for Senior/Staff Engineer with AI + Security + Leadership skills" },
+                { q: "What keywords are MISSING from your resume?", a: "RAG, LLM, Vector DB, Claude API, GPT-4, PCI compliance, OWASP Top 10" },
+                { q: "Your MTTR (P1 incidents)?", a: "12 minutes (target: <15 min)" },
+                { q: "Your uptime SLA?", a: "99.9% (43 min downtime/month allowed)" },
+                { q: "How many security investigations have you done?", a: "50+ malicious actor cases with timeline reconstruction" },
+                { q: "How many code/DML reviews have you done?", a: "100+ code reviews, 50+ DML reviews" },
+                { q: "What's your unique AI skill?", a: "Built Claude AI skills for automated triage (Biscuit project), 40% faster incident resolution" },
+                { q: "Your cost optimization metric?", a: "25% AWS cost reduction (rightsizing, Reserved Instances)" },
+                { q: "Your performance optimization metric?", a: "80% database load reduction (Redis caching)" },
+                { q: "Your sprint velocity improvement?", a: "40% improvement (better Jira breakdown, standardized templates)" }
+            ],
+            module2: [
+                { q: "EIC database sharding one-liner?", a: "Stack1 for high-volume customers (500K+ invoices/year), Stack2 for standard — prevents hot-spotting, allows independent scaling" },
+                { q: "CSR 3-layer caching one-liner?", a: "APCu (1ms) → Redis (5ms) → MySQL (50ms), <50ms p99 latency serving 200+ microservices" },
+                { q: "MPay idempotency one-liner?", a: "Redis SETNX lock + MySQL state machine prevents duplicate charges — reduced disputes 80%" },
+                { q: "WCL connection pooling one-liner?", a: "Reuses 10-100 connections instead of creating new ones — prevents MySQL connection exhaustion" },
+                { q: "AMAPI bulk insert one-liner?", a: "Batches 100 rows/INSERT + Bloom filter duplicate detection — <100ms per account" },
+                { q: "Biscuit AI assistant one-liner?", a: "Claude skills (FastAPI) automate triage, investigation, timeline reconstruction — 40% faster resolution" },
+                { q: "Payment repo cross-team debugging one-liner?", a: ".NET microservice orchestrating Stripe/PayPal — debugged HttpClient timeouts, webhook HMAC validation via Claude AI code analysis" },
+                { q: "Security investigation one-liner?", a: "Parallel log collection from 5 sources (Datadog, Splunk, Pendo, SendGrid, MySQL) → chronological timeline → customer report in <60 min" },
+                { q: "PagerDuty on-call one-liner?", a: "Weekly rotation (2 days/7 hours), 50+ P1/P2 incidents, 12-min MTTR, 99.9% uptime" },
+                { q: "Datadog monitoring one-liner?", a: "Post-PHP-upgrade 3-day monitoring protocol — found 20+ latent bugs via negative scenario testing" }
+            ],
+            module3: [
+                { q: "What is a token?", a: "~4 characters or sub-word unit — LLMs process text in tokens, not characters" },
+                { q: "What is context window?", a: "Maximum tokens the LLM can process in one request (e.g. GPT-4: 128K tokens, Claude: 200K tokens)" },
+                { q: "What is temperature?", a: "Controls randomness: 0 = deterministic (same input → same output), 1 = creative (varied outputs)" },
+                { q: "What are embeddings?", a: "Numbers representing text meaning — 'cat' and 'kitten' have similar embeddings, used for semantic search" },
+                { q: "What is semantic search?", a: "Search by meaning (not just keywords) — 'invoice overdue' matches 'unpaid bills' via embeddings" },
+                { q: "GPT-4 vs Claude difference?", a: "Claude: 200K context, better at following instructions; GPT-4: 128K context, stronger at reasoning" },
+                { q: "What is ChromaDB?", a: "Vector database for storing embeddings — enables semantic search over 100K+ documents" },
+                { q: "What is zero-shot prompting?", a: "Ask LLM to do task without examples — 'Translate this to French: Hello'" },
+                { q: "What is few-shot prompting?", a: "Give LLM 2-3 examples first — 'Happy → 😊, Sad → 😢, Angry → ?'" },
+                { q: "What is chain-of-thought?", a: "Ask LLM to explain reasoning step-by-step — 'Let's think step by step:'" }
+            ],
+            module4: [
+                { q: "RAG one-liner?", a: "Retrieve relevant docs from vector DB → pass to LLM as context → LLM generates answer grounded in your data" },
+                { q: "RAG vs fine-tuning?", a: "RAG: query private/dynamic data (cheaper, faster). Fine-tuning: change behavior/style (expensive, slower)" },
+                { q: "What is an agent?", a: "LLM that can call functions/tools to take actions (search, fetch data, update DB, send email)" },
+                { q: "Function calling one-liner?", a: "LLM decides which function to call with what parameters — you execute it, return result to LLM" },
+                { q: "Multi-agent orchestration one-liner?", a: "Multiple agents working together (Researcher finds data → Analyst summarizes → Writer drafts email)" },
+                { q: "RAG chunking strategy?", a: "Split docs into 500-1000 token chunks with 100-token overlap — preserves context across boundaries" },
+                { q: "Cost optimization for RAG?", a: "Cache embeddings (don't re-embed same doc), use cheaper models for retrieval (GPT-3.5 for search, GPT-4 for final answer)" },
+                { q: "When NOT to use RAG?", a: "Data is already in LLM's training set, real-time data updates (use fine-tuning or prompt injection instead)" }
+            ],
+            module5: [
+                { q: "InvoiceGPT features?", a: "Chat with invoices (RAG), agent actions (create invoice, send email, generate report), streaming responses, cost tracking" },
+                { q: "InvoiceGPT tech stack?", a: "Backend: Python + FastAPI + LangChain + OpenAI API. Frontend: React + TypeScript. DB: PostgreSQL + pgvector. Deploy: Docker + AWS/Render" },
+                { q: "Why build InvoiceGPT?", a: "Proves you can build full-stack AI apps (not just use ChatGPT) — portfolio piece for interviews" },
+                { q: "LangChain one-liner?", a: "Framework for building LLM apps — chains (multi-step workflows), agents (tool-calling), memory (conversation history)" },
+                { q: "Streaming responses one-liner?", a: "LLM sends tokens as they're generated (not all at once) — better UX for long responses" }
+            ],
+            module6: [
+                { q: "Job application strategy?", a: "Apply to 20+ companies (Naukri, LinkedIn, direct), customize resume per job, follow up after 3-5 days" },
+                { q: "Target companies (Chennai/Bengaluru)?", a: "Tier 1: Zoho, Freshworks, Chargebee, Postman. Tier 2: Razorpay, PhonePe, Flipkart, Swiggy" },
+                { q: "Salary negotiation script?", a: "Based on 12+ years + AI skills + security + leadership, expecting ₹38-40 LPA — can we discuss?" },
+                { q: "If asked current salary?", a: "Prefer to focus on market rate for this role (Senior/Staff Full-Stack + AI Engineer in Bengaluru)" },
+                { q: "If they push back on salary?", a: "If ₹40 LPA not possible, could we explore ₹36 LPA base + performance bonus tied to delivery milestones?" }
+            ]
+        };
+
+        let currentModule = '';
+        let currentFlashcardIndex = 0;
+
+        function openQuiz(module) {
+            currentModule = module;
+            const modal = document.getElementById('quiz-modal');
+            const content = document.getElementById('quiz-content');
+            const title = document.getElementById('quiz-title');
+
+            title.textContent = `Module ${module.replace('module', '')} Quiz`;
+
+            const quiz = quizzes[module];
+            let html = '';
+
+            quiz.forEach((item, index) => {
+                html += `
+                    <div class="quiz-question" data-index="${index}">
+                        <h4>${index + 1}. ${item.q}</h4>
+                        <ul class="quiz-options">
+                            ${item.options.map((opt, optIndex) => `
+                                <li onclick="selectOption(${index}, ${optIndex})" data-option="${optIndex}">${opt}</li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                `;
+            });
+
+            content.innerHTML = html;
+            modal.classList.add('active');
+        }
+
+        function selectOption(questionIndex, optionIndex) {
+            const question = document.querySelectorAll('.quiz-question')[questionIndex];
+            const options = question.querySelectorAll('.quiz-options li');
+            options.forEach(opt => opt.classList.remove('selected'));
+            options[optionIndex].classList.add('selected');
+        }
+
+        function submitQuiz() {
+            const quiz = quizzes[currentModule];
+            let correct = 0;
+
+            quiz.forEach((item, index) => {
+                const question = document.querySelectorAll('.quiz-question')[index];
+                const selected = question.querySelector('.quiz-options li.selected');
+                const options = question.querySelectorAll('.quiz-options li');
+
+                if (selected) {
+                    const selectedIndex = parseInt(selected.getAttribute('data-option'));
+                    if (selectedIndex === item.correct) {
+                        correct++;
+                        selected.classList.add('correct');
+                    } else {
+                        selected.classList.add('incorrect');
+                        options[item.correct].classList.add('correct');
+                    }
+                } else {
+                    options[item.correct].classList.add('correct');
+                }
+            });
+
+            const percent = Math.round((correct / quiz.length) * 100);
+            const resultDiv = document.getElementById('quiz-result');
+
+            if (percent >= 80) {
+                resultDiv.innerHTML = `<span style="color: green;">✅ ${correct}/${quiz.length} correct (${percent}%) - PASSED!</span>`;
+            } else {
+                resultDiv.innerHTML = `<span style="color: orange;">⚠️ ${correct}/${quiz.length} correct (${percent}%) - Review and try again!</span>`;
+            }
+        }
+
+        function closeQuiz() {
+            document.getElementById('quiz-modal').classList.remove('active');
+            document.getElementById('quiz-result').innerHTML = '';
+        }
+
+        function openFlashcards(module) {
+            currentModule = module;
+            currentFlashcardIndex = 0;
+            const modal = document.getElementById('flashcard-modal');
+            const title = document.getElementById('flashcard-title');
+
+            title.textContent = `Module ${module.replace('module', '')} Flashcards`;
+            showFlashcard();
+            modal.classList.add('active');
+        }
+
+        function showFlashcard() {
+            const cards = flashcards[currentModule];
+            const card = cards[currentFlashcardIndex];
+            const content = document.getElementById('flashcard-content');
+
+            content.innerHTML = `
+                <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                    <div class="flashcard-front">
+                        <h3>${card.q}</h3>
+                        <p style="color: #999; margin-top: 20px;">Click to flip</p>
+                    </div>
+                    <div class="flashcard-back">
+                        <h3>${card.a}</h3>
+                        <p style="color: #999; margin-top: 20px;">Card ${currentFlashcardIndex + 1}/${cards.length}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function nextFlashcard() {
+            const cards = flashcards[currentModule];
+            if (currentFlashcardIndex < cards.length - 1) {
+                currentFlashcardIndex++;
+                showFlashcard();
+            }
+        }
+
+        function prevFlashcard() {
+            if (currentFlashcardIndex > 0) {
+                currentFlashcardIndex--;
+                showFlashcard();
+            }
+        }
+
+        function closeFlashcards() {
+            document.getElementById('flashcard-modal').classList.remove('active');
+        }
+
+        // Initialize
+        restoreCheckboxStates();
+        updateProgress();
+    </script>
+</body>
+</html>

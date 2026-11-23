@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progress Dashboard - Course Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .overall-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            border-top: 5px solid #667eea;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .stat-card h2 {
+            font-size: 3em;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .stat-card p {
+            color: #666;
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+
+        .stat-card.warning h2 {
+            color: #ffc107;
+        }
+
+        .stat-card.success h2 {
+            color: #28a745;
+        }
+
+        .progress-circle {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 20px;
+        }
+
+        .module-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .module-section h3 {
+            color: #667eea;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .file-progress {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .file-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 5px solid #ccc;
+            transition: all 0.3s;
+        }
+
+        .file-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .file-item.completed {
+            border-left-color: #28a745;
+            background: linear-gradient(135deg, #f0fff4 0%, #e6ffed 100%);
+        }
+
+        .file-item.in-progress {
+            border-left-color: #ffc107;
+            background: linear-gradient(135deg, #fffbf0 0%, #fff9e6 100%);
+        }
+
+        .file-item h4 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .file-progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .file-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+        }
+
+        .file-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .achievement-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            background: #28a745;
+            color: white;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .achievement-badge.bronze {
+            background: #cd7f32;
+        }
+
+        .achievement-badge.silver {
+            background: #c0c0c0;
+        }
+
+        .achievement-badge.gold {
+            background: #ffd700;
+            color: #333;
+        }
+
+        .circular-progress {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto;
+        }
+
+        .circular-progress svg {
+            transform: rotate(-90deg);
+        }
+
+        .circular-progress-bg {
+            fill: none;
+            stroke: #e9ecef;
+            stroke-width: 10;
+        }
+
+        .circular-progress-fill {
+            fill: none;
+            stroke: url(#gradient);
+            stroke-width: 10;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.5s ease;
+        }
+
+        .progress-text {
+            text-align: center;
+            margin-top: -90px;
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📊 Your Progress Dashboard</h1>
+            <p>Track your journey to Staff Engineer</p>
+        </header>
+
+        <div class="content">
+            <a href="navigation.html" class="back-link">← Back to Navigation</a>
+
+            <!-- Overall Stats -->
+            <div class="overall-stats">
+                <div class="stat-card">
+                    <div class="circular-progress">
+                        <svg width="150" height="150">
+                            <defs>
+                                <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                            <circle class="circular-progress-bg" cx="75" cy="75" r="65"></circle>
+                            <circle class="circular-progress-fill" id="overall-circle" cx="75" cy="75" r="65"
+                                stroke-dasharray="408.4" stroke-dashoffset="408.4"></circle>
+                        </svg>
+                    </div>
+                    <div class="progress-text" id="overall-percent">0%</div>
+                    <p>Overall Progress</p>
+                </div>
+
+                <div class="stat-card">
+                    <h2 id="files-completed">0</h2>
+                    <p>Files Completed</p>
+                </div>
+
+                <div class="stat-card">
+                    <h2 id="sections-completed">0</h2>
+                    <p>Sections Completed</p>
+                </div>
+
+                <div class="stat-card success">
+                    <h2 id="study-streak">0</h2>
+                    <p>Day Streak 🔥</p>
+                </div>
+            </div>
+
+            <!-- Module Breakdown -->
+            <div id="modules-container">
+                <!-- Dynamically populated -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // All course files grouped by module
+        const MODULES = {
+            'START HERE': [
+                'start_here',
+                'industry_expectations_12plus_years',
+                'njqrt_work_context_last_2_5_years',
+                'architecture_diagrams_all_repos',
+                'my_billtrust_workflow_and_tools',
+                'readme',
+                'course_syllabus',
+                'quick_reference_cheat_sheet_interview_day',
+                'job_roles_you_can_apply',
+                'master_interview_cheatsheet_all_topics',
+                'auth_email_verification_flow_eic',
+                'ats_resume_jd_match_analyzer',
+                'my_interview_storylines_star_method',
+                'communication_interview_mastery'
+            ],
+            'Module 1: Resume & LinkedIn': [
+                'linkedin_profile_update_guide',
+                'cover_letter_template',
+                'create_pdf_now'
+            ],
+            'Module 2: Technical Interview': [
+                'technical_interview_qa_resume_projects',
+                'technical_interview_qa_resume_projects_part2',
+                'mock_interview_questions',
+                'behavioral_interview_star_method',
+                'system_design_practice_whiteboard',
+                'oop_concepts_and_design_patterns',
+                'mock_interview_practice_guide',
+                'salary_negotiation_guide',
+                'job_search_strategy_action_plan',
+                'scenario_based_case_studies',
+                'code_examples_practice',
+                'interview_prep_master_plan',
+                'interview_preparation_guide',
+                'dsa_module_blind75_easy_to_medium',
+                'cypress_automation_testing_module'
+            ],
+            'System Design & Architecture': [
+                'system_design_interview_guide',
+                'system_design_deep_dive_famous_apps',
+                'microservices_architecture_guide',
+                'aws_services_and_architecture_guide',
+                'api_design_rest_guide',
+                'api_development_local_to_production',
+                'payment_gateway_end_to_end_flow'
+            ],
+            'Technology Deep Dives': [
+                'redis_memcache_interview_guide',
+                'kafka_rabbitmq_messaging_guide',
+                'elasticsearch_search_systems_guide',
+                'kubernetes_deep_dive_guide',
+                'cicd_devops_guide'
+            ],
+            'AI/ML & Full-Stack': [
+                'ai_agentic_workflows_interview_guide',
+                'python_fastapi_interview_guide',
+                'reactjs_frontend_interview_guide',
+                'learning_path_fullstack_ai'
+            ],
+            'Advanced Framework Questions': [
+                'laravel_advanced_interview_questions',
+                'reactjs_advanced_interview_questions',
+                'python_fastapi_advanced_interview_questions'
+            ]
+        };
+
+        // Calculate progress for a single file
+        function getFileProgress(fileId) {
+            const storageKey = `course_progress_${fileId}`;
+            const saved = localStorage.getItem(storageKey);
+            if (!saved) return { completed: 0, total: 0, percentage: 0 };
+
+            const progress = JSON.parse(saved);
+            const sections = Object.keys(progress);
+            const completed = sections.filter(key => progress[key]).length;
+
+            return {
+                completed: completed,
+                total: sections.length,
+                percentage: sections.length > 0 ? Math.round((completed / sections.length) * 100) : 0
+            };
+        }
+
+        // Calculate overall stats
+        function calculateStats() {
+            let totalFiles = 0;
+            let completedFiles = 0;
+            let totalSections = 0;
+            let completedSections = 0;
+
+            Object.values(MODULES).forEach(files => {
+                files.forEach(fileId => {
+                    totalFiles++;
+                    const progress = getFileProgress(fileId);
+                    totalSections += progress.total;
+                    completedSections += progress.completed;
+
+                    if (progress.percentage === 100) {
+                        completedFiles++;
+                    }
+                });
+            });
+
+            const overallPercentage = totalSections > 0 ? Math.round((completedSections / totalSections) * 100) : 0;
+
+            return {
+                totalFiles,
+                completedFiles,
+                totalSections,
+                completedSections,
+                overallPercentage
+            };
+        }
+
+        // Update circular progress
+        function updateCircularProgress(percentage) {
+            const circle = document.getElementById('overall-circle');
+            const circumference = 408.4; // 2 * PI * 65
+            const offset = circumference - (percentage / 100) * circumference;
+            circle.style.strokeDashoffset = offset;
+
+            document.getElementById('overall-percent').textContent = percentage + '%';
+        }
+
+        // Calculate study streak
+        function getStudyStreak() {
+            const lastStudy = localStorage.getItem('last_study_date');
+            const streak = parseInt(localStorage.getItem('study_streak') || '0');
+
+            if (!lastStudy) return 0;
+
+            const today = new Date().toDateString();
+            const lastDate = new Date(lastStudy).toDateString();
+
+            if (today === lastDate) {
+                return streak;
+            }
+
+            // Reset streak if more than 1 day gap
+            const daysDiff = (new Date(today) - new Date(lastDate)) / (1000 * 60 * 60 * 24);
+            if (daysDiff > 1) {
+                return 0;
+            }
+
+            return streak;
+        }
+
+        // Update study streak
+        function updateStudyStreak() {
+            const today = new Date().toDateString();
+            const lastStudy = localStorage.getItem('last_study_date');
+            const lastDate = lastStudy ? new Date(lastStudy).toDateString() : null;
+
+            if (today !== lastDate) {
+                const daysDiff = lastDate ? (new Date(today) - new Date(lastDate)) / (1000 * 60 * 60 * 24) : 1;
+
+                if (daysDiff === 1) {
+                    // Consecutive day
+                    const currentStreak = parseInt(localStorage.getItem('study_streak') || '0');
+                    localStorage.setItem('study_streak', (currentStreak + 1).toString());
+                } else if (daysDiff > 1) {
+                    // Streak broken, restart
+                    localStorage.setItem('study_streak', '1');
+                }
+
+                localStorage.setItem('last_study_date', today);
+            }
+        }
+
+        // Render module progress
+        function renderModules() {
+            const container = document.getElementById('modules-container');
+            container.innerHTML = '';
+
+            Object.entries(MODULES).forEach(([moduleName, files]) => {
+                const moduleDiv = document.createElement('div');
+                moduleDiv.className = 'module-section';
+
+                let moduleCompleted = 0;
+                let moduleTotal = 0;
+
+                const filesHtml = files.map(fileId => {
+                    const progress = getFileProgress(fileId);
+                    moduleTotal += progress.total;
+                    moduleCompleted += progress.completed;
+
+                    const fileName = fileId.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+                    const statusClass = progress.percentage === 100 ? 'completed' : (progress.percentage > 0 ? 'in-progress' : '');
+                    const statusIcon = progress.percentage === 100 ? '✅' : (progress.percentage > 0 ? '⏳' : '⭕');
+
+                    return `
+                        <div class="file-item ${statusClass}">
+                            <h4>${statusIcon} ${fileName}</h4>
+                            <div class="file-stats">
+                                <span>${progress.completed}/${progress.total} sections</span>
+                                <span><strong>${progress.percentage}%</strong></span>
+                            </div>
+                            <div class="file-progress-bar">
+                                <div class="file-progress-fill" style="width: ${progress.percentage}%"></div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                const modulePercentage = moduleTotal > 0 ? Math.round((moduleCompleted / moduleTotal) * 100) : 0;
+                const badge = modulePercentage === 100 ? '<span class="achievement-badge gold">🏆 Complete!</span>' :
+                             modulePercentage >= 75 ? '<span class="achievement-badge silver">Almost There!</span>' :
+                             modulePercentage >= 50 ? '<span class="achievement-badge bronze">Halfway!</span>' : '';
+
+                moduleDiv.innerHTML = `
+                    <h3>${moduleName} ${badge}</h3>
+                    <div style="margin-bottom: 20px;">
+                        <strong>Module Progress: ${modulePercentage}%</strong>
+                        <div class="file-progress-bar" style="margin-top: 10px;">
+                            <div class="file-progress-fill" style="width: ${modulePercentage}%"></div>
+                        </div>
+                    </div>
+                    <div class="file-progress">
+                        ${filesHtml}
+                    </div>
+                `;
+
+                container.appendChild(moduleDiv);
+            });
+        }
+
+        // Initialize dashboard
+        function initDashboard() {
+            // Update streak
+            updateStudyStreak();
+
+            // Calculate and display stats
+            const stats = calculateStats();
+
+            document.getElementById('files-completed').textContent = `${stats.completedFiles}/${stats.totalFiles}`;
+            document.getElementById('sections-completed').textContent = `${stats.completedSections}/${stats.totalSections}`;
+            document.getElementById('study-streak').textContent = getStudyStreak();
+
+            updateCircularProgress(stats.overallPercentage);
+
+            // Render modules
+            renderModules();
+        }
+
+        // Run on load
+        document.addEventListener('DOMContentLoaded', initDashboard);
+    </script>
+</body>
+</html>
