@@ -1,0 +1,1585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elasticsearch_Search_Systems_Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 60px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .metadata {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 16px 24px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #666;
+            border-left: 4px solid #667eea;
+        }
+
+        /* PROGRESS TRACKER STYLES */
+        .progress-tracker {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .progress-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-stats {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .progress-percentage {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #764ba2;
+        }
+
+        .progress-bar-container {
+            height: 12px;
+            background: #e9ecef;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+            border-radius: 20px;
+        }
+
+        .reset-btn {
+            padding: 8px 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+
+        .reset-btn:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+        }
+
+        .progress-items {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .progress-items::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .progress-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .progress-item:hover {
+            background: #f8f9fa;
+            transform: translateX(5px);
+        }
+
+        .progress-item.completed {
+            opacity: 0.7;
+        }
+
+        .progress-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .progress-label {
+            cursor: pointer;
+            font-size: 0.95em;
+            line-height: 1.5;
+            color: #495057;
+            flex-grow: 1;
+        }
+
+        .progress-item.completed .progress-label {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .toggle-progress {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .toggle-progress:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .progress-items.collapsed {
+            display: none;
+        }
+
+        /* CONTENT STYLES */
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 4px solid #667eea;
+            font-weight: 700;
+        }
+
+        h2 {
+            color: #764ba2;
+            font-size: 2em;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        h3 {
+            color: #495057;
+            font-size: 1.5em;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        h4 {
+            color: #666;
+            font-size: 1.25em;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        ul, ol {
+            margin: 20px 0;
+            padding-left: 40px;
+        }
+
+        li {
+            margin-bottom: 12px;
+            line-height: 1.7;
+        }
+
+        code {
+            background: #f4f5f7;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #c7254e;
+            border: 1px solid #e1e4e8;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 24px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 25px 0;
+            border: 1px solid #444;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            border: none;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        blockquote {
+            border-left: 5px solid #667eea;
+            padding: 15px 25px;
+            margin: 25px 0;
+            background: #f8f9fa;
+            border-radius: 0 8px 8px 0;
+            color: #495057;
+            font-style: italic;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 30px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 14px 18px;
+            text-align: left;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tr:hover {
+            background: #e9ecef;
+            transition: background 0.2s;
+        }
+
+        a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px solid transparent;
+            transition: border-bottom 0.2s;
+        }
+
+        a:hover {
+            border-bottom: 1px solid #667eea;
+        }
+
+        hr {
+            border: none;
+            border-top: 2px solid #e9ecef;
+            margin: 40px 0;
+        }
+
+        strong {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        em {
+            color: #495057;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 25px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.6em;
+            }
+
+            .progress-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .progress-stats {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../navigation.html" class="back-link">&larr; Back to Navigation</a>
+
+        <div class="metadata">
+            <strong>Source:</strong> dev/Elasticsearch_Search_Systems_Guide.md &nbsp;|&nbsp; <strong>Updated:</strong> 2026-11-18 19:44:54
+        </div>
+
+        <!-- PROGRESS TRACKER -->
+        <div class="progress-tracker">
+            <div class="progress-header">
+                <div class="progress-title">
+                    <span>📚</span>
+                    <span>Your Progress</span>
+                </div>
+                <div class="progress-stats">
+                    <span class="progress-percentage" id="progress-pct">0%</span>
+                    <button class="reset-btn" onclick="resetProgress()">Reset</button>
+                    <button class="toggle-progress" onclick="toggleProgressList()">▼ Hide</button>
+                </div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progress-bar" style="width: 0%"></div>
+            </div>
+            <div class="progress-items" id="progress-items">
+                <!-- Checkboxes will be generated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="content">
+<h1 id="elasticsearch-search-systems-guide">Elasticsearch &amp; Search Systems Guide</h1>
+<p><strong>For Senior Software Engineer Interviews</strong></p>
+<p>Your competitive advantage: <strong>Enterprise search experience</strong> (10,000+ customers, invoice search, customer lookup, full-text search at scale)</p>
+<hr />
+<h2 id="table-of-contents">Table of Contents</h2>
+<ol>
+<li><a href="#search-fundamentals">Search Fundamentals</a></li>
+<li><a href="#elasticsearch-architecture">Elasticsearch Architecture</a></li>
+<li><a href="#indexing--mapping">Indexing &amp; Mapping</a></li>
+<li><a href="#querying--relevance">Querying &amp; Relevance</a></li>
+<li><a href="#aggregations--analytics">Aggregations &amp; Analytics</a></li>
+<li><a href="#performance--scaling">Performance &amp; Scaling</a></li>
+<li><a href="#your-Enterprise SaaS Company-use-cases">Your real-world use cases</a></li>
+<li><a href="#interview-questions--answers">Interview Questions &amp; Answers</a></li>
+</ol>
+<hr />
+<h2 id="search-fundamentals">Search Fundamentals</h2>
+<h3 id="why-not-just-use-sql">Why Not Just Use SQL?</h3>
+<p><strong>SQL Limitations for Search:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Slow on large tables (sequential scan)</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">invoices</span><span class="w"> </span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">description</span><span class="w"> </span><span class="k">LIKE</span><span class="w"> </span><span class="s1">'%payment%'</span><span class="w">  </span><span class="c1">-- Can't use index</span>
+
+<span class="c1">-- No relevance scoring (all matches equal)</span>
+<span class="c1">-- No typo tolerance</span>
+<span class="c1">-- No synonym support ('car' doesn't match 'automobile')</span>
+</code></pre></div>
+
+<p><strong>Elasticsearch Advantages:</strong><br />
+- <strong>Inverted index:</strong> Fast text search (milliseconds vs seconds)<br />
+- <strong>Relevance scoring:</strong> Best matches first (TF-IDF, BM25)<br />
+- <strong>Fuzzy matching:</strong> Typo tolerance ('paymnet' → 'payment')<br />
+- <strong>Synonyms:</strong> 'car' matches 'automobile', 'vehicle'<br />
+- <strong>Full-text:</strong> Search across all fields<br />
+- <strong>Aggregations:</strong> Faceted search, analytics</p>
+<hr />
+<h3 id="inverted-index-how-search-works">Inverted Index (How Search Works)</h3>
+<p><strong>Regular Database Index:</strong></p>
+<div class="codehilite"><pre><span></span><code>Document ID → Content
+1 → "Quick brown fox"
+2 → "Brown cow jumps"
+3 → "Fox jumps over"
+</code></pre></div>
+
+<p><strong>Inverted Index:</strong></p>
+<div class="codehilite"><pre><span></span><code>Term → Document IDs
+'quick' → [1]
+'brown' → [1, 2]
+'fox' → [1, 3]
+'cow' → [2]
+'jumps' → [2, 3]
+</code></pre></div>
+
+<p><strong>Search "brown fox":</strong><br />
+1. Lookup 'brown' → [1, 2]<br />
+2. Lookup 'fox' → [1, 3]<br />
+3. Intersection → [1]<br />
+4. Return document 1</p>
+<p><strong>Fast:</strong> O(log N) term lookup + set intersection</p>
+<hr />
+<h2 id="elasticsearch-architecture">Elasticsearch Architecture</h2>
+<h3 id="core-concepts">Core Concepts</h3>
+<div class="codehilite"><pre><span></span><code>Cluster (search-cluster)
+  ├── Node 1 (Master + Data)
+  ├── Node 2 (Data)
+  └── Node 3 (Data)
+      ↓
+Index (invoices)
+  ├── Shard 0 (Primary) → Node 1
+  │   └── Replica → Node 2
+  ├── Shard 1 (Primary) → Node 2
+  │   └── Replica → Node 3
+  └── Shard 2 (Primary) → Node 3
+      └── Replica → Node 1
+</code></pre></div>
+
+<p><strong>Terminology:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Elasticsearch</th>
+<th>MySQL Equivalent</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Index</td>
+<td>Database</td>
+</tr>
+<tr>
+<td>Document</td>
+<td>Row</td>
+</tr>
+<tr>
+<td>Field</td>
+<td>Column</td>
+</tr>
+<tr>
+<td>Mapping</td>
+<td>Schema</td>
+</tr>
+<tr>
+<td>Shard</td>
+<td>Partition</td>
+</tr>
+</tbody>
+</table>
+<h3 id="sharding-replication">Sharding &amp; Replication</h3>
+<p><strong>Sharding (Horizontal Scaling):</strong><br />
+- Index split into N shards (default: 1)<br />
+- Each shard is a Lucene index<br />
+- Search runs on all shards in parallel</p>
+<p><strong>Replication (High Availability):</strong><br />
+- Each shard has R replicas (default: 1)<br />
+- If node dies, replica promoted to primary<br />
+- Reads can hit replicas (load balancing)</p>
+<p><strong>Example:</strong></p>
+<div class="codehilite"><pre><span></span><code>PUT<span class="w"> </span>/invoices
+<span class="o">{</span>
+<span class="w">  </span><span class="s2">"settings"</span>:<span class="w"> </span><span class="o">{</span>
+<span class="w">    </span><span class="s2">"number_of_shards"</span>:<span class="w"> </span><span class="m">3</span>,
+<span class="w">    </span><span class="s2">"number_of_replicas"</span>:<span class="w"> </span><span class="m">1</span>
+<span class="w">  </span><span class="o">}</span>
+<span class="o">}</span>
+
+<span class="c1"># Result:</span>
+<span class="c1"># 3 primary shards + 3 replica shards = 6 total shards</span>
+<span class="c1"># Spread across 3 nodes</span>
+</code></pre></div>
+
+<hr />
+<h2 id="indexing-mapping">Indexing &amp; Mapping</h2>
+<h3 id="mapping-schema-definition">Mapping (Schema Definition)</h3>
+<div class="codehilite"><pre><span></span><code><span class="err">PUT</span><span class="w"> </span><span class="err">/i</span><span class="kc">n</span><span class="err">voices</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="nt">"mappings"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"invoice_id"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"keyword"</span><span class="w">  </span><span class="c1">// Exact match (not analyzed)</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">"customer_name"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"text"</span><span class="p">,</span><span class="w">    </span><span class="c1">// Full-text search (analyzed)</span>
+<span class="w">        </span><span class="nt">"fields"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="nt">"keyword"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"keyword"</span><span class="w">  </span><span class="c1">// Also store exact for sorting</span>
+<span class="w">          </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">"amount"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"float"</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">"due_date"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"date"</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"text"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"analyzer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"english"</span><span class="w">  </span><span class="c1">// Stemming, stop words</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">"tags"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"keyword"</span><span class="w">  </span><span class="c1">// Array of exact values</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong>Field Types:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Use Case</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>text</code></td>
+<td>Full-text search</td>
+<td>Description, email body</td>
+</tr>
+<tr>
+<td><code>keyword</code></td>
+<td>Exact match, aggregations</td>
+<td>Status, tags, IDs</td>
+</tr>
+<tr>
+<td><code>long</code>, <code>float</code></td>
+<td>Numeric range queries</td>
+<td>Amount, quantity</td>
+</tr>
+<tr>
+<td><code>date</code></td>
+<td>Date range queries</td>
+<td>Created_at, due_date</td>
+</tr>
+<tr>
+<td><code>boolean</code></td>
+<td>True/false</td>
+<td>Is_paid, is_active</td>
+</tr>
+<tr>
+<td><code>object</code></td>
+<td>Nested object</td>
+<td city_ street_ zip>Address</td>
+</tr>
+<tr>
+<td><code>geo_point</code></td>
+<td>Location search</td>
+<td>Lat/long coordinates</td>
+</tr>
+</tbody>
+</table>
+<h3 id="analyzers-text-processing">Analyzers (Text Processing)</h3>
+<p><strong>Standard Analyzer (Default):</strong></p>
+<div class="codehilite"><pre><span></span><code>"The QUICK Brown Fox!"
+  ↓ Lowercase
+"the quick brown fox!"
+  ↓ Tokenize
+["the", "quick", "brown", "fox"]
+  ↓ Remove stop words
+["quick", "brown", "fox"]
+</code></pre></div>
+
+<p><strong>English Analyzer (Stemming):</strong></p>
+<div class="codehilite"><pre><span></span><code>"Running quickly with foxes"
+  ↓ Lowercase + tokenize
+["running", "quickly", "with", "foxes"]
+  ↓ Stem
+["run", "quick", "with", "fox"]
+  ↓ Remove stop words
+["run", "quick", "fox"]
+</code></pre></div>
+
+<p>Now "running" matches "run", "runner", "runs"</p>
+<p><strong>Custom Analyzer:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="err">PUT</span><span class="w"> </span><span class="err">/i</span><span class="kc">n</span><span class="err">voices</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="nt">"settings"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"analysis"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"analyzer"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"invoice_analyzer"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"custom"</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">"tokenizer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"standard"</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">"filter"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"lowercase"</span><span class="p">,</span><span class="w"> </span><span class="s2">"asciifolding"</span><span class="p">,</span><span class="w"> </span><span class="s2">"invoice_synonym"</span><span class="p">]</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">"filter"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"invoice_synonym"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"synonym"</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">"synonyms"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="s2">"bill, invoice"</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">"payment, charge, fee"</span>
+<span class="w">          </span><span class="p">]</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<hr />
+<h2 id="querying-relevance">Querying &amp; Relevance</h2>
+<h3 id="basic-queries">Basic Queries</h3>
+<p><strong>1. Match Query (Full-Text Search)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="err">GET</span><span class="w"> </span><span class="err">/i</span><span class="kc">n</span><span class="err">voices/_search</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="nt">"query"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"match"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"payment processing"</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Finds: "payment", "processing", "payments processed"</span>
+<span class="c1">// Scored by relevance (BM25)</span>
+</code></pre></div>
+
+<p><strong>2. Term Query (Exact Match)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="err">GET</span><span class="w"> </span><span class="err">/i</span><span class="kc">n</span><span class="err">voices/_search</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="nt">"query"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"term"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"paid"</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Finds: Exact "paid" (case-sensitive on keyword fields)</span>
+</code></pre></div>
+
+<p><strong>3. Range Query</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="err">GET</span><span class="w"> </span><span class="err">/i</span><span class="kc">n</span><span class="err">voices/_search</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="nt">"query"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"range"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"amount"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"gte"</span><span class="p">:</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"lte"</span><span class="p">:</span><span class="w"> </span><span class="mi">500</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong>4. Bool Query (Combine Multiple)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="err">GET</span><span class="w"> </span><span class="err">/i</span><span class="kc">n</span><span class="err">voices/_search</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="nt">"query"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"bool"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"must"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span><span class="nt">"match"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"customer_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Acme Corp"</span><span class="p">}}</span>
+<span class="w">      </span><span class="p">],</span>
+<span class="w">      </span><span class="nt">"filter"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span><span class="nt">"term"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"unpaid"</span><span class="p">}},</span>
+<span class="w">        </span><span class="p">{</span><span class="nt">"range"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"due_date"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"lt"</span><span class="p">:</span><span class="w"> </span><span class="s2">"now"</span><span class="p">}}}</span>
+<span class="w">      </span><span class="p">],</span>
+<span class="w">      </span><span class="nt">"must_not"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span><span class="nt">"term"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"is_disputed"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">}}</span>
+<span class="w">      </span><span class="p">],</span>
+<span class="w">      </span><span class="nt">"should"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span><span class="nt">"term"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"priority"</span><span class="p">:</span><span class="w"> </span><span class="s2">"high"</span><span class="p">}}</span>
+<span class="w">      </span><span class="p">]</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// must: AND (scored)</span>
+<span class="c1">// filter: AND (not scored, cacheable)</span>
+<span class="c1">// must_not: NOT</span>
+<span class="c1">// should: OR (boosts score)</span>
+</code></pre></div>
+
+<h3 id="relevance-scoring-bm25">Relevance Scoring (BM25)</h3>
+<p><strong>TF-IDF Concept:</strong><br />
+- <strong>Term Frequency (TF):</strong> More occurrences = higher score<br />
+- <strong>Inverse Document Frequency (IDF):</strong> Rare terms score higher</p>
+<div class="codehilite"><pre><span></span><code>Score = TF × IDF
+
+Example:
+"payment" appears in 1000 invoices → low IDF → low score
+"ACH123456" appears in 1 invoice → high IDF → high score
+</code></pre></div>
+
+<p><strong>Boosting:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="err">GET</span><span class="w"> </span><span class="err">/i</span><span class="kc">n</span><span class="err">voices/_search</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="nt">"query"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"multi_match"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"query"</span><span class="p">:</span><span class="w"> </span><span class="s2">"payment"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"fields"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"description^2"</span><span class="p">,</span><span class="w"> </span><span class="s2">"notes"</span><span class="p">]</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Matches in description score 2x higher than notes</span>
+</code></pre></div>
+
+<p><strong>Explain (Debug Scoring):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="err">GET</span><span class="w"> </span><span class="err">/i</span><span class="kc">n</span><span class="err">voices/_search</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="nt">"query"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"match"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"payment"</span><span class="p">}},</span>
+<span class="w">  </span><span class="nt">"explain"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="p">}</span>
+
+<span class="c1">// Returns detailed score calculation</span>
+</code></pre></div>
+
+<hr />
+<h2 id="aggregations-analytics">Aggregations &amp; Analytics</h2>
+<h3 id="types-of-aggregations">Types of Aggregations</h3>
+<p><strong>1. Bucket Aggregations (Group By)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="err">GET</span><span class="w"> </span><span class="err">/i</span><span class="kc">n</span><span class="err">voices/_search</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="nt">"size"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">  </span><span class="c1">// Don't return documents, just aggregations</span>
+<span class="w">  </span><span class="nt">"aggs"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"by_status"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"terms"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"field"</span><span class="p">:</span><span class="w"> </span><span class="s2">"status"</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Result:</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="nt">"aggregations"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"by_status"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"buckets"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span><span class="nt">"key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"paid"</span><span class="p">,</span><span class="w"> </span><span class="nt">"doc_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">5000</span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span><span class="nt">"key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"unpaid"</span><span class="p">,</span><span class="w"> </span><span class="nt">"doc_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">1500</span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span><span class="nt">"key"</span><span class="p">:</span><span class="w"> </span><span class="s2">"overdue"</span><span class="p">,</span><span class="w"> </span><span class="nt">"doc_count"</span><span class="p">:</span><span class="w"> </span><span class="mi">300</span><span class="p">}</span>
+<span class="w">      </span><span class="p">]</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong>2. Metric Aggregations (Calculate Values)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="err">GET</span><span class="w"> </span><span class="err">/i</span><span class="kc">n</span><span class="err">voices/_search</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="nt">"size"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"aggs"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"total_revenue"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"sum"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"field"</span><span class="p">:</span><span class="w"> </span><span class="s2">"amount"</span><span class="p">}</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">"avg_invoice"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"avg"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"field"</span><span class="p">:</span><span class="w"> </span><span class="s2">"amount"</span><span class="p">}</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">"stats"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"stats"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"field"</span><span class="p">:</span><span class="w"> </span><span class="s2">"amount"</span><span class="p">}</span><span class="w">  </span><span class="c1">// min, max, avg, sum, count</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong>3. Date Histogram (Time-Series)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="err">GET</span><span class="w"> </span><span class="err">/i</span><span class="kc">n</span><span class="err">voices/_search</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="nt">"size"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"aggs"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"sales_over_time"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"date_histogram"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"field"</span><span class="p">:</span><span class="w"> </span><span class="s2">"created_at"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"calendar_interval"</span><span class="p">:</span><span class="w"> </span><span class="s2">"month"</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">"aggs"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"monthly_revenue"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="nt">"sum"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"field"</span><span class="p">:</span><span class="w"> </span><span class="s2">"amount"</span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Result: Revenue per month</span>
+</code></pre></div>
+
+<p><strong>4. Nested Aggregations</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="err">GET</span><span class="w"> </span><span class="err">/i</span><span class="kc">n</span><span class="err">voices/_search</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="nt">"size"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"aggs"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"by_customer"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"terms"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"field"</span><span class="p">:</span><span class="w"> </span><span class="s2">"customer_id"</span><span class="p">},</span>
+<span class="w">      </span><span class="nt">"aggs"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"total_spent"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="nt">"sum"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"field"</span><span class="p">:</span><span class="w"> </span><span class="s2">"amount"</span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Top customers by spend</span>
+</code></pre></div>
+
+<hr />
+<h2 id="performance-scaling">Performance &amp; Scaling</h2>
+<h3 id="indexing-performance">Indexing Performance</h3>
+<p><strong>Bulk Indexing:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="err">POST</span><span class="w"> </span><span class="err">/_bulk</span>
+<span class="p">{</span><span class="nt">"index"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"_index"</span><span class="p">:</span><span class="w"> </span><span class="s2">"invoices"</span><span class="p">,</span><span class="w"> </span><span class="nt">"_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1"</span><span class="p">}}</span>
+<span class="p">{</span><span class="nt">"invoice_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"INV-001"</span><span class="p">,</span><span class="w"> </span><span class="nt">"amount"</span><span class="p">:</span><span class="w"> </span><span class="mf">150.00</span><span class="p">}</span>
+<span class="p">{</span><span class="nt">"index"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"_index"</span><span class="p">:</span><span class="w"> </span><span class="s2">"invoices"</span><span class="p">,</span><span class="w"> </span><span class="nt">"_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2"</span><span class="p">}}</span>
+<span class="p">{</span><span class="nt">"invoice_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"INV-002"</span><span class="p">,</span><span class="w"> </span><span class="nt">"amount"</span><span class="p">:</span><span class="w"> </span><span class="mf">200.00</span><span class="p">}</span>
+
+<span class="c1">// 100x faster than individual inserts</span>
+</code></pre></div>
+
+<p><strong>Refresh Interval:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="err">PUT</span><span class="w"> </span><span class="err">/i</span><span class="kc">n</span><span class="err">voices/_se</span><span class="kc">tt</span><span class="err">i</span><span class="kc">n</span><span class="err">gs</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="nt">"index"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"refresh_interval"</span><span class="p">:</span><span class="w"> </span><span class="s2">"30s"</span><span class="w">  </span><span class="c1">// Default: 1s</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Documents visible after refresh</span>
+<span class="c1">// Higher interval = faster indexing</span>
+</code></pre></div>
+
+<p><strong>Disable Replicas During Bulk Load:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="err">PUT</span><span class="w"> </span><span class="err">/i</span><span class="kc">n</span><span class="err">voices/_se</span><span class="kc">tt</span><span class="err">i</span><span class="kc">n</span><span class="err">gs</span>
+<span class="p">{</span><span class="nt">"number_of_replicas"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">}</span>
+
+<span class="c1">// ... bulk index ...</span>
+
+<span class="err">PUT</span><span class="w"> </span><span class="err">/i</span><span class="kc">n</span><span class="err">voices/_se</span><span class="kc">tt</span><span class="err">i</span><span class="kc">n</span><span class="err">gs</span>
+<span class="p">{</span><span class="nt">"number_of_replicas"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">}</span>
+</code></pre></div>
+
+<h3 id="query-performance">Query Performance</h3>
+<p><strong>1. Use Filters (Cacheable)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">// Slow: Scored query</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="nt">"query"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"match"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"paid"</span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Fast: Cached filter</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="nt">"query"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"bool"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"filter"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span><span class="nt">"term"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"paid"</span><span class="p">}}</span>
+<span class="w">      </span><span class="p">]</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong>2. Limit Fields Returned</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="err">GET</span><span class="w"> </span><span class="err">/i</span><span class="kc">n</span><span class="err">voices/_search</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="nt">"query"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="err">...</span><span class="p">},</span>
+<span class="w">  </span><span class="nt">"_source"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"invoice_id"</span><span class="p">,</span><span class="w"> </span><span class="s2">"amount"</span><span class="p">]</span><span class="w">  </span><span class="c1">// Don't return all fields</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong>3. Pagination (Scroll API for Large Results)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">// Bad: Deep pagination (slow)</span>
+<span class="err">GET</span><span class="w"> </span><span class="err">/i</span><span class="kc">n</span><span class="err">voices/_search?</span><span class="kc">fr</span><span class="err">om=</span><span class="mi">10000</span><span class="err">&amp;size=</span><span class="mi">10</span>
+
+<span class="c1">// Good: Scroll API</span>
+<span class="err">POST</span><span class="w"> </span><span class="err">/i</span><span class="kc">n</span><span class="err">voices/_search?scroll=</span><span class="mi">1</span><span class="err">m</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="nt">"size"</span><span class="p">:</span><span class="w"> </span><span class="mi">1000</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"query"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="err">...</span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Then: GET /_search/scroll with scroll_id</span>
+</code></pre></div>
+
+<h3 id="scaling-strategies">Scaling Strategies</h3>
+<p><strong>1. More Shards (Horizontal)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># 1 shard → 3 shards = 3x query parallelism</span>
+PUT<span class="w"> </span>/invoices/_settings
+<span class="o">{</span><span class="s2">"number_of_shards"</span>:<span class="w"> </span><span class="m">3</span><span class="o">}</span>
+
+<span class="c1"># Note: Can't change after index created</span>
+<span class="c1"># Must reindex into new index</span>
+</code></pre></div>
+
+<p><strong>2. More Nodes</strong><br />
+- Add server → ES auto-balances shards<br />
+- Linear scaling (3 nodes → 6 nodes = 2x capacity)</p>
+<p><strong>3. Dedicated Master Nodes</strong></p>
+<div class="codehilite"><pre><span></span><code>Node 1, 2, 3: Master-eligible (cluster coordination)
+Node 4, 5, 6: Data nodes (hold shards)
+Node 7, 8: Ingest nodes (preprocessing)
+</code></pre></div>
+
+<p><strong>4. Hot-Warm Architecture</strong></p>
+<div class="codehilite"><pre><span></span><code>Hot tier (SSD, recent data): Today's invoices
+Warm tier (HDD, old data): Last year's invoices
+Cold tier (S3, archive): 5+ years old
+</code></pre></div>
+
+<hr />
+<h2 id="your-real-world-use-cases">Your real-world use cases</h2>
+<h3 id="1-invoice-search">1. Invoice Search</h3>
+<p><strong>Requirements:</strong><br />
+- Search 10M+ invoices across 10k customers<br />
+- Full-text search: invoice number, customer name, description<br />
+- Filter by: status, date range, amount range<br />
+- Sort by relevance or date</p>
+<p><strong>Mapping:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="err">PUT</span><span class="w"> </span><span class="err">/i</span><span class="kc">n</span><span class="err">voices</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="nt">"settings"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"number_of_shards"</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"number_of_replicas"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">"mappings"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"invoice_id"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"keyword"</span><span class="p">},</span>
+<span class="w">      </span><span class="nt">"customer_id"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"keyword"</span><span class="p">},</span>
+<span class="w">      </span><span class="nt">"customer_name"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"text"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"fields"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"keyword"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"keyword"</span><span class="p">}}</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"text"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"analyzer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"english"</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">"amount"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"float"</span><span class="p">},</span>
+<span class="w">      </span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"keyword"</span><span class="p">},</span>
+<span class="w">      </span><span class="nt">"due_date"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"date"</span><span class="p">},</span>
+<span class="w">      </span><span class="nt">"created_at"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"date"</span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong>Search Query:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">public function searchInvoices($query, $filters) {</span>
+<span class="x">    $params = [</span>
+<span class="x">        'index' =&gt; 'invoices',</span>
+<span class="x">        'body' =&gt; [</span>
+<span class="x">            'query' =&gt; [</span>
+<span class="x">                'bool' =&gt; [</span>
+<span class="x">                    'must' =&gt; [</span>
+<span class="x">                        [</span>
+<span class="x">                            'multi_match' =&gt; [</span>
+<span class="x">                                'query' =&gt; $query,</span>
+<span class="x">                                'fields' =&gt; [</span>
+<span class="x">                                    'invoice_id^3',      // Boost exact ID</span>
+<span class="x">                                    'customer_name^2',   // Boost customer name</span>
+<span class="x">                                    'description'</span>
+<span class="x">                                ],</span>
+<span class="x">                                'fuzziness' =&gt; 'AUTO'   // Typo tolerance</span>
+<span class="x">                            ]</span>
+<span class="x">                        ]</span>
+<span class="x">                    ],</span>
+<span class="x">                    'filter' =&gt; []</span>
+<span class="x">                ]</span>
+<span class="x">            ],</span>
+<span class="x">            'sort' =&gt; [</span>
+<span class="x">                '_score' =&gt; 'desc',</span>
+<span class="x">                'created_at' =&gt; 'desc'</span>
+<span class="x">            ],</span>
+<span class="x">            'size' =&gt; 20</span>
+<span class="x">        ]</span>
+<span class="x">    ];</span>
+
+<span class="x">    // Apply filters</span>
+<span class="x">    if (isset($filters['customer_id'])) {</span>
+<span class="x">        $params['body']['query']['bool']['filter'][] = [</span>
+<span class="x">            'term' =&gt; ['customer_id' =&gt; $filters['customer_id']]</span>
+<span class="x">        ];</span>
+<span class="x">    }</span>
+
+<span class="x">    if (isset($filters['status'])) {</span>
+<span class="x">        $params['body']['query']['bool']['filter'][] = [</span>
+<span class="x">            'term' =&gt; ['status' =&gt; $filters['status']]</span>
+<span class="x">        ];</span>
+<span class="x">    }</span>
+
+<span class="x">    if (isset($filters['date_range'])) {</span>
+<span class="x">        $params['body']['query']['bool']['filter'][] = [</span>
+<span class="x">            'range' =&gt; [</span>
+<span class="x">                'created_at' =&gt; [</span>
+<span class="x">                    'gte' =&gt; $filters['date_range']['from'],</span>
+<span class="x">                    'lte' =&gt; $filters['date_range']['to']</span>
+<span class="x">                ]</span>
+<span class="x">            ]</span>
+<span class="x">        ];</span>
+<span class="x">    }</span>
+
+<span class="x">    return $this-&gt;client-&gt;search($params);</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h3 id="2-customer-lookup-autocomplete">2. Customer Lookup (Autocomplete)</h3>
+<p><strong>Requirement:</strong> Type-ahead search as user types</p>
+<p><strong>Mapping (N-Gram Tokenizer):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="err">PUT</span><span class="w"> </span><span class="err">/cus</span><span class="kc">t</span><span class="err">omers</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="nt">"settings"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"analysis"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"tokenizer"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"autocomplete_tokenizer"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"edge_ngram"</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">"min_gram"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">"max_gram"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">"token_chars"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"letter"</span><span class="p">,</span><span class="w"> </span><span class="s2">"digit"</span><span class="p">]</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">"analyzer"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"autocomplete"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"custom"</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">"tokenizer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"autocomplete_tokenizer"</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">"filter"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"lowercase"</span><span class="p">]</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">"mappings"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"text"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"analyzer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"autocomplete"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"search_analyzer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"standard"</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// "Acme Corp" indexed as: "ac", "acm", "acme", "acme ", "acme c", ...</span>
+<span class="c1">// Query "acm" matches "Acme Corp"</span>
+</code></pre></div>
+
+<p><strong>Query:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="err">GET</span><span class="w"> </span><span class="err">/cus</span><span class="kc">t</span><span class="err">omers/_search</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="nt">"query"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"match"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"query"</span><span class="p">:</span><span class="w"> </span><span class="s2">"acm"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"operator"</span><span class="p">:</span><span class="w"> </span><span class="s2">"and"</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">"size"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="3-audit-log-search">3. Audit Log Search</h3>
+<p><strong>Requirement:</strong> Search millions of audit events</p>
+<p><strong>Data Pipeline:</strong></p>
+<div class="codehilite"><pre><span></span><code>Application Logs
+  ↓ Filebeat
+Logstash (parse, enrich)
+  ↓
+Elasticsearch
+  ↓ Kibana
+Dashboard + Search
+</code></pre></div>
+
+<p><strong>Index Template (Daily Rotation):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="err">PUT</span><span class="w"> </span><span class="err">/_i</span><span class="kc">n</span><span class="err">dex_</span><span class="kc">te</span><span class="err">mpla</span><span class="kc">te</span><span class="err">/audi</span><span class="kc">t</span><span class="err">_logs</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="nt">"index_patterns"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"audit-logs-*"</span><span class="p">],</span>
+<span class="w">  </span><span class="nt">"template"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"settings"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"number_of_shards"</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"number_of_replicas"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"index.lifecycle.name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"audit_policy"</span><span class="w">  </span><span class="c1">// Delete after 90 days</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">"mappings"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"properties"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"@timestamp"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"date"</span><span class="p">},</span>
+<span class="w">        </span><span class="nt">"user_id"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"keyword"</span><span class="p">},</span>
+<span class="w">        </span><span class="nt">"action"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"keyword"</span><span class="p">},</span>
+<span class="w">        </span><span class="nt">"resource"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"keyword"</span><span class="p">},</span>
+<span class="w">        </span><span class="nt">"ip_address"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ip"</span><span class="p">},</span>
+<span class="w">        </span><span class="nt">"details"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"text"</span><span class="p">}</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// Creates: audit-logs-2026-11-16, audit-logs-2026-11-17, ...</span>
+</code></pre></div>
+
+<p><strong>Search:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="err">GET</span><span class="w"> </span><span class="err">/audi</span><span class="kc">t</span><span class="mi">-</span><span class="err">logs</span><span class="mi">-</span><span class="err">*/_search</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="nt">"query"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"bool"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"must"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span><span class="nt">"match"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"action"</span><span class="p">:</span><span class="w"> </span><span class="s2">"invoice.deleted"</span><span class="p">}}</span>
+<span class="w">      </span><span class="p">],</span>
+<span class="w">      </span><span class="nt">"filter"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span><span class="nt">"term"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"user_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"user_123"</span><span class="p">}},</span>
+<span class="w">        </span><span class="p">{</span><span class="nt">"range"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"@timestamp"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"gte"</span><span class="p">:</span><span class="w"> </span><span class="s2">"now-7d"</span><span class="p">}}}</span>
+<span class="w">      </span><span class="p">]</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<hr />
+<h2 id="interview-questions-answers">Interview Questions &amp; Answers</h2>
+<h3 id="q1-how-does-elasticsearch-search-so-fast-compared-to-sql-like-queries">Q1: "How does Elasticsearch search so fast compared to SQL LIKE queries?"</h3>
+<p><strong>Your Answer:</strong></p>
+<blockquote>
+<p><em>"Elasticsearch uses an inverted index, which is fundamentally different from how SQL databases work.</em></p>
+<p><strong>SQL LIKE (Sequential Scan):</strong><br />
+<code>sql
+SELECT * FROM invoices WHERE description LIKE '%payment%'
+-- O(N) - must read every row
+-- Can't use B-tree index</code></p>
+<p><strong>Elasticsearch (Inverted Index):</strong><br />
+<code>Term 'payment' → [Doc1, Doc5, Doc9]  -- O(log N) lookup</code></p>
+<p><strong>How Inverted Index Works:</strong><br />
+<em>1. At index time, text is analyzed:</em><br />
+<em>- "Payment processing for invoice" → ["payment", "processing", "invoice"]</em><br />
+<em>2. Each term maps to document IDs:</em><br />
+<code>'payment' → [1, 5, 9, 12]
+   'processing' → [1, 7, 9]
+   'invoice' → [1, 2, 5, 9, 12]</code><br />
+<em>3. Search "payment processing":</em><br />
+<em>- Lookup 'payment' → [1, 5, 9, 12]</em><br />
+<em>- Lookup 'processing' → [1, 7, 9]</em><br />
+<em>- Intersection → [1, 9]</em><br />
+<em>- Return documents 1 and 9</em></p>
+<p><strong>Performance:</strong><br />
+<em>- SQL LIKE: 5+ seconds on 10M rows</em><br />
+<em>- Elasticsearch: &lt; 100ms on 10M documents</em></p>
+<p><strong>In a production environment, for invoice search across 10M invoices:</strong><br />
+<em>- SQL was too slow (3-5 sec queries)</em><br />
+<em>- Elasticsearch: &lt; 50ms average</em><br />
+<em>- Bonus: Relevance scoring (best matches first), typo tolerance ('paymnet' works)</em>"*</p>
+</blockquote>
+<hr />
+<h3 id="q2-design-a-search-feature-for-an-e-commerce-site-with-faceted-filtering">Q2: "Design a search feature for an e-commerce site with faceted filtering."</h3>
+<p><strong>Your Answer:</strong></p>
+<blockquote>
+<p><em>"Faceted search lets users filter by multiple criteria (category, price, brand, rating). Here's how I'd design it:</em></p>
+<p><strong>Requirements:</strong><br />
+<em>- Search products by name/description</em><br />
+<em>- Filter by: category, price range, brand, rating, in-stock</em><br />
+<em>- Show facet counts (e.g., 'Laptops (250)', 'Desktops (150)')</em><br />
+<em>- Fast (&lt; 100ms)</em></p>
+<p><strong>Mapping:</strong><br />
+<code>json
+PUT /products
+{
+  "mappings": {
+    "properties": {
+      "name": {"type": "text"},
+      "description": {"type": "text"},
+      "category": {"type": "keyword"},
+      "brand": {"type": "keyword"},
+      "price": {"type": "float"},
+      "rating": {"type": "float"},
+      "in_stock": {"type": "boolean"}
+    }
+  }
+}</code></p>
+<p><strong>Query:</strong><br />
+<code>json
+GET /products/_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {"multi_match": {
+          "query": "laptop",
+          "fields": ["name^2", "description"]
+        }}
+      ],
+      "filter": [
+        {"term": {"category": "electronics"}},
+        {"range": {"price": {"gte": 500, "lte": 2000}}},
+        {"term": {"in_stock": true}}
+      ]
+    }
+  },
+  "aggs": {
+    "categories": {
+      "terms": {"field": "category", "size": 20}
+    },
+    "brands": {
+      "terms": {"field": "brand", "size": 20}
+    },
+    "price_ranges": {
+      "range": {
+        "field": "price",
+        "ranges": [
+          {"to": 500},
+          {"from": 500, "to": 1000},
+          {"from": 1000, "to": 2000},
+          {"from": 2000}
+        ]
+      }
+    }
+  },
+  "size": 20
+}</code></p>
+<p><strong>Response:</strong><br />
+<code>json
+{
+  "hits": {
+    "total": 250,
+    "hits": [/* product results */]
+  },
+  "aggregations": {
+    "categories": {
+      "buckets": [
+        {"key": "electronics", "doc_count": 250},
+        {"key": "accessories", "doc_count": 120}
+      ]
+    },
+    "brands": {
+      "buckets": [
+        {"key": "Dell", "doc_count": 80},
+        {"key": "HP", "doc_count": 70},
+        {"key": "Lenovo", "doc_count": 60}
+      ]
+    },
+    "price_ranges": {
+      "buckets": [
+        {"to": 500, "doc_count": 50},
+        {"from": 500, "to": 1000, "doc_count": 120},
+        {"from": 1000, "to": 2000, "doc_count": 80}
+      ]
+    }
+  }
+}</code></p>
+<p><strong>UI Implementation:</strong><br />
+<em>- Checkboxes for categories, brands (with counts)</em><br />
+<em>- Slider for price range</em><br />
+<em>- Star rating filter</em><br />
+<em>- Each click refires query with updated filters</em></p>
+<p><strong>Performance:</strong><br />
+<em>- Aggregations run on filtered results (fast)</em><br />
+<em>- Use filter context (cacheable, no scoring)</em><br />
+<em>- Expected: &lt; 50ms for 100k products</em>"*</p>
+</blockquote>
+<hr />
+<h3 id="q3-how-would-you-implement-autocompletetype-ahead-search">Q3: "How would you implement autocomplete/type-ahead search?"</h3>
+<p><strong>Your Answer:</strong></p>
+<blockquote>
+<p><em>"Autocomplete needs to match partial input as user types. I'd use edge n-grams:</em></p>
+<p><strong>Example: User types 'Acme' progressively</strong><br />
+<em>- 'A' → matches 'Acme Corp', 'Apple Inc'</em><br />
+<em>- 'Ac' → matches 'Acme Corp'</em><br />
+<em>- 'Acm' → matches 'Acme Corp'</em><br />
+<em>- 'Acme' → matches 'Acme Corp'</em></p>
+<p><strong>Edge N-Gram Analyzer:</strong><br />
+<code>json
+PUT /customers
+{
+  "settings": {
+    "analysis": {
+      "tokenizer": {
+        "autocomplete_tokenizer": {
+          "type": "edge_ngram",
+          "min_gram": 2,
+          "max_gram": 10
+        }
+      },
+      "analyzer": {
+        "autocomplete": {
+          "tokenizer": "autocomplete_tokenizer",
+          "filter": ["lowercase"]
+        }
+      }
+    }
+  },
+  "mappings": {
+    "properties": {
+      "name": {
+        "type": "text",
+        "analyzer": "autocomplete",
+        "search_analyzer": "standard"
+      }
+    }
+  }
+}</code></p>
+<p><strong>How It Works:</strong><br />
+<em>- Index time: "Acme Corp" → ["ac", "acm", "acme", "acme ", "acme c", "acme co", ...]</em><br />
+<em>- Search time: "acm" → standard analyzer (no n-grams)</em><br />
+<em>- Match: "acm" exists in n-grams</em></p>
+<p><strong>Query:</strong><br />
+<code>json
+GET /customers/_search
+{
+  "query": {
+    "match": {
+      "name": {
+        "query": "acm",
+        "operator": "and"
+      }
+    }
+  },
+  "size": 10
+}</code></p>
+<p><strong>Alternative: Completion Suggester (Faster for Pure Autocomplete)</strong><br />
+```json<br />
+PUT /customers<br />
+{<br />
+  "mappings": {<br />
+    "properties": {<br />
+      "name_suggest": {<br />
+        "type": "completion"<br />
+      }<br />
+    }<br />
+  }<br />
+}</p>
+<p>GET /customers/_search<br />
+{<br />
+  "suggest": {<br />
+    "customer-suggest": {<br />
+      "prefix": "acm",<br />
+      "completion": {<br />
+        "field": "name_suggest",<br />
+        "size": 10<br />
+      }<br />
+    }<br />
+  }<br />
+}<br />
+```</p>
+<p><strong>Performance:</strong><br />
+<em>- Edge n-grams: &lt; 10ms</em><br />
+<em>- Completion suggester: &lt; 5ms (optimized for autocomplete)</em></p>
+<p><strong>real-world use case:</strong><br />
+<em>- Customer name autocomplete in invoice creation form</em><br />
+<em>- 10k customers, instant suggestions</em><br />
+<em>- Typo tolerance with fuzzy matching</em>"*</p>
+</blockquote>
+<hr />
+<h2 id="summary-your-search-expertise">Summary: Your Search Expertise</h2>
+<p><strong>When Asked About Search:</strong></p>
+<blockquote>
+<p><em>"In a production environment, I'd implement Elasticsearch for invoice search across 10M+ invoices. We'd use an inverted index for sub-100ms queries, compared to SQL LIKE's 3-5 seconds.</em></p>
+<p><em>The mapping would include full-text fields for customer name and description with English analyzer for stemming, keyword fields for status and exact invoice IDs, and date/numeric fields for range filtering.</em></p>
+<p><em>For relevance, I'd boost invoice ID matches 3x and customer name 2x. We'd support fuzzy matching for typos and use bool queries combining full-text search with cached filters for status and date range.</em></p>
+<p><em>For scaling, we'd shard across 5 nodes with 1 replica per shard for high availability. Bulk indexing via nightly sync from MySQL, with 30-second refresh interval.</em></p>
+<p><em>This gives us Google-like search for invoices with faceted filtering, autocomplete, and audit log search."</em></p>
+</blockquote>
+<hr />
+<p><strong>Search systems expertise complete!</strong> 🔍</p>
+<p>Continuing with remaining guides...</p>
+        </div>
+    </div>
+
+    <script>
+        // Progress Tracker JavaScript
+        const STORAGE_KEY = 'course_progress_elasticsearch_search_systems_guide';
+
+        // Extract all H2 and H3 headings from content
+        function extractSections() {
+            const content = document.querySelector('.content');
+            const headings = content.querySelectorAll('h2, h3');
+            const sections = [];
+
+            headings.forEach((heading, index) => {
+                const level = heading.tagName === 'H2' ? 2 : 3;
+                const text = heading.textContent.trim();
+                const id = `section-${index}`;
+
+                // Add ID to heading for linking
+                heading.id = id;
+
+                sections.push({
+                    id: id,
+                    text: text,
+                    level: level
+                });
+            });
+
+            return sections;
+        }
+
+        // Load saved progress from localStorage
+        function loadProgress() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            return saved ? JSON.parse(saved) : {};
+        }
+
+        // Save progress to localStorage
+        function saveProgress(progress) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+        }
+
+        // Calculate progress percentage
+        function calculateProgress() {
+            const checkboxes = document.querySelectorAll('.progress-checkbox');
+            const total = checkboxes.length;
+            if (total === 0) return 0;
+
+            const completed = Array.from(checkboxes).filter(cb => cb.checked).length;
+            return Math.round((completed / total) * 100);
+        }
+
+        // Update progress display
+        function updateProgressDisplay() {
+            const percentage = calculateProgress();
+            document.getElementById('progress-pct').textContent = percentage + '%';
+            document.getElementById('progress-bar').style.width = percentage + '%';
+
+            // Update completed class on items
+            document.querySelectorAll('.progress-item').forEach(item => {
+                const checkbox = item.querySelector('.progress-checkbox');
+                if (checkbox.checked) {
+                    item.classList.add('completed');
+                } else {
+                    item.classList.remove('completed');
+                }
+            });
+        }
+
+        // Toggle checkbox
+        function toggleCheckbox(sectionId) {
+            const checkbox = document.getElementById('cb-' + sectionId);
+            const progress = loadProgress();
+
+            progress[sectionId] = checkbox.checked;
+            saveProgress(progress);
+            updateProgressDisplay();
+        }
+
+        // Reset all progress
+        function resetProgress() {
+            if (confirm('Reset all progress for this page?')) {
+                localStorage.removeItem(STORAGE_KEY);
+                document.querySelectorAll('.progress-checkbox').forEach(cb => {
+                    cb.checked = false;
+                });
+                updateProgressDisplay();
+            }
+        }
+
+        // Toggle progress list visibility
+        function toggleProgressList() {
+            const list = document.getElementById('progress-items');
+            const btn = document.querySelector('.toggle-progress');
+
+            if (list.classList.contains('collapsed')) {
+                list.classList.remove('collapsed');
+                btn.textContent = '▼ Hide';
+            } else {
+                list.classList.add('collapsed');
+                btn.textContent = '▶ Show';
+            }
+        }
+
+        // Initialize progress tracker
+        function initProgressTracker() {
+            const sections = extractSections();
+            const progress = loadProgress();
+            const container = document.getElementById('progress-items');
+
+            if (sections.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No sections found</p>';
+                return;
+            }
+
+            sections.forEach(section => {
+                const item = document.createElement('div');
+                item.className = 'progress-item';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'progress-checkbox';
+                checkbox.id = 'cb-' + section.id;
+                checkbox.checked = progress[section.id] || false;
+                checkbox.onchange = () => toggleCheckbox(section.id);
+
+                const label = document.createElement('label');
+                label.className = 'progress-label';
+                label.htmlFor = 'cb-' + section.id;
+                label.textContent = section.text;
+                label.style.paddingLeft = section.level === 3 ? '20px' : '0';
+                label.onclick = () => {
+                    document.getElementById(section.id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+                };
+
+                item.appendChild(checkbox);
+                item.appendChild(label);
+                container.appendChild(item);
+            });
+
+            updateProgressDisplay();
+        }
+
+        // Run on page load
+        document.addEventListener('DOMContentLoaded', initProgressTracker);
+    </script>
+</body>
+</html>

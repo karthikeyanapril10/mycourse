@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master_Interview_Cheatsheet_All_Topics</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 60px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .metadata {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 16px 24px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #666;
+            border-left: 4px solid #667eea;
+        }
+
+        /* PROGRESS TRACKER STYLES */
+        .progress-tracker {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .progress-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-stats {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .progress-percentage {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #764ba2;
+        }
+
+        .progress-bar-container {
+            height: 12px;
+            background: #e9ecef;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+            border-radius: 20px;
+        }
+
+        .reset-btn {
+            padding: 8px 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+
+        .reset-btn:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+        }
+
+        .progress-items {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .progress-items::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .progress-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .progress-item:hover {
+            background: #f8f9fa;
+            transform: translateX(5px);
+        }
+
+        .progress-item.completed {
+            opacity: 0.7;
+        }
+
+        .progress-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .progress-label {
+            cursor: pointer;
+            font-size: 0.95em;
+            line-height: 1.5;
+            color: #495057;
+            flex-grow: 1;
+        }
+
+        .progress-item.completed .progress-label {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .toggle-progress {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .toggle-progress:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .progress-items.collapsed {
+            display: none;
+        }
+
+        /* CONTENT STYLES */
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 4px solid #667eea;
+            font-weight: 700;
+        }
+
+        h2 {
+            color: #764ba2;
+            font-size: 2em;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        h3 {
+            color: #495057;
+            font-size: 1.5em;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        h4 {
+            color: #666;
+            font-size: 1.25em;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        ul, ol {
+            margin: 20px 0;
+            padding-left: 40px;
+        }
+
+        li {
+            margin-bottom: 12px;
+            line-height: 1.7;
+        }
+
+        code {
+            background: #f4f5f7;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #c7254e;
+            border: 1px solid #e1e4e8;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 24px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 25px 0;
+            border: 1px solid #444;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            border: none;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        blockquote {
+            border-left: 5px solid #667eea;
+            padding: 15px 25px;
+            margin: 25px 0;
+            background: #f8f9fa;
+            border-radius: 0 8px 8px 0;
+            color: #495057;
+            font-style: italic;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 30px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 14px 18px;
+            text-align: left;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tr:hover {
+            background: #e9ecef;
+            transition: background 0.2s;
+        }
+
+        a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px solid transparent;
+            transition: border-bottom 0.2s;
+        }
+
+        a:hover {
+            border-bottom: 1px solid #667eea;
+        }
+
+        hr {
+            border: none;
+            border-top: 2px solid #e9ecef;
+            margin: 40px 0;
+        }
+
+        strong {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        em {
+            color: #495057;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 25px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.6em;
+            }
+
+            .progress-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .progress-stats {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../navigation.html" class="back-link">&larr; Back to Navigation</a>
+
+        <div class="metadata">
+            <strong>Source:</strong> dev/Master_Interview_Cheatsheet_All_Topics.md &nbsp;|&nbsp; <strong>Updated:</strong> 2026-11-18 19:44:55
+        </div>
+
+        <!-- PROGRESS TRACKER -->
+        <div class="progress-tracker">
+            <div class="progress-header">
+                <div class="progress-title">
+                    <span>📚</span>
+                    <span>Your Progress</span>
+                </div>
+                <div class="progress-stats">
+                    <span class="progress-percentage" id="progress-pct">0%</span>
+                    <button class="reset-btn" onclick="resetProgress()">Reset</button>
+                    <button class="toggle-progress" onclick="toggleProgressList()">▼ Hide</button>
+                </div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progress-bar" style="width: 0%"></div>
+            </div>
+            <div class="progress-items" id="progress-items">
+                <!-- Checkboxes will be generated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="content">
+<h1 id="master-interview-cheatsheet-all-topics">Master Interview Cheatsheet: All Topics</h1>
+<blockquote>
+<p><strong>Quick Reference</strong>: Review this 1 hour before your interview</p>
+</blockquote>
+<hr />
+<h2 id="60-second-intro-tell-me-about-yourself">🎯 60-Second Intro ("Tell Me About Yourself")</h2>
+<p><strong>Template:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="err">"I'm Karthik, a Staff Engineer at Billtrust with 12+ years in fintech and SaaS.</span>
+
+<span class="err">I specialize in production triage — I've led 100+ NJQRT cases, preventing over </span>
+<span class="err">$500k in revenue loss. I developed an AI-assisted triage workflow (RC-5 protocol) </span>
+<span class="err">that reduced investigation time from 6 hours to 2 hours, now adopted by my team.</span>
+
+<span class="err">I'm hands-on with backend: PHP/Laravel, .NET, MySQL, RabbitMQ, Kafka. Recently </span>
+<span class="err">scaled invoice generation from 5 to 20 workers, handling 100k invoices/month.</span>
+
+<span class="err">I'm looking for Staff Engineer or SRE roles where I can apply my expertise in </span>
+<span class="nv">fintech</span><span class="w"> </span><span class="nv">platforms</span><span class="w"> </span><span class="nv">and</span><span class="w"> </span><span class="nv">production</span><span class="w"> </span><span class="nv">reliability</span>.<span class="err">"</span>
+</code></pre></div>
+
+<p><strong>Time:</strong> Under 60 seconds<br />
+<strong>Practice:</strong> Record 5 times, reduce "umm"s</p>
+<hr />
+<h2 id="oop-concepts-solid-design-patterns">📚 OOP Concepts (SOLID + Design Patterns)</h2>
+<h3 id="4-pillars-of-oop"><strong>4 Pillars of OOP</strong></h3>
+<ol>
+<li><strong>Encapsulation</strong> - Hide data, expose methods (Invoice class, private $amount)</li>
+<li><strong>Inheritance</strong> - Code reuse (BaseController → InvoiceController)</li>
+<li><strong>Polymorphism</strong> - Same interface, different implementations (PaymentProcessor)</li>
+<li><strong>Abstraction</strong> - Hide complexity (InvoiceRepository hides SQL)</li>
+</ol>
+<h3 id="solid-principles-2-min-explanation"><strong>SOLID Principles (2-Min Explanation)</strong></h3>
+<ul>
+<li><strong>S</strong> = Single Responsibility (one class, one reason to change)</li>
+<li><strong>O</strong> = Open/Closed (open for extension, closed for modification)</li>
+<li><strong>L</strong> = Liskov Substitution (subclass must be substitutable for parent)</li>
+<li><strong>I</strong> = Interface Segregation (don't force methods you don't need)</li>
+<li><strong>D</strong> = Dependency Inversion (depend on interfaces, not concrete classes)</li>
+</ul>
+<p><strong>Your Experience:</strong><br />
+"At Billtrust:<br />
+- <strong>S</strong>: Repository separates persistence from business logic<br />
+- <strong>O</strong>: PaymentGateway interface (add Stripe/AuthNet without changing code)<br />
+- <strong>L</strong>: All notification classes (Email/SMS/Push) are interchangeable<br />
+- <strong>I</strong>: Cacheable, Auditable interfaces are small and focused<br />
+- <strong>D</strong>: Laravel DI injects dependencies (Mailer, Cache, DB)"</p>
+<h3 id="design-patterns-know-these-5"><strong>Design Patterns (Know These 5)</strong></h3>
+<table>
+<thead>
+<tr>
+<th>Pattern</th>
+<th>Use Case</th>
+<th>Billtrust Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Singleton</strong></td>
+<td>One instance (Logger, DB connection)</td>
+<td>Laravel singleton binding</td>
+</tr>
+<tr>
+<td><strong>Factory</strong></td>
+<td>Create objects without exposing logic</td>
+<td>PaymentGatewayFactory::create($type)</td>
+</tr>
+<tr>
+<td><strong>Observer</strong></td>
+<td>Event-driven (pub/sub)</td>
+<td>Laravel events, RabbitMQ</td>
+</tr>
+<tr>
+<td><strong>Repository</strong></td>
+<td>Data access layer</td>
+<td>InvoiceRepository hides SQL</td>
+</tr>
+<tr>
+<td><strong>Strategy</strong></td>
+<td>Interchangeable algorithms</td>
+<td>Discount calculation (% vs fixed)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Quick Answer:</strong><br />
+"At Billtrust, we use Factory pattern for payment gateway selection — customers choose Stripe or Authorize.Net, and PaymentGatewayFactory creates the right gateway. This keeps client code clean (no if/else chains)."</p>
+<hr />
+<h2 id="system-design-5-systems-you-must-know">🏗️ System Design (5 Systems You MUST Know)</h2>
+<h3 id="1-invoice-delivery-system-100k-invoicesmonth"><strong>1. Invoice Delivery System (100k invoices/month)</strong></h3>
+<div class="codehilite"><pre><span></span><code>Billing API → RabbitMQ (invoice_jobs) → PDF Workers (5-20 auto-scale)
+   → S3 → RabbitMQ (email_jobs) → Email Workers → SendGrid
+</code></pre></div>
+
+<p><strong>Scale:</strong> 100k/month = 2.3/sec avg, 23/sec peak<br />
+<strong>Key:</strong> Auto-scaling (HPA on queue depth), idempotency (Redis), DLQ</p>
+<p><strong>Interview Answer (2 min):</strong><br />
+"I'd use RabbitMQ for task distribution — each invoice processed exactly once. PDF workers auto-scale 5-20 pods based on queue depth via Kubernetes HPA. For idempotency, we check Redis (processed:{invoice_id}) before generating. Failed messages go to DLQ after 3 retries. At Billtrust, this handled 100k invoices/month with zero downtime."</p>
+<hr />
+<h3 id="2-payment-processing-10k-transactionshour"><strong>2. Payment Processing (10k transactions/hour)</strong></h3>
+<div class="codehilite"><pre><span></span><code>Web UI → Payment API → Kafka (payment_events) → Workers → Stripe API
+   → MySQL (payments table) → Multiple consumers (billing, analytics, fraud)
+</code></pre></div>
+
+<p><strong>Why Kafka?</strong> Event replay, multiple consumers, audit log (7-year retention)</p>
+<p><strong>Key Decisions:</strong><br />
+- Idempotency: UUID per transaction, check Redis before charging<br />
+- At-least-once delivery: Ack AFTER processing<br />
+- Fraud detection: Velocity checks (Redis counters), blacklist, geolocation</p>
+<hr />
+<h3 id="3-user-authentication-sso-oauth"><strong>3. User Authentication (SSO + OAuth)</strong></h3>
+<div class="codehilite"><pre><span></span><code>Web App → Auth Service → Okta (SAML) → Redis (session store, 8h TTL)
+   → MySQL (users table)
+</code></pre></div>
+
+<p><strong>Why Redis?</strong> Speed (0.1ms vs 10ms MySQL), TTL auto-expiration</p>
+<hr />
+<h3 id="4-fraud-detection-real-time"><strong>4. Fraud Detection (Real-Time)</strong></h3>
+<div class="codehilite"><pre><span></span><code>Payment API → Kafka → Rules Engine (10ms, synchronous) → Block/Allow
+   → ML Model (500ms, async) → Review Queue
+</code></pre></div>
+
+<p><strong>Key:</strong> Rules run BEFORE payment completes, ML runs AFTER (async)</p>
+<hr />
+<h3 id="5-notification-system-10m-users"><strong>5. Notification System (10M users)</strong></h3>
+<div class="codehilite"><pre><span></span><code>Event Source → Kafka → Fan-Out Service → 3 queues (Email, SMS, Push)
+   → SendGrid/Twilio/FCM
+</code></pre></div>
+
+<p><strong>Scale:</strong> 10M/day = 115/sec avg, 1150/sec peak = 400 msgs/sec per queue</p>
+<hr />
+<h2 id="behavioral-star-stories-know-3">💬 Behavioral (STAR Stories - Know 3)</h2>
+<h3 id="story-1-technical-problem-njqrt-14987"><strong>Story 1: Technical Problem (NJQRT-14987)</strong></h3>
+<ul>
+<li><strong>S</strong>: Invoice discount bug, 42 customers, $128k at risk</li>
+<li><strong>T</strong>: 48-hour SLA to find root cause</li>
+<li><strong>A</strong>: RC-5 protocol (checked prior conclusion, universality, reachability, signature, fix vs mask). Ran 12 MySQL queries, verified 3 files.</li>
+<li><strong>R</strong>: Fixed in 24 hours, $128k saved, RC-5 adopted by team</li>
+</ul>
+<p><strong>Time:</strong> 90 seconds</p>
+<hr />
+<h3 id="story-2-scaling-under-pressure"><strong>Story 2: Scaling Under Pressure</strong></h3>
+<ul>
+<li><strong>S</strong>: Month-end billing, queue backed up 10k → 15k messages, customers expecting invoices by 9 AM</li>
+<li><strong>T</strong>: 2 hours to clear or notify customers of delay</li>
+<li><strong>A</strong>: Scaled pods 5 → 20 (manual override), increased S3 timeout, requeued DLQ</li>
+<li><strong>R</strong>: Cleared by 8:50 AM (10 min before deadline), implemented multi-region S3 fallback</li>
+</ul>
+<hr />
+<h3 id="story-3-mentoring-junior-devs"><strong>Story 3: Mentoring Junior Devs</strong></h3>
+<ul>
+<li><strong>S</strong>: 2 new devs, 6-8 hours per case (should be 2 hours), 40% false root causes</li>
+<li><strong>T</strong>: Get them productive faster</li>
+<li><strong>A</strong>: Created RC-5 checklist, global rules doc (CLAUDE.md), weekly code reviews, measured progress</li>
+<li><strong>R</strong>: 8h → 2h in 3 months, false root causes 40% → 5%, team velocity 15 → 25 cases/month</li>
+</ul>
+<hr />
+<h2 id="database-mysql">🗄️ Database (MySQL)</h2>
+<h3 id="indexing"><strong>Indexing</strong></h3>
+<ul>
+<li><strong>Without index:</strong> Full table scan (slow)</li>
+<li><strong>With index:</strong> B-tree lookup (fast)</li>
+<li><strong>When to index:</strong> WHERE, JOIN, ORDER BY columns</li>
+<li><strong>Cost:</strong> Slower writes (index must update)</li>
+</ul>
+<p><strong>Example:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Slow (no index on CustomerId)</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">fsiinvoice</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">CustomerId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">12345</span><span class="p">;</span>
+
+<span class="c1">-- Fast (index on CustomerId)</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_customer</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">fsiinvoice</span><span class="p">(</span><span class="n">CustomerId</span><span class="p">);</span>
+</code></pre></div>
+
+<h3 id="query-optimization"><strong>Query Optimization</strong></h3>
+<ul>
+<li>Use <code>EXPLAIN</code> to see execution plan</li>
+<li>Avoid <code>SELECT *</code> (specify columns)</li>
+<li>Use <code>LIMIT</code> for large result sets</li>
+<li>Parameterized queries (prevent SQL injection)</li>
+</ul>
+<p><strong>At Billtrust:</strong><br />
+"We always scope queries by tenant (CustomerId) to ensure multi-tenant isolation. All queries use parameterized statements to prevent SQL injection."</p>
+<hr />
+<h2 id="rabbitmq-vs-kafka">🔄 RabbitMQ vs Kafka</h2>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>RabbitMQ</th>
+<th>Kafka</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Pattern</strong></td>
+<td>Task queue (1 consumer)</td>
+<td>Event stream (N consumers)</td>
+</tr>
+<tr>
+<td><strong>Delivery</strong></td>
+<td>At-least-once</td>
+<td>At-least-once (or exactly-once)</td>
+</tr>
+<tr>
+<td><strong>Retention</strong></td>
+<td>Deleted after consumed</td>
+<td>Days/weeks (configurable)</td>
+</tr>
+<tr>
+<td><strong>Use For</strong></td>
+<td>Invoice PDF, email jobs</td>
+<td>Payment events, audit log</td>
+</tr>
+<tr>
+<td><strong>Throughput</strong></td>
+<td>1000+ msgs/sec</td>
+<td>100k+ msgs/sec</td>
+</tr>
+</tbody>
+</table>
+<p><strong>When to Use Each:</strong><br />
+- <strong>RabbitMQ</strong>: Task queues (1 worker per job), short-lived messages<br />
+- <strong>Kafka</strong>: Pub/sub (multiple consumers), event replay, audit log</p>
+<p><strong>At Billtrust:</strong><br />
+"We use RabbitMQ for invoice generation (task queue, deleted after generation) and Kafka for payment events (multiple teams read same events: billing, analytics, fraud)."</p>
+<hr />
+<h2 id="aws-services-know-these-5">☁️ AWS Services (Know These 5)</h2>
+<h3 id="1-ec2-compute"><strong>1. EC2 (Compute)</strong></h3>
+<ul>
+<li><strong>Instance Types:</strong> t3 (burstable), m5 (balanced), c5 (compute), r5 (memory)</li>
+<li><strong>Auto-Scaling:</strong> Based on CPU, queue depth, custom metric</li>
+</ul>
+<h3 id="2-rds-database"><strong>2. RDS (Database)</strong></h3>
+<ul>
+<li><strong>Multi-AZ:</strong> Synchronous replication, automatic failover (&lt;1 min)</li>
+<li><strong>Read Replicas:</strong> Async replication, scale reads</li>
+</ul>
+<h3 id="3-s3-storage"><strong>3. S3 (Storage)</strong></h3>
+<ul>
+<li><strong>Storage Classes:</strong> Standard (hot), IA (infrequent access), Glacier (archive)</li>
+<li><strong>Use:</strong> Store invoice PDFs, backups</li>
+</ul>
+<h3 id="4-sqs-queue"><strong>4. SQS (Queue)</strong></h3>
+<ul>
+<li><strong>Standard:</strong> Unlimited throughput, best-effort ordering</li>
+<li><strong>FIFO:</strong> 300 TPS, strict ordering, exactly-once</li>
+</ul>
+<h3 id="5-sns-pubsub"><strong>5. SNS (Pub/Sub)</strong></h3>
+<ul>
+<li><strong>Use:</strong> Fan-out (1 message → N subscribers)</li>
+<li><strong>Combo:</strong> SNS → SQS (broadcast to multiple queues)</li>
+</ul>
+<hr />
+<h2 id="docker-kubernetes">🐳 Docker + Kubernetes</h2>
+<h3 id="docker"><strong>Docker</strong></h3>
+<div class="codehilite"><pre><span></span><code><span class="k">FROM</span><span class="w"> </span><span class="s">php:8.2-fpm</span>
+<span class="k">COPY</span><span class="w"> </span>.<span class="w"> </span>/var/www
+<span class="k">RUN</span><span class="w"> </span>composer<span class="w"> </span>install
+<span class="k">CMD</span><span class="w"> </span>php-fpm
+</code></pre></div>
+
+<p><strong>Benefits:</strong> Consistent environment (dev = prod), easy scaling</p>
+<h3 id="kubernetes"><strong>Kubernetes</strong></h3>
+<ul>
+<li><strong>Pod:</strong> Smallest unit (1+ containers)</li>
+<li><strong>Deployment:</strong> Manages replicas (5 → 20 pods)</li>
+<li><strong>Service:</strong> Load balancer (distributes traffic)</li>
+<li><strong>HPA:</strong> Auto-scaling based on CPU, queue depth</li>
+</ul>
+<p><strong>At Billtrust:</strong><br />
+"Our invoice workers auto-scale 5-20 pods based on RabbitMQ queue depth. HPA monitors the queue every 15 seconds and scales up when depth &gt; 100 messages."</p>
+<hr />
+<h2 id="testing-cypress-automation">🧪 Testing (Cypress Automation)</h2>
+<h3 id="page-object-model"><strong>Page Object Model</strong></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1">// pages/AdminPage.ts</span>
+<span class="k">export</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">AdminPage</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">elements</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">passwordTextBox</span><span class="o">:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">cy</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">"[name='NewPassword']"</span><span class="p">),</span>
+<span class="w">    </span><span class="nx">updateButton</span><span class="o">:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">cy</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">"input.btncc[value='Update']"</span><span class="p">)</span>
+<span class="w">  </span><span class="p">};</span>
+
+<span class="w">  </span><span class="nx">enterPassword</span><span class="p">(</span><span class="nx">password</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">elements</span><span class="p">.</span><span class="nx">passwordTextBox</span><span class="p">().</span><span class="nx">clear</span><span class="p">().</span><span class="kr">type</span><span class="p">(</span><span class="nx">password</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// tests/admin.spec.ts</span>
+<span class="nx">it</span><span class="p">(</span><span class="s1">'updates password'</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">adminPage</span><span class="p">.</span><span class="nx">enterPassword</span><span class="p">(</span><span class="s1">'newPass123'</span><span class="p">);</span>
+<span class="w">  </span><span class="nx">adminPage</span><span class="p">.</span><span class="nx">clickUpdate</span><span class="p">();</span>
+<span class="w">  </span><span class="nx">cy</span><span class="p">.</span><span class="nx">contains</span><span class="p">(</span><span class="s1">'Password updated'</span><span class="p">).</span><span class="nx">should</span><span class="p">(</span><span class="s1">'be.visible'</span><span class="p">);</span>
+<span class="p">});</span>
+</code></pre></div>
+
+<p><strong>Benefits:</strong> Reusable, maintainable, separates test logic from selectors</p>
+<hr />
+<h2 id="security-common-vulnerabilities">🔐 Security (Common Vulnerabilities)</h2>
+<h3 id="1-sql-injection"><strong>1. SQL Injection</strong></h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// ❌ Bad (vulnerable)</span>
+<span class="x">$sql = "SELECT * FROM users WHERE id = " . $_GET['id'];</span>
+
+<span class="x">// ✅ Good (parameterized)</span>
+<span class="x">$sql = "SELECT * FROM users WHERE id = ?";</span>
+<span class="x">$stmt = $db-&gt;prepare($sql);</span>
+<span class="x">$stmt-&gt;execute([$_GET['id']]);</span>
+</code></pre></div>
+
+<h3 id="2-xss-cross-site-scripting"><strong>2. XSS (Cross-Site Scripting)</strong></h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// ❌ Bad (vulnerable)</span>
+<span class="x">echo "&lt;div&gt;" . $_GET['name'] . "&lt;/div&gt;";</span>
+
+<span class="x">// ✅ Good (escaped)</span>
+<span class="x">echo "&lt;div&gt;" . htmlspecialchars($_GET['name'], ENT_QUOTES) . "&lt;/div&gt;";</span>
+</code></pre></div>
+
+<h3 id="3-authentication"><strong>3. Authentication</strong></h3>
+<ul>
+<li><strong>Never store plaintext passwords</strong> (use bcrypt/Argon2)</li>
+<li><strong>Session timeout</strong> (8 hours, Redis TTL)</li>
+<li><strong>Rate limiting</strong> (5 failed logins → lock account)</li>
+</ul>
+<p><strong>At Billtrust:</strong><br />
+"All database queries use parameterized statements. We escape user input before rendering. Session tokens stored in Redis with 8-hour TTL."</p>
+<hr />
+<h2 id="cicd-pipeline">🛠️ CI/CD Pipeline</h2>
+<div class="codehilite"><pre><span></span><code>Push Code → GitHub → Run Tests (Jest/Cypress) → Lint (ESLint/PHPCS)
+   → Security Scan (Checkmarx) → Build Docker Image → Deploy to Staging
+   → Run E2E Tests → Manual Approval → Deploy to Prod
+</code></pre></div>
+
+<p><strong>Key Steps:</strong><br />
+- Unit tests (fast, 1-2 min)<br />
+- Integration tests (DB, API, 5-10 min)<br />
+- E2E tests (Cypress, full flow, 10-20 min)<br />
+- Code coverage (80%+ required)<br />
+- Security scan (Checkmarx, no NEW findings)</p>
+<p><strong>At Billtrust:</strong><br />
+"We use GitHub Actions with 6-job workflow. Checkmarx runs pre-commit locally (CLI) and in CI. Code coverage merged across all test types (unit + integration + E2E) via Codecov."</p>
+<hr />
+<h2 id="salary-negotiation-3-scripts">💰 Salary Negotiation (3 Scripts)</h2>
+<h3 id="1-deflect-current-salary-question"><strong>1. Deflect Current Salary Question</strong></h3>
+<div class="codehilite"><pre><span></span><code><span class="nv">Recruiter</span>:<span class="w"> </span><span class="s2">"What's your current salary?"</span>
+
+<span class="nv">You</span>:<span class="w"> </span><span class="err">"I'm looking for a role that values my 12+ years of experience and </span>
+<span class="err">     technical depth in fintech. Rather than focus on current compensation, </span>
+<span class="w">     </span><span class="nv">I</span><span class="s1">'d love to understand what budget you have for this role. What'</span><span class="nv">s</span><span class="w"> </span><span class="nv">the</span><span class="w"> </span><span class="nv">range</span>?<span class="err">"</span>
+</code></pre></div>
+
+<h3 id="2-counter-offer"><strong>2. Counter-Offer</strong></h3>
+<div class="codehilite"><pre><span></span><code><span class="nv">Hiring</span><span class="w"> </span><span class="nv">Manager</span>:<span class="w"> </span><span class="s2">"We'd like to offer ₹36 LPA"</span>
+
+<span class="nv">You</span><span class="w"> </span><span class="ss">(</span><span class="nv">via</span><span class="w"> </span><span class="nv">email</span><span class="ss">)</span>:<span class="w"> </span><span class="err">"Thank you for the offer! After reviewing market rates for </span>
+<span class="err">Staff Engineers in Bangalore (₹35-50 LPA per Glassdoor), I was hoping we </span>
+<span class="err">could meet at ₹40 LPA. Given my 12 years, NJQRT expertise, and AI workflows, </span>
+<span class="err">I'm confident I can deliver strong value in the first 90 days. </span>
+
+<span class="nv">Would</span><span class="w"> </span><span class="nv">it</span><span class="w"> </span><span class="nv">be</span><span class="w"> </span><span class="nv">possible</span><span class="w"> </span><span class="nv">to</span><span class="w"> </span><span class="nv">adjust</span><span class="w"> </span><span class="nv">the</span><span class="w"> </span><span class="nv">base</span><span class="w"> </span><span class="nv">to</span><span class="w"> </span>₹<span class="mi">34</span><span class="w"> </span><span class="nv">LPA</span>?<span class="err">"</span>
+</code></pre></div>
+
+<h3 id="3-accept-after-negotiation"><strong>3. Accept After Negotiation</strong></h3>
+<div class="codehilite"><pre><span></span><code><span class="s2">"Thank you for working with me. I'm happy to accept ₹39 LPA total comp </span>
+<span class="p">(</span><span class="n">base</span><span class="w"> </span><span class="err">₹</span><span class="mi">33</span><span class="n">L</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">variable</span><span class="w"> </span><span class="err">₹</span><span class="mi">4</span><span class="n">L</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">RSUs</span><span class="w"> </span><span class="err">₹</span><span class="mi">2</span><span class="n">L</span><span class="p">)</span><span class="o">.</span><span class="w"> </span>
+
+<span class="n">Logistics</span><span class="p">:</span>
+<span class="o">-</span><span class="w"> </span><span class="n">Start</span><span class="w"> </span><span class="n">date</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">2</span><span class="w"> </span><span class="n">weeks</span><span class="w"> </span><span class="n">from</span><span class="w"> </span><span class="n">today</span><span class="p">]</span>
+<span class="o">-</span><span class="w"> </span><span class="n">Notice</span><span class="w"> </span><span class="n">period</span><span class="p">:</span><span class="w"> </span><span class="mi">45</span><span class="w"> </span><span class="n">days</span><span class="w"> </span><span class="n">at</span><span class="w"> </span><span class="n">Billtrust</span>
+<span class="o">-</span><span class="w"> </span><span class="n">Offer</span><span class="w"> </span><span class="n">letter</span><span class="p">:</span><span class="w"> </span><span class="n">Please</span><span class="w"> </span><span class="n">send</span><span class="w"> </span><span class="n">final</span><span class="w"> </span><span class="n">version</span>
+
+<span class="n">Excited</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">join</span><span class="o">!</span><span class="s2">"</span>
+</code></pre></div>
+
+<hr />
+<h2 id="common-interview-questions-quick-answers">🎤 Common Interview Questions (Quick Answers)</h2>
+<h3 id="1-why-are-you-leaving-billtrust"><strong>1. "Why are you leaving Billtrust?"</strong></h3>
+<p>"I've had 12 great years — grew from Junior to Staff level. At this point, I'm looking for new challenges in a different domain or scale. I want to work on problems outside fintech and stretch my skills in distributed systems."</p>
+<h3 id="2-whats-your-biggest-weakness"><strong>2. "What's your biggest weakness?"</strong></h3>
+<p>"Early in my career, I had a tendency to present interim conclusions as final. For example, checking one audit table and concluding 'this rules out the audit mechanism' when there were 33 tables. I've since developed RC-5 (Root Cause Sanity Check) — a 5-question checklist before concluding. This discipline made me much more thorough."</p>
+<h3 id="3-where-do-you-see-yourself-in-5-years"><strong>3. "Where do you see yourself in 5 years?"</strong></h3>
+<p>"Principal Engineer or Engineering Manager, leading technical decisions for a product. I want to mentor engineers — I've trained 2 at Billtrust and find that rewarding. Ideally, I'll be the 'go-to person' for solving hard production issues."</p>
+<h3 id="4-why-do-you-want-to-work-here"><strong>4. "Why do you want to work here?"</strong></h3>
+<p>"I'm excited about [Company] for 3 reasons:<br />
+1. <strong>Technical Challenge:</strong> I read your blog post about [specific problem] — that's exactly the scale problem I want to solve<br />
+2. <strong>Domain:</strong> [E-commerce/healthcare/etc.] is new to me, and I want to learn outside fintech<br />
+3. <strong>Team:</strong> [Engineering Leader] worked at [Previous Company] — I admire their work on [project]"</p>
+<h3 id="5-do-you-have-any-questions-for-me"><strong>5. "Do you have any questions for me?"</strong></h3>
+<ol>
+<li>"What's the team structure? How many engineers? Senior/junior split?"</li>
+<li>"What's the biggest technical challenge the team faces right now?"</li>
+<li>"How does the team handle production incidents? On-call rotation?"</li>
+</ol>
+<hr />
+<h2 id="cheat-sheet-interview-day-checklist">📊 Cheat Sheet: Interview Day Checklist</h2>
+<h3 id="1-hour-before"><strong>1 Hour Before:</strong></h3>
+<ul>
+<li>[ ] Review this cheatsheet (10 min)</li>
+<li>[ ] Review job description (5 min)</li>
+<li>[ ] Review your 60-sec intro (practice 2x)</li>
+<li>[ ] Review 3 STAR stories (practice 1x each)</li>
+<li>[ ] Close all tabs except interview link</li>
+<li>[ ] Bathroom break, water ready</li>
+</ul>
+<h3 id="during-interview"><strong>During Interview:</strong></h3>
+<ul>
+<li>[ ] Smile when you answer (even on video)</li>
+<li>[ ] Pause 2 seconds before answering (shows thoughtfulness)</li>
+<li>[ ] Use interviewer's name ("That's a great question, [Name]...")</li>
+<li>[ ] Take notes (shows you're listening)</li>
+<li>[ ] Ask clarifying questions ("Can I confirm: you're asking about X?")</li>
+</ul>
+<h3 id="after-interview"><strong>After Interview:</strong></h3>
+<ul>
+<li>[ ] Send thank-you email within 24 hours</li>
+<li>[ ] Write down questions you struggled with</li>
+<li>[ ] Practice those questions before next interview</li>
+</ul>
+<hr />
+<h2 id="top-10-things-interviewers-want-to-hear">🔥 Top 10 Things Interviewers Want to Hear</h2>
+<ol>
+<li><strong>"At Billtrust, we..."</strong> (always tie to your real work)</li>
+<li><strong>"I prevented $500k revenue loss"</strong> (quantified impact)</li>
+<li><strong>"I developed RC-5 protocol"</strong> (you built something, not just used it)</li>
+<li><strong>"My team adopted it"</strong> (influence beyond your work)</li>
+<li><strong>"I scaled from 5 to 20 pods"</strong> (scaling experience)</li>
+<li><strong>"100+ production cases"</strong> (production reliability)</li>
+<li><strong>"At-least-once delivery + idempotency"</strong> (you understand tradeoffs)</li>
+<li><strong>"RabbitMQ for tasks, Kafka for events"</strong> (right tool for the job)</li>
+<li><strong>"Laravel DI container"</strong> (you understand frameworks, not just syntax)</li>
+<li><strong>"Let me walk you through the system design..."</strong> (clear communicator)</li>
+</ol>
+<hr />
+<h2 id="final-5-minute-review-read-before-interview">🎯 Final 5-Minute Review (Read Before Interview)</h2>
+<h3 id="your-3-strengths"><strong>Your 3 Strengths:</strong></h3>
+<ol>
+<li><strong>Production Reliability</strong> (100+ NJQRT cases, RC-5 protocol)</li>
+<li><strong>System Scaling</strong> (invoice workers 5 → 20 pods, 100k/month)</li>
+<li><strong>Fintech Domain</strong> (payments, fraud detection, compliance)</li>
+</ol>
+<h3 id="your-3-stories"><strong>Your 3 Stories:</strong></h3>
+<ol>
+<li>NJQRT-14987 (invoice discount bug, $128k saved, 24 hours)</li>
+<li>Scaling under pressure (month-end billing, 15k queue, cleared in 2 hours)</li>
+<li>Mentoring (2 devs, 8h → 2h, false root causes 40% → 5%)</li>
+</ol>
+<h3 id="your-3-questions-to-ask"><strong>Your 3 Questions to Ask:</strong></h3>
+<ol>
+<li>"What's the team structure?"</li>
+<li>"What's the biggest technical challenge?"</li>
+<li>"How do you handle production incidents?"</li>
+</ol>
+<h3 id="remember"><strong>Remember:</strong></h3>
+<ul>
+<li>✅ Pause before answering (shows you're thinking)</li>
+<li>✅ Use STAR format (Situation → Task → Action → Result)</li>
+<li>✅ Quantify everything ($500k saved, 100+ cases, 5 → 20 pods)</li>
+<li>✅ Tie to your work ("At Billtrust, we...")</li>
+<li>✅ Keep answers under 2 minutes</li>
+</ul>
+<hr />
+<h2 id="youre-ready">🚀 You're Ready</h2>
+<p><strong>You have:</strong><br />
+- ✅ 12+ years experience<br />
+- ✅ 100+ production cases<br />
+- ✅ RC-5 protocol (your differentiator)<br />
+- ✅ Scaling expertise (5 → 20 pods)<br />
+- ✅ Fintech domain knowledge<br />
+- ✅ This cheatsheet</p>
+<p><strong>Now go nail that interview.</strong> 🎯</p>
+        </div>
+    </div>
+
+    <script>
+        // Progress Tracker JavaScript
+        const STORAGE_KEY = 'course_progress_master_interview_cheatsheet_all_topics';
+
+        // Extract all H2 and H3 headings from content
+        function extractSections() {
+            const content = document.querySelector('.content');
+            const headings = content.querySelectorAll('h2, h3');
+            const sections = [];
+
+            headings.forEach((heading, index) => {
+                const level = heading.tagName === 'H2' ? 2 : 3;
+                const text = heading.textContent.trim();
+                const id = `section-${index}`;
+
+                // Add ID to heading for linking
+                heading.id = id;
+
+                sections.push({
+                    id: id,
+                    text: text,
+                    level: level
+                });
+            });
+
+            return sections;
+        }
+
+        // Load saved progress from localStorage
+        function loadProgress() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            return saved ? JSON.parse(saved) : {};
+        }
+
+        // Save progress to localStorage
+        function saveProgress(progress) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+        }
+
+        // Calculate progress percentage
+        function calculateProgress() {
+            const checkboxes = document.querySelectorAll('.progress-checkbox');
+            const total = checkboxes.length;
+            if (total === 0) return 0;
+
+            const completed = Array.from(checkboxes).filter(cb => cb.checked).length;
+            return Math.round((completed / total) * 100);
+        }
+
+        // Update progress display
+        function updateProgressDisplay() {
+            const percentage = calculateProgress();
+            document.getElementById('progress-pct').textContent = percentage + '%';
+            document.getElementById('progress-bar').style.width = percentage + '%';
+
+            // Update completed class on items
+            document.querySelectorAll('.progress-item').forEach(item => {
+                const checkbox = item.querySelector('.progress-checkbox');
+                if (checkbox.checked) {
+                    item.classList.add('completed');
+                } else {
+                    item.classList.remove('completed');
+                }
+            });
+        }
+
+        // Toggle checkbox
+        function toggleCheckbox(sectionId) {
+            const checkbox = document.getElementById('cb-' + sectionId);
+            const progress = loadProgress();
+
+            progress[sectionId] = checkbox.checked;
+            saveProgress(progress);
+            updateProgressDisplay();
+        }
+
+        // Reset all progress
+        function resetProgress() {
+            if (confirm('Reset all progress for this page?')) {
+                localStorage.removeItem(STORAGE_KEY);
+                document.querySelectorAll('.progress-checkbox').forEach(cb => {
+                    cb.checked = false;
+                });
+                updateProgressDisplay();
+            }
+        }
+
+        // Toggle progress list visibility
+        function toggleProgressList() {
+            const list = document.getElementById('progress-items');
+            const btn = document.querySelector('.toggle-progress');
+
+            if (list.classList.contains('collapsed')) {
+                list.classList.remove('collapsed');
+                btn.textContent = '▼ Hide';
+            } else {
+                list.classList.add('collapsed');
+                btn.textContent = '▶ Show';
+            }
+        }
+
+        // Initialize progress tracker
+        function initProgressTracker() {
+            const sections = extractSections();
+            const progress = loadProgress();
+            const container = document.getElementById('progress-items');
+
+            if (sections.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No sections found</p>';
+                return;
+            }
+
+            sections.forEach(section => {
+                const item = document.createElement('div');
+                item.className = 'progress-item';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'progress-checkbox';
+                checkbox.id = 'cb-' + section.id;
+                checkbox.checked = progress[section.id] || false;
+                checkbox.onchange = () => toggleCheckbox(section.id);
+
+                const label = document.createElement('label');
+                label.className = 'progress-label';
+                label.htmlFor = 'cb-' + section.id;
+                label.textContent = section.text;
+                label.style.paddingLeft = section.level === 3 ? '20px' : '0';
+                label.onclick = () => {
+                    document.getElementById(section.id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+                };
+
+                item.appendChild(checkbox);
+                item.appendChild(label);
+                container.appendChild(item);
+            });
+
+            updateProgressDisplay();
+        }
+
+        // Run on page load
+        document.addEventListener('DOMContentLoaded', initProgressTracker);
+    </script>
+</body>
+</html>

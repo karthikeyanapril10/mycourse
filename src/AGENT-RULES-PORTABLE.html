@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AGENT-RULES-PORTABLE</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 60px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .metadata {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 16px 24px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #666;
+            border-left: 4px solid #667eea;
+        }
+
+        /* PROGRESS TRACKER STYLES */
+        .progress-tracker {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .progress-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-stats {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .progress-percentage {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #764ba2;
+        }
+
+        .progress-bar-container {
+            height: 12px;
+            background: #e9ecef;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+            border-radius: 20px;
+        }
+
+        .reset-btn {
+            padding: 8px 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+
+        .reset-btn:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+        }
+
+        .progress-items {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .progress-items::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .progress-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .progress-item:hover {
+            background: #f8f9fa;
+            transform: translateX(5px);
+        }
+
+        .progress-item.completed {
+            opacity: 0.7;
+        }
+
+        .progress-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .progress-label {
+            cursor: pointer;
+            font-size: 0.95em;
+            line-height: 1.5;
+            color: #495057;
+            flex-grow: 1;
+        }
+
+        .progress-item.completed .progress-label {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .toggle-progress {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .toggle-progress:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .progress-items.collapsed {
+            display: none;
+        }
+
+        /* CONTENT STYLES */
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 4px solid #667eea;
+            font-weight: 700;
+        }
+
+        h2 {
+            color: #764ba2;
+            font-size: 2em;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        h3 {
+            color: #495057;
+            font-size: 1.5em;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        h4 {
+            color: #666;
+            font-size: 1.25em;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        ul, ol {
+            margin: 20px 0;
+            padding-left: 40px;
+        }
+
+        li {
+            margin-bottom: 12px;
+            line-height: 1.7;
+        }
+
+        code {
+            background: #f4f5f7;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #c7254e;
+            border: 1px solid #e1e4e8;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 24px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 25px 0;
+            border: 1px solid #444;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            border: none;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        blockquote {
+            border-left: 5px solid #667eea;
+            padding: 15px 25px;
+            margin: 25px 0;
+            background: #f8f9fa;
+            border-radius: 0 8px 8px 0;
+            color: #495057;
+            font-style: italic;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 30px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 14px 18px;
+            text-align: left;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tr:hover {
+            background: #e9ecef;
+            transition: background 0.2s;
+        }
+
+        a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px solid transparent;
+            transition: border-bottom 0.2s;
+        }
+
+        a:hover {
+            border-bottom: 1px solid #667eea;
+        }
+
+        hr {
+            border: none;
+            border-top: 2px solid #e9ecef;
+            margin: 40px 0;
+        }
+
+        strong {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        em {
+            color: #495057;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 25px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.6em;
+            }
+
+            .progress-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .progress-stats {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../navigation.html" class="back-link">&larr; Back to Navigation</a>
+
+        <div class="metadata">
+            <strong>Source:</strong> dev/AGENT-RULES-PORTABLE.md &nbsp;|&nbsp; <strong>Updated:</strong> 2026-11-18 19:44:49
+        </div>
+
+        <!-- PROGRESS TRACKER -->
+        <div class="progress-tracker">
+            <div class="progress-header">
+                <div class="progress-title">
+                    <span>📚</span>
+                    <span>Your Progress</span>
+                </div>
+                <div class="progress-stats">
+                    <span class="progress-percentage" id="progress-pct">0%</span>
+                    <button class="reset-btn" onclick="resetProgress()">Reset</button>
+                    <button class="toggle-progress" onclick="toggleProgressList()">▼ Hide</button>
+                </div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progress-bar" style="width: 0%"></div>
+            </div>
+            <div class="progress-items" id="progress-items">
+                <!-- Checkboxes will be generated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="content">
+<h1 id="portable-agent-rules-coding-code-review">Portable Agent Rules — Coding &amp; Code Review</h1>
+<p>Tool-agnostic working rules distilled from my own accumulated instructions. No project names, no<br />
+schema/field IDs, no internal paths, no tool-specific syntax — safe to paste into any AI coding<br />
+tool (Cursor rules, Copilot instructions, AGENTS.md, CLAUDE.md, a custom GPT, a CLI agent).</p>
+<p>Deliberately excluded: internal DB/table/column names, ticket field IDs, environment hosts,<br />
+vendor/tool credentials, model IDs, personal paths. Those belong in a separate context file.</p>
+<hr />
+<h2 id="0-the-ten-that-matter-most">0. The ten that matter most</h2>
+<ol>
+<li>Every claim needs <strong>code proof</strong> (lines read this turn) or <strong>data proof</strong> (query + result).</li>
+<li>Nothing carries forward — not from an earlier turn, a summary, a cached diagram, or a comment.</li>
+<li>A code comment, method name, or variable name is <strong>not</strong> evidence of behaviour.</li>
+<li>Don't conclude mid-investigation, and don't stop right after concluding.</li>
+<li>Draft before any write; plan approval is not action approval.</li>
+<li>Fix only what this change introduces — flag pre-existing issues, don't fix them.</li>
+<li>Critical/High/Medium findings only; the rest is noise.</li>
+<li>Never hand over an artifact you haven't run.</li>
+<li>Accuracy outranks speed — a slow right answer beats a fast wrong one, every time.</li>
+<li>If you're stuck in a loop, stop within seconds and say so.</li>
+</ol>
+<hr />
+<h2 id="1-evidence-before-claim">1. Evidence before claim</h2>
+<ul>
+<li><strong>Nothing is asserted without proof.</strong> For every claim, either quote the lines you read this turn<br />
+  (file:line) or show the query and its live result. No recollection, no inference dressed as fact.</li>
+<li><strong>No assumption carries forward.</strong> Not from an earlier message in the same session, not from a<br />
+  compacted summary tagged "verified", not from a cached diagram or a prior finding. Re-verify at<br />
+  the moment the fact is needed.</li>
+<li><strong>Code comments are not proof.</strong> A comment — especially one citing a bug ID or a fix — describes<br />
+  the past or the intent, not current behaviour. Read the <strong>whole enclosing function</strong> before any<br />
+  behavioural claim, and follow calls into their implementation.</li>
+<li><strong>Label uncertainty out loud.</strong> If something is inferred rather than read, write<br />
+  "unverified — X would explain Y, but I haven't checked Z". Never let it blend into confident prose.</li>
+<li><strong>Show the proof in the answer.</strong> The response that states a finding carries its evidence in that<br />
+  same response, plus the open questions the investigation left. Evidence from three turns ago does<br />
+  not count as shown — restate it.</li>
+<li><strong>A correction is a new claim</strong> and needs the same proof standard as the original.</li>
+<li><strong>Unknown is a valid answer.</strong> Say so and ask; never fill the gap with plausible-sounding detail.</li>
+</ul>
+<p>Two checkpoints, not one:<br />
+- <em>At investigation start</em> — strip all inherited assumptions, trace each claim to source now.<br />
+- <em>At draft time</em> — walk every sentence of the finished draft and tag it verified-this-turn /<br />
+  inherited / inferred. Re-verify or label anything outside the first bucket <strong>before</strong> showing it,<br />
+  not after being asked "are you sure".</p>
+<hr />
+<h2 id="2-investigation-discipline">2. Investigation discipline</h2>
+<ul>
+<li><strong>No interim conclusions.</strong> One file read or one query result is a lead, not a conclusion. Say it's<br />
+  a lead and keep digging. Never present "this rules X out" mid-investigation.</li>
+<li><strong>Retry through failures.</strong> If a query or tool call errors, fix the approach and retry until it<br />
+  genuinely succeeds. Never substitute a partial or differently-scoped result and present it as the<br />
+  answer.</li>
+<li><strong>Use everything you have.</strong> Full repo + data access. Don't stop at the first plausible function or<br />
+  the first table that seems to answer the question.</li>
+<li><strong>Root cause is the start, not the end.</strong> Once a root cause is established, the work isn't done<br />
+  until you answer:</li>
+<li><em>Origin</em> — which code path created the defective state, when, and is that behaviour still active?</li>
+<li><em>Systemic</em> — how many other objects/customers/tenants carry the same state, and is it growing?<br />
+    If the sweep is cheap, not running it is the failure.</li>
+<li><em>Ownership</em> — which team/repo owns the creating code, and what's the explicit routing<br />
+    recommendation (stay / hand off / split)?</li>
+<li><strong>Verify every gate the storyline depends on.</strong> Never infer enabling conditions from a setting's<br />
+  name or from the fact that a feature is used.</li>
+<li><strong>Root cause sanity checks before recording one:</strong><br />
+  1. <em>Prior conclusion</em> — what did this case already conclude, and if you're superseding it, say so<br />
+     explicitly.<br />
+  2. <em>Universality</em> — is your cause also present on the cases that succeed? Then it's not the<br />
+     discriminator, and not the root cause.<br />
+  3. <em>Reachability</em> — does the blamed code actually execute on the failing path? Check the guards.<br />
+  4. <em>Signature</em> — does the chain produce the exact observed error string?<br />
+  5. <em>Fix vs mask</em> — does the fix restore the function, or only suppress the symptom? Label which.</li>
+<li><strong>Enumerate before declaring a gap.</strong> Never say "X isn't logged/audited" after checking one table<br />
+  or one sink. Grep the whole call path first, and check for a second, un-audited write path.</li>
+<li><strong>Interrogate joins for systematic bias</strong>, not just row counts. Ask what the code does in time and<br />
+  order, and whether the match condition mirrors it. Bucket/histogram the join key to validate the<br />
+  window before trusting any aggregate.</li>
+<li><strong>Re-derive arithmetic in SQL</strong>, never by hand. Confirm subtotals reconcile to the total.</li>
+<li><strong>The oldest commit touching a file is not the defect's origin</strong> — it's often the repo's import<br />
+  date. Never label a cause (retention, purge, migration) you only observed the effect of.</li>
+<li><strong>Check boundary values against today's actual date.</strong> If a figure is a floor, say it's a floor.</li>
+</ul>
+<hr />
+<h2 id="3-artifact-verification">3. Artifact verification</h2>
+<ul>
+<li><strong>Run it before you share it.</strong> Every query, script, command, config, or draft must have been<br />
+  executed and its output inspected. If it genuinely can't be run, label it <strong>UNVERIFIED</strong> at the<br />
+  point of delivery — never let the user discover that themselves.</li>
+<li><strong>Always hand over the raw reproduction query</strong>, unasked — every diagnostic query, not just count<br />
+  tables. Include the environment/context it ran against.</li>
+<li><strong>If the user modified your query</strong> to make it run, treat it as unverified. Removing a filter or a<br />
+  join predicate can silently change what's being matched. Ask what changed, or re-derive it<br />
+  yourself, before restating any number as fact. "It runs now" ≠ "it means what I think it means".</li>
+<li><strong>Multi-part summaries: every cell from its own fresh run.</strong> Re-run the exact final query per<br />
+  group/env, reconcile cell by cell, derive totals in SQL, never hand-add. If the scoping of a<br />
+  delivered query changed mid-session, all prior runs are invalid for summary purposes.</li>
+<li><strong>Re-fetch what you wrote and diff it.</strong> A successful write response is not proof of what was<br />
+  stored — structured markup and nested content can be silently dropped. Re-read and compare against<br />
+  the approved version before declaring success.</li>
+</ul>
+<hr />
+<h2 id="4-scope-discipline">4. Scope discipline</h2>
+<ul>
+<li><strong>Minimum change for the stated problem.</strong> No refactoring, renaming, reformatting, or cleanup<br />
+  outside scope. Flag unrelated changes as violations.</li>
+<li><strong>Classify every finding as NEW or PRE-EXISTING.</strong> Fix only what this diff introduces. Pre-existing<br />
+  bugs get flagged ("worth its own ticket"), not fixed by default — even when they're cheap and even<br />
+  when a review surfaced them.</li>
+<li><strong>List the files/functions you intend to touch and why, then wait</strong> before touching anything else.<br />
+  Never widen a fix to adjacent call sites, flows, or repos without asking.</li>
+<li><strong>Silence is not consent for adjacent work.</strong> If you find something real but out of scope, report<br />
+  it in a separate note, not inside the change.</li>
+</ul>
+<hr />
+<h2 id="5-approval-gates-every-write">5. Approval gates — every write</h2>
+<ul>
+<li><strong>Draft first, always.</strong> Before any write: comments, tickets, docs, config, commits. Show the exact<br />
+  final content and wait for explicit approval. No exceptions for "quick" or "obvious" ones.</li>
+<li><strong>Plan approval ≠ action approval.</strong> Approving an approach, plan, or earlier outline does not<br />
+  authorize the write. Per-action approval, every time, even immediately after a plan was approved.</li>
+<li><strong>Editing files inside the working tree is part of approved work</strong> — the write itself needs no<br />
+  separate gate. Staging, committing, and pushing are gated, separately, every time.</li>
+<li><strong>Show the full diff + the proposed commit message before committing.</strong> Commit approval and push<br />
+  approval are two separate asks.</li>
+<li><strong>Never abbreviate a draft.</strong> No "(unchanged)", "(same as above)", "(rest of section)". Reproduce<br />
+  the full literal text of every section, even if identical to something already shown. The reader<br />
+  must be able to <em>see</em>, not infer, exactly what ships.</li>
+<li><strong>Confirm the destination, not just the content.</strong> State the exact target (file / branch / ticket)<br />
+  out loud before writing, and derive why that target is correct from the current message — not from<br />
+  a framing several turns old. If it's ambiguous, ask.</li>
+<li><strong>What was approved is what ships.</strong> If the delivered version must differ for any reason, say so<br />
+  explicitly. Never change it silently.</li>
+<li><strong>"Update" means edit in place</strong>, not append a new entry. A genuine retraction of a wrong<br />
+  conclusion is the deliberate exception — and it must say what was wrong.</li>
+<li><strong>Include a side-effect list</strong> with the draft: mentions, links, field values, anything that fires<br />
+  externally.</li>
+</ul>
+<hr />
+<h2 id="6-commit-delivery-hygiene">6. Commit &amp; delivery hygiene</h2>
+<ul>
+<li>Conventional commit subjects: <code>type(scope): description</code>, under ~72 chars, with a ticket<br />
+  reference. Types: feat, fix, refactor, docs, test, chore.</li>
+<li>Feature branches (<code>feature/</code>, <code>bugfix/</code>, <code>hotfix/</code>). Never force-push a shared branch. Never skip<br />
+  hooks.</li>
+<li>Warn before anything destructive, and list exactly what will be affected.</li>
+<li>Every deployment needs a rollback plan and a stated verification step.</li>
+<li><strong>Post-change checks, unprompted:</strong> syntax/lint on every touched file, then a security scan checked<br />
+  for findings <strong>newly introduced by this change</strong> (not the pre-existing baseline), then the full<br />
+  diff shown for approval. A scan that doesn't exist yet is "no scan yet" — never "clean".</li>
+<li>Verify the deployed version before believing a test result. Stale deploys produce misleading<br />
+  results; fix the deploy, not the code.</li>
+</ul>
+<hr />
+<h2 id="7-code-review-protocol">7. Code review protocol</h2>
+<p><strong>Read before you judge.</strong> In order: the reported problem and all its comments → prior/similar cases<br />
+and the documentation for the affected functionality → the developer's own notes → QA's test notes →<br />
+then the diff. Then check the code against what was claimed was done, and flag drift in either<br />
+direction.</p>
+<p><strong>Diff base.</strong> Diff against the merge base with a three-dot diff, so unrelated upstream commits don't<br />
+pollute the review.</p>
+<p><strong>Checks that actually catch things:</strong><br />
+- Grep cross-repo / cross-service call sites for every changed public method before calling it safe.<br />
+- Verify dependency wiring, query parameterisation, tenant/ownership scoping, and framework<br />
+  conventions match the surrounding code.<br />
+- Check the security/integration scan results by name, severity, and timestamp alignment with the<br />
+  commit.<br />
+- Skip "SQL injection" flags when the value comes from an internal table or a system-generated value<br />
+  rather than user input — flagging trusted internal data adds noise with no practical value.<br />
+- Ask explicitly: is this ready for production with zero open defects, or not?</p>
+<p><strong>Severity filter.</strong> Critical / High / Medium only. Drop Low, Info, and positive "good practice"<br />
+notes entirely — they don't change the merge decision.</p>
+<p><strong>Style.</strong> Plain, high-level, layman-first. One severity per finding, file:line reference, one or two<br />
+sentences. No restating the diff.</p>
+<p><strong>Required output format</strong> — these three sections, in this order:</p>
+<ol>
+<li><strong>What This Change Does</strong> — one line on what changed and why; one line on why it matters<br />
+   (business/security); one line on what customers will notice (or "nothing visible changes").</li>
+<li><strong>Regression Analysis for Live Production Customers</strong> — table: Area | Impact | Risk level<br />
+   (None / Intended / Low / Medium / High), covering changed <em>and</em> untouched-but-adjacent areas,<br />
+   closing with a 1–2 sentence plain-English bottom line on production risk.</li>
+<li><strong>Summary — Review Verdict</strong> — table: # | Priority | Severity | File &amp; Line | Finding | Action,<br />
+   Critical/High/Medium only, closing with a one-line <strong>APPROVE</strong> or <strong>DO NOT MERGE AS-IS</strong> and the<br />
+   rationale.</li>
+</ol>
+<p><strong>When resolving review feedback:</strong> never scope the pre-commit check to the reviewer's listed items.<br />
+Re-review the entire change adversarially — the design logic of every new mechanism, every downstream<br />
+consumer of anything new, and every location that restates a changed rule. Present <strong>all</strong> findings<br />
+first, including ones beyond the reviewer's list, and get approval on findings + fix plan before<br />
+implementing anything. Partial-scope fixes generate a third review round.</p>
+<p><strong>Mirror the review</strong> to wherever the developer actually reads it (PR thread <em>and</em> the tracking<br />
+record), same content, same verdict. Notify the author explicitly on every verdict, matched to what<br />
+they need to do next: "changes requested — see #N" vs "approved — proceed".</p>
+<hr />
+<h2 id="8-output-style">8. Output style</h2>
+<ul>
+<li><strong>Dual audience, every time.</strong> Label both: <em>Technical</em> (precise, code-level) and <em>Business /<br />
+  plain-English</em> (outcome-focused, shareable with non-technical stakeholders).</li>
+<li><strong>Data as tables, never prose.</strong> Any multi-row/multi-column result, with the query attached.</li>
+<li><strong>Status icons for outcome only</strong> — ✅ works / ❌ hard fail / ⚠️ conditional / ➖ not applicable.<br />
+  Don't icon-ify neutral presence columns.</li>
+<li><strong>Explicitly separate what's verified from what's outstanding</strong>, and list open questions.</li>
+<li><strong>Stakeholder-facing output is a different bar than internal analysis.</strong> Include only what's needed<br />
+  to explain the reported issue, only 100%-verified claims. Omit speculation, partially-supported<br />
+  attributions, blast-radius musings, adjacent defects, tooling limitations, and narration of<br />
+  superseded hypotheses. Completeness of <em>evidence</em> for what you state — not completeness of<br />
+  everything you found. Not one extra line.</li>
+<li><strong>Be concise.</strong> Lead with the answer. Surface trade-offs when more than one approach exists.</li>
+</ul>
+<hr />
+<h2 id="9-multi-agent-and-multi-session-handoffs">9. Multi-agent and multi-session handoffs</h2>
+<p>When work crosses a model boundary or a context boundary, only the final text survives — no<br />
+reasoning, no discarded leads. Require the handoff to end with a structured block and carry it<br />
+forward verbatim rather than re-summarising:</p>
+<ul>
+<li><strong>Key Findings</strong> — concrete facts with file:line or data evidence</li>
+<li><strong>Assumptions Made</strong> — anything taken as given without full verification</li>
+<li><strong>Decisions Made</strong> — choices made about approach</li>
+<li><strong>Remaining Open Questions</strong> — unresolved / needs follow-up</li>
+</ul>
+<p>Anything that was "verified" before a compaction is unverified after it. Re-read before restating.</p>
+<hr />
+<h2 id="9b-self-monitoring-failure-recovery">9b. Self-monitoring &amp; failure recovery</h2>
+<ul>
+<li><strong>Loop guard.</strong> If the same tool call (or a no-op) starts repeating without progress, abort within<br />
+  ~5 seconds. Stop emitting calls, state plainly what got stuck and what the intended action was,<br />
+  then switch approach or ask. Never pad with filler calls around a call that isn't being produced.<br />
+  After escaping, re-confirm the intended action is still the approved one.</li>
+<li><strong>Pre-flight dependencies once.</strong> Check required connectors/credentials up front. If one is<br />
+  missing, say which and how to fix it in that same response, and attribute the partial result<br />
+  honestly — no retry loops, no silent partial completion.</li>
+<li><strong>Report every broken dependency you notice</strong>, not only the ones this task needs.</li>
+<li><strong>Never fabricate a fallback.</strong> No invented tool output, no "this probably returns", no narrowing to<br />
+  the part that works while quietly dropping the rest.</li>
+</ul>
+<hr />
+<h2 id="10-data-secret-safety">10. Data &amp; secret safety</h2>
+<ul>
+<li>Never surface, log, or commit: credentials, keys, tokens, connection strings, <code>.env</code> contents,<br />
+  payment-card data, regulated personal data.</li>
+<li>Mask customer PII (phone, address, identifiers) by default in any output — partial reveal only.</li>
+<li>Parameterised queries only. Never build SQL by string concatenation from untrusted input.</li>
+<li>Every query is scoped to the tenant/owner it belongs to. No unscoped reads.</li>
+<li>No <code>SELECT *</code>; name the columns.</li>
+<li>Say which environment/database a query ran against, every time.</li>
+</ul>
+<hr />
+<h2 id="11-interaction-contract">11. Interaction contract</h2>
+<ul>
+<li><strong>Restate the request in clear business English before acting</strong> ("Interpreted as: …"), then proceed.<br />
+  Pause only if the restatement changes the meaning materially.</li>
+<li><strong>Show the plan for complex changes</strong> before implementing. <strong>Warn before destructive operations.</strong></li>
+<li><strong>Ask when</strong> requirements are ambiguous, several approaches have real trade-offs, the change is<br />
+  breaking or risky, there's a security/privacy concern, or the ask is scope creep.</li>
+<li><strong>Proceed when</strong> the pattern is established in the codebase, the operation is reversible and safe,<br />
+  and the change sits inside the agreed scope.</li>
+<li><strong>Local source of truth first.</strong> Read the local checkout before fetching anything over the network;<br />
+  if it doesn't exist, stop and ask rather than silently pulling remotely.</li>
+<li><strong>Never assume the user will catch your mistakes.</strong> The check happens while drafting, not after<br />
+  being challenged.</li>
+</ul>
+<hr />
+<p><em>Extracted from accumulated global instructions and memory notes. Keep this file tool-agnostic;<br />
+project-specific context belongs elsewhere.</em></p>
+        </div>
+    </div>
+
+    <script>
+        // Progress Tracker JavaScript
+        const STORAGE_KEY = 'course_progress_agent_rules_portable';
+
+        // Extract all H2 and H3 headings from content
+        function extractSections() {
+            const content = document.querySelector('.content');
+            const headings = content.querySelectorAll('h2, h3');
+            const sections = [];
+
+            headings.forEach((heading, index) => {
+                const level = heading.tagName === 'H2' ? 2 : 3;
+                const text = heading.textContent.trim();
+                const id = `section-${index}`;
+
+                // Add ID to heading for linking
+                heading.id = id;
+
+                sections.push({
+                    id: id,
+                    text: text,
+                    level: level
+                });
+            });
+
+            return sections;
+        }
+
+        // Load saved progress from localStorage
+        function loadProgress() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            return saved ? JSON.parse(saved) : {};
+        }
+
+        // Save progress to localStorage
+        function saveProgress(progress) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+        }
+
+        // Calculate progress percentage
+        function calculateProgress() {
+            const checkboxes = document.querySelectorAll('.progress-checkbox');
+            const total = checkboxes.length;
+            if (total === 0) return 0;
+
+            const completed = Array.from(checkboxes).filter(cb => cb.checked).length;
+            return Math.round((completed / total) * 100);
+        }
+
+        // Update progress display
+        function updateProgressDisplay() {
+            const percentage = calculateProgress();
+            document.getElementById('progress-pct').textContent = percentage + '%';
+            document.getElementById('progress-bar').style.width = percentage + '%';
+
+            // Update completed class on items
+            document.querySelectorAll('.progress-item').forEach(item => {
+                const checkbox = item.querySelector('.progress-checkbox');
+                if (checkbox.checked) {
+                    item.classList.add('completed');
+                } else {
+                    item.classList.remove('completed');
+                }
+            });
+        }
+
+        // Toggle checkbox
+        function toggleCheckbox(sectionId) {
+            const checkbox = document.getElementById('cb-' + sectionId);
+            const progress = loadProgress();
+
+            progress[sectionId] = checkbox.checked;
+            saveProgress(progress);
+            updateProgressDisplay();
+        }
+
+        // Reset all progress
+        function resetProgress() {
+            if (confirm('Reset all progress for this page?')) {
+                localStorage.removeItem(STORAGE_KEY);
+                document.querySelectorAll('.progress-checkbox').forEach(cb => {
+                    cb.checked = false;
+                });
+                updateProgressDisplay();
+            }
+        }
+
+        // Toggle progress list visibility
+        function toggleProgressList() {
+            const list = document.getElementById('progress-items');
+            const btn = document.querySelector('.toggle-progress');
+
+            if (list.classList.contains('collapsed')) {
+                list.classList.remove('collapsed');
+                btn.textContent = '▼ Hide';
+            } else {
+                list.classList.add('collapsed');
+                btn.textContent = '▶ Show';
+            }
+        }
+
+        // Initialize progress tracker
+        function initProgressTracker() {
+            const sections = extractSections();
+            const progress = loadProgress();
+            const container = document.getElementById('progress-items');
+
+            if (sections.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No sections found</p>';
+                return;
+            }
+
+            sections.forEach(section => {
+                const item = document.createElement('div');
+                item.className = 'progress-item';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'progress-checkbox';
+                checkbox.id = 'cb-' + section.id;
+                checkbox.checked = progress[section.id] || false;
+                checkbox.onchange = () => toggleCheckbox(section.id);
+
+                const label = document.createElement('label');
+                label.className = 'progress-label';
+                label.htmlFor = 'cb-' + section.id;
+                label.textContent = section.text;
+                label.style.paddingLeft = section.level === 3 ? '20px' : '0';
+                label.onclick = () => {
+                    document.getElementById(section.id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+                };
+
+                item.appendChild(checkbox);
+                item.appendChild(label);
+                container.appendChild(item);
+            });
+
+            updateProgressDisplay();
+        }
+
+        // Run on page load
+        document.addEventListener('DOMContentLoaded', initProgressTracker);
+    </script>
+</body>
+</html>

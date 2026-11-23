@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Microservices_Architecture_Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 60px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .metadata {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 16px 24px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #666;
+            border-left: 4px solid #667eea;
+        }
+
+        /* PROGRESS TRACKER STYLES */
+        .progress-tracker {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .progress-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-stats {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .progress-percentage {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #764ba2;
+        }
+
+        .progress-bar-container {
+            height: 12px;
+            background: #e9ecef;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+            border-radius: 20px;
+        }
+
+        .reset-btn {
+            padding: 8px 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+
+        .reset-btn:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+        }
+
+        .progress-items {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .progress-items::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .progress-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .progress-item:hover {
+            background: #f8f9fa;
+            transform: translateX(5px);
+        }
+
+        .progress-item.completed {
+            opacity: 0.7;
+        }
+
+        .progress-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .progress-label {
+            cursor: pointer;
+            font-size: 0.95em;
+            line-height: 1.5;
+            color: #495057;
+            flex-grow: 1;
+        }
+
+        .progress-item.completed .progress-label {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .toggle-progress {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .toggle-progress:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .progress-items.collapsed {
+            display: none;
+        }
+
+        /* CONTENT STYLES */
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 4px solid #667eea;
+            font-weight: 700;
+        }
+
+        h2 {
+            color: #764ba2;
+            font-size: 2em;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        h3 {
+            color: #495057;
+            font-size: 1.5em;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        h4 {
+            color: #666;
+            font-size: 1.25em;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        ul, ol {
+            margin: 20px 0;
+            padding-left: 40px;
+        }
+
+        li {
+            margin-bottom: 12px;
+            line-height: 1.7;
+        }
+
+        code {
+            background: #f4f5f7;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #c7254e;
+            border: 1px solid #e1e4e8;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 24px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 25px 0;
+            border: 1px solid #444;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            border: none;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        blockquote {
+            border-left: 5px solid #667eea;
+            padding: 15px 25px;
+            margin: 25px 0;
+            background: #f8f9fa;
+            border-radius: 0 8px 8px 0;
+            color: #495057;
+            font-style: italic;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 30px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 14px 18px;
+            text-align: left;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tr:hover {
+            background: #e9ecef;
+            transition: background 0.2s;
+        }
+
+        a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px solid transparent;
+            transition: border-bottom 0.2s;
+        }
+
+        a:hover {
+            border-bottom: 1px solid #667eea;
+        }
+
+        hr {
+            border: none;
+            border-top: 2px solid #e9ecef;
+            margin: 40px 0;
+        }
+
+        strong {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        em {
+            color: #495057;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 25px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.6em;
+            }
+
+            .progress-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .progress-stats {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../navigation.html" class="back-link">&larr; Back to Navigation</a>
+
+        <div class="metadata">
+            <strong>Source:</strong> dev/Microservices_Architecture_Guide.md &nbsp;|&nbsp; <strong>Updated:</strong> 2026-11-18 19:44:55
+        </div>
+
+        <!-- PROGRESS TRACKER -->
+        <div class="progress-tracker">
+            <div class="progress-header">
+                <div class="progress-title">
+                    <span>📚</span>
+                    <span>Your Progress</span>
+                </div>
+                <div class="progress-stats">
+                    <span class="progress-percentage" id="progress-pct">0%</span>
+                    <button class="reset-btn" onclick="resetProgress()">Reset</button>
+                    <button class="toggle-progress" onclick="toggleProgressList()">▼ Hide</button>
+                </div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progress-bar" style="width: 0%"></div>
+            </div>
+            <div class="progress-items" id="progress-items">
+                <!-- Checkboxes will be generated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="content">
+<h1 id="microservices-architecture-guide">Microservices Architecture Guide</h1>
+<p><strong>For Senior Software Engineer Interviews</strong></p>
+<p>Your competitive advantage: <strong>Production microservices experience</strong> (EIC, CC, CSR, WCL, MPay — 5 independent services, API communication, event-driven architecture)</p>
+<hr />
+<h2 id="monolith-vs-microservices">Monolith vs Microservices</h2>
+<h3 id="monolith-single-codebase">Monolith (Single Codebase)</h3>
+<div class="codehilite"><pre><span></span><code>┌─────────────────────────────┐
+│      Billing Application    │
+│                             │
+│  ┌─────────┐ ┌───────────┐ │
+│  │ Invoice │ │  Payment  │ │
+│  │ Module  │ │  Module   │ │
+│  └─────────┘ └───────────┘ │
+│  ┌─────────┐ ┌───────────┐ │
+│  │Customer │ │   Email   │ │
+│  │ Module  │ │  Module   │ │
+│  └─────────┘ └───────────┘ │
+│                             │
+│     Single Database         │
+└─────────────────────────────┘
+</code></pre></div>
+
+<p><strong>Pros:</strong><br />
+- Simple to develop (one codebase)<br />
+- Easy to deploy (one artifact)<br />
+- No network latency (in-process calls)</p>
+<p><strong>Cons:</strong><br />
+- Hard to scale (must scale entire app)<br />
+- One bug crashes everything<br />
+- Long deployment times (test entire app)<br />
+- Hard to adopt new tech (stuck with same stack)</p>
+<hr />
+<h3 id="microservices-distributed-system">Microservices (Distributed System)</h3>
+<div class="codehilite"><pre><span></span><code>┌──────────┐    ┌──────────┐    ┌──────────┐
+│ Invoice  │    │ Payment  │    │ Customer │
+│ Service  │◄──►│ Service  │◄──►│ Service  │
+│          │    │          │    │          │
+│ DB: MySQL│    │ DB: MySQL│    │ DB: Postgres │
+└──────────┘    └──────────┘    └──────────┘
+     │               │               │
+     └───────────────┴───────────────┘
+                     │
+              ┌─────────────┐
+              │   Kafka     │
+              │ Event Bus   │
+              └─────────────┘
+</code></pre></div>
+
+<p><strong>Pros:</strong><br />
+- Independent scaling (scale payment service 10x, invoice 2x)<br />
+- Fault isolation (payment down ≠ invoice down)<br />
+- Tech diversity (Invoice: PHP, Payment: .NET, Customer: Go)<br />
+- Fast deploys (deploy one service, not all)</p>
+<p><strong>Cons:</strong><br />
+- Complex (distributed system challenges)<br />
+- Network latency (API calls instead of in-process)<br />
+- Data consistency (eventual, not ACID)<br />
+- Operational overhead (10 services = 10 deployments, 10 logs, 10 monitors)</p>
+<hr />
+<h2 id="production-microservices">Production Microservices</h2>
+<h3 id="architecture">Architecture</h3>
+<div class="codehilite"><pre><span></span><code>┌────────────────────────────────────────────┐
+│         API Gateway / Load Balancer        │
+└─────┬──────┬──────┬──────┬──────┬─────────┘
+      │      │      │      │      │
+      v      v      v      v      v
+   ┌─────┐ ┌────┐ ┌────┐ ┌────┐ ┌─────┐
+   │ EIC │ │ CC │ │CSR │ │WCL │ │MPay │
+   │(PHP)│ │(PHP│ │(PHP│ │(PHP│ │(PHP)│
+   └──┬──┘ └─┬──┘ └─┬──┘ └─┬──┘ └──┬──┘
+      │      │      │      │      │
+      v      v      v      v      v
+   ┌──────────────────────────────────┐
+   │     Shared Infrastructure        │
+   │  MySQL, Redis, Kafka, S3         │
+   └──────────────────────────────────┘
+</code></pre></div>
+
+<p><strong>Services:</strong></p>
+<ol>
+<li><strong>EIC (eInvoice Connect)</strong> — Invoice presentation, buyer portal</li>
+<li><strong>CC (Client Connect)</strong> — Admin/settings, customer management</li>
+<li><strong>CSR (Customer Settings Repository)</strong> — Centralized settings API</li>
+<li><strong>WCL (Web Communication Layer)</strong> — Email/notification service</li>
+<li><strong>MPay (Managed Pay)</strong> — Payment processing</li>
+</ol>
+<p><strong>Communication:</strong><br />
+- Synchronous: REST APIs (EIC → CSR)<br />
+- Asynchronous: Kafka events (Payment → Invoice)<br />
+- Shared: Redis (session cache), MySQL (tenant DBs)</p>
+<hr />
+<h2 id="service-communication-patterns">Service Communication Patterns</h2>
+<h3 id="1-synchronous-rest-api">1. Synchronous (REST API)</h3>
+<p><strong>Use Case:</strong> Real-time data fetch</p>
+<div class="codehilite"><pre><span></span><code><span class="x">// EIC needs customer settings</span>
+<span class="x">class InvoiceController {</span>
+<span class="x">    private $csrClient;</span>
+
+<span class="x">    public function show($customerId) {</span>
+<span class="x">        // Call CSR service</span>
+<span class="x">        $settings = $this-&gt;csrClient-&gt;get("/api/v1/customers/$customerId/settings");</span>
+
+<span class="x">        // Use settings to render invoice</span>
+<span class="x">        return view('invoice', [</span>
+<span class="x">            'settings' =&gt; $settings,</span>
+<span class="x">            'invoice' =&gt; Invoice::find($customerId)</span>
+<span class="x">        ]);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>Pros:</strong><br />
+- Simple<br />
+- Immediate response<br />
+- Strong consistency</p>
+<p><strong>Cons:</strong><br />
+- Tight coupling (EIC down if CSR down)<br />
+- Latency (network call adds 50-100ms)<br />
+- Cascading failures</p>
+<p><strong>Circuit Breaker Pattern:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">class CircuitBreaker {</span>
+<span class="x">    private $failureThreshold = 5;</span>
+<span class="x">    private $timeout = 30; // seconds</span>
+
+<span class="x">    public function call($service, $request) {</span>
+<span class="x">        $failures = Redis::get("failures:$service") ?? 0;</span>
+
+<span class="x">        if ($failures &gt;= $this-&gt;failureThreshold) {</span>
+<span class="x">            $openedAt = Redis::get("circuit_opened:$service");</span>
+<span class="x">            if (time() - $openedAt &lt; $this-&gt;timeout) {</span>
+<span class="x">                throw new CircuitOpenException("$service is down");</span>
+<span class="x">            }</span>
+<span class="x">            // Try again after timeout</span>
+<span class="x">            Redis::del("circuit_opened:$service");</span>
+<span class="x">        }</span>
+
+<span class="x">        try {</span>
+<span class="x">            $response = Http::timeout(5)-&gt;get($request);</span>
+<span class="x">            Redis::set("failures:$service", 0); // Reset on success</span>
+<span class="x">            return $response;</span>
+<span class="x">        } catch (Exception $e) {</span>
+<span class="x">            Redis::incr("failures:$service");</span>
+<span class="x">            if (Redis::get("failures:$service") &gt;= $this-&gt;failureThreshold) {</span>
+<span class="x">                Redis::set("circuit_opened:$service", time());</span>
+<span class="x">            }</span>
+<span class="x">            throw $e;</span>
+<span class="x">        }</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<hr />
+<h3 id="2-asynchronous-event-driven">2. Asynchronous (Event-Driven)</h3>
+<p><strong>Use Case:</strong> Eventually consistent state sync</p>
+<div class="codehilite"><pre><span></span><code><span class="nv">Payment</span><span class="w"> </span><span class="nv">Service</span>:<span class="w"> </span><span class="nv">Payment</span><span class="w"> </span><span class="nv">captured</span>
+<span class="w">   </span>↓
+<span class="nv">Kafka</span>:<span class="w"> </span><span class="nv">payment</span>.<span class="nv">captured</span><span class="w"> </span><span class="nv">event</span>
+<span class="w">   </span>↓
+<span class="nv">Invoice</span><span class="w"> </span><span class="nv">Service</span>:<span class="w"> </span><span class="nv">Mark</span><span class="w"> </span><span class="nv">invoice</span><span class="w"> </span><span class="nv">paid</span>
+<span class="nv">Email</span><span class="w"> </span><span class="nv">Service</span>:<span class="w"> </span><span class="k">Send</span><span class="w"> </span><span class="nv">receipt</span>
+<span class="nv">Analytics</span><span class="w"> </span><span class="nv">Service</span>:<span class="w"> </span><span class="nv">Update</span><span class="w"> </span><span class="nv">dashboard</span>
+</code></pre></div>
+
+<p><strong>Implementation:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Payment service (producer)</span>
+<span class="x">class PaymentService {</span>
+<span class="x">    public function capturePayment($invoiceId, $amount) {</span>
+<span class="x">        // Process payment</span>
+<span class="x">        $payment = Payment::create([...]);</span>
+
+<span class="x">        // Publish event</span>
+<span class="x">        Kafka::publish('payment_events', [</span>
+<span class="x">            'event_type' =&gt; 'payment.captured',</span>
+<span class="x">            'invoice_id' =&gt; $invoiceId,</span>
+<span class="x">            'amount' =&gt; $amount,</span>
+<span class="x">            'payment_id' =&gt; $payment-&gt;id,</span>
+<span class="x">            'timestamp' =&gt; now()</span>
+<span class="x">        ]);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">// Invoice service (consumer)</span>
+<span class="x">class PaymentEventHandler {</span>
+<span class="x">    public function handlePaymentCaptured($event) {</span>
+<span class="x">        Invoice::where('id', $event['invoice_id'])</span>
+<span class="x">            -&gt;update(['status' =&gt; 'paid', 'paid_at' =&gt; $event['timestamp']]);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>Pros:</strong><br />
+- Loose coupling (services independent)<br />
+- High availability (async = no blocking)<br />
+- Scalable (add consumers without changing producer)</p>
+<p><strong>Cons:</strong><br />
+- Eventual consistency (invoice not immediately paid)<br />
+- Complex debugging (trace across services)<br />
+- Duplicate handling (idempotency required)</p>
+<hr />
+<h3 id="3-saga-pattern-distributed-transaction">3. Saga Pattern (Distributed Transaction)</h3>
+<p><strong>Use Case:</strong> Multi-service transaction with rollback</p>
+<div class="codehilite"><pre><span></span><code>Order → Payment → Inventory → Shipping
+
+Success Path:
+1. Order Service: Create order
+2. Payment Service: Charge card
+3. Inventory Service: Reserve items
+4. Shipping Service: Create shipment
+
+Failure Path (Compensating Transactions):
+1. Payment Service: Card declined
+2. Inventory Service: Nothing to rollback (never ran)
+3. Order Service: Cancel order
+</code></pre></div>
+
+<p><strong>Orchestration-Based Saga:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Saga orchestrator</span>
+<span class="x">class OrderSaga {</span>
+<span class="x">    public function execute($orderId) {</span>
+<span class="x">        try {</span>
+<span class="x">            // Step 1: Create order</span>
+<span class="x">            $order = OrderService::create($orderId);</span>
+
+<span class="x">            // Step 2: Charge payment</span>
+<span class="x">            $payment = PaymentService::charge($order-&gt;total);</span>
+
+<span class="x">            // Step 3: Reserve inventory</span>
+<span class="x">            $reservation = InventoryService::reserve($order-&gt;items);</span>
+
+<span class="x">            // Step 4: Create shipment</span>
+<span class="x">            $shipment = ShippingService::create($order);</span>
+
+<span class="x">            return ['status' =&gt; 'success'];</span>
+
+<span class="x">        } catch (PaymentException $e) {</span>
+<span class="x">            // Compensate: Cancel order</span>
+<span class="x">            OrderService::cancel($orderId);</span>
+<span class="x">            throw $e;</span>
+
+<span class="x">        } catch (InventoryException $e) {</span>
+<span class="x">            // Compensate: Refund payment, cancel order</span>
+<span class="x">            PaymentService::refund($payment-&gt;id);</span>
+<span class="x">            OrderService::cancel($orderId);</span>
+<span class="x">            throw $e;</span>
+<span class="x">        }</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>Choreography-Based Saga (Event-Driven):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="mf">1.</span><span class="w"> </span><span class="ow">Or</span><span class="n">der</span><span class="w"> </span><span class="n">Service</span><span class="p">:</span><span class="w"> </span><span class="ow">or</span><span class="n">der</span><span class="mf">.</span><span class="n">created</span><span class="w"> </span><span class="n">event</span>
+<span class="mf">2.</span><span class="w"> </span><span class="n">Payment</span><span class="w"> </span><span class="n">Service</span><span class="p">:</span><span class="w"> </span><span class="kr">List</span><span class="n">ens</span><span class="p">,</span><span class="w"> </span><span class="n">charges</span><span class="w"> </span><span class="n">card</span>
+<span class="w">   </span><span class="err">→</span><span class="w"> </span><span class="kr">On</span><span class="w"> </span><span class="n">success</span><span class="p">:</span><span class="w"> </span><span class="n">payment</span><span class="mf">.</span><span class="n">succeeded</span><span class="w"> </span><span class="n">event</span>
+<span class="w">   </span><span class="err">→</span><span class="w"> </span><span class="kr">On</span><span class="w"> </span><span class="n">failure</span><span class="p">:</span><span class="w"> </span><span class="n">payment</span><span class="mf">.</span><span class="n">failed</span><span class="w"> </span><span class="n">event</span>
+<span class="mf">3.</span><span class="w"> </span><span class="n">Inventory</span><span class="w"> </span><span class="n">Service</span><span class="p">:</span><span class="w"> </span><span class="kr">List</span><span class="n">ens</span><span class="w"> </span><span class="kr">to</span><span class="w"> </span><span class="n">payment</span><span class="mf">.</span><span class="n">succeeded</span><span class="p">,</span><span class="w"> </span><span class="n">reserves</span><span class="w"> </span><span class="n">items</span>
+<span class="w">   </span><span class="err">→</span><span class="w"> </span><span class="n">inventory</span><span class="mf">.</span><span class="n">reserved</span><span class="w"> </span><span class="n">event</span>
+<span class="mf">4.</span><span class="w"> </span><span class="ow">Or</span><span class="n">der</span><span class="w"> </span><span class="n">Service</span><span class="p">:</span><span class="w"> </span><span class="kr">List</span><span class="n">ens</span><span class="w"> </span><span class="kr">to</span><span class="w"> </span><span class="n">payment</span><span class="mf">.</span><span class="n">failed</span>
+<span class="w">   </span><span class="err">→</span><span class="w"> </span><span class="n">Publishes</span><span class="w"> </span><span class="ow">or</span><span class="n">der</span><span class="mf">.</span><span class="n">cancelled</span><span class="w"> </span><span class="n">event</span>
+</code></pre></div>
+
+<hr />
+<h2 id="data-management">Data Management</h2>
+<h3 id="database-per-service">Database Per Service</h3>
+<div class="codehilite"><pre><span></span><code>✅ GOOD (Database per service):
+Invoice Service → invoice_db (MySQL)
+Payment Service → payment_db (MySQL)
+Customer Service → customer_db (Postgres)
+
+❌ BAD (Shared database):
+All services → shared_db
+</code></pre></div>
+
+<p><strong>Why Separate?</strong><br />
+- Loose coupling (schema changes don't break other services)<br />
+- Technology flexibility (Invoice: MySQL, Customer: Postgres, Analytics: MongoDB)<br />
+- Independent scaling</p>
+<p><strong>Challenge: Cross-Service Queries</strong></p>
+<div class="codehilite"><pre><span></span><code>❌ BAD (Direct DB access):
+Invoice Service queries Payment DB directly
+
+✅ GOOD (API call):
+Invoice Service → API → Payment Service → Payment DB
+
+✅ BETTER (Event sourcing):
+Payment Service publishes payment.captured event
+Invoice Service maintains its own payment cache
+</code></pre></div>
+
+<p><strong>Your production setup:</strong><br />
+- Tenant DBs: <code>billingclient1</code>, <code>billingclient2</code> (shared across services)<br />
+- CSR: Centralized settings API (abstracts DB)<br />
+- Each service owns its tables</p>
+<hr />
+<h2 id="service-discovery">Service Discovery</h2>
+<h3 id="problem-how-do-services-find-each-other">Problem: How do services find each other?</h3>
+<p><strong>Static Configuration:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nt">services</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">csr</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://csr.Enterprise SaaS Company.com</span>
+<span class="w">  </span><span class="nt">payment</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://payment.Enterprise SaaS Company.com</span>
+</code></pre></div>
+
+<p><strong>Service Discovery (Kubernetes):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Service creates DNS entry</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Service</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">csr</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">invoicing-prod</span>
+<span class="c1"># DNS: csr.invoicing-prod.svc.cluster.local</span>
+</code></pre></div>
+
+<p><strong>EIC calls CSR:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">$response = Http::get('http://csr.invoicing-prod.svc.cluster.local/api/v1/settings');</span>
+</code></pre></div>
+
+<hr />
+<h2 id="api-gateway-pattern">API Gateway Pattern</h2>
+<h3 id="centralized-entry-point">Centralized Entry Point</h3>
+<div class="codehilite"><pre><span></span><code>Client
+  ↓
+API Gateway (Kong, AWS API Gateway)
+  ├─ /invoices/*     → EIC Service
+  ├─ /payments/*     → Payment Service
+  ├─ /customers/*    → Customer Service
+  └─ /settings/*     → CSR Service
+</code></pre></div>
+
+<p><strong>Benefits:</strong><br />
+- Single endpoint for clients<br />
+- Centralized auth, rate limiting, logging<br />
+- Service routing (no client changes when service moves)</p>
+<p><strong>API Gateway (Kong) Config:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nt">services</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">invoice-service</span>
+<span class="w">    </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http://eic.invoicing-prod.svc.cluster.local</span>
+<span class="w">    </span><span class="nt">routes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">invoice-route</span>
+<span class="w">        </span><span class="nt">paths</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/api/invoices</span>
+
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">payment-service</span>
+<span class="w">    </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http://payment.invoicing-prod.svc.cluster.local</span>
+<span class="w">    </span><span class="nt">routes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">payment-route</span>
+<span class="w">        </span><span class="nt">paths</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/api/payments</span>
+
+<span class="nt">plugins</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rate-limiting</span>
+<span class="w">    </span><span class="nt">config</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">minute</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
+
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">jwt</span>
+<span class="w">    </span><span class="nt">config</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">secret_is_base64</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+</code></pre></div>
+
+<hr />
+<h2 id="interview-questions-answers">Interview Questions &amp; Answers</h2>
+<h3 id="q1-when-would-you-use-microservices-vs-a-monolith">Q1: "When would you use microservices vs a monolith?"</h3>
+<p><strong>Your Answer:</strong></p>
+<blockquote>
+<p><em>"Start with a monolith, migrate to microservices when:</em></p>
+<p><strong>Use Monolith When:</strong><br />
+<em>- <strong>Small team</strong> (&lt; 10 developers) — overhead not worth it</em><br />
+<em>- <strong>Simple domain</strong> — e-commerce with 3 models (products, orders, users)</em><br />
+<em>- <strong>Rapid iteration</strong> — startup finding product-market fit</em><br />
+<em>- <strong>Low scale</strong> — &lt; 1000 users, single server handles it</em></p>
+<p><strong>Migrate to Microservices When:</strong><br />
+<em>- <strong>Scaling bottlenecks</strong> — payment service needs 10x instances, but invoice only 2x</em><br />
+<em>- <strong>Team size</strong> — 50+ developers, monolith = merge conflicts</em><br />
+<em>- <strong>Deploy velocity</strong> — want to deploy payment changes without testing entire app</em><br />
+<em>- <strong>Fault isolation</strong> — reporting crashes shouldn't take down checkout</em><br />
+<em>- <strong>Technology diversity</strong> — machine learning team wants Python, core app is PHP</em></p>
+<p><strong>In a production environment:</strong><br />
+<em>- Started: Monolith (all PHP, single codebase)</em><br />
+<em>- Problem: Invoice changes required full regression test (3 days)</em><br />
+<em>- Solution: Split into 5 services (EIC, CC, CSR, WCL, MPay)</em><br />
+<em>- Result: Deploy invoice changes in 1 hour, payment independently</em></p>
+<p><strong>When NOT to Use Microservices:</strong><br />
+<em>- Premature optimization (small app, 2 developers)</em><br />
+<em>- Distributed monolith (same team owns all services, deploy together)</em><br />
+<em>- No clear boundaries (services call each other 100x per request)</em></p>
+<p>*<em>My Rule: Start monolith, extract services when pain &gt; cost."</em></p>
+</blockquote>
+<hr />
+<h3 id="q2-how-do-you-handle-data-consistency-across-microservices">Q2: "How do you handle data consistency across microservices?"</h3>
+<p><strong>Your Answer:</strong></p>
+<blockquote>
+<p><em>"In microservices, you trade ACID for eventual consistency. Here are the patterns:</em></p>
+<p><strong>Pattern 1: Eventual Consistency (Event-Driven)</strong><br />
+<code>Payment Service: Charge succeeded
+  ↓ Kafka event
+Invoice Service: Mark paid (eventually, within seconds)</code></p>
+<p><strong>Pattern 2: Saga Pattern (Distributed Transaction)</strong><br />
+<em>- Orchestrator coordinates multi-service transaction</em><br />
+<em>- Compensating transactions on failure</em><br />
+<em>- Example: Order → Payment → Inventory → Shipping</em></p>
+<p><strong>Pattern 3: API Composition (Read-Time Join)</strong><br />
+<code>GET /api/invoices/123 needs payment status
+  ↓
+1. Invoice Service: Fetch invoice
+2. Payment Service API: Fetch payment status
+3. Combine and return</code></p>
+<p><strong>Pattern 4: CQRS (Denormalize for Reads)</strong><br />
+```<br />
+Write Side:<br />
+- Payment Service: Captures payment<br />
+- Publishes payment.captured event</p>
+<p>Read Side:<br />
+- Invoice Service: Listens to event<br />
+- Updates local payment_status cache<br />
+- Reads from cache (fast, eventual)<br />
+```</p>
+<p><strong>Real enterprise example:</strong></p>
+<p><strong>Problem:</strong> Invoice page needs customer settings (from CSR service)</p>
+<p><strong>Bad Approach (Synchronous):</strong><br />
+<code>php
+// Every invoice load = API call to CSR (slow, coupled)
+$settings = Http::get("https://csr/api/customers/$id/settings");</code></p>
+<p><strong>Good Approach (Cache + Events):</strong><br />
+```php<br />
+// Cache settings in Redis (1 hour TTL)<br />
+$settings = Redis::get("customer:$id:settings");</p>
+<p>if (!$settings) {<br />
+    $settings = Http::get("https://csr/api/customers/$id/settings");<br />
+    Redis::setex("customer:$id:settings", 3600, $settings);<br />
+}</p>
+<p>// When CSR changes setting → Kafka event → Invalidate cache<br />
+```</p>
+<p><strong>Tradeoffs:</strong><br />
+<em>- <strong>Immediate consistency:</strong> Tight coupling, slow, simple</em><br />
+<em>- <strong>Eventual consistency:</strong> Loose coupling, fast, complex</em></p>
+<p><strong>When to Use Each:</strong><br />
+<em>- Payment processing: Strong consistency (Saga pattern)</em><br />
+<em>- Analytics dashboard: Eventual (events)</em><br />
+<em>- Invoice display: Eventual with cache (CQRS)</em>"*</p>
+</blockquote>
+<hr />
+<h3 id="q3-how-do-you-handle-failures-in-a-microservices-architecture">Q3: "How do you handle failures in a microservices architecture?"</h3>
+<p><strong>Your Answer:</strong></p>
+<blockquote>
+<p><em>"Failures are normal in distributed systems. In a production environment, we use multiple patterns:</em></p>
+<p><strong>1. Circuit Breaker (Prevent Cascade)</strong><br />
+<code>php
+Invoice Service calls Payment Service:
+- Normal: Pass through
+- 5 failures in 1 min: Open circuit (fail fast)
+- After 30s: Half-open (try 1 request)
+- If success: Close circuit (back to normal)</code></p>
+<p><strong>2. Retry with Exponential Backoff</strong><br />
+<code>php
+try {
+    $response = Http::retry(3, 100)-&gt;get($url);
+    // Retry 3 times: 100ms, 200ms, 400ms
+} catch (Exception $e) {
+    Log::error('Service unavailable', ['service' =&gt; $url]);
+    // Fallback or fail gracefully
+}</code></p>
+<p><strong>3. Timeout (Don't Wait Forever)</strong><br />
+<code>php
+$response = Http::timeout(5)-&gt;get($url);
+// Max 5 seconds, then exception</code></p>
+<p><strong>4. Fallback (Degrade Gracefully)</strong><br />
+<code>php
+try {
+    $recommendations = RecommendationService::get($userId);
+} catch (Exception $e) {
+    // Service down → use cached or default
+    $recommendations = Cache::get("recs:$userId", []);
+}</code></p>
+<p><strong>5. Bulkhead Pattern (Isolate Resources)</strong><br />
+```<br />
+Connection Pool:<br />
+- Payment Service: 20 connections<br />
+- Reporting Service: 5 connections</p>
+<p>If Reporting hangs:<br />
+- Uses 5 connections<br />
+- Payment still has 20 (isolated)<br />
+```</p>
+<p><strong>6. Health Checks (Kubernetes)</strong><br />
+```yaml<br />
+livenessProbe:<br />
+  httpGet:<br />
+    path: /health<br />
+    port: 80<br />
+  initialDelaySeconds: 30<br />
+  periodSeconds: 10</p>
+<h1 id="if-fails-3x-restart-pod">If fails 3x → restart pod</h1>
+<p>```</p>
+<p><strong>7. Dead Letter Queue (Async Failures)</strong><br />
+<code>Payment event processing fails 3x
+  ↓
+Send to DLQ
+  ↓
+Manual investigation</code></p>
+<p><strong>Real Enterprise SaaS Company Incident:</strong></p>
+<p><strong>Problem:</strong> CSR service went down (database crash)</p>
+<p><strong>Without Circuit Breaker:</strong><br />
+<em>- EIC calls CSR (5s timeout)</em><br />
+<em>- 1000 requests/min × 5s = 5000 threads waiting</em><br />
+<em>- EIC runs out of memory</em><br />
+<em>- Both services down (cascading failure)</em></p>
+<p><strong>With Circuit Breaker:</strong><br />
+<em>- CSR fails 5 times → circuit opens</em><br />
+<em>- EIC fails fast (no waiting)</em><br />
+<em>- EIC serves cached settings</em><br />
+<em>- Users see slightly stale data (acceptable)</em><br />
+<em>- CSR recovers → circuit closes</em><br />
+<em>- Result: EIC stayed up, 0 user downtime</em>"*</p>
+</blockquote>
+<hr />
+<h2 id="summary-your-microservices-expertise">Summary: Your Microservices Expertise</h2>
+<p><strong>When Asked About Microservices:</strong></p>
+<blockquote>
+<p><em>"In a production environment, I work with 5 production microservices: EIC, CC, CSR, WCL, and MPay. Each service has its own database tables, deployment pipeline, and scaling profile.</em></p>
+<p><em>Communication is hybrid: synchronous REST APIs for real-time reads (EIC → CSR for settings), asynchronous Kafka events for state changes (payment captured → invoice paid). We use circuit breakers to prevent cascading failures and cache frequently-accessed data in Redis.</em></p>
+<p><em>For distributed transactions, we use the saga pattern with compensating transactions. Example: AutoPay enrollment spans 4 services — if payment tokenization fails, we rollback the account link and user creation.</em></p>
+<p><em>Services are deployed on Kubernetes with independent scaling (payment service: 10 pods, invoice: 5 pods). API Gateway (Kong) provides centralized auth, rate limiting, and routing. CloudWatch tracks cross-service request traces with correlation IDs.</em></p>
+<p><em>Data consistency is eventual via Kafka events, with idempotency keys to handle duplicates. We maintain 99.9% uptime despite individual service failures through circuit breakers, timeouts, and graceful degradation."</em></p>
+</blockquote>
+<hr />
+<p><strong>All 6 interview guides complete!</strong> 🎉</p>
+<p>You now have:<br />
+1. ✅ Kafka &amp; RabbitMQ Messaging<br />
+2. ✅ Elasticsearch &amp; Search Systems<br />
+3. ✅ CI/CD Pipelines &amp; DevOps<br />
+4. ✅ Kubernetes Deep Dive<br />
+5. ✅ API Design &amp; REST<br />
+6. ✅ Microservices Architecture</p>
+<p><strong>Total interview prep: 18 comprehensive guides covering every senior engineer topic!</strong></p>
+        </div>
+    </div>
+
+    <script>
+        // Progress Tracker JavaScript
+        const STORAGE_KEY = 'course_progress_microservices_architecture_guide';
+
+        // Extract all H2 and H3 headings from content
+        function extractSections() {
+            const content = document.querySelector('.content');
+            const headings = content.querySelectorAll('h2, h3');
+            const sections = [];
+
+            headings.forEach((heading, index) => {
+                const level = heading.tagName === 'H2' ? 2 : 3;
+                const text = heading.textContent.trim();
+                const id = `section-${index}`;
+
+                // Add ID to heading for linking
+                heading.id = id;
+
+                sections.push({
+                    id: id,
+                    text: text,
+                    level: level
+                });
+            });
+
+            return sections;
+        }
+
+        // Load saved progress from localStorage
+        function loadProgress() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            return saved ? JSON.parse(saved) : {};
+        }
+
+        // Save progress to localStorage
+        function saveProgress(progress) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+        }
+
+        // Calculate progress percentage
+        function calculateProgress() {
+            const checkboxes = document.querySelectorAll('.progress-checkbox');
+            const total = checkboxes.length;
+            if (total === 0) return 0;
+
+            const completed = Array.from(checkboxes).filter(cb => cb.checked).length;
+            return Math.round((completed / total) * 100);
+        }
+
+        // Update progress display
+        function updateProgressDisplay() {
+            const percentage = calculateProgress();
+            document.getElementById('progress-pct').textContent = percentage + '%';
+            document.getElementById('progress-bar').style.width = percentage + '%';
+
+            // Update completed class on items
+            document.querySelectorAll('.progress-item').forEach(item => {
+                const checkbox = item.querySelector('.progress-checkbox');
+                if (checkbox.checked) {
+                    item.classList.add('completed');
+                } else {
+                    item.classList.remove('completed');
+                }
+            });
+        }
+
+        // Toggle checkbox
+        function toggleCheckbox(sectionId) {
+            const checkbox = document.getElementById('cb-' + sectionId);
+            const progress = loadProgress();
+
+            progress[sectionId] = checkbox.checked;
+            saveProgress(progress);
+            updateProgressDisplay();
+        }
+
+        // Reset all progress
+        function resetProgress() {
+            if (confirm('Reset all progress for this page?')) {
+                localStorage.removeItem(STORAGE_KEY);
+                document.querySelectorAll('.progress-checkbox').forEach(cb => {
+                    cb.checked = false;
+                });
+                updateProgressDisplay();
+            }
+        }
+
+        // Toggle progress list visibility
+        function toggleProgressList() {
+            const list = document.getElementById('progress-items');
+            const btn = document.querySelector('.toggle-progress');
+
+            if (list.classList.contains('collapsed')) {
+                list.classList.remove('collapsed');
+                btn.textContent = '▼ Hide';
+            } else {
+                list.classList.add('collapsed');
+                btn.textContent = '▶ Show';
+            }
+        }
+
+        // Initialize progress tracker
+        function initProgressTracker() {
+            const sections = extractSections();
+            const progress = loadProgress();
+            const container = document.getElementById('progress-items');
+
+            if (sections.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No sections found</p>';
+                return;
+            }
+
+            sections.forEach(section => {
+                const item = document.createElement('div');
+                item.className = 'progress-item';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'progress-checkbox';
+                checkbox.id = 'cb-' + section.id;
+                checkbox.checked = progress[section.id] || false;
+                checkbox.onchange = () => toggleCheckbox(section.id);
+
+                const label = document.createElement('label');
+                label.className = 'progress-label';
+                label.htmlFor = 'cb-' + section.id;
+                label.textContent = section.text;
+                label.style.paddingLeft = section.level === 3 ? '20px' : '0';
+                label.onclick = () => {
+                    document.getElementById(section.id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+                };
+
+                item.appendChild(checkbox);
+                item.appendChild(label);
+                container.appendChild(item);
+            });
+
+            updateProgressDisplay();
+        }
+
+        // Run on page load
+        document.addEventListener('DOMContentLoaded', initProgressTracker);
+    </script>
+</body>
+</html>

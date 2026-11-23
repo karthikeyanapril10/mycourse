@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mock_Interview_Practice_Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 60px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .metadata {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 16px 24px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #666;
+            border-left: 4px solid #667eea;
+        }
+
+        /* PROGRESS TRACKER STYLES */
+        .progress-tracker {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .progress-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-stats {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .progress-percentage {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #764ba2;
+        }
+
+        .progress-bar-container {
+            height: 12px;
+            background: #e9ecef;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+            border-radius: 20px;
+        }
+
+        .reset-btn {
+            padding: 8px 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+
+        .reset-btn:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+        }
+
+        .progress-items {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .progress-items::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .progress-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .progress-item:hover {
+            background: #f8f9fa;
+            transform: translateX(5px);
+        }
+
+        .progress-item.completed {
+            opacity: 0.7;
+        }
+
+        .progress-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .progress-label {
+            cursor: pointer;
+            font-size: 0.95em;
+            line-height: 1.5;
+            color: #495057;
+            flex-grow: 1;
+        }
+
+        .progress-item.completed .progress-label {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .toggle-progress {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .toggle-progress:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .progress-items.collapsed {
+            display: none;
+        }
+
+        /* CONTENT STYLES */
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 4px solid #667eea;
+            font-weight: 700;
+        }
+
+        h2 {
+            color: #764ba2;
+            font-size: 2em;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        h3 {
+            color: #495057;
+            font-size: 1.5em;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        h4 {
+            color: #666;
+            font-size: 1.25em;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        ul, ol {
+            margin: 20px 0;
+            padding-left: 40px;
+        }
+
+        li {
+            margin-bottom: 12px;
+            line-height: 1.7;
+        }
+
+        code {
+            background: #f4f5f7;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #c7254e;
+            border: 1px solid #e1e4e8;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 24px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 25px 0;
+            border: 1px solid #444;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            border: none;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        blockquote {
+            border-left: 5px solid #667eea;
+            padding: 15px 25px;
+            margin: 25px 0;
+            background: #f8f9fa;
+            border-radius: 0 8px 8px 0;
+            color: #495057;
+            font-style: italic;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 30px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 14px 18px;
+            text-align: left;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tr:hover {
+            background: #e9ecef;
+            transition: background 0.2s;
+        }
+
+        a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px solid transparent;
+            transition: border-bottom 0.2s;
+        }
+
+        a:hover {
+            border-bottom: 1px solid #667eea;
+        }
+
+        hr {
+            border: none;
+            border-top: 2px solid #e9ecef;
+            margin: 40px 0;
+        }
+
+        strong {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        em {
+            color: #495057;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 25px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.6em;
+            }
+
+            .progress-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .progress-stats {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../navigation.html" class="back-link">&larr; Back to Navigation</a>
+
+        <div class="metadata">
+            <strong>Source:</strong> dev/Mock_Interview_Practice_Guide.md &nbsp;|&nbsp; <strong>Updated:</strong> 2026-11-18 19:44:55
+        </div>
+
+        <!-- PROGRESS TRACKER -->
+        <div class="progress-tracker">
+            <div class="progress-header">
+                <div class="progress-title">
+                    <span>📚</span>
+                    <span>Your Progress</span>
+                </div>
+                <div class="progress-stats">
+                    <span class="progress-percentage" id="progress-pct">0%</span>
+                    <button class="reset-btn" onclick="resetProgress()">Reset</button>
+                    <button class="toggle-progress" onclick="toggleProgressList()">▼ Hide</button>
+                </div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progress-bar" style="width: 0%"></div>
+            </div>
+            <div class="progress-items" id="progress-items">
+                <!-- Checkboxes will be generated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="content">
+<h1 id="mock-interview-practice-guide">Mock Interview Practice Guide</h1>
+<blockquote>
+<p><strong>For 12+ Years Experience</strong>: Practice makes perfect — but only if you practice OUT LOUD</p>
+</blockquote>
+<hr />
+<h2 id="why-most-people-fail-interviews">⚠️ Why Most People Fail Interviews</h2>
+<p><strong>You can read 100 interview questions and still freeze when asked one.</strong></p>
+<p><strong>Problem:</strong> Reading answers ≠ Speaking answers under pressure</p>
+<div class="codehilite"><pre><span></span><code>❌<span class="w"> </span><span class="nv">What</span><span class="w"> </span><span class="nv">You</span><span class="w"> </span><span class="nv">Think</span>:
+<span class="w">  </span><span class="err">"I know the answer to 'Tell me about yourself' — I'll just say my name, </span>
+<span class="w">   </span><span class="nv">company</span>,<span class="w"> </span><span class="nv">and</span><span class="w"> </span><span class="nv">years</span><span class="w"> </span><span class="nv">of</span><span class="w"> </span><span class="nv">experience</span><span class="w"> </span><span class="nv">when</span><span class="w"> </span><span class="nv">they</span><span class="w"> </span><span class="nv">ask</span>.<span class="err">"</span>
+
+<span class="err">✅ Reality:</span>
+<span class="w">  </span><span class="nv">Interviewer</span>:<span class="w"> </span><span class="s2">"Tell me about yourself"</span>
+<span class="w">  </span><span class="nv">You</span>:<span class="w"> </span><span class="err">"Umm... so... I'm Karthik... I work at... umm... Billtrust... </span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="nv">like</span>...<span class="w"> </span><span class="mi">12</span><span class="w"> </span><span class="nv">years</span>...<span class="w"> </span><span class="nv">I</span><span class="w"> </span><span class="k">do</span>...<span class="w"> </span><span class="nv">umm</span>...<span class="w"> </span><span class="nv">backend</span><span class="w"> </span><span class="nv">stuff</span>...<span class="err">"</span>
+<span class="err">  → 30 seconds of painful filler words</span>
+</code></pre></div>
+
+<p><strong>The Fix:</strong> Practice OUT LOUD. Record yourself. Watch it back. Cringe. Improve. Repeat.</p>
+<hr />
+<h2 id="3-types-of-interview-practice">🎯 3 Types of Interview Practice</h2>
+<h3 id="type-1-solo-practice-record-yourself"><strong>Type 1: Solo Practice (Record Yourself)</strong></h3>
+<p><strong>What:</strong> You ask yourself a question, record your answer (video/audio), watch it back.</p>
+<p><strong>Why:</strong> You'll catch:<br />
+- Filler words ("umm", "like", "basically", "so")<br />
+- Rambling (5-min answer to a 2-min question)<br />
+- Lack of structure (no clear beginning/middle/end)<br />
+- Weak delivery (looking down, monotone voice)</p>
+<p><strong>How:</strong><br />
+1. Pick 1 question from the course<br />
+2. Set a 2-min timer<br />
+3. Hit record on your phone (video is better than audio)<br />
+4. Answer the question (no notes, no pausing)<br />
+5. Watch it back — count how many times you say "umm"<br />
+6. Record again (aim for 50% fewer filler words)</p>
+<p><strong>Goal:</strong> Get each answer under 2 minutes, structured, confident.</p>
+<hr />
+<h3 id="type-2-peer-practice-mock-interview"><strong>Type 2: Peer Practice (Mock Interview)</strong></h3>
+<p><strong>What:</strong> A friend plays the interviewer, you answer. Then swap roles.</p>
+<p><strong>Why:</strong> Real interviews have:<br />
+- Follow-up questions you didn't prepare for<br />
+- Silence (awkward pauses)<br />
+- Unexpected tangents ("Oh you used RabbitMQ? Why not Kafka?")</p>
+<p><strong>How:</strong><br />
+1. Find a friend (preferably engineer, but anyone works)<br />
+2. Give them a list of 10 questions from the course<br />
+3. Set a 30-min timer<br />
+4. They ask, you answer (no notes)<br />
+5. They give feedback: "You rambled on Q3, Q5 was great"<br />
+6. Swap: You interview them (you'll learn what good/bad answers sound like)</p>
+<p><strong>Goal:</strong> Get comfortable with:<br />
+- Being interrupted<br />
+- Thinking on your feet<br />
+- Defending your answers ("Are you sure RabbitMQ scales?")</p>
+<hr />
+<h3 id="type-3-professional-mock-interview-paid-coach"><strong>Type 3: Professional Mock Interview (Paid Coach)</strong></h3>
+<p><strong>What:</strong> Hire a pro interviewer (₹1000-2000/hour) for a full 60-min mock.</p>
+<p><strong>Why:</strong> <br />
+- Real interview feel (stranger asking hard questions)<br />
+- Professional feedback (not just "it was fine")<br />
+- Worth it for 1-2 sessions (not 10)</p>
+<p><strong>Where to Find:</strong><br />
+- <strong>Preplaced.in</strong> (India-focused, ex-FAANG interviewers)<br />
+- <strong>Interviewing.io</strong> (Global, anonymous practice)<br />
+- <strong>LinkedIn</strong> (search "Interview Coach India")</p>
+<p><strong>When to Use:</strong><br />
+- After you've practiced solo for 2 weeks (don't waste money before you're ready)<br />
+- 1 week before final-round interviews (tune your performance)</p>
+<p><strong>Cost:</strong> ₹2000 × 2 sessions = ₹4000 (worth it if it gets you ₹5 LPA more)</p>
+<hr />
+<h2 id="the-10-questions-you-must-practice-record-these-first">🎤 The 10 Questions You MUST Practice (Record These First)</h2>
+<h3 id="1-tell-me-about-yourself-60-seconds"><strong>1. Tell Me About Yourself (60 Seconds)</strong></h3>
+<p><strong>Goal:</strong> Memorable 60-sec intro that highlights your value.</p>
+<p><strong>Structure:</strong><br />
+- 10 sec: Name + current role<br />
+- 20 sec: What you do (technical depth)<br />
+- 20 sec: Key achievement (quantified)<br />
+- 10 sec: Why you're here (what you're looking for)</p>
+<p><strong>Your Draft:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="err">"I'm Karthik, a Staff Engineer at Billtrust with 12+ years in fintech and </span>
+<span class="err"> SaaS platforms. </span>
+
+<span class="err"> I specialize in NJQRT production triage — I've led root cause investigations </span>
+<span class="err"> for 100+ critical issues, preventing over $500k in revenue loss. I developed </span>
+<span class="err"> an AI-assisted triage workflow that reduced investigation time from 6 hours </span>
+<span class="err"> to 2 hours, now adopted by the team.</span>
+
+<span class="err"> I'm also hands-on with backend systems: PHP, .NET, MySQL, RabbitMQ, Kafka. </span>
+<span class="err"> Recently scaled our invoice generation workers from 5 to 20 pods, handling </span>
+<span class="err"> 100k invoices/month with zero downtime.</span>
+
+<span class="err"> I'm exploring Staff Engineer roles where I can apply my expertise in fintech </span>
+<span class="w"> </span><span class="nv">platforms</span><span class="w"> </span><span class="nv">and</span><span class="w"> </span><span class="nv">AI</span><span class="o">-</span><span class="nv">driven</span><span class="w"> </span><span class="nv">workflows</span><span class="w"> </span><span class="nv">to</span><span class="w"> </span><span class="nv">solve</span><span class="w"> </span><span class="nv">complex</span>,<span class="w"> </span><span class="nv">high</span><span class="o">-</span><span class="nv">impact</span><span class="w"> </span><span class="nv">problems</span>.<span class="err">"</span>
+</code></pre></div>
+
+<p><strong>Practice:</strong><br />
+- Record 5 times<br />
+- Goal: Under 60 seconds, no "umm"s, confident delivery</p>
+<hr />
+<h3 id="2-why-are-you-leaving-billtrust-30-seconds"><strong>2. Why Are You Leaving Billtrust? (30 Seconds)</strong></h3>
+<p><strong>Goal:</strong> Positive reason, not complaining.</p>
+<p><strong>❌ Bad:</strong><br />
+"My manager doesn't appreciate my work, and the company isn't giving raises."</p>
+<p><strong>✅ Good:</strong><br />
+"I've had a great 12 years at Billtrust — I've grown from Junior Engineer to <br />
+ Staff level, and I'm proud of the NJQRT triage system I built. </p>
+<p>At this point in my career, I'm looking for new challenges in a different <br />
+ domain or scale. I want to work on problems outside fintech — maybe e-commerce, <br />
+ healthcare, or gaming — and stretch my skills in distributed systems and AI."</p>
+<p><strong>Key:</strong> Frame it as growth, not escape.</p>
+<hr />
+<h3 id="3-walk-me-through-a-technical-challenge-2-minutes"><strong>3. Walk Me Through a Technical Challenge (2 Minutes)</strong></h3>
+<p><strong>Goal:</strong> STAR format, technical depth, quantified impact.</p>
+<p><strong>Pick Your Best Story:</strong><br />
+- NJQRT-14987 (invoice discount bug, $128k saved)<br />
+- RabbitMQ scaling (100k invoices, 4h → 50min)<br />
+- Fraud detection (credential stuffing, 42 customers protected)</p>
+<p><strong>Practice:</strong><br />
+- Record 3 different technical stories<br />
+- Keep each under 2 minutes<br />
+- Include: Situation → Task → Action → Result</p>
+<hr />
+<h3 id="4-whats-your-biggest-weakness-45-seconds"><strong>4. What's Your Biggest Weakness? (45 Seconds)</strong></h3>
+<p><strong>Goal:</strong> Real weakness + what you're doing to fix it.</p>
+<p><strong>❌ Bad:</strong><br />
+"I'm a perfectionist" (cliché, not a real weakness)</p>
+<p><strong>✅ Good:</strong><br />
+"Early in my career, I had a tendency to present interim conclusions as final. <br />
+ For example, in one triage case, I checked one audit table, didn't find the <br />
+ data, and concluded 'this rules out the audit mechanism.' </p>
+<p>Turned out there were 33 audit tables — I'd only checked 1.</p>
+<p>Since then, I've developed a checklist: enumerate all possibilities before <br />
+ concluding. I call it RC-5 (Root Cause Sanity Check) — it's now part of my <br />
+ team's standard process. This discipline has made me a much more thorough <br />
+ investigator."</p>
+<p><strong>Key:</strong> Weakness + lesson learned + current state.</p>
+<hr />
+<h3 id="5-where-do-you-see-yourself-in-5-years-30-seconds"><strong>5. Where Do You See Yourself in 5 Years? (30 Seconds)</strong></h3>
+<p><strong>Goal:</strong> Show ambition without sounding like you'll leave in 2 years.</p>
+<p><strong>❌ Bad:</strong><br />
+"I want to be CTO" (too ambitious, unrealistic)</p>
+<p><strong>✅ Good:</strong><br />
+"In 5 years, I see myself as a Principal Engineer or Engineering Manager, <br />
+ leading technical decisions for a product or platform.</p>
+<p>I want to mentor junior engineers — I've already trained 2 developers on NJQRT <br />
+ triage at Billtrust, and I find that really rewarding.</p>
+<p>Ideally, I'll be known as the 'go-to person' for solving hard production <br />
+ issues and building resilient systems."</p>
+<p><strong>Key:</strong> Leadership + mentorship + technical depth.</p>
+<hr />
+<h3 id="6-why-do-you-want-to-work-here-45-seconds"><strong>6. Why Do You Want to Work Here? (45 Seconds)</strong></h3>
+<p><strong>Goal:</strong> Show you researched the company (not just "I need a job").</p>
+<p><strong>Research First:</strong><br />
+- Read company tech blog (what tech stack? what problems?)<br />
+- Check LinkedIn: Who are the engineering leaders?<br />
+- Read Glassdoor reviews (culture, work-life balance)</p>
+<p><strong>Template:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="s">"I'm excited about [Company] for 3 reasons:</span>
+
+<span class="mf">1.</span><span class="w"> </span><span class="n">Technical</span><span class="w"> </span><span class="n">Challenge</span><span class="o">:</span><span class="w"> </span><span class="n">I</span><span class="w"> </span><span class="n">read</span><span class="w"> </span><span class="n">your</span><span class="w"> </span><span class="n">blog</span><span class="w"> </span><span class="n">post</span><span class="w"> </span><span class="n">about</span><span class="w"> </span><span class="p">[</span><span class="n">specific</span><span class="w"> </span><span class="n">tech</span><span class="w"> </span><span class="n">problem</span><span class="p">]</span><span class="w"> </span><span class="err">—</span><span class="w"> </span>
+<span class="w">   </span><span class="n">that</span><span class="err">'</span><span class="n">s</span><span class="w"> </span><span class="n">exactly</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">kind</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">scale</span><span class="w"> </span><span class="n">problem</span><span class="w"> </span><span class="n">I</span><span class="w"> </span><span class="n">want</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">solve</span><span class="p">.</span><span class="w"> </span><span class="n">At</span><span class="w"> </span><span class="n">Billtrust</span><span class="p">,</span><span class="w"> </span>
+<span class="w">   </span><span class="n">I</span><span class="w"> </span><span class="n">scaled</span><span class="w"> </span><span class="p">[</span><span class="n">similar</span><span class="w"> </span><span class="n">system</span><span class="p">],</span><span class="w"> </span><span class="n">so</span><span class="w"> </span><span class="n">I</span><span class="w"> </span><span class="n">have</span><span class="w"> </span><span class="n">direct</span><span class="w"> </span><span class="n">experience</span><span class="w"> </span><span class="n">here</span><span class="p">.</span>
+
+<span class="mf">2.</span><span class="w"> </span><span class="n">Domain</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="n">Company</span><span class="w"> </span><span class="n">domain</span><span class="w"> </span><span class="err">—</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="n">g</span><span class="p">.,</span><span class="w"> </span><span class="n">e</span><span class="o">-</span><span class="n">commerce</span><span class="p">,</span><span class="w"> </span><span class="n">healthcare</span><span class="p">]</span><span class="w"> </span><span class="n">is</span><span class="w"> </span><span class="n">new</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">me</span><span class="p">,</span><span class="w"> </span><span class="n">and</span><span class="w"> </span>
+<span class="w">   </span><span class="n">I</span><span class="w"> </span><span class="n">want</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">learn</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="n">different</span><span class="w"> </span><span class="n">problem</span><span class="w"> </span><span class="n">space</span><span class="w"> </span><span class="n">outside</span><span class="w"> </span><span class="n">fintech</span><span class="p">.</span>
+
+<span class="mf">3.</span><span class="w"> </span><span class="n">Team</span><span class="o">:</span><span class="w"> </span><span class="n">I</span><span class="w"> </span><span class="n">saw</span><span class="w"> </span><span class="n">on</span><span class="w"> </span><span class="n">LinkedIn</span><span class="w"> </span><span class="n">that</span><span class="w"> </span><span class="p">[</span><span class="n">Engineering</span><span class="w"> </span><span class="n">Leader</span><span class="w"> </span><span class="n">Name</span><span class="p">]</span><span class="w"> </span><span class="n">worked</span><span class="w"> </span><span class="n">at</span><span class="w"> </span><span class="p">[</span><span class="n">Previous</span><span class="w"> </span>
+<span class="w">   </span><span class="n">Company</span><span class="p">]</span><span class="w"> </span><span class="err">—</span><span class="w"> </span><span class="n">I</span><span class="w"> </span><span class="n">admire</span><span class="w"> </span><span class="n">their</span><span class="w"> </span><span class="n">work</span><span class="w"> </span><span class="n">on</span><span class="w"> </span><span class="p">[</span><span class="n">specific</span><span class="w"> </span><span class="n">project</span><span class="p">].</span><span class="w"> </span><span class="n">I</span><span class="err">'</span><span class="n">d</span><span class="w"> </span><span class="n">love</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">learn</span><span class="w"> </span>
+<span class="w">   </span><span class="n">from</span><span class="w"> </span><span class="n">them</span><span class="p">.</span><span class="s">"</span>
+</code></pre></div>
+
+<p><strong>Key:</strong> Specific reasons, not generic "great company!"</p>
+<hr />
+<h3 id="7-how-do-you-handle-disagreement-with-your-manager-1-minute"><strong>7. How Do You Handle Disagreement With Your Manager? (1 Minute)</strong></h3>
+<p><strong>Goal:</strong> Show you can disagree respectfully.</p>
+<p><strong>STAR Story:</strong><br />
+- Situation: Manager wanted to migrate from RabbitMQ to Kafka<br />
+- Task: I believed it was the wrong choice<br />
+- Action: Presented data-driven comparison (not emotion)<br />
+- Result: Decided to keep RabbitMQ, saved 6 weeks + $5k/month</p>
+<p><strong>Practice:</strong><br />
+- Use Story #8 from Behavioral_Interview_STAR_Method.md<br />
+- Keep under 1 minute</p>
+<hr />
+<h3 id="8-explain-technical-concept-to-a-non-technical-person-1-minute"><strong>8. Explain [Technical Concept] to a Non-Technical Person (1 Minute)</strong></h3>
+<p><strong>Examples:</strong><br />
+- "Explain RabbitMQ vs Kafka to a product manager"<br />
+- "Explain database indexing to a designer"<br />
+- "Explain OAuth to a sales rep"</p>
+<p><strong>Template:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nx">Imagine</span><span class="o">...</span>
+
+<span class="nx">RabbitMQ</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="k">like</span><span class="w"> </span><span class="nx">a</span><span class="w"> </span><span class="nx">post</span><span class="w"> </span><span class="nx">office</span><span class="p">:</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="nx">You</span><span class="w"> </span><span class="nx">drop</span><span class="w"> </span><span class="nx">a</span><span class="w"> </span><span class="nx">letter</span><span class="w"> </span><span class="p">(</span><span class="nx">message</span><span class="p">)</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="nx">the</span><span class="w"> </span><span class="nx">mailbox</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="nx">The</span><span class="w"> </span><span class="nx">post</span><span class="w"> </span><span class="nx">office</span><span class="w"> </span><span class="nx">delivers</span><span class="w"> </span><span class="nx">it</span><span class="w"> </span><span class="nx">to</span><span class="w"> </span><span class="nx">the</span><span class="w"> </span><span class="nx">recipient</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="nx">Once</span><span class="w"> </span><span class="nx">delivered</span><span class="p">,</span><span class="w"> </span><span class="nx">the</span><span class="w"> </span><span class="nx">letter</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="nx">gone</span><span class="w"> </span><span class="p">(</span><span class="nx">deleted</span><span class="p">)</span>
+
+<span class="nx">Kafka</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="k">like</span><span class="w"> </span><span class="nx">a</span><span class="w"> </span><span class="nx">newspaper</span><span class="p">:</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="nx">You</span><span class="w"> </span><span class="nx">publish</span><span class="w"> </span><span class="nx">an</span><span class="w"> </span><span class="nx">article</span><span class="w"> </span><span class="p">(</span><span class="nx">event</span><span class="p">)</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="nx">Multiple</span><span class="w"> </span><span class="nx">people</span><span class="w"> </span><span class="nx">can</span><span class="w"> </span><span class="nx">read</span><span class="w"> </span><span class="nx">the</span><span class="w"> </span><span class="nx">same</span><span class="w"> </span><span class="nx">article</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="nx">The</span><span class="w"> </span><span class="nx">article</span><span class="w"> </span><span class="nx">stays</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="nx">the</span><span class="w"> </span><span class="kn">library</span><span class="w"> </span><span class="nx">forever</span><span class="w"> </span><span class="p">(</span><span class="nx">retention</span><span class="p">)</span>
+
+<span class="nx">We</span><span class="w"> </span><span class="nx">use</span><span class="w"> </span><span class="nx">RabbitMQ</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="nx">tasks</span><span class="w"> </span><span class="p">(</span><span class="nx">invoice</span><span class="w"> </span><span class="nx">generation</span><span class="p">)</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="nx">Kafka</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="nx">events</span><span class="w"> </span>
+<span class="p">(</span><span class="nx">payment</span><span class="w"> </span><span class="nx">logs</span><span class="w"> </span><span class="nx">that</span><span class="w"> </span><span class="nx">multiple</span><span class="w"> </span><span class="nx">teams</span><span class="w"> </span><span class="nx">need</span><span class="p">).</span>
+</code></pre></div>
+
+<p><strong>Key:</strong> Analogy + simple language + no jargon.</p>
+<hr />
+<h3 id="9-do-you-have-any-questions-for-me-ask-3-questions"><strong>9. Do You Have Any Questions for Me? (Ask 3 Questions)</strong></h3>
+<p><strong>Goal:</strong> Show you're evaluating them (not just them evaluating you).</p>
+<p><strong>Your 3 Questions:</strong></p>
+<p><strong>Q1 (Team):</strong><br />
+"What's the team structure? How many engineers? What's the split between <br />
+ senior/junior developers?"<br />
+→ Learn: Are you joining a mature team or starting from scratch?</p>
+<p><strong>Q2 (Tech):</strong><br />
+"What's the biggest technical challenge the team is facing right now?"<br />
+→ Learn: What will you work on Day 1?</p>
+<p><strong>Q3 (Culture):</strong><br />
+"How does the team handle production incidents? Is there an on-call rotation?"<br />
+→ Learn: Work-life balance, expectations</p>
+<p><strong>Key:</strong> Ask about THEIR challenges, not just perks ("do you have free food?").</p>
+<hr />
+<h3 id="10-system-design-design-system-from-your-experience-10-minutes"><strong>10. System Design: Design [System from Your Experience] (10 Minutes)</strong></h3>
+<p><strong>Examples:</strong><br />
+- Invoice delivery system (100k invoices/month)<br />
+- Payment processing (10k transactions/hour)<br />
+- Fraud detection (real-time, 100 ms latency)</p>
+<p><strong>Practice:</strong><br />
+- Draw on paper/whiteboard<br />
+- Explain out loud (record yourself)<br />
+- Keep under 10 minutes (high-level design only)</p>
+<hr />
+<h2 id="recording-setup">📹 Recording Setup</h2>
+<h3 id="tools-you-need"><strong>Tools You Need:</strong></h3>
+<p><strong>Video:</strong><br />
+- Phone camera (default Camera app)<br />
+- Laptop webcam (OBS Studio, free)<br />
+- Zoom (record yourself in a meeting)</p>
+<p><strong>Audio Only:</strong><br />
+- Voice Memos (iPhone)<br />
+- Google Recorder (Android)<br />
+- Audacity (desktop, free)</p>
+<p><strong>Where to Save:</strong><br />
+- Google Drive folder: "Interview Practice"<br />
+- Watch 1 week later (you'll cringe, that's good!)</p>
+<hr />
+<h2 id="practice-schedule-4-weeks">🎯 Practice Schedule (4 Weeks)</h2>
+<h3 id="week-1-solo-practice-record-10-core-questions"><strong>Week 1: Solo Practice (Record 10 Core Questions)</strong></h3>
+<p><strong>Monday-Friday (1 hour/day):</strong><br />
+- Day 1: "Tell me about yourself" + "Why leaving Billtrust?" (record 5x each)<br />
+- Day 2: "Technical challenge" (record 3 different stories)<br />
+- Day 3: "Biggest weakness" + "5 years from now"<br />
+- Day 4: "Why this company?" (customize for 3 companies)<br />
+- Day 5: "Questions for interviewer" (practice asking)</p>
+<p><strong>Weekend:</strong><br />
+- Watch all 10 recordings<br />
+- Count filler words ("umm", "like", "so")<br />
+- Goal: Reduce by 50%</p>
+<hr />
+<h3 id="week-2-behavioral-questions-record-10-star-stories"><strong>Week 2: Behavioral Questions (Record 10 STAR Stories)</strong></h3>
+<p><strong>Monday-Friday (1 hour/day):</strong><br />
+- Day 1: Technical problem-solving (Record Story #1, #2 from STAR guide)<br />
+- Day 2: Leadership (Record Story #5, #10)<br />
+- Day 3: Failure (Record Story #4)<br />
+- Day 4: Collaboration (Record Story #3, #6)<br />
+- Day 5: Influence (Record Story #8)</p>
+<p><strong>Weekend:</strong><br />
+- Watch all 10 stories<br />
+- Keep each under 2 minutes<br />
+- Goal: Clear structure (Situation → Task → Action → Result)</p>
+<hr />
+<h3 id="week-3-system-design-draw-explain-5-systems"><strong>Week 3: System Design (Draw &amp; Explain 5 Systems)</strong></h3>
+<p><strong>Monday-Friday (1 hour/day):</strong><br />
+- Day 1: Invoice delivery system (draw + explain)<br />
+- Day 2: Payment processing (draw + explain)<br />
+- Day 3: User authentication (SSO) (draw + explain)<br />
+- Day 4: Fraud detection (draw + explain)<br />
+- Day 5: Notification system (draw + explain)</p>
+<p><strong>Weekend:</strong><br />
+- Record yourself explaining each design (video)<br />
+- Goal: Under 10 minutes each, clear boxes/arrows</p>
+<hr />
+<h3 id="week-4-mock-interview-full-60-min-simulation"><strong>Week 4: Mock Interview (Full 60-Min Simulation)</strong></h3>
+<p><strong>Monday-Wednesday:</strong><br />
+- Find a friend willing to interview you<br />
+- Give them 15 questions from the course<br />
+- 30-min behavioral + 30-min system design<br />
+- Get feedback</p>
+<p><strong>Thursday-Friday:</strong><br />
+- Hire a professional mock interviewer (Preplaced.in)<br />
+- 60-min full interview<br />
+- Get detailed feedback</p>
+<p><strong>Weekend:</strong><br />
+- Fix weak areas based on feedback<br />
+- Record final versions of your top 5 answers</p>
+<hr />
+<h2 id="interview-day-checklist">✅ Interview Day Checklist</h2>
+<h3 id="1-day-before"><strong>1 Day Before:</strong></h3>
+<ul>
+<li>[ ] Re-watch your recorded answers (don't re-record, just refresh memory)</li>
+<li>[ ] Print 3 copies of your resume</li>
+<li>[ ] Prepare 3 questions to ask interviewer</li>
+<li>[ ] Test Zoom/Google Meet (if virtual)</li>
+<li>[ ] Pick your outfit (plain solid colors on video)</li>
+</ul>
+<h3 id="2-hours-before"><strong>2 Hours Before:</strong></h3>
+<ul>
+<li>[ ] Eat a meal (don't interview hungry)</li>
+<li>[ ] No coffee right before (you'll talk too fast)</li>
+<li>[ ] Bathroom break</li>
+<li>[ ] Close all tabs except interview link</li>
+<li>[ ] Turn off phone notifications</li>
+</ul>
+<h3 id="10-minutes-before"><strong>10 Minutes Before:</strong></h3>
+<ul>
+<li>[ ] Deep breaths (4 sec in, 4 sec hold, 4 sec out)</li>
+<li>[ ] Smile (sounds weird, but it relaxes your voice)</li>
+<li>[ ] Review your 60-sec intro ("Tell me about yourself")</li>
+<li>[ ] Join meeting 2 min early (not 10 min early, awkward silence)</li>
+</ul>
+<h3 id="during-interview"><strong>During Interview:</strong></h3>
+<ul>
+<li>[ ] Smile when you answer (even on video)</li>
+<li>[ ] Pause 2 seconds before answering (shows thoughtfulness)</li>
+<li>[ ] Use the interviewer's name ("That's a great question, [Name]...")</li>
+<li>[ ] Take notes (shows you're listening)</li>
+<li>[ ] Ask clarifying questions ("Can I confirm: you're asking about X?")</li>
+</ul>
+<h3 id="after-interview"><strong>After Interview:</strong></h3>
+<ul>
+<li>[ ] Send thank-you email within 24 hours</li>
+<li>[ ] Write down questions you struggled with</li>
+<li>[ ] Practice those questions for next interview</li>
+</ul>
+<hr />
+<h2 id="your-practice-goal">🚀 Your Practice Goal</h2>
+<p><strong>By End of Week 4:</strong><br />
+- ✅ 10 core questions recorded (under 2 min each)<br />
+- ✅ 10 STAR stories recorded (under 2 min each)<br />
+- ✅ 5 system designs drawn + explained (under 10 min each)<br />
+- ✅ 2 full mock interviews completed (1 friend, 1 pro)<br />
+- ✅ Filler words reduced by 70% (from baseline)</p>
+<p><strong>Result:</strong> You'll walk into your real interview with muscle memory. You won't freeze.</p>
+<hr />
+<h2 id="key-takeaways">💡 Key Takeaways</h2>
+<p>✅ <strong>Reading ≠ Speaking</strong>: Practice OUT LOUD<br />
+✅ <strong>Record yourself</strong>: You can't improve what you don't see<br />
+✅ <strong>Keep answers under 2 minutes</strong>: Interviewers lose attention after that<br />
+✅ <strong>Structure matters</strong>: STAR format for behavioral, boxes/arrows for system design<br />
+✅ <strong>Practice with pressure</strong>: Mock interviews &gt; solo practice  </p>
+<p>You know the answers. Now you just need to deliver them confidently under pressure. 🎯</p>
+        </div>
+    </div>
+
+    <script>
+        // Progress Tracker JavaScript
+        const STORAGE_KEY = 'course_progress_mock_interview_practice_guide';
+
+        // Extract all H2 and H3 headings from content
+        function extractSections() {
+            const content = document.querySelector('.content');
+            const headings = content.querySelectorAll('h2, h3');
+            const sections = [];
+
+            headings.forEach((heading, index) => {
+                const level = heading.tagName === 'H2' ? 2 : 3;
+                const text = heading.textContent.trim();
+                const id = `section-${index}`;
+
+                // Add ID to heading for linking
+                heading.id = id;
+
+                sections.push({
+                    id: id,
+                    text: text,
+                    level: level
+                });
+            });
+
+            return sections;
+        }
+
+        // Load saved progress from localStorage
+        function loadProgress() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            return saved ? JSON.parse(saved) : {};
+        }
+
+        // Save progress to localStorage
+        function saveProgress(progress) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+        }
+
+        // Calculate progress percentage
+        function calculateProgress() {
+            const checkboxes = document.querySelectorAll('.progress-checkbox');
+            const total = checkboxes.length;
+            if (total === 0) return 0;
+
+            const completed = Array.from(checkboxes).filter(cb => cb.checked).length;
+            return Math.round((completed / total) * 100);
+        }
+
+        // Update progress display
+        function updateProgressDisplay() {
+            const percentage = calculateProgress();
+            document.getElementById('progress-pct').textContent = percentage + '%';
+            document.getElementById('progress-bar').style.width = percentage + '%';
+
+            // Update completed class on items
+            document.querySelectorAll('.progress-item').forEach(item => {
+                const checkbox = item.querySelector('.progress-checkbox');
+                if (checkbox.checked) {
+                    item.classList.add('completed');
+                } else {
+                    item.classList.remove('completed');
+                }
+            });
+        }
+
+        // Toggle checkbox
+        function toggleCheckbox(sectionId) {
+            const checkbox = document.getElementById('cb-' + sectionId);
+            const progress = loadProgress();
+
+            progress[sectionId] = checkbox.checked;
+            saveProgress(progress);
+            updateProgressDisplay();
+        }
+
+        // Reset all progress
+        function resetProgress() {
+            if (confirm('Reset all progress for this page?')) {
+                localStorage.removeItem(STORAGE_KEY);
+                document.querySelectorAll('.progress-checkbox').forEach(cb => {
+                    cb.checked = false;
+                });
+                updateProgressDisplay();
+            }
+        }
+
+        // Toggle progress list visibility
+        function toggleProgressList() {
+            const list = document.getElementById('progress-items');
+            const btn = document.querySelector('.toggle-progress');
+
+            if (list.classList.contains('collapsed')) {
+                list.classList.remove('collapsed');
+                btn.textContent = '▼ Hide';
+            } else {
+                list.classList.add('collapsed');
+                btn.textContent = '▶ Show';
+            }
+        }
+
+        // Initialize progress tracker
+        function initProgressTracker() {
+            const sections = extractSections();
+            const progress = loadProgress();
+            const container = document.getElementById('progress-items');
+
+            if (sections.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No sections found</p>';
+                return;
+            }
+
+            sections.forEach(section => {
+                const item = document.createElement('div');
+                item.className = 'progress-item';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'progress-checkbox';
+                checkbox.id = 'cb-' + section.id;
+                checkbox.checked = progress[section.id] || false;
+                checkbox.onchange = () => toggleCheckbox(section.id);
+
+                const label = document.createElement('label');
+                label.className = 'progress-label';
+                label.htmlFor = 'cb-' + section.id;
+                label.textContent = section.text;
+                label.style.paddingLeft = section.level === 3 ? '20px' : '0';
+                label.onclick = () => {
+                    document.getElementById(section.id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+                };
+
+                item.appendChild(checkbox);
+                item.appendChild(label);
+                container.appendChild(item);
+            });
+
+            updateProgressDisplay();
+        }
+
+        // Run on page load
+        document.addEventListener('DOMContentLoaded', initProgressTracker);
+    </script>
+</body>
+</html>

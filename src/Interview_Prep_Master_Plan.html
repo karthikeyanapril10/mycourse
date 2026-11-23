@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interview_Prep_Master_Plan</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 60px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .metadata {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 16px 24px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #666;
+            border-left: 4px solid #667eea;
+        }
+
+        /* PROGRESS TRACKER STYLES */
+        .progress-tracker {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .progress-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-stats {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .progress-percentage {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #764ba2;
+        }
+
+        .progress-bar-container {
+            height: 12px;
+            background: #e9ecef;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+            border-radius: 20px;
+        }
+
+        .reset-btn {
+            padding: 8px 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+
+        .reset-btn:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+        }
+
+        .progress-items {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .progress-items::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .progress-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .progress-item:hover {
+            background: #f8f9fa;
+            transform: translateX(5px);
+        }
+
+        .progress-item.completed {
+            opacity: 0.7;
+        }
+
+        .progress-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .progress-label {
+            cursor: pointer;
+            font-size: 0.95em;
+            line-height: 1.5;
+            color: #495057;
+            flex-grow: 1;
+        }
+
+        .progress-item.completed .progress-label {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .toggle-progress {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .toggle-progress:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .progress-items.collapsed {
+            display: none;
+        }
+
+        /* CONTENT STYLES */
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 4px solid #667eea;
+            font-weight: 700;
+        }
+
+        h2 {
+            color: #764ba2;
+            font-size: 2em;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        h3 {
+            color: #495057;
+            font-size: 1.5em;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        h4 {
+            color: #666;
+            font-size: 1.25em;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        ul, ol {
+            margin: 20px 0;
+            padding-left: 40px;
+        }
+
+        li {
+            margin-bottom: 12px;
+            line-height: 1.7;
+        }
+
+        code {
+            background: #f4f5f7;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #c7254e;
+            border: 1px solid #e1e4e8;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 24px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 25px 0;
+            border: 1px solid #444;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            border: none;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        blockquote {
+            border-left: 5px solid #667eea;
+            padding: 15px 25px;
+            margin: 25px 0;
+            background: #f8f9fa;
+            border-radius: 0 8px 8px 0;
+            color: #495057;
+            font-style: italic;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 30px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 14px 18px;
+            text-align: left;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tr:hover {
+            background: #e9ecef;
+            transition: background 0.2s;
+        }
+
+        a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px solid transparent;
+            transition: border-bottom 0.2s;
+        }
+
+        a:hover {
+            border-bottom: 1px solid #667eea;
+        }
+
+        hr {
+            border: none;
+            border-top: 2px solid #e9ecef;
+            margin: 40px 0;
+        }
+
+        strong {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        em {
+            color: #495057;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 25px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.6em;
+            }
+
+            .progress-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .progress-stats {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../navigation.html" class="back-link">&larr; Back to Navigation</a>
+
+        <div class="metadata">
+            <strong>Source:</strong> dev/Interview_Prep_Master_Plan.md &nbsp;|&nbsp; <strong>Updated:</strong> 2026-11-18 19:44:54
+        </div>
+
+        <!-- PROGRESS TRACKER -->
+        <div class="progress-tracker">
+            <div class="progress-header">
+                <div class="progress-title">
+                    <span>📚</span>
+                    <span>Your Progress</span>
+                </div>
+                <div class="progress-stats">
+                    <span class="progress-percentage" id="progress-pct">0%</span>
+                    <button class="reset-btn" onclick="resetProgress()">Reset</button>
+                    <button class="toggle-progress" onclick="toggleProgressList()">▼ Hide</button>
+                </div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progress-bar" style="width: 0%"></div>
+            </div>
+            <div class="progress-items" id="progress-items">
+                <!-- Checkboxes will be generated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="content">
+<h1 id="interview-preparation-master-plan">Interview Preparation Master Plan</h1>
+<p><strong>Complete Study Guide for Senior Full-Stack Engineer (12+ Years Experience)</strong></p>
+<p><strong>Location:</strong> <code>C:\Users\kasekar\GH\interview-prep\</code></p>
+<hr />
+<h2 id="your-complete-interview-package">📚 <strong>Your Complete Interview Package</strong></h2>
+<h3 id="resume-profile"><strong>Resume &amp; Profile</strong></h3>
+<ol>
+<li>✅ <code>Karthikeyan_Sekar_Resume_Beautiful.html</code> - Your beautiful resume (PDF-ready)</li>
+<li>✅ <code>Karthikeyan_Sekar_Resume_ATS_Optimized.md</code> - Plain text version</li>
+<li>✅ <code>LinkedIn_Profile_Update_Guide.md</code> - Complete LinkedIn optimization</li>
+<li>✅ <code>CREATE_PDF_NOW.md</code> - PDF conversion instructions</li>
+</ol>
+<h3 id="technical-interview-preparation"><strong>Technical Interview Preparation</strong></h3>
+<ol start="5">
+<li>✅ <code>Technical_Interview_QA_Resume_Projects.md</code> - Part 1 (50+ questions)</li>
+<li>✅ <code>Technical_Interview_QA_Resume_Projects_Part2.md</code> - Part 2 (45+ questions)</li>
+<li>✅ <code>Mock_Interview_Questions.md</code> - Full mock interviews</li>
+<li>✅ <code>Scenario_Based_Case_Studies.md</code> - Real-world scenarios</li>
+<li>✅ <code>Code_Examples_Practice.md</code> - Hands-on coding challenges</li>
+</ol>
+<h3 id="learning-path-guides"><strong>Learning Path Guides</strong></h3>
+<ol start="10">
+<li>✅ <code>LEARNING_PATH_FullStack_AI.md</code> - 8-week full-stack learning path</li>
+<li>✅ <code>START_HERE.md</code> - Master navigation guide</li>
+<li>✅ <strong>THIS FILE</strong> - Master plan &amp; study schedule</li>
+</ol>
+<h3 id="subject-specific-guides-20-files"><strong>Subject-Specific Guides</strong> (20 files)</h3>
+<ul>
+<li>System Design, Python/FastAPI, React.js, AWS, Redis, Kafka</li>
+<li>Elasticsearch, CI/CD, Kubernetes, API Design, Microservices</li>
+<li>Payment Gateway, AI Agentic Workflows, and more...</li>
+</ul>
+<hr />
+<h2 id="2-week-interview-prep-plan">🎯 <strong>2-Week Interview Prep Plan</strong></h2>
+<h3 id="week-1-technical-deep-dive"><strong>Week 1: Technical Deep-Dive</strong></h3>
+<h4 id="day-1-2-resume-projects-eic-cc-csr"><strong>Day 1-2: Resume Projects (EIC, CC, CSR)</strong></h4>
+<p><strong>Morning (2 hours):</strong><br />
+- [ ] Read <code>Technical_Interview_QA_Resume_Projects.md</code> - Sections 1-3<br />
+- [ ] Practice explaining EIC architecture (database sharding, multi-language)<br />
+- [ ] Practice explaining CC vs EIC differences</p>
+<p><strong>Afternoon (2 hours):</strong><br />
+- [ ] Do coding exercises from <code>Code_Examples_Practice.md</code> - Database section<br />
+- [ ] Practice SQL queries (sharding, caching)<br />
+- [ ] Draw architecture diagrams (Stack1/Stack2)</p>
+<p><strong>Evening (1 hour):</strong><br />
+- [ ] Review CSR caching strategy (3-layer: APCu, Redis, MySQL)<br />
+- [ ] Practice explaining in 5 minutes (record yourself)</p>
+<p><strong>Success Metrics:</strong><br />
+- ✅ Can explain EIC architecture without notes<br />
+- ✅ Can draw Stack1/Stack2 diagram from memory<br />
+- ✅ Can write cache-aside pattern code from scratch</p>
+<hr />
+<h4 id="day-3-4-microservices-wcl-mpay-amapi"><strong>Day 3-4: Microservices (WCL, MPay, AMAPI)</strong></h4>
+<p><strong>Morning (2 hours):</strong><br />
+- [ ] Read <code>Technical_Interview_QA_Resume_Projects.md</code> - Sections 4-6<br />
+- [ ] Understand WCL's encrypted auth mechanism<br />
+- [ ] Understand MPay's idempotency pattern</p>
+<p><strong>Afternoon (2 hours):</strong><br />
+- [ ] Do <code>Code_Examples_Practice.md</code> - Microservices section<br />
+- [ ] Implement idempotency key logic<br />
+- [ ] Implement connection pooling example</p>
+<p><strong>Evening (1 hour):</strong><br />
+- [ ] Practice explaining service-to-service communication<br />
+- [ ] Draw microservices architecture diagram</p>
+<p><strong>Success Metrics:</strong><br />
+- ✅ Can explain idempotency to prevent duplicate charges<br />
+- ✅ Can code connection pooling from scratch<br />
+- ✅ Can draw WCL integration diagram</p>
+<hr />
+<h4 id="day-5-whitelabel-incident-tracker"><strong>Day 5: Whitelabel + Incident Tracker</strong></h4>
+<p><strong>Morning (2 hours):</strong><br />
+- [ ] Read <code>Technical_Interview_QA_Resume_Projects.md</code> - Sections 7-8<br />
+- [ ] Understand dynamic RBAC implementation<br />
+- [ ] Understand incident categorization system</p>
+<p><strong>Afternoon (2 hours):</strong><br />
+- [ ] Do <code>Scenario_Based_Case_Studies.md</code> - Case Study 1 &amp; 2<br />
+- [ ] Practice explaining RBAC to non-technical stakeholders<br />
+- [ ] Practice RCA process</p>
+<p><strong>Evening (1 hour):</strong><br />
+- [ ] Review all 8 projects (can you explain each in 3 minutes?)</p>
+<p><strong>Success Metrics:</strong><br />
+- ✅ Can explain all 8 projects briefly (3 min each)<br />
+- ✅ Can solve RCA case study without looking at answers</p>
+<hr />
+<h4 id="day-6-7-architecture-performance"><strong>Day 6-7: Architecture + Performance</strong></h4>
+<p><strong>Morning (2 hours):</strong><br />
+- [ ] Read <code>Technical_Interview_QA_Resume_Projects.md</code> - Sections 9-11<br />
+- [ ] Study microservices communication patterns<br />
+- [ ] Study performance debugging process</p>
+<p><strong>Afternoon (2 hours):</strong><br />
+- [ ] Do <code>Code_Examples_Practice.md</code> - Performance section<br />
+- [ ] Practice SQL query optimization<br />
+- [ ] Practice caching implementation</p>
+<p><strong>Evening (1 hour):</strong><br />
+- [ ] Review System_Design_Interview_Guide.md (from your existing guides)<br />
+- [ ] Practice 7-step system design framework</p>
+<p><strong>Success Metrics:</strong><br />
+- ✅ Can debug slow API (500ms → 50ms) systematically<br />
+- ✅ Can design a new microservice from scratch<br />
+- ✅ Can explain trade-offs: MySQL vs PostgreSQL vs MongoDB</p>
+<hr />
+<h3 id="week-2-advanced-topics-mock-interviews"><strong>Week 2: Advanced Topics + Mock Interviews</strong></h3>
+<h4 id="day-8-9-database-security"><strong>Day 8-9: Database + Security</strong></h4>
+<p><strong>Morning (2 hours):</strong><br />
+- [ ] Read <code>Technical_Interview_QA_Resume_Projects_Part2.md</code> - Section 12<br />
+- [ ] Study 100M+ row optimization strategies<br />
+- [ ] Study database comparison (MySQL/PostgreSQL/MongoDB)</p>
+<p><strong>Afternoon (2 hours):</strong><br />
+- [ ] Do <code>Code_Examples_Practice.md</code> - Database optimization section<br />
+- [ ] Practice partitioning strategy<br />
+- [ ] Practice indexing strategy</p>
+<p><strong>Evening (1 hour):</strong><br />
+- [ ] Read Part2 - Section 11 (Security &amp; PCI-DSS)<br />
+- [ ] Review PCI compliance requirements</p>
+<p><strong>Success Metrics:</strong><br />
+- ✅ Can optimize 100M+ row table step-by-step<br />
+- ✅ Can explain PCI-DSS compliance implementation<br />
+- ✅ Can explain database choice trade-offs</p>
+<hr />
+<h4 id="day-10-11-leadership-behavioral"><strong>Day 10-11: Leadership + Behavioral</strong></h4>
+<p><strong>Morning (2 hours):</strong><br />
+- [ ] Read <code>Technical_Interview_QA_Resume_Projects_Part2.md</code> - Section 13<br />
+- [ ] Study mentoring approach (3 junior developers)<br />
+- [ ] Study disagreement scenario (data-driven approach)</p>
+<p><strong>Afternoon (2 hours):</strong><br />
+- [ ] Do <code>Scenario_Based_Case_Studies.md</code> - Leadership scenarios<br />
+- [ ] Practice STAR format answers (Situation, Task, Action, Result)<br />
+- [ ] Write 5 leadership stories</p>
+<p><strong>Evening (1 hour):</strong><br />
+- [ ] Review <code>Interview_Preparation_Guide.md</code> (behavioral questions)<br />
+- [ ] Practice 2-minute elevator pitch</p>
+<p><strong>Success Metrics:</strong><br />
+- ✅ Have 5 STAR stories ready (mentoring, disagreement, production issue, etc.)<br />
+- ✅ Can explain mentoring philosophy clearly<br />
+- ✅ 2-minute pitch is smooth and confident</p>
+<hr />
+<h4 id="day-12-production-debugging"><strong>Day 12: Production Debugging</strong></h4>
+<p><strong>Morning (2 hours):</strong><br />
+- [ ] Read <code>Technical_Interview_QA_Resume_Projects_Part2.md</code> - Section 14<br />
+- [ ] Study incident response process (8-minute outage)<br />
+- [ ] Study post-mortem template</p>
+<p><strong>Afternoon (2 hours):</strong><br />
+- [ ] Do <code>Scenario_Based_Case_Studies.md</code> - Production scenarios<br />
+- [ ] Practice incident timeline creation<br />
+- [ ] Practice root cause analysis</p>
+<p><strong>Evening (1 hour):</strong><br />
+- [ ] Review debugging checklist<br />
+- [ ] Practice explaining incident response process</p>
+<p><strong>Success Metrics:</strong><br />
+- ✅ Can walk through production incident response step-by-step<br />
+- ✅ Can write post-mortem from scenario<br />
+- ✅ Know incident response checklist by heart</p>
+<hr />
+<h4 id="day-13-mock-interviews"><strong>Day 13: Mock Interviews</strong></h4>
+<p><strong>Morning (3 hours):</strong><br />
+- [ ] Do <code>Mock_Interview_Questions.md</code> - Technical Phone Screen<br />
+- [ ] Record yourself (audio/video)<br />
+- [ ] Time yourself (45 minutes)</p>
+<p><strong>Afternoon (3 hours):</strong><br />
+- [ ] Do <code>Mock_Interview_Questions.md</code> - System Design Interview<br />
+- [ ] Draw diagrams on whiteboard<br />
+- [ ] Time yourself (60 minutes)</p>
+<p><strong>Evening (2 hours):</strong><br />
+- [ ] Review recordings<br />
+- [ ] Identify weak areas<br />
+- [ ] Practice weak areas again</p>
+<p><strong>Success Metrics:</strong><br />
+- ✅ Completed full mock interview without looking at answers<br />
+- ✅ Identified 3 areas to improve<br />
+- ✅ Answers are clear and confident</p>
+<hr />
+<h4 id="day-14-final-review-weak-areas"><strong>Day 14: Final Review + Weak Areas</strong></h4>
+<p><strong>Morning (2 hours):</strong><br />
+- [ ] Review weak areas identified on Day 13<br />
+- [ ] Re-read relevant sections<br />
+- [ ] Practice weak areas</p>
+<p><strong>Afternoon (2 hours):</strong><br />
+- [ ] Do <code>Mock_Interview_Questions.md</code> - Behavioral Interview<br />
+- [ ] Practice all STAR stories<br />
+- [ ] Practice questions to ask interviewer</p>
+<p><strong>Evening (2 hours):</strong><br />
+- [ ] Final review of all 8 projects (1 sentence each)<br />
+- [ ] Review key metrics (40%, 60%, 80%, 99.9%)<br />
+- [ ] Get good sleep! 😴</p>
+<p><strong>Success Metrics:</strong><br />
+- ✅ Weak areas now feel strong<br />
+- ✅ Can explain all projects confidently<br />
+- ✅ Ready for interview tomorrow!</p>
+<hr />
+<h2 id="deep-understanding-checklist">✅ <strong>Deep Understanding Checklist</strong></h2>
+<h3 id="for-each-of-your-8-projects"><strong>For Each of Your 8 Projects:</strong></h3>
+<h4 id="1-einvoice-connect-eic"><strong>1. eInvoice Connect (EIC)</strong></h4>
+<ul>
+<li>[ ] Can explain database sharding (Stack1/Stack2) strategy</li>
+<li>[ ] Can explain why sharding vs other approaches</li>
+<li>[ ] Can explain 10-minute email authentication flow</li>
+<li>[ ] Can explain multi-language implementation (12+ languages)</li>
+<li>[ ] Can explain sub-user delegation architecture</li>
+<li>[ ] Can explain AutoPay threshold logic</li>
+<li>[ ] Can code cache-aside pattern for this project</li>
+<li>[ ] Can draw architecture diagram from memory</li>
+</ul>
+<h4 id="2-client-connect-cc"><strong>2. Client Connect (CC)</strong></h4>
+<ul>
+<li>[ ] Can explain difference from EIC (supplier vs customer)</li>
+<li>[ ] Can explain payment on behalf of customer (security)</li>
+<li>[ ] Can explain bulk onboarding via AMAPI</li>
+<li>[ ] Can explain group-based access control (admin/standard/customer)</li>
+<li>[ ] Can explain MPay enablement workflow</li>
+<li>[ ] Can draw CC ↔ AMAPI integration</li>
+<li>[ ] Can explain when to use CC vs EIC</li>
+</ul>
+<h4 id="3-customer-settings-repository-csr"><strong>3. Customer Settings Repository (CSR)</strong></h4>
+<ul>
+<li>[ ] Can explain 3-layer caching (APCu, Redis, MySQL)</li>
+<li>[ ] Can explain why each layer exists</li>
+<li>[ ] Can explain versioned settings with rollback</li>
+<li>[ ] Can explain how 200+ microservices use CSR</li>
+<li>[ ] Can explain cache invalidation strategy</li>
+<li>[ ] Can code cache implementation</li>
+<li>[ ] Can explain &lt;50ms lookup achievement</li>
+</ul>
+<h4 id="4-web-communication-layer-wcl"><strong>4. Web Communication Layer (WCL)</strong></h4>
+<ul>
+<li>[ ] Can explain connection pooling strategy</li>
+<li>[ ] Can explain connection leak detection</li>
+<li>[ ] Can explain encrypted key authentication</li>
+<li>[ ] Can explain key rotation strategy</li>
+<li>[ ] Can explain TTL-based caching</li>
+<li>[ ] Can explain service-to-service auth</li>
+<li>[ ] Can draw WCL architecture diagram</li>
+</ul>
+<h4 id="5-managed-pay-mpay"><strong>5. Managed Pay (MPay)</strong></h4>
+<ul>
+<li>[ ] Can explain idempotency to prevent duplicate charges</li>
+<li>[ ] Can code idempotency implementation</li>
+<li>[ ] Can explain threshold-based AutoPay</li>
+<li>[ ] Can explain integration with CC and EIC</li>
+<li>[ ] Can explain 80% dispute reduction</li>
+<li>[ ] Can explain payment gateway integration</li>
+</ul>
+<h4 id="6-account-management-api-amapi"><strong>6. Account Management API (AMAPI)</strong></h4>
+<ul>
+<li>[ ] Can explain &lt;100ms response time strategy</li>
+<li>[ ] Can explain Bloom filter for duplicate detection</li>
+<li>[ ] Can explain batch processing approach</li>
+<li>[ ] Can explain multi-layer audit logging</li>
+<li>[ ] Can explain 50,000+ accounts/month scale</li>
+<li>[ ] Can code bulk insert optimization</li>
+</ul>
+<h4 id="7-multi-domain-whitelabel-platform"><strong>7. Multi-Domain Whitelabel Platform</strong></h4>
+<ul>
+<li>[ ] Can explain dynamic RBAC architecture</li>
+<li>[ ] Can explain custom role names (20+ customers)</li>
+<li>[ ] Can explain permission-based approach</li>
+<li>[ ] Can explain use across industries (school, gym, hospital, etc.)</li>
+<li>[ ] Can explain Razorpay integration</li>
+<li>[ ] Can draw RBAC schema</li>
+</ul>
+<h4 id="8-incident-remediation-rca-tracker"><strong>8. Incident Remediation &amp; RCA Tracker</strong></h4>
+<ul>
+<li>[ ] Can explain 100+ features × 1000+ customers scale</li>
+<li>[ ] Can explain categorization (Critical/High/Medium/Low)</li>
+<li>[ ] Can explain SLO deadline tracking</li>
+<li>[ ] Can explain historical RCA search</li>
+<li>[ ] Can explain release notes generation</li>
+<li>[ ] Can explain full-stack architecture (FastAPI + React)</li>
+</ul>
+<hr />
+<h2 id="technical-skills-checklist">📊 <strong>Technical Skills Checklist</strong></h2>
+<h3 id="architecture-design"><strong>Architecture &amp; Design</strong></h3>
+<ul>
+<li>[ ] Can design a microservice from scratch</li>
+<li>[ ] Can explain microservices communication patterns</li>
+<li>[ ] Can explain when to use microservices vs monolith</li>
+<li>[ ] Can explain service-to-service authentication</li>
+<li>[ ] Can explain API gateway pattern</li>
+<li>[ ] Can draw system architecture diagrams</li>
+</ul>
+<h3 id="database"><strong>Database</strong></h3>
+<ul>
+<li>[ ] Can optimize 100M+ row table</li>
+<li>[ ] Can explain database sharding</li>
+<li>[ ] Can explain partitioning strategy</li>
+<li>[ ] Can write complex SQL queries</li>
+<li>[ ] Can use EXPLAIN to debug queries</li>
+<li>[ ] Can choose between MySQL/PostgreSQL/MongoDB</li>
+<li>[ ] Can design database schema</li>
+</ul>
+<h3 id="caching"><strong>Caching</strong></h3>
+<ul>
+<li>[ ] Can implement cache-aside pattern</li>
+<li>[ ] Can explain 3-layer caching</li>
+<li>[ ] Can explain cache invalidation strategies</li>
+<li>[ ] Can explain TTL-based caching</li>
+<li>[ ] Can explain when to use Redis vs Memcached</li>
+<li>[ ] Can code caching implementation</li>
+</ul>
+<h3 id="performance"><strong>Performance</strong></h3>
+<ul>
+<li>[ ] Can debug slow API (500ms → 50ms)</li>
+<li>[ ] Can identify bottlenecks (Datadog APM)</li>
+<li>[ ] Can optimize database queries</li>
+<li>[ ] Can implement connection pooling</li>
+<li>[ ] Can explain indexing strategies</li>
+<li>[ ] Can measure performance improvements</li>
+</ul>
+<h3 id="security"><strong>Security</strong></h3>
+<ul>
+<li>[ ] Can explain PCI-DSS compliance</li>
+<li>[ ] Can implement encryption (at rest, in transit)</li>
+<li>[ ] Can implement authentication/authorization</li>
+<li>[ ] Can explain idempotency patterns</li>
+<li>[ ] Can prevent SQL injection</li>
+<li>[ ] Can explain security best practices</li>
+</ul>
+<h3 id="leadership"><strong>Leadership</strong></h3>
+<ul>
+<li>[ ] Can explain mentoring approach</li>
+<li>[ ] Can give examples of mentoring success</li>
+<li>[ ] Can explain how to disagree with manager</li>
+<li>[ ] Can explain technical decision-making</li>
+<li>[ ] Can explain production incident response</li>
+<li>[ ] Can write post-mortems</li>
+</ul>
+<hr />
+<h2 id="interview-day-checklist">🎯 <strong>Interview Day Checklist</strong></h2>
+<h3 id="1-week-before"><strong>1 Week Before:</strong></h3>
+<ul>
+<li>[ ] Resume PDF created and saved</li>
+<li>[ ] LinkedIn profile updated</li>
+<li>[ ] Completed 2-week study plan</li>
+<li>[ ] Practiced all mock interviews</li>
+<li>[ ] Identified and improved weak areas</li>
+</ul>
+<h3 id="1-day-before"><strong>1 Day Before:</strong></h3>
+<ul>
+<li>[ ] Review all 8 projects (can explain each in 3 min)</li>
+<li>[ ] Review key metrics (40%, 60%, 80%, 99.9%)</li>
+<li>[ ] Review STAR stories (have 5 ready)</li>
+<li>[ ] Review questions to ask interviewer</li>
+<li>[ ] Prepare clean workspace (whiteboard/paper for system design)</li>
+<li>[ ] Get good sleep (8 hours)</li>
+</ul>
+<h3 id="morning-of"><strong>Morning Of:</strong></h3>
+<ul>
+<li>[ ] Light review (don't cram!)</li>
+<li>[ ] Review 2-minute elevator pitch</li>
+<li>[ ] Review company research (why you want to work there)</li>
+<li>[ ] Eat breakfast</li>
+<li>[ ] Dress professionally</li>
+<li>[ ] Test tech (internet, mic, camera if virtual)</li>
+</ul>
+<h3 id="during-interview"><strong>During Interview:</strong></h3>
+<ul>
+<li>[ ] Listen carefully to question (don't interrupt)</li>
+<li>[ ] Ask clarifying questions (requirements, constraints)</li>
+<li>[ ] Think out loud (show your process)</li>
+<li>[ ] Use STAR format for behavioral questions</li>
+<li>[ ] Draw diagrams for system design</li>
+<li>[ ] Explain trade-offs (not just one solution)</li>
+<li>[ ] Ask questions at the end (shows interest)</li>
+</ul>
+<h3 id="after-interview"><strong>After Interview:</strong></h3>
+<ul>
+<li>[ ] Send thank-you email (within 24 hours)</li>
+<li>[ ] Reflect on what went well/poorly</li>
+<li>[ ] Update study plan if needed</li>
+<li>[ ] Prepare for next round</li>
+</ul>
+<hr />
+<h2 id="key-metrics-to-memorize">📝 <strong>Key Metrics to Memorize</strong></h2>
+<p><strong>Your Impact Numbers:</strong><br />
+- <strong>40%</strong> faster incident resolution (AI workflows)<br />
+- <strong>60%</strong> more security findings (automated review)<br />
+- <strong>80%</strong> database load reduction (Redis caching)<br />
+- <strong>95%</strong> cache hit rate maintained<br />
+- <strong>99.9%</strong> uptime SLA<br />
+- <strong>100%</strong> success rate (200+ DB changes)<br />
+- <strong>500+</strong> production incidents resolved<br />
+- <strong>&lt; 15 min</strong> MTTR (rollback time)<br />
+- <strong>&lt; 100ms</strong> API response time<br />
+- <strong>&lt; 50ms</strong> settings lookup (CSR)<br />
+- <strong>10,000+</strong> customers served<br />
+- <strong>100M+</strong> rows optimized<br />
+- <strong>12+ years</strong> PHP/Laravel experience<br />
+- <strong>8 projects</strong> on resume (know each deeply)<br />
+- <strong>3 junior developers</strong> mentored<br />
+- <strong>200+ microservices</strong> served (CSR)</p>
+<hr />
+<h2 id="study-session-template">🚀 <strong>Study Session Template</strong></h2>
+<p><strong>Use this for each study session:</strong></p>
+<h3 id="session-start-5-min"><strong>Session Start (5 min):</strong></h3>
+<ol>
+<li>Review what you learned yesterday</li>
+<li>Set today's goal (specific and measurable)</li>
+<li>Time-box each activity</li>
+</ol>
+<h3 id="study-block-25-min"><strong>Study Block (25 min):</strong></h3>
+<ol>
+<li>Read/watch material (focus on understanding, not memorizing)</li>
+<li>Take notes (write in your own words)</li>
+<li>Practice explaining (teach it back to yourself)</li>
+</ol>
+<h3 id="practice-block-25-min"><strong>Practice Block (25 min):</strong></h3>
+<ol>
+<li>Code examples (write from memory)</li>
+<li>Draw diagrams (architecture, flow charts)</li>
+<li>Answer practice questions (without looking at answers first)</li>
+</ol>
+<h3 id="break-5-min"><strong>Break (5 min):</strong></h3>
+<ol>
+<li>Stand up, stretch, walk around</li>
+<li>Clear your mind</li>
+<li>Prepare for next session</li>
+</ol>
+<h3 id="end-session-5-min"><strong>End Session (5 min):</strong></h3>
+<ol>
+<li>Review what you learned today</li>
+<li>Write down weak areas</li>
+<li>Plan tomorrow's focus</li>
+</ol>
+<hr />
+<h2 id="success-criteria">🏆 <strong>Success Criteria</strong></h2>
+<p><strong>You're ready when you can:</strong></p>
+<ol>
+<li><strong>Explain all 8 projects</strong> in 3 minutes each without notes</li>
+<li><strong>Draw architecture diagrams</strong> from memory (EIC sharding, CSR caching, WCL integration)</li>
+<li><strong>Code core patterns</strong> from scratch (idempotency, connection pooling, cache-aside)</li>
+<li><strong>Answer 90%+ questions</strong> in the Q&amp;A guides without looking</li>
+<li><strong>Complete mock interviews</strong> in time (45 min phone, 60 min system design)</li>
+<li><strong>Tell 5 STAR stories</strong> smoothly and confidently</li>
+<li><strong>Ask smart questions</strong> at the end of every mock interview</li>
+<li><strong>Explain trade-offs</strong> (not just one approach)</li>
+<li><strong>Handle curveball questions</strong> (say "I don't know" then reason through it)</li>
+<li><strong>Feel confident</strong> (not nervous) about your resume projects</li>
+</ol>
+<hr />
+<h2 id="daily-reminders">📌 <strong>Daily Reminders</strong></h2>
+<p><strong>Before Each Study Session:</strong><br />
+- [ ] Clear workspace (close distractions)<br />
+- [ ] Set timer (Pomodoro: 25 min work, 5 min break)<br />
+- [ ] Goal for this session (write it down)</p>
+<p><strong>During Study:</strong><br />
+- [ ] No multitasking (focus 100%)<br />
+- [ ] Take notes by hand (better retention)<br />
+- [ ] Explain out loud (teach yourself)<br />
+- [ ] Code examples from scratch (no copy-paste)</p>
+<p><strong>After Study:</strong><br />
+- [ ] Review what you learned<br />
+- [ ] Practice explaining to a friend/mirror<br />
+- [ ] Sleep well (8 hours for memory consolidation)</p>
+<hr />
+<h2 id="learning-tips">🎓 <strong>Learning Tips</strong></h2>
+<h3 id="for-code"><strong>For Code:</strong></h3>
+<ul>
+<li><strong>Don't just read code</strong> — write it from scratch</li>
+<li><strong>Don't copy-paste</strong> — type it out yourself</li>
+<li><strong>Test your code</strong> — run it, see errors, fix them</li>
+<li><strong>Explain every line</strong> — what does it do, why is it needed?</li>
+</ul>
+<h3 id="for-architecture"><strong>For Architecture:</strong></h3>
+<ul>
+<li><strong>Draw diagrams</strong> — boxes, arrows, labels</li>
+<li><strong>Explain flow</strong> — request comes in, goes here, then there</li>
+<li><strong>Identify bottlenecks</strong> — where can it fail, slow down?</li>
+<li><strong>Consider trade-offs</strong> — why this approach over others?</li>
+</ul>
+<h3 id="for-interviews"><strong>For Interviews:</strong></h3>
+<ul>
+<li><strong>Think out loud</strong> — interviewers want to see your process</li>
+<li><strong>Ask clarifying questions</strong> — requirements, constraints, scale</li>
+<li><strong>Start simple</strong> — basic solution first, then optimize</li>
+<li><strong>Handle edge cases</strong> — empty input, max values, null, errors</li>
+<li><strong>Measure impact</strong> — always quantify (40%, 500ms → 50ms, etc.)</li>
+</ul>
+<h3 id="for-confidence"><strong>For Confidence:</strong></h3>
+<ul>
+<li><strong>Practice daily</strong> — even 30 minutes helps</li>
+<li><strong>Record yourself</strong> — watch/listen back, improve</li>
+<li><strong>Mock with friends</strong> — peer interviews are gold</li>
+<li><strong>Celebrate small wins</strong> — finished a section? Great!</li>
+<li><strong>Don't compare</strong> — your journey is unique</li>
+</ul>
+<hr />
+<h2 id="common-mistakes-to-avoid">🚨 <strong>Common Mistakes to Avoid</strong></h2>
+<ol>
+<li><strong>Cramming the night before</strong> → Study consistently, not last minute</li>
+<li><strong>Memorizing without understanding</strong> → Explain "why", not just "what"</li>
+<li><strong>Skipping practice</strong> → Reading ≠ doing, code it yourself</li>
+<li><strong>Not timing yourself</strong> → Real interviews have time limits</li>
+<li><strong>Giving up too early</strong> → "I don't know" is better than silence, reason through it</li>
+<li><strong>Not asking questions</strong> → Interviewers expect you to clarify</li>
+<li><strong>Over-explaining</strong> → Keep answers concise (3-5 min max)</li>
+<li><strong>Ignoring weak areas</strong> → Review what you don't know, not what you do</li>
+<li><strong>Not preparing questions</strong> → Always have 3-5 questions ready</li>
+<li><strong>Poor storytelling</strong> → Use STAR format for behavioral questions</li>
+</ol>
+<hr />
+<h2 id="files-reference">📂 <strong>Files Reference</strong></h2>
+<p><strong>Main Study Files</strong> (read in order):<br />
+1. <code>Interview_Prep_Master_Plan.md</code> ← <strong>YOU ARE HERE</strong><br />
+2. <code>Technical_Interview_QA_Resume_Projects.md</code> (Part 1)<br />
+3. <code>Technical_Interview_QA_Resume_Projects_Part2.md</code> (Part 2)<br />
+4. <code>Mock_Interview_Questions.md</code><br />
+5. <code>Scenario_Based_Case_Studies.md</code><br />
+6. <code>Code_Examples_Practice.md</code></p>
+<p><strong>Resume &amp; Profile:</strong><br />
+- <code>Karthikeyan_Sekar_Resume_Beautiful.html</code><br />
+- <code>LinkedIn_Profile_Update_Guide.md</code><br />
+- <code>CREATE_PDF_NOW.md</code></p>
+<p><strong>Learning Path:</strong><br />
+- <code>LEARNING_PATH_FullStack_AI.md</code> (8-week full-stack + AI)<br />
+- <code>START_HERE.md</code> (navigation guide)</p>
+<p><strong>20+ Subject Guides:</strong> (in <code>interview-prep/</code> folder)<br />
+- System Design, Python/FastAPI, React.js, AWS, Redis, Kafka, etc.</p>
+<hr />
+<h2 id="motivation">💪 <strong>Motivation</strong></h2>
+<p><strong>You have:</strong><br />
+- ✅ 12+ years of experience<br />
+- ✅ 8 impressive projects with real impact<br />
+- ✅ Leadership experience (3 junior developers mentored)<br />
+- ✅ Production expertise (500+ incidents resolved)<br />
+- ✅ Quantifiable results (40%, 60%, 80%, 99.9%)<br />
+- ✅ Full-stack skills (PHP, Python, React, AWS)<br />
+- ✅ AI-first mindset (FastAPI, agentic workflows)</p>
+<p><strong>You are ready.</strong> This prep plan is just to make sure you show it confidently.</p>
+<hr />
+<h2 id="next-session-continuation">🎯 <strong>Next Session Continuation</strong></h2>
+<p><strong>To continue your learning in another session:</strong></p>
+<ol>
+<li><strong>Open this file first:</strong> <code>Interview_Prep_Master_Plan.md</code></li>
+<li><strong>Check your progress:</strong> Review the 2-week plan checkboxes</li>
+<li><strong>Pick up where you left off:</strong> Read today's section</li>
+<li><strong>Follow the study session template:</strong> Morning/Afternoon/Evening blocks</li>
+<li><strong>Track completion:</strong> Mark checkboxes as you finish</li>
+</ol>
+<p><strong>All files are persistent</strong> — your progress is saved!</p>
+<hr />
+<p><strong>Location:</strong> <code>C:\Users\kasekar\GH\interview-prep\</code></p>
+<p><strong>YOU'VE GOT THIS! 🚀</strong></p>
+<hr />
+<p><strong>Created:</strong> 2026-11-16<br />
+<strong>For:</strong> Karthikeyan Sekar (12+ years Full-Stack Engineer)<br />
+<strong>Goal:</strong> Land senior-level role in Chennai/Bengaluru<br />
+<strong>Status:</strong> Complete interview prep package ready!</p>
+        </div>
+    </div>
+
+    <script>
+        // Progress Tracker JavaScript
+        const STORAGE_KEY = 'course_progress_interview_prep_master_plan';
+
+        // Extract all H2 and H3 headings from content
+        function extractSections() {
+            const content = document.querySelector('.content');
+            const headings = content.querySelectorAll('h2, h3');
+            const sections = [];
+
+            headings.forEach((heading, index) => {
+                const level = heading.tagName === 'H2' ? 2 : 3;
+                const text = heading.textContent.trim();
+                const id = `section-${index}`;
+
+                // Add ID to heading for linking
+                heading.id = id;
+
+                sections.push({
+                    id: id,
+                    text: text,
+                    level: level
+                });
+            });
+
+            return sections;
+        }
+
+        // Load saved progress from localStorage
+        function loadProgress() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            return saved ? JSON.parse(saved) : {};
+        }
+
+        // Save progress to localStorage
+        function saveProgress(progress) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+        }
+
+        // Calculate progress percentage
+        function calculateProgress() {
+            const checkboxes = document.querySelectorAll('.progress-checkbox');
+            const total = checkboxes.length;
+            if (total === 0) return 0;
+
+            const completed = Array.from(checkboxes).filter(cb => cb.checked).length;
+            return Math.round((completed / total) * 100);
+        }
+
+        // Update progress display
+        function updateProgressDisplay() {
+            const percentage = calculateProgress();
+            document.getElementById('progress-pct').textContent = percentage + '%';
+            document.getElementById('progress-bar').style.width = percentage + '%';
+
+            // Update completed class on items
+            document.querySelectorAll('.progress-item').forEach(item => {
+                const checkbox = item.querySelector('.progress-checkbox');
+                if (checkbox.checked) {
+                    item.classList.add('completed');
+                } else {
+                    item.classList.remove('completed');
+                }
+            });
+        }
+
+        // Toggle checkbox
+        function toggleCheckbox(sectionId) {
+            const checkbox = document.getElementById('cb-' + sectionId);
+            const progress = loadProgress();
+
+            progress[sectionId] = checkbox.checked;
+            saveProgress(progress);
+            updateProgressDisplay();
+        }
+
+        // Reset all progress
+        function resetProgress() {
+            if (confirm('Reset all progress for this page?')) {
+                localStorage.removeItem(STORAGE_KEY);
+                document.querySelectorAll('.progress-checkbox').forEach(cb => {
+                    cb.checked = false;
+                });
+                updateProgressDisplay();
+            }
+        }
+
+        // Toggle progress list visibility
+        function toggleProgressList() {
+            const list = document.getElementById('progress-items');
+            const btn = document.querySelector('.toggle-progress');
+
+            if (list.classList.contains('collapsed')) {
+                list.classList.remove('collapsed');
+                btn.textContent = '▼ Hide';
+            } else {
+                list.classList.add('collapsed');
+                btn.textContent = '▶ Show';
+            }
+        }
+
+        // Initialize progress tracker
+        function initProgressTracker() {
+            const sections = extractSections();
+            const progress = loadProgress();
+            const container = document.getElementById('progress-items');
+
+            if (sections.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No sections found</p>';
+                return;
+            }
+
+            sections.forEach(section => {
+                const item = document.createElement('div');
+                item.className = 'progress-item';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'progress-checkbox';
+                checkbox.id = 'cb-' + section.id;
+                checkbox.checked = progress[section.id] || false;
+                checkbox.onchange = () => toggleCheckbox(section.id);
+
+                const label = document.createElement('label');
+                label.className = 'progress-label';
+                label.htmlFor = 'cb-' + section.id;
+                label.textContent = section.text;
+                label.style.paddingLeft = section.level === 3 ? '20px' : '0';
+                label.onclick = () => {
+                    document.getElementById(section.id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+                };
+
+                item.appendChild(checkbox);
+                item.appendChild(label);
+                container.appendChild(item);
+            });
+
+            updateProgressDisplay();
+        }
+
+        // Run on page load
+        document.addEventListener('DOMContentLoaded', initProgressTracker);
+    </script>
+</body>
+</html>

@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kubernetes_Deep_Dive_Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 60px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .metadata {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 16px 24px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #666;
+            border-left: 4px solid #667eea;
+        }
+
+        /* PROGRESS TRACKER STYLES */
+        .progress-tracker {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .progress-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-stats {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .progress-percentage {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #764ba2;
+        }
+
+        .progress-bar-container {
+            height: 12px;
+            background: #e9ecef;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+            border-radius: 20px;
+        }
+
+        .reset-btn {
+            padding: 8px 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+
+        .reset-btn:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+        }
+
+        .progress-items {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .progress-items::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .progress-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .progress-item:hover {
+            background: #f8f9fa;
+            transform: translateX(5px);
+        }
+
+        .progress-item.completed {
+            opacity: 0.7;
+        }
+
+        .progress-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .progress-label {
+            cursor: pointer;
+            font-size: 0.95em;
+            line-height: 1.5;
+            color: #495057;
+            flex-grow: 1;
+        }
+
+        .progress-item.completed .progress-label {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .toggle-progress {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .toggle-progress:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .progress-items.collapsed {
+            display: none;
+        }
+
+        /* CONTENT STYLES */
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 4px solid #667eea;
+            font-weight: 700;
+        }
+
+        h2 {
+            color: #764ba2;
+            font-size: 2em;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        h3 {
+            color: #495057;
+            font-size: 1.5em;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        h4 {
+            color: #666;
+            font-size: 1.25em;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        ul, ol {
+            margin: 20px 0;
+            padding-left: 40px;
+        }
+
+        li {
+            margin-bottom: 12px;
+            line-height: 1.7;
+        }
+
+        code {
+            background: #f4f5f7;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #c7254e;
+            border: 1px solid #e1e4e8;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 24px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 25px 0;
+            border: 1px solid #444;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            border: none;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        blockquote {
+            border-left: 5px solid #667eea;
+            padding: 15px 25px;
+            margin: 25px 0;
+            background: #f8f9fa;
+            border-radius: 0 8px 8px 0;
+            color: #495057;
+            font-style: italic;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 30px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 14px 18px;
+            text-align: left;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tr:hover {
+            background: #e9ecef;
+            transition: background 0.2s;
+        }
+
+        a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px solid transparent;
+            transition: border-bottom 0.2s;
+        }
+
+        a:hover {
+            border-bottom: 1px solid #667eea;
+        }
+
+        hr {
+            border: none;
+            border-top: 2px solid #e9ecef;
+            margin: 40px 0;
+        }
+
+        strong {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        em {
+            color: #495057;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 25px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.6em;
+            }
+
+            .progress-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .progress-stats {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../navigation.html" class="back-link">&larr; Back to Navigation</a>
+
+        <div class="metadata">
+            <strong>Source:</strong> dev/Kubernetes_Deep_Dive_Guide.md &nbsp;|&nbsp; <strong>Updated:</strong> 2026-11-18 19:44:55
+        </div>
+
+        <!-- PROGRESS TRACKER -->
+        <div class="progress-tracker">
+            <div class="progress-header">
+                <div class="progress-title">
+                    <span>📚</span>
+                    <span>Your Progress</span>
+                </div>
+                <div class="progress-stats">
+                    <span class="progress-percentage" id="progress-pct">0%</span>
+                    <button class="reset-btn" onclick="resetProgress()">Reset</button>
+                    <button class="toggle-progress" onclick="toggleProgressList()">▼ Hide</button>
+                </div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progress-bar" style="width: 0%"></div>
+            </div>
+            <div class="progress-items" id="progress-items">
+                <!-- Checkboxes will be generated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="content">
+<h1 id="kubernetes-deep-dive-guide">Kubernetes Deep Dive Guide</h1>
+<p><strong>For Senior Software Engineer Interviews</strong></p>
+<p>Your competitive advantage: <strong>Production EKS experience</strong> (6 environments, daily kubectl usage, multi-tenant workloads at scale)</p>
+<hr />
+<h2 id="quick-reference">Quick Reference</h2>
+<h3 id="production-eks-clusters">Production EKS Clusters</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># 6 Active Environments</span>
+us-dev<span class="w"> </span><span class="o">(</span>full<span class="w"> </span>kubectl<span class="w"> </span>access<span class="o">)</span>
+us-stage<span class="w"> </span><span class="o">(</span>read-only<span class="o">)</span>
+us-uat<span class="w"> </span><span class="o">(</span>read-only<span class="o">)</span>
+us-prod<span class="w"> </span><span class="o">(</span>read-only<span class="o">)</span>
+eu-uat<span class="w"> </span><span class="o">(</span>read-only<span class="o">)</span>
+eu-prod<span class="w"> </span><span class="o">(</span>read-only<span class="o">)</span>
+
+<span class="c1"># Daily Commands</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>invoicing-prod
+kubectl<span class="w"> </span>logs<span class="w"> </span>-f<span class="w"> </span>&lt;pod&gt;<span class="w"> </span>-n<span class="w"> </span>invoicing-prod
+kubectl<span class="w"> </span>describe<span class="w"> </span>pod<span class="w"> </span>&lt;pod&gt;<span class="w"> </span>-n<span class="w"> </span>invoicing-prod
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>&lt;pod&gt;<span class="w"> </span>-n<span class="w"> </span>invoicing-dev<span class="w"> </span>--<span class="w"> </span>/bin/bash
+</code></pre></div>
+
+<hr />
+<h2 id="core-concepts">Core Concepts</h2>
+<h3 id="pod-smallest-unit">Pod (Smallest Unit)</h3>
+<div class="codehilite"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">eic-pod</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">eic</span>
+<span class="w">    </span><span class="nt">env</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prod</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">eic</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Enterprise SaaS Company/eic:latest</span>
+<span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">containerPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+<span class="w">    </span><span class="nt">env</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DB_HOST</span>
+<span class="w">      </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">"billingclient1.rds.amazonaws.com"</span>
+</code></pre></div>
+
+<p><strong>Pod = 1+ containers sharing:</strong><br />
+- Network namespace (localhost between containers)<br />
+- Storage volumes<br />
+- Same node</p>
+<hr />
+<h3 id="deployment-manages-pods">Deployment (Manages Pods)</h3>
+<div class="codehilite"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">eic</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">invoicing-prod</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">eic</span>
+<span class="w">  </span><span class="nt">template</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">eic</span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">eic</span>
+<span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Enterprise SaaS Company/eic:2026-11-16</span>
+<span class="w">        </span><span class="nt">resources</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">requests</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="s">"512Mi"</span>
+<span class="w">            </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">"500m"</span>
+<span class="w">          </span><span class="nt">limits</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="s">"1Gi"</span>
+<span class="w">            </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">"1000m"</span>
+</code></pre></div>
+
+<p><strong>Deployment ensures:</strong><br />
+- 10 replicas always running<br />
+- Rolling updates (zero downtime)<br />
+- Self-healing (restarts failed pods)</p>
+<hr />
+<h3 id="service-load-balancer">Service (Load Balancer)</h3>
+<div class="codehilite"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Service</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">eic</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">invoicing-prod</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">LoadBalancer</span><span class="w">  </span><span class="c1"># AWS ELB</span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">eic</span>
+<span class="w">  </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+<span class="w">    </span><span class="nt">targetPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+</code></pre></div>
+
+<p><strong>Service → Pods:</strong><br />
+- Discovers all pods with label <code>app: eic</code><br />
+- Load balances across them<br />
+- Stable endpoint (DNS: <code>eic.invoicing-prod.svc.cluster.local</code>)</p>
+<hr />
+<h3 id="configmap-secrets">ConfigMap &amp; Secrets</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># ConfigMap (non-sensitive)</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ConfigMap</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app-config</span>
+<span class="nt">data</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">APP_ENV</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">production</span>
+<span class="w">  </span><span class="nt">LOG_LEVEL</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">info</span>
+<span class="w">  </span><span class="nt">CACHE_TTL</span><span class="p">:</span><span class="w"> </span><span class="s">"3600"</span>
+
+<span class="nn">---</span>
+<span class="c1"># Secret (sensitive)</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Secret</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">db-credentials</span>
+<span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Opaque</span>
+<span class="nt">data</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">YWRtaW4=</span><span class="w">  </span><span class="c1"># base64 encoded</span>
+<span class="w">  </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cGFzc3dvcmQ=</span>
+</code></pre></div>
+
+<p><strong>Use in Pod:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">eic</span>
+<span class="w">    </span><span class="nt">env</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">APP_ENV</span>
+<span class="w">      </span><span class="nt">valueFrom</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">configMapKeyRef</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app-config</span>
+<span class="w">          </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">APP_ENV</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DB_USER</span>
+<span class="w">      </span><span class="nt">valueFrom</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">secretKeyRef</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">db-credentials</span>
+<span class="w">          </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">username</span>
+</code></pre></div>
+
+<hr />
+<h2 id="your-daily-kubectl-commands">Your Daily kubectl Commands</h2>
+<h3 id="get-resources">Get Resources</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># List pods</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>invoicing-prod
+kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>invoicing-prod<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span>eic<span class="w">  </span><span class="c1"># Filter by label</span>
+
+<span class="c1"># Wide output (node, IP)</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>invoicing-prod<span class="w"> </span>-o<span class="w"> </span>wide
+
+<span class="c1"># Watch (live updates)</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>invoicing-prod<span class="w"> </span>--watch
+
+<span class="c1"># All resources</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>all<span class="w"> </span>-n<span class="w"> </span>invoicing-prod
+</code></pre></div>
+
+<h3 id="logs">Logs</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Tail logs</span>
+kubectl<span class="w"> </span>logs<span class="w"> </span>-f<span class="w"> </span>&lt;pod-name&gt;<span class="w"> </span>-n<span class="w"> </span>invoicing-prod
+
+<span class="c1"># Last 100 lines</span>
+kubectl<span class="w"> </span>logs<span class="w"> </span>&lt;pod-name&gt;<span class="w"> </span>-n<span class="w"> </span>invoicing-prod<span class="w"> </span>--tail<span class="o">=</span><span class="m">100</span>
+
+<span class="c1"># Specific container (multi-container pod)</span>
+kubectl<span class="w"> </span>logs<span class="w"> </span>&lt;pod-name&gt;<span class="w"> </span>-c<span class="w"> </span>&lt;container-name&gt;<span class="w"> </span>-n<span class="w"> </span>invoicing-prod
+
+<span class="c1"># Previous crashed pod</span>
+kubectl<span class="w"> </span>logs<span class="w"> </span>&lt;pod-name&gt;<span class="w"> </span>-n<span class="w"> </span>invoicing-prod<span class="w"> </span>--previous
+</code></pre></div>
+
+<h3 id="describe-debug-info">Describe (Debug Info)</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Pod details</span>
+kubectl<span class="w"> </span>describe<span class="w"> </span>pod<span class="w"> </span>&lt;pod-name&gt;<span class="w"> </span>-n<span class="w"> </span>invoicing-prod
+
+<span class="c1"># Shows:</span>
+<span class="c1"># - Events (why pod crashed)</span>
+<span class="c1"># - Resource usage</span>
+<span class="c1"># - Restart count</span>
+<span class="c1"># - Node placement</span>
+</code></pre></div>
+
+<h3 id="exec-ssh-into-pod">Exec (SSH into pod)</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Bash shell (dev only)</span>
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>&lt;pod-name&gt;<span class="w"> </span>-n<span class="w"> </span>invoicing-dev<span class="w"> </span>--<span class="w"> </span>/bin/bash
+
+<span class="c1"># Run single command</span>
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>&lt;pod-name&gt;<span class="w"> </span>-n<span class="w"> </span>invoicing-dev<span class="w"> </span>--<span class="w"> </span>php<span class="w"> </span>artisan<span class="w"> </span>migrate:status
+</code></pre></div>
+
+<h3 id="edit-resources">Edit Resources</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Edit deployment (live)</span>
+kubectl<span class="w"> </span>edit<span class="w"> </span>deployment<span class="w"> </span>eic<span class="w"> </span>-n<span class="w"> </span>invoicing-prod
+
+<span class="c1"># Scale replicas</span>
+kubectl<span class="w"> </span>scale<span class="w"> </span>deployment<span class="w"> </span>eic<span class="w"> </span>-n<span class="w"> </span>invoicing-prod<span class="w"> </span>--replicas<span class="o">=</span><span class="m">15</span>
+</code></pre></div>
+
+<h3 id="rollout-management">Rollout Management</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Check rollout status</span>
+kubectl<span class="w"> </span>rollout<span class="w"> </span>status<span class="w"> </span>deployment/eic<span class="w"> </span>-n<span class="w"> </span>invoicing-prod
+
+<span class="c1"># Rollout history</span>
+kubectl<span class="w"> </span>rollout<span class="w"> </span><span class="nb">history</span><span class="w"> </span>deployment/eic<span class="w"> </span>-n<span class="w"> </span>invoicing-prod
+
+<span class="c1"># Rollback to previous version</span>
+kubectl<span class="w"> </span>rollout<span class="w"> </span>undo<span class="w"> </span>deployment/eic<span class="w"> </span>-n<span class="w"> </span>invoicing-prod
+
+<span class="c1"># Rollback to specific revision</span>
+kubectl<span class="w"> </span>rollout<span class="w"> </span>undo<span class="w"> </span>deployment/eic<span class="w"> </span>-n<span class="w"> </span>invoicing-prod<span class="w"> </span>--to-revision<span class="o">=</span><span class="m">3</span>
+</code></pre></div>
+
+<hr />
+<h2 id="interview-questions-answers">Interview Questions &amp; Answers</h2>
+<h3 id="q1-explain-the-difference-between-a-pod-deployment-and-service-in-kubernetes">Q1: "Explain the difference between a Pod, Deployment, and Service in Kubernetes."</h3>
+<p><strong>Your Answer:</strong></p>
+<blockquote>
+<p><em>"In a production environment, we use all three for our EIC application:</em></p>
+<p><strong>Pod (Atomic Unit):</strong><br />
+<em>- Smallest deployable unit</em><br />
+<em>- 1+ containers sharing network + storage</em><br />
+<em>- Ephemeral (can die anytime)</em><br />
+<em>- Example: eic-pod-abc123 running our PHP app</em></p>
+<p><strong>Deployment (Controller):</strong><br />
+<em>- Manages a set of identical pods (replica set)</em><br />
+<em>- Ensures desired state (10 replicas always running)</em><br />
+<em>- Handles updates (rolling deployment)</em><br />
+<em>- Self-healing (restarts failed pods)</em></p>
+<p><code>yaml
+Deployment: eic (replicas: 10)
+  ↓
+Creates 10 Pods: eic-abc, eic-def, eic-ghi, ...</code></p>
+<p><strong>Service (Load Balancer):</strong><br />
+<em>- Stable network endpoint for pods</em><br />
+<em>- Load balances across all healthy pods</em><br />
+<em>- DNS name: <code>eic.invoicing-prod.svc.cluster.local</code></em><br />
+<em>- Type LoadBalancer → creates AWS ELB</em></p>
+<p><code>User → AWS ELB (Service) → Round-robin to 10 Pods</code></p>
+<p><strong>Real-world flow:</strong><br />
+<em>1. Deploy: <code>kubectl apply -f deployment.yaml</code> creates 10 pods</em><br />
+<em>2. Service discovers them via label selector <code>app: eic</code></em><br />
+<em>3. AWS ELB routes traffic across all 10</em><br />
+<em>4. If pod dies, Deployment creates replacement</em><br />
+<em>5. Service auto-updates to route to new pod</em></p>
+<p><strong>Why Deployment vs Pod directly?</strong><br />
+<em>- Pod dies → manually recreate</em><br />
+<em>- Deployment → auto-recreates</em><br />
+<em>- Deployment enables rolling updates, scaling, rollback</em>"*</p>
+</blockquote>
+<hr />
+<h3 id="q2-how-do-you-troubleshoot-a-pod-thats-in-crashloopbackoff">Q2: "How do you troubleshoot a pod that's in CrashLoopBackOff?"</h3>
+<p><strong>Your Answer:</strong></p>
+<blockquote>
+<p><em>"CrashLoopBackOff means the pod keeps crashing and Kubernetes is backing off retries. In a production environment, here's my debugging workflow:</em></p>
+<p><strong>Step 1: Check Pod Status</strong><br />
+```bash<br />
+kubectl get pods -n invoicing-prod</p>
+<h1 id="name-ready-status-restarts">NAME                   READY   STATUS             RESTARTS</h1>
+<h1 id="eic-abc123-01-crashloopbackoff-5">eic-abc123             0/1     CrashLoopBackOff   5</h1>
+<p>```</p>
+<p><strong>Step 2: Describe Pod (See Events)</strong><br />
+```bash<br />
+kubectl describe pod eic-abc123 -n invoicing-prod</p>
+<h1 id="look-for">Look for:</h1>
+<h1 id="events">Events:</h1>
+<h1 id="type-reason-message">Type     Reason     Message</h1>
+<h1 id="warning-backoff-back-off-restarting-failed-container">Warning  BackOff    Back-off restarting failed container</h1>
+<h1 id="warning-failed-error-imagepullbackoff">Warning  Failed     Error: ImagePullBackOff</h1>
+<p>```</p>
+<p><strong>Step 3: Check Logs</strong><br />
+```bash</p>
+<h1 id="current-attempt">Current attempt</h1>
+<p>kubectl logs eic-abc123 -n invoicing-prod</p>
+<h1 id="previous-crash">Previous crash</h1>
+<p>kubectl logs eic-abc123 -n invoicing-prod --previous<br />
+```</p>
+<p><strong>Common Causes I've Seen:</strong></p>
+<p><strong>1. Missing Environment Variable</strong><br />
+```</p>
+<h1 id="log-shows">Log shows:</h1>
+<p>Error: DB_HOST not set</p>
+<h1 id="fix-add-to-deployment">Fix: Add to deployment</h1>
+<p>env:<br />
+- name: DB_HOST<br />
+  value: "billingclient1.rds.amazonaws.com"<br />
+```</p>
+<p><strong>2. Database Connection Failed</strong><br />
+```</p>
+<h1 id="log-shows_1">Log shows:</h1>
+<p>SQLSTATE[HY000] [2002] Connection refused</p>
+<h1 id="debug">Debug:</h1>
+<p>kubectl exec -it eic-abc123 -n invoicing-dev -- /bin/bash<br />
+mysql -h billingclient1.rds.amazonaws.com -u admin -p</p>
+<h1 id="usually-security-group-blocking-pod-rds">Usually: Security group blocking pod → RDS</h1>
+<p>```</p>
+<p><strong>3. Out of Memory (OOMKilled)</strong><br />
+```bash<br />
+kubectl describe pod eic-abc123 -n invoicing-prod</p>
+<h1 id="last-state-terminated">Last State: Terminated</h1>
+<h1 id="reason-oomkilled">Reason: OOMKilled</h1>
+<h1 id="fix-increase-memory-limit">Fix: Increase memory limit</h1>
+<p>resources:<br />
+  limits:<br />
+    memory: "2Gi"  # Was 1Gi<br />
+```</p>
+<p><strong>4. Health Check Failing</strong><br />
+<code>yaml
+livenessProbe:
+  httpGet:
+    path: /health
+    port: 80
+  initialDelaySeconds: 30  # PHP-FPM takes time to start</code></p>
+<p><strong>5. Image Pull Error</strong><br />
+```</p>
+<h1 id="events-show">Events show:</h1>
+<p>Failed to pull image "Enterprise SaaS Company/eic:wrong-tag"</p>
+<h1 id="fix-correct-image-tag">Fix: Correct image tag</h1>
+<p>image: Enterprise SaaS Company/eic:2026-11-16<br />
+```</p>
+<p><strong>Real Enterprise SaaS Company Incident:</strong><br />
+<em>- EIC pods CrashLoopBackOff after deploy</em><br />
+<em>- Logs: "Class 'Redis' not found"</em><br />
+<em>- Root cause: Forgot to install php-redis extension in Docker image</em><br />
+<em>- Fix: Updated Dockerfile, rebuilt image</em><br />
+<em>- Deployed new image, pods started successfully</em>"*</p>
+</blockquote>
+<hr />
+<h3 id="q3-explain-how-kubernetes-rolling-updates-work-and-how-to-ensure-zero-downtime">Q3: "Explain how Kubernetes rolling updates work and how to ensure zero downtime."</h3>
+<p><strong>Your Answer:</strong></p>
+<blockquote>
+<p><em>"In a production environment, we use rolling updates for all production deployments:</em></p>
+<p><strong>Rolling Update Strategy:</strong><br />
+<code>yaml
+spec:
+  replicas: 10
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 2        # Can have 12 pods during update
+      maxUnavailable: 1  # Always 9+ pods serving traffic</code></p>
+<p><strong>Update Process:</strong><br />
+1. Create 2 new v2.0 pods (total: 12)<br />
+2. Wait for v2.0 pods to pass readiness probe<br />
+3. Terminate 1 old v1.0 pod (total: 11)<br />
+4. Create 1 new v2.0 pod (total: 12)<br />
+5. Repeat until all 10 pods are v2.0</p>
+<p><strong>Zero-Downtime Checklist:</strong></p>
+<p><strong>1. Readiness Probe (CRITICAL)</strong><br />
+<code>yaml
+readinessProbe:
+  httpGet:
+    path: /ready
+    port: 80
+  initialDelaySeconds: 5
+  periodSeconds: 5
+  failureThreshold: 3</code><br />
+<em>- Pod NOT ready → no traffic sent</em><br />
+<em>- Ensures new pods fully booted before traffic</em></p>
+<p><strong>2. Liveness Probe</strong><br />
+<code>yaml
+livenessProbe:
+  httpGet:
+    path: /health
+    port: 80
+  initialDelaySeconds: 30
+  periodSeconds: 10</code><br />
+<em>- Pod unhealthy → Kubernetes restarts it</em></p>
+<p><strong>3. Graceful Shutdown</strong><br />
+<code>yaml
+lifecycle:
+  preStop:
+    exec:
+      command: ["/bin/sh", "-c", "sleep 15"]</code><br />
+<em>- Kubernetes sends SIGTERM</em><br />
+<em>- App finishes in-flight requests (15s)</em><br />
+<em>- Then force kill (SIGKILL)</em></p>
+<p><strong>4. Resource Limits (Prevent OOM)</strong><br />
+<code>yaml
+resources:
+  requests:
+    memory: "512Mi"
+    cpu: "500m"
+  limits:
+    memory: "1Gi"
+    cpu: "1000m"</code></p>
+<p><strong>5. PodDisruptionBudget (High Availability)</strong><br />
+<code>yaml
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: eic-pdb
+spec:
+  minAvailable: 8  # Always 8+ pods during updates/node drain
+  selector:
+    matchLabels:
+      app: eic</code></p>
+<p><strong>Monitoring During Rollout:</strong><br />
+```bash</p>
+<h1 id="watch-rollout">Watch rollout</h1>
+<p>kubectl rollout status deployment/eic -n invoicing-prod</p>
+<h1 id="cloudwatch-alarms">CloudWatch alarms</h1>
+<h1 id="-error-rate-1">- Error rate &lt; 1%</h1>
+<h1 id="-latency-p95-500ms">- Latency P95 &lt; 500ms</h1>
+<h1 id="-if-spike-auto-rollback">- If spike → auto-rollback</h1>
+<p>```</p>
+<p><strong>Database Migrations (Backward Compatibility):</strong><br />
+<code>Release 1: Add new column (old code still works)
+Release 2: Code uses new column (both columns exist)
+Release 3: Remove old column (only new code deployed)</code></p>
+<p>*<em>Result: Users see nothing. Traffic seamlessly shifts from v1 to v2."</em></p>
+</blockquote>
+<hr />
+<h2 id="summary-your-kubernetes-expertise">Summary: Your Kubernetes Expertise</h2>
+<p><strong>When Asked About Kubernetes:</strong></p>
+<blockquote>
+<p><em>"In a production environment, I manage production EKS workloads across 6 environments. I use kubectl daily — get pods, logs, describe for debugging, exec for troubleshooting in dev.</em></p>
+<p><em>Our EIC application runs 10 replicas in production with rolling updates (maxSurge=2, maxUnavailable=1) for zero downtime. We use readiness probes to ensure pods are healthy before traffic, liveness probes for auto-restart, and PodDisruptionBudgets to maintain availability during node maintenance.</em></p>
+<p><em>For troubleshooting CrashLoopBackOff, I start with describe for events, then logs (current and previous), then exec to test connectivity. Common issues: missing env vars, database connection failures, OOMKilled, health check timeouts.</em></p>
+<p><em>Our deployments are fully GitOps — infrastructure as code in Git, deployed via kubectl apply, with automated rollback on health check failures."</em></p>
+</blockquote>
+<hr />
+<p><strong>Kubernetes expertise complete!</strong> ☸️</p>
+<p>Creating final 2 guides...</p>
+        </div>
+    </div>
+
+    <script>
+        // Progress Tracker JavaScript
+        const STORAGE_KEY = 'course_progress_kubernetes_deep_dive_guide';
+
+        // Extract all H2 and H3 headings from content
+        function extractSections() {
+            const content = document.querySelector('.content');
+            const headings = content.querySelectorAll('h2, h3');
+            const sections = [];
+
+            headings.forEach((heading, index) => {
+                const level = heading.tagName === 'H2' ? 2 : 3;
+                const text = heading.textContent.trim();
+                const id = `section-${index}`;
+
+                // Add ID to heading for linking
+                heading.id = id;
+
+                sections.push({
+                    id: id,
+                    text: text,
+                    level: level
+                });
+            });
+
+            return sections;
+        }
+
+        // Load saved progress from localStorage
+        function loadProgress() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            return saved ? JSON.parse(saved) : {};
+        }
+
+        // Save progress to localStorage
+        function saveProgress(progress) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+        }
+
+        // Calculate progress percentage
+        function calculateProgress() {
+            const checkboxes = document.querySelectorAll('.progress-checkbox');
+            const total = checkboxes.length;
+            if (total === 0) return 0;
+
+            const completed = Array.from(checkboxes).filter(cb => cb.checked).length;
+            return Math.round((completed / total) * 100);
+        }
+
+        // Update progress display
+        function updateProgressDisplay() {
+            const percentage = calculateProgress();
+            document.getElementById('progress-pct').textContent = percentage + '%';
+            document.getElementById('progress-bar').style.width = percentage + '%';
+
+            // Update completed class on items
+            document.querySelectorAll('.progress-item').forEach(item => {
+                const checkbox = item.querySelector('.progress-checkbox');
+                if (checkbox.checked) {
+                    item.classList.add('completed');
+                } else {
+                    item.classList.remove('completed');
+                }
+            });
+        }
+
+        // Toggle checkbox
+        function toggleCheckbox(sectionId) {
+            const checkbox = document.getElementById('cb-' + sectionId);
+            const progress = loadProgress();
+
+            progress[sectionId] = checkbox.checked;
+            saveProgress(progress);
+            updateProgressDisplay();
+        }
+
+        // Reset all progress
+        function resetProgress() {
+            if (confirm('Reset all progress for this page?')) {
+                localStorage.removeItem(STORAGE_KEY);
+                document.querySelectorAll('.progress-checkbox').forEach(cb => {
+                    cb.checked = false;
+                });
+                updateProgressDisplay();
+            }
+        }
+
+        // Toggle progress list visibility
+        function toggleProgressList() {
+            const list = document.getElementById('progress-items');
+            const btn = document.querySelector('.toggle-progress');
+
+            if (list.classList.contains('collapsed')) {
+                list.classList.remove('collapsed');
+                btn.textContent = '▼ Hide';
+            } else {
+                list.classList.add('collapsed');
+                btn.textContent = '▶ Show';
+            }
+        }
+
+        // Initialize progress tracker
+        function initProgressTracker() {
+            const sections = extractSections();
+            const progress = loadProgress();
+            const container = document.getElementById('progress-items');
+
+            if (sections.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No sections found</p>';
+                return;
+            }
+
+            sections.forEach(section => {
+                const item = document.createElement('div');
+                item.className = 'progress-item';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'progress-checkbox';
+                checkbox.id = 'cb-' + section.id;
+                checkbox.checked = progress[section.id] || false;
+                checkbox.onchange = () => toggleCheckbox(section.id);
+
+                const label = document.createElement('label');
+                label.className = 'progress-label';
+                label.htmlFor = 'cb-' + section.id;
+                label.textContent = section.text;
+                label.style.paddingLeft = section.level === 3 ? '20px' : '0';
+                label.onclick = () => {
+                    document.getElementById(section.id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+                };
+
+                item.appendChild(checkbox);
+                item.appendChild(label);
+                container.appendChild(item);
+            });
+
+            updateProgressDisplay();
+        }
+
+        // Run on page load
+        document.addEventListener('DOMContentLoaded', initProgressTracker);
+    </script>
+</body>
+</html>

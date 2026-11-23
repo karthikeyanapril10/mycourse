@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interview_Preparation_Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 60px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .metadata {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 16px 24px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #666;
+            border-left: 4px solid #667eea;
+        }
+
+        /* PROGRESS TRACKER STYLES */
+        .progress-tracker {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .progress-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-stats {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .progress-percentage {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #764ba2;
+        }
+
+        .progress-bar-container {
+            height: 12px;
+            background: #e9ecef;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+            border-radius: 20px;
+        }
+
+        .reset-btn {
+            padding: 8px 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+
+        .reset-btn:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+        }
+
+        .progress-items {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .progress-items::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .progress-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .progress-item:hover {
+            background: #f8f9fa;
+            transform: translateX(5px);
+        }
+
+        .progress-item.completed {
+            opacity: 0.7;
+        }
+
+        .progress-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .progress-label {
+            cursor: pointer;
+            font-size: 0.95em;
+            line-height: 1.5;
+            color: #495057;
+            flex-grow: 1;
+        }
+
+        .progress-item.completed .progress-label {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .toggle-progress {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .toggle-progress:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .progress-items.collapsed {
+            display: none;
+        }
+
+        /* CONTENT STYLES */
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 4px solid #667eea;
+            font-weight: 700;
+        }
+
+        h2 {
+            color: #764ba2;
+            font-size: 2em;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        h3 {
+            color: #495057;
+            font-size: 1.5em;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        h4 {
+            color: #666;
+            font-size: 1.25em;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        ul, ol {
+            margin: 20px 0;
+            padding-left: 40px;
+        }
+
+        li {
+            margin-bottom: 12px;
+            line-height: 1.7;
+        }
+
+        code {
+            background: #f4f5f7;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #c7254e;
+            border: 1px solid #e1e4e8;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 24px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 25px 0;
+            border: 1px solid #444;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            border: none;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        blockquote {
+            border-left: 5px solid #667eea;
+            padding: 15px 25px;
+            margin: 25px 0;
+            background: #f8f9fa;
+            border-radius: 0 8px 8px 0;
+            color: #495057;
+            font-style: italic;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 30px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 14px 18px;
+            text-align: left;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tr:hover {
+            background: #e9ecef;
+            transition: background 0.2s;
+        }
+
+        a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px solid transparent;
+            transition: border-bottom 0.2s;
+        }
+
+        a:hover {
+            border-bottom: 1px solid #667eea;
+        }
+
+        hr {
+            border: none;
+            border-top: 2px solid #e9ecef;
+            margin: 40px 0;
+        }
+
+        strong {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        em {
+            color: #495057;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 25px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.6em;
+            }
+
+            .progress-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .progress-stats {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../navigation.html" class="back-link">&larr; Back to Navigation</a>
+
+        <div class="metadata">
+            <strong>Source:</strong> dev/Interview_Preparation_Guide.md &nbsp;|&nbsp; <strong>Updated:</strong> 2026-11-18 19:44:54
+        </div>
+
+        <!-- PROGRESS TRACKER -->
+        <div class="progress-tracker">
+            <div class="progress-header">
+                <div class="progress-title">
+                    <span>📚</span>
+                    <span>Your Progress</span>
+                </div>
+                <div class="progress-stats">
+                    <span class="progress-percentage" id="progress-pct">0%</span>
+                    <button class="reset-btn" onclick="resetProgress()">Reset</button>
+                    <button class="toggle-progress" onclick="toggleProgressList()">▼ Hide</button>
+                </div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progress-bar" style="width: 0%"></div>
+            </div>
+            <div class="progress-items" id="progress-items">
+                <!-- Checkboxes will be generated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="content">
+<h1 id="interview-preparation-guide-karthikeyan-sekar">Interview Preparation Guide - Karthikeyan Sekar</h1>
+<h2 id="your-story-the-2-minute-pitch">Your Story - The 2-Minute Pitch</h2>
+<p><em>"I'm a Senior Software Engineer In a production environment with deep expertise in enterprise billing platforms. I specialize in multi-tenant PHP and .NET applications, focusing on production support, security, and database optimization. What sets me apart is my systematic approach to problem-solving—I've developed frameworks for root cause analysis that combine code verification, data validation, and cross-system investigation. I've resolved 500+ production incidents, conducted hundreds of security-focused code reviews, and maintained 99.9% uptime for critical invoicing services handling millions of transactions. I'm passionate about code quality, security, and building robust systems that scale."</em></p>
+<hr />
+<h2 id="key-accomplishments-to-highlight">Key Accomplishments to Highlight</h2>
+<h3 id="1-production-incident-management">1. Production Incident Management</h3>
+<p><strong>STAR Format:</strong><br />
+- <strong>Situation:</strong> Critical production incidents affecting enterprise customers with billing/invoicing<br />
+- <strong>Task:</strong> Rapid triage, root cause analysis, and coordination of emergency fixes<br />
+- <strong>Action:</strong> Developed systematic investigation framework (RC-5 methodology), established verification protocols, coordinated cross-team responses<br />
+- <strong>Result:</strong> Reduced MTTR by 40%, prevented recurring issues, documented 50+ incident patterns</p>
+<h3 id="2-security-leadership">2. Security Leadership</h3>
+<p><strong>STAR Format:</strong><br />
+- <strong>Situation:</strong> Legacy codebase with potential SQL injection and XSS vulnerabilities<br />
+- <strong>Task:</strong> Conduct comprehensive security audits and establish security gates<br />
+- <strong>Action:</strong> Integrated Checkmarx scanning, trained team on OWASP Top 10, enforced parameterized queries<br />
+- <strong>Result:</strong> 60% reduction in production security findings, zero PCI/HIPAA violations</p>
+<h3 id="3-database-optimization">3. Database Optimization</h3>
+<p><strong>STAR Format:</strong><br />
+- <strong>Situation:</strong> Customer reports timing out on large data queries (100M+ row tables)<br />
+- <strong>Task:</strong> Identify bottlenecks and optimize without breaking existing functionality<br />
+- <strong>Action:</strong> Analyzed EXPLAIN plans, added strategic indexes, refactored N+1 queries, implemented pagination<br />
+- <strong>Result:</strong> Reduced query times from minutes to seconds, improved user experience</p>
+<h3 id="4-multi-tenant-architecture">4. Multi-Tenant Architecture</h3>
+<p><strong>STAR Format:</strong><br />
+- <strong>Situation:</strong> Needed to scale invoicing platform to support 10,000+ tenants<br />
+- <strong>Task:</strong> Design tenant isolation and data routing without cross-contamination<br />
+- <strong>Action:</strong> Implemented stack routing system, customer-to-database mapping, query safety patterns<br />
+- <strong>Action:</strong> Documented AC vs UC model differences<br />
+- <strong>Result:</strong> Achieved complete tenant isolation, zero cross-tenant data leakage incidents</p>
+<h3 id="5-code-review-excellence">5. Code Review Excellence</h3>
+<p><strong>STAR Format:</strong><br />
+- <strong>Situation:</strong> Team had inconsistent code quality, security issues slipping through<br />
+- <strong>Task:</strong> Establish comprehensive code review standards<br />
+- <strong>Action:</strong> Created review checklists, security gates, regression analysis frameworks, mentored team<br />
+- <strong>Result:</strong> Standards adopted across 5 teams, improved code quality, faster onboarding</p>
+<hr />
+<h2 id="technical-deep-dive-topics-be-ready-to-discuss">Technical Deep-Dive Topics (Be Ready to Discuss)</h2>
+<h3 id="php-laravel">PHP &amp; Laravel</h3>
+<ul>
+<li><strong>Dependency Injection:</strong> Pimple (EIC), Laravel service container (CC/CSR)</li>
+<li><strong>Database Patterns:</strong> Eloquent ORM, DbFactory for tenant routing, Zend_Db_Select with bound parameters</li>
+<li><strong>Multi-tenant Routing:</strong> How you route to billingclient1 vs billingclient2 based on customer stack</li>
+<li><strong>Active Modules:</strong> Why you only touch ig70/ in EIC, application/cc/ in CC (dead code avoidance)</li>
+</ul>
+<h3 id="database-design-optimization">Database Design &amp; Optimization</h3>
+<ul>
+<li><strong>Multi-tenant Schema:</strong> Shared schema vs database-per-tenant tradeoffs</li>
+<li><strong>Query Optimization:</strong> EXPLAIN plans, index selection, covering indexes, avoiding full table scans</li>
+<li><strong>Large Table Strategies:</strong> Pagination, partitioning, archival strategies for 100M+ row tables</li>
+<li><strong>Stored Procedures:</strong> <code>FindCustSettings()</code> pattern, when to use vs application logic</li>
+<li><strong>Audit Tables:</strong> The 33 audit table problem, fsiAccountAudits vs fsionlineaccountaudit distinction</li>
+</ul>
+<h3 id="security">Security</h3>
+<ul>
+<li><strong>SQL Injection Prevention:</strong> Always parameterized queries, never string concatenation, examples</li>
+<li><strong>XSS Mitigation:</strong> Output encoding, CSP headers</li>
+<li><strong>Authentication Flows:</strong> SSO (SAML) vs direct login, session management, JWT validation</li>
+<li><strong>PCI/HIPAA Compliance:</strong> What data you can/cannot log, storage encryption, access controls</li>
+<li><strong>OWASP Top 10:</strong> Be able to name and explain each, with examples from your work</li>
+</ul>
+<h3 id="architecture-design-patterns">Architecture &amp; Design Patterns</h3>
+<ul>
+<li><strong>Account-Centric vs User-Centric Models:</strong> Data model differences, when to use each</li>
+<li><strong>Microservices Communication:</strong> REST APIs, async messaging, service boundaries</li>
+<li><strong>Configuration Management:</strong> Atom-based settings pattern (fsicustomersettings)</li>
+<li><strong>DI Patterns:</strong> Constructor injection, service providers, factory patterns</li>
+<li><strong>Event Sourcing:</strong> Audit trail design, capturing who/when/what changed</li>
+</ul>
+<h3 id="devops-infrastructure">DevOps &amp; Infrastructure</h3>
+<ul>
+<li><strong>Docker:</strong> Running PHP applications in containers, multi-stage builds</li>
+<li><strong>Kubernetes:</strong> Pod management, kubectl commands, namespace isolation</li>
+<li><strong>CI/CD:</strong> GitHub Actions, automated testing, deployment pipelines</li>
+<li><strong>AWS:</strong> EKS cluster management, stack routing across 6 environments</li>
+<li><strong>Monitoring:</strong> Splunk, Datadog integration, alerting strategies</li>
+</ul>
+<hr />
+<h2 id="behavioral-questions-prepared-answers">Behavioral Questions - Prepared Answers</h2>
+<h3 id="tell-me-about-a-time-you-disagreed-with-a-team-member">"Tell me about a time you disagreed with a team member"</h3>
+<p><em>Example: When a developer wanted to skip rollback scripts for DML changes</em><br />
+- <strong>Situation:</strong> Developer argued rollback scripts were unnecessary for "simple" updates<br />
+- <strong>Your Position:</strong> Every production DML needs a tested rollback (learned from past incident)<br />
+- <strong>Approach:</strong> Showed data from past rollback scenarios, explained DBA requirements<br />
+- <strong>Resolution:</strong> Team adopted mandatory rollback policy, prevented future issues<br />
+- <strong>Learning:</strong> Safety processes exist for good reasons, but need to explain the "why"</p>
+<h3 id="describe-a-difficult-bug-you-solved">"Describe a difficult bug you solved"</h3>
+<p><em>Example: Invisible account records in audit table (NJQRT-15205)</em><br />
+- <strong>Problem:</strong> Account-centric customers had audit records with empty AccountNumber<br />
+- <strong>Investigation:</strong> Traced through legacy AddAccountAudit() code, found old cc90 PHP<br />
+- <strong>Root Cause:</strong> Function wrote AC rows with AccountNumber='' due to missing parameter<br />
+- <strong>Fix:</strong> Updated function signature, added parameter validation, backfilled 50k+ records<br />
+- <strong>Impact:</strong> Restored audit trail visibility for compliance reporting</p>
+<h3 id="how-do-you-handle-production-emergencies">"How do you handle production emergencies?"</h3>
+<p><em>Your RC-5 methodology:</em><br />
+1. <strong>Prior conclusion check:</strong> What does the ticket already say? Am I changing it?<br />
+2. <strong>Universality test:</strong> Is this also present on successful cases?<br />
+3. <strong>Reachability verification:</strong> Does this code actually execute?<br />
+4. <strong>Signature match:</strong> Does this produce the exact error observed?<br />
+5. <strong>Fix vs mask distinction:</strong> Am I fixing the root cause or just hiding the error?</p>
+<h3 id="tell-me-about-a-time-you-improved-a-process">"Tell me about a time you improved a process"</h3>
+<p><em>Example: Standardized DML/DDL review workflow</em><br />
+- <strong>Before:</strong> Ad-hoc reviews, inconsistent quality, occasional production issues<br />
+- <strong>Analysis:</strong> Identified common failure patterns (wrong database, missing WHERE clause, no rollback)<br />
+- <strong>Solution:</strong> Created checklist template, validation gates, automated pre-checks<br />
+- <strong>Implementation:</strong> Documented process, trained team, integrated into Jira workflow<br />
+- <strong>Results:</strong> 100% success rate across 200+ production changes, zero rollback incidents</p>
+<h3 id="how-do-you-stay-current-with-technology">"How do you stay current with technology?"</h3>
+<ul>
+<li>Follow Laravel/PHP release notes and upgrade guides</li>
+<li>Study OWASP security updates and CVE databases</li>
+<li>Experiment with AI-assisted development (Claude, Copilot)</li>
+<li>Read architecture blogs (Martin Fowler, DDD patterns)</li>
+<li>Contribute to internal knowledge base and documentation</li>
+<li>Review open-source projects for patterns and best practices</li>
+</ul>
+<hr />
+<h2 id="questions-to-ask-interviewers">Questions to Ask Interviewers</h2>
+<h3 id="for-engineering-manager">For Engineering Manager:</h3>
+<ol>
+<li>"What's the biggest technical challenge the team is facing right now?"</li>
+<li>"How do you balance feature velocity with technical debt and code quality?"</li>
+<li>"What does the code review process look like here?"</li>
+<li>"How does the team handle production incidents and on-call rotation?"</li>
+<li>"What opportunities are there for technical leadership and mentorship?"</li>
+</ol>
+<h3 id="for-technical-lead">For Technical Lead:</h3>
+<ol>
+<li>"Can you walk me through your current architecture and tech stack?"</li>
+<li>"What are the main scalability challenges you're working on?"</li>
+<li>"How do you approach database design for multi-tenant applications?"</li>
+<li>"What's your testing strategy? (unit, integration, e2e)"</li>
+<li>"What does a typical sprint look like for the team?"</li>
+</ol>
+<h3 id="for-productbusiness">For Product/Business:</h3>
+<ol>
+<li>"What are the company's top 3 priorities for the next year?"</li>
+<li>"How does engineering collaborate with product and design?"</li>
+<li>"What metrics define success for this role?"</li>
+<li>"What does career growth look like here?"</li>
+</ol>
+<h3 id="for-everyone">For Everyone:</h3>
+<ol>
+<li>"What do you enjoy most about working here?"</li>
+<li>"What's one thing you'd change about the team or process if you could?"</li>
+<li>"How would you describe the team culture?"</li>
+</ol>
+<hr />
+<h2 id="technical-exercise-preparation">Technical Exercise Preparation</h2>
+<h3 id="if-asked-to-write-code-live">If asked to write code live:</h3>
+<p><strong>Be ready to demonstrate:</strong><br />
+- Writing a parameterized SQL query with proper tenant scoping<br />
+- Implementing a Laravel controller action with validation<br />
+- Designing a multi-tenant database schema<br />
+- Reviewing code for security vulnerabilities<br />
+- Debugging a slow query with EXPLAIN<br />
+- Writing a simple REST API endpoint</p>
+<p><strong>Practice problems:</strong><br />
+1. Design a customer settings system that supports inheritance and overrides<br />
+2. Implement SSO authentication flow with SAML<br />
+3. Write a database migration for a 100M row table with zero downtime<br />
+4. Debug a SQL injection vulnerability<br />
+5. Optimize a N+1 query problem</p>
+<h3 id="system-design-questions">System Design Questions:</h3>
+<p><strong>Be ready to discuss:</strong><br />
+- Designing a multi-tenant SaaS billing platform<br />
+- Handling 10M+ invoices per month with high reliability<br />
+- Payment processing system with retry logic and idempotency<br />
+- Audit logging and compliance reporting system<br />
+- Zero-downtime deployment strategy for database changes</p>
+<hr />
+<h2 id="your-unique-strengths">Your Unique Strengths</h2>
+<ol>
+<li><strong>Systematic Problem Solving:</strong> RC-5 methodology, verification protocols, data-grounded analysis</li>
+<li><strong>Security Expertise:</strong> PCI/HIPAA compliance, OWASP Top 10, Checkmarx integration</li>
+<li><strong>Cross-Functional Communication:</strong> Dual-audience explanations (technical + business)</li>
+<li><strong>Production Reliability:</strong> 99.9% uptime, zero-rollback database changes</li>
+<li><strong>Documentation:</strong> 50+ processes documented, knowledge transfer</li>
+<li><strong>AI-Assisted Development:</strong> Pioneering AI workflows for code review and triage</li>
+<li><strong>Mentorship:</strong> Trained 5+ developers, established team standards</li>
+</ol>
+<hr />
+<h2 id="red-flags-to-avoid">Red Flags to Avoid</h2>
+<ul>
+<li>Don't badmouth Enterprise SaaS Company or former colleagues</li>
+<li>Don't claim expertise in technologies you only used briefly</li>
+<li>Don't overstate your individual contributions on team projects (use "we" appropriately)</li>
+<li>Don't get too deep in the weeds on obscure technical details</li>
+<li>Don't skip the "Result" in STAR answers</li>
+<li>Don't say "I don't know" without adding "but here's how I'd find out"</li>
+</ul>
+<hr />
+<h2 id="salary-negotiation-prep">Salary Negotiation Prep</h2>
+<p><strong>Your market value based on:</strong><br />
+- 8+ years PHP/Laravel experience<br />
+- Production support/incident management expertise<br />
+- Security and compliance specialization<br />
+- Database optimization skills<br />
+- Technical leadership experience</p>
+<p><strong>Research:</strong><br />
+- Check Glassdoor/Levels.fyi for Senior Software Engineer salaries in your area<br />
+- Factor in: Remote vs on-site, company size, industry, stock options<br />
+- Know your minimum acceptable offer before negotiating</p>
+<p><strong>Negotiation tactics:</strong><br />
+- Let them make the first offer<br />
+- If pressed: "I'm looking for market rate for a Senior Engineer with my experience, which I understand is in the $X-Y range"<br />
+- Consider total comp: base, bonus, equity, benefits, PTO, remote work<br />
+- Always negotiate after receiving an offer, not during interview</p>
+<hr />
+<h2 id="day-before-checklist">Day Before Checklist</h2>
+<ul>
+<li>[ ] Review this guide</li>
+<li>[ ] Re-read the job description and match your experience</li>
+<li>[ ] Prepare 3-5 questions for each interviewer</li>
+<li>[ ] Test your camera/mic/internet if remote</li>
+<li>[ ] Get a good night's sleep</li>
+<li>[ ] Prepare your workspace (if remote: clean background, good lighting)</li>
+<li>[ ] Have pen and paper ready for notes</li>
+<li>[ ] Review the company's recent news/blog posts</li>
+</ul>
+<hr />
+<h2 id="during-the-interview">During the Interview</h2>
+<p><strong>Do:</strong><br />
+- Listen carefully to the full question before answering<br />
+- Use STAR format for behavioral questions<br />
+- Ask clarifying questions if something is unclear<br />
+- Show enthusiasm for the role and company<br />
+- Take brief pauses to think before complex answers<br />
+- Be honest if you don't know something</p>
+<p><strong>Don't:</strong><br />
+- Interrupt the interviewer<br />
+- Go on long tangents<br />
+- Speak negatively about current/former employers<br />
+- Pretend to know something you don't<br />
+- Forget to ask your prepared questions<br />
+- Rush your answers</p>
+<hr />
+<p>Good luck! You've got this. 🚀</p>
+        </div>
+    </div>
+
+    <script>
+        // Progress Tracker JavaScript
+        const STORAGE_KEY = 'course_progress_interview_preparation_guide';
+
+        // Extract all H2 and H3 headings from content
+        function extractSections() {
+            const content = document.querySelector('.content');
+            const headings = content.querySelectorAll('h2, h3');
+            const sections = [];
+
+            headings.forEach((heading, index) => {
+                const level = heading.tagName === 'H2' ? 2 : 3;
+                const text = heading.textContent.trim();
+                const id = `section-${index}`;
+
+                // Add ID to heading for linking
+                heading.id = id;
+
+                sections.push({
+                    id: id,
+                    text: text,
+                    level: level
+                });
+            });
+
+            return sections;
+        }
+
+        // Load saved progress from localStorage
+        function loadProgress() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            return saved ? JSON.parse(saved) : {};
+        }
+
+        // Save progress to localStorage
+        function saveProgress(progress) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+        }
+
+        // Calculate progress percentage
+        function calculateProgress() {
+            const checkboxes = document.querySelectorAll('.progress-checkbox');
+            const total = checkboxes.length;
+            if (total === 0) return 0;
+
+            const completed = Array.from(checkboxes).filter(cb => cb.checked).length;
+            return Math.round((completed / total) * 100);
+        }
+
+        // Update progress display
+        function updateProgressDisplay() {
+            const percentage = calculateProgress();
+            document.getElementById('progress-pct').textContent = percentage + '%';
+            document.getElementById('progress-bar').style.width = percentage + '%';
+
+            // Update completed class on items
+            document.querySelectorAll('.progress-item').forEach(item => {
+                const checkbox = item.querySelector('.progress-checkbox');
+                if (checkbox.checked) {
+                    item.classList.add('completed');
+                } else {
+                    item.classList.remove('completed');
+                }
+            });
+        }
+
+        // Toggle checkbox
+        function toggleCheckbox(sectionId) {
+            const checkbox = document.getElementById('cb-' + sectionId);
+            const progress = loadProgress();
+
+            progress[sectionId] = checkbox.checked;
+            saveProgress(progress);
+            updateProgressDisplay();
+        }
+
+        // Reset all progress
+        function resetProgress() {
+            if (confirm('Reset all progress for this page?')) {
+                localStorage.removeItem(STORAGE_KEY);
+                document.querySelectorAll('.progress-checkbox').forEach(cb => {
+                    cb.checked = false;
+                });
+                updateProgressDisplay();
+            }
+        }
+
+        // Toggle progress list visibility
+        function toggleProgressList() {
+            const list = document.getElementById('progress-items');
+            const btn = document.querySelector('.toggle-progress');
+
+            if (list.classList.contains('collapsed')) {
+                list.classList.remove('collapsed');
+                btn.textContent = '▼ Hide';
+            } else {
+                list.classList.add('collapsed');
+                btn.textContent = '▶ Show';
+            }
+        }
+
+        // Initialize progress tracker
+        function initProgressTracker() {
+            const sections = extractSections();
+            const progress = loadProgress();
+            const container = document.getElementById('progress-items');
+
+            if (sections.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No sections found</p>';
+                return;
+            }
+
+            sections.forEach(section => {
+                const item = document.createElement('div');
+                item.className = 'progress-item';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'progress-checkbox';
+                checkbox.id = 'cb-' + section.id;
+                checkbox.checked = progress[section.id] || false;
+                checkbox.onchange = () => toggleCheckbox(section.id);
+
+                const label = document.createElement('label');
+                label.className = 'progress-label';
+                label.htmlFor = 'cb-' + section.id;
+                label.textContent = section.text;
+                label.style.paddingLeft = section.level === 3 ? '20px' : '0';
+                label.onclick = () => {
+                    document.getElementById(section.id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+                };
+
+                item.appendChild(checkbox);
+                item.appendChild(label);
+                container.appendChild(item);
+            });
+
+            updateProgressDisplay();
+        }
+
+        // Run on page load
+        document.addEventListener('DOMContentLoaded', initProgressTracker);
+    </script>
+</body>
+</html>

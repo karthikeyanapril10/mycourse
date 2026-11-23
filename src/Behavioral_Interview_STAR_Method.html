@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Behavioral_Interview_STAR_Method</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 60px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .metadata {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 16px 24px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #666;
+            border-left: 4px solid #667eea;
+        }
+
+        /* PROGRESS TRACKER STYLES */
+        .progress-tracker {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .progress-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-stats {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .progress-percentage {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #764ba2;
+        }
+
+        .progress-bar-container {
+            height: 12px;
+            background: #e9ecef;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+            border-radius: 20px;
+        }
+
+        .reset-btn {
+            padding: 8px 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+
+        .reset-btn:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+        }
+
+        .progress-items {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .progress-items::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .progress-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .progress-item:hover {
+            background: #f8f9fa;
+            transform: translateX(5px);
+        }
+
+        .progress-item.completed {
+            opacity: 0.7;
+        }
+
+        .progress-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .progress-label {
+            cursor: pointer;
+            font-size: 0.95em;
+            line-height: 1.5;
+            color: #495057;
+            flex-grow: 1;
+        }
+
+        .progress-item.completed .progress-label {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .toggle-progress {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .toggle-progress:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .progress-items.collapsed {
+            display: none;
+        }
+
+        /* CONTENT STYLES */
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 4px solid #667eea;
+            font-weight: 700;
+        }
+
+        h2 {
+            color: #764ba2;
+            font-size: 2em;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        h3 {
+            color: #495057;
+            font-size: 1.5em;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        h4 {
+            color: #666;
+            font-size: 1.25em;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        ul, ol {
+            margin: 20px 0;
+            padding-left: 40px;
+        }
+
+        li {
+            margin-bottom: 12px;
+            line-height: 1.7;
+        }
+
+        code {
+            background: #f4f5f7;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #c7254e;
+            border: 1px solid #e1e4e8;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 24px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 25px 0;
+            border: 1px solid #444;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            border: none;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        blockquote {
+            border-left: 5px solid #667eea;
+            padding: 15px 25px;
+            margin: 25px 0;
+            background: #f8f9fa;
+            border-radius: 0 8px 8px 0;
+            color: #495057;
+            font-style: italic;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 30px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 14px 18px;
+            text-align: left;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tr:hover {
+            background: #e9ecef;
+            transition: background 0.2s;
+        }
+
+        a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px solid transparent;
+            transition: border-bottom 0.2s;
+        }
+
+        a:hover {
+            border-bottom: 1px solid #667eea;
+        }
+
+        hr {
+            border: none;
+            border-top: 2px solid #e9ecef;
+            margin: 40px 0;
+        }
+
+        strong {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        em {
+            color: #495057;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 25px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.6em;
+            }
+
+            .progress-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .progress-stats {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../navigation.html" class="back-link">&larr; Back to Navigation</a>
+
+        <div class="metadata">
+            <strong>Source:</strong> dev/Behavioral_Interview_STAR_Method.md &nbsp;|&nbsp; <strong>Updated:</strong> 2026-11-18 19:44:52
+        </div>
+
+        <!-- PROGRESS TRACKER -->
+        <div class="progress-tracker">
+            <div class="progress-header">
+                <div class="progress-title">
+                    <span>📚</span>
+                    <span>Your Progress</span>
+                </div>
+                <div class="progress-stats">
+                    <span class="progress-percentage" id="progress-pct">0%</span>
+                    <button class="reset-btn" onclick="resetProgress()">Reset</button>
+                    <button class="toggle-progress" onclick="toggleProgressList()">▼ Hide</button>
+                </div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progress-bar" style="width: 0%"></div>
+            </div>
+            <div class="progress-items" id="progress-items">
+                <!-- Checkboxes will be generated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="content">
+<h1 id="behavioral-interview-guide-star-method">Behavioral Interview Guide: STAR Method</h1>
+<blockquote>
+<p><strong>For 12+ Years Experience</strong>: Interviewers expect leadership, mentorship, and cross-team impact stories</p>
+</blockquote>
+<hr />
+<h2 id="what-is-star-method">📚 What is STAR Method?</h2>
+<p><strong>STAR = Situation → Task → Action → Result</strong></p>
+<div class="codehilite"><pre><span></span><code>❌<span class="w"> </span><span class="nv">Bad</span><span class="w"> </span><span class="nv">Answer</span>:
+<span class="s2">"I'm good at debugging. I fixed many bugs at Billtrust."</span>
+
+✅<span class="w"> </span><span class="nv">Good</span><span class="w"> </span><span class="nv">STAR</span><span class="w"> </span><span class="nv">Answer</span>:
+<span class="nv">Situation</span>:<span class="w"> </span><span class="s2">"At Billtrust, we had a critical invoice discount bug affecting 42 customers"</span>
+<span class="nv">Task</span>:<span class="w"> </span><span class="s2">"As NJQRT triage lead, I had 48 hours to find root cause and prevent revenue loss"</span>
+<span class="nv">Action</span>:<span class="w"> </span><span class="s2">"I used my RC-5 protocol: verified code proof, ran DB queries, traced 3 service calls"</span>
+<span class="nb">Result</span>:<span class="w"> </span><span class="s2">"Fixed in 24 hours, prevented $128k revenue leak, documented pattern for team"</span>
+</code></pre></div>
+
+<p><strong>Why STAR Works:</strong><br />
+- Proves you can structure complex problems<br />
+- Shows measurable impact (not just "I did stuff")<br />
+- Demonstrates ownership and follow-through</p>
+<hr />
+<h2 id="10-star-stories-from-your-njqrt-work">🎯 10 STAR Stories From Your NJQRT Work</h2>
+<h3 id="1-root-cause-investigation-under-pressure"><strong>1. Root Cause Investigation Under Pressure</strong></h3>
+<p><strong>Common Questions:</strong><br />
+- "Tell me about a time you solved a difficult technical problem"<br />
+- "Describe a critical bug you debugged"</p>
+<p><strong>Your STAR Story:</strong></p>
+<p><strong>Situation:</strong><br />
+"At Billtrust, I led NJQRT triage for a production support team handling 100+ cases/month. In September 2026, we received NJQRT-14987 — a critical invoice discount calculation bug affecting 42 enterprise customers. The sales team was escalating because customers saw incorrect totals on invoices."</p>
+<p><strong>Task:</strong><br />
+"As the triage lead, I had a 48-hour SLA to identify root cause and severity. The challenge was that the invoice calculation system spans 3 services (PHP billing, .NET workers, MySQL) with 15+ developers having touched the discount logic over 2 years."</p>
+<p><strong>Action:</strong><br />
+"I applied my RC-5 Root Cause Sanity Check protocol:<br />
+1. <strong>Prior conclusion check</strong>: Reviewed the ticket's initial hypothesis (memcache key bug) — rejected it via code proof<br />
+2. <strong>Universality test</strong>: Queried prod DB — found the bug only triggered for pre-netting discount + multi-line invoices (not universal)<br />
+3. <strong>Reachability</strong>: Traced PHP <code>CalculateInvoiceTotal()</code> → found a conditional branch that ONLY executes for pre-netting mode<br />
+4. <strong>Signature match</strong>: The error message 'Discount applied twice' matched the code path exactly<br />
+5. <strong>Fix vs mask</strong>: Proposed a functional fix (correct the calculation sequence) not just error handling</p>
+<p>I ran 12 live MySQL queries against prod (via my Docker DB gateway), verified the discount logic in 3 files, and proved the root cause with code line numbers."</p>
+<p><strong>Result:</strong><br />
+"✅ Identified root cause in 24 hours (50% faster than SLA)<br />
+✅ Prevented $128,800 revenue leak across 42 companies<br />
+✅ Created a reusable RC-5 checklist adopted by 5 other team members<br />
+✅ Zero repeat incidents in this code path after the fix"</p>
+<p><strong>Key Phrases to Emphasize:</strong><br />
+- "I developed a systematic protocol" (shows leadership)<br />
+- "Proved with code and data, not assumptions" (technical rigor)<br />
+- "Adopted by other team members" (influence beyond your work)</p>
+<hr />
+<h3 id="2-scaling-consumer-performance-technical-leadership"><strong>2. Scaling Consumer Performance (Technical Leadership)</strong></h3>
+<p><strong>Common Questions:</strong><br />
+- "Tell me about a time you optimized system performance"<br />
+- "Describe a scalability challenge you solved"</p>
+<p><strong>Your STAR Story:</strong></p>
+<p><strong>Situation:</strong><br />
+"At Billtrust, our RabbitMQ invoice PDF generation queue was backing up during month-end billing. Queue depth spiked from 100 to 10,000+ messages, causing 2-hour delays for customers expecting invoices within 15 minutes."</p>
+<p><strong>Task:</strong><br />
+"As the engineer responsible for the invoice generation workers, I needed to process 100k invoices in under 1 hour instead of 4 hours, without increasing infrastructure costs significantly."</p>
+<p><strong>Action:</strong><br />
+"I took a systematic approach:<br />
+1. <strong>Profiled the bottleneck</strong>: Added logging → found 80% of time spent on S3 uploads (not PDF generation)<br />
+2. <strong>Code optimization</strong>: Parallelized S3 uploads using async I/O (was sequential)<br />
+3. <strong>Infrastructure scaling</strong>: Implemented Kubernetes HPA based on RabbitMQ queue depth<br />
+   - Min 2 pods, max 20 pods<br />
+   - Scale trigger: queue depth &gt; 100 messages<br />
+4. <strong>Prefetch tuning</strong>: Set <code>prefetch_count=1</code> for fair load balancing across workers<br />
+5. <strong>Monitoring</strong>: Added Datadog dashboards for queue depth, processing rate, pod count"</p>
+<p><strong>Result:</strong><br />
+"✅ Reduced processing time from 4 hours → 50 minutes (80% improvement)<br />
+✅ Auto-scaling saved $2k/month (pods scale down after spike)<br />
+✅ Month-end SLA violations dropped from 15% → 0%<br />
+✅ Solution reused for 3 other queue-based services"</p>
+<p><strong>Key Phrases:</strong><br />
+- "Profiled before optimizing" (data-driven decisions)<br />
+- "80% improvement" (quantified impact)<br />
+- "Reused for 3 other services" (architectural thinking)</p>
+<hr />
+<h3 id="3-cross-team-collaboration-conflict-resolution"><strong>3. Cross-Team Collaboration &amp; Conflict Resolution</strong></h3>
+<p><strong>Common Questions:</strong><br />
+- "Tell me about a time you disagreed with a teammate"<br />
+- "Describe a situation where you had to work with a difficult person"</p>
+<p><strong>Your STAR Story:</strong></p>
+<p><strong>Situation:</strong><br />
+"During a DML (database migration) review for NJQRT-15275, I found a critical issue: the developer's SQL script was targeting the wrong database (Stack 1 instead of Stack 2). The 'Apply Date' field showed the script should have run yesterday, and the developer insisted I should approve it immediately because 'we're already late.'"</p>
+<p><strong>Task:</strong><br />
+"I needed to balance two priorities: (1) don't block the team unnecessarily, (2) don't approve a DML that could corrupt production data. The developer was frustrated and escalating to their manager."</p>
+<p><strong>Action:</strong><br />
+"I took a collaborative approach:<br />
+1. <strong>Acknowledged the pressure</strong>: 'I understand the urgency and the late timeline'<br />
+2. <strong>Showed the proof</strong>: Ran <code>USE billingclient1; SELECT DATABASE();</code> and compared to the ticket's 'Stack 2' requirement → database mismatch<br />
+3. <strong>Offered a solution</strong>: 'Let's fix the USE statement right now, I'll re-review in 10 minutes instead of sending it back to the queue'<br />
+4. <strong>Educated for next time</strong>: Shared my checklist: 'Always verify USE statement matches the ticket's Cloud Service Type'<br />
+5. <strong>Escalated constructively</strong>: When the developer's manager asked why I delayed, I sent the side-by-side proof (ticket said Stack 2, SQL said Stack 1) + explained the customer impact (wrong DB = data corruption)"</p>
+<p><strong>Result:</strong><br />
+"✅ Fixed in 15 minutes, approved same day<br />
+✅ Prevented potential data corruption on 50k customer records<br />
+✅ Developer thanked me later: 'You saved me from a major outage'<br />
+✅ Team adopted my pre-review checklist (now part of onboarding)"</p>
+<p><strong>Key Phrases:</strong><br />
+- "Balanced urgency with correctness" (judgment)<br />
+- "Offered a solution, not just criticism" (collaborative)<br />
+- "Escalated with proof, not emotion" (professional)</p>
+<hr />
+<h3 id="4-learning-from-failure"><strong>4. Learning From Failure</strong></h3>
+<p><strong>Common Questions:</strong><br />
+- "Tell me about a time you failed"<br />
+- "Describe a project that didn't go as planned"</p>
+<p><strong>Your STAR Story:</strong></p>
+<p><strong>Situation:</strong><br />
+"In August 2026, I was reviewing NJQRT-14200 (a surcharge calculation bug). I spent 3 hours analyzing the <code>fsiaccountautopay</code> table and concluded: 'No surcharge flag found, this rules out the autopay surcharge mechanism.'"</p>
+<p><strong>Task:</strong><br />
+"The user reported that autopay customers were being charged surcharges incorrectly. My job was to find which code path was adding the surcharge."</p>
+<p><strong>Action (What Went Wrong):</strong><br />
+"I made a critical mistake: I assumed <code>fsiaccountautopay</code> was the ONLY place surcharge flags were stored. I presented my interim conclusion as final: 'The surcharge mechanism is ruled out.'</p>
+<p>The actual root cause was:<br />
+- Surcharge was controlled by a <strong>tenant-level HTTP setting</strong> (not a DB flag)<br />
+- The setting had an OR condition: <code>MessagePayFail</code> OR <code>MessagePayExceed</code> (I only checked one)<br />
+- The code path was in a completely different service (payment gateway, not billing)"</p>
+<p><strong>What I Learned:</strong><br />
+"❌ <strong>Don't present interim conclusions as final</strong>: I should have said 'fsiaccountautopay doesn't show it, but I need to check HTTP settings and other services'<br />
+❌ <strong>Don't stop at the first table</strong>: The billingclient schema has 33 audit tables — I checked 1 and assumed it was complete<br />
+❌ <strong>Follow the code, not the data</strong>: I looked at the DB, but didn't trace the actual function call path"</p>
+<p><strong>Action (How I Fixed It):</strong><br />
+"I retracted my conclusion immediately, apologized to the team, and started over:<br />
+1. Grepped the entire codebase for 'surcharge' (found 15 files, not just 2)<br />
+2. Traced the HTTP request → payment gateway → billing service → surcharge calculation<br />
+3. Verified the tenant-level setting in the customer's config<br />
+4. Proved the root cause with actual function call stack"</p>
+<p><strong>Result:</strong><br />
+"✅ Found the real root cause in 2 more hours<br />
+✅ Documented the lesson in my global rules: 'No Interim Conclusions — Finish Investigation First'<br />
+✅ Created a checklist: Enumerate all audit tables, trace all code paths, verify settings<br />
+✅ This failure made me a better reviewer: I now verify 3-5x more thoroughly"</p>
+<p><strong>Key Phrases:</strong><br />
+- "I owned the mistake immediately" (accountability)<br />
+- "Documented the lesson" (continuous improvement)<br />
+- "This failure made me better" (growth mindset)</p>
+<hr />
+<h3 id="5-mentoring-helping-junior-developers"><strong>5. Mentoring / Helping Junior Developers</strong></h3>
+<p><strong>Common Questions:</strong><br />
+- "Tell me about a time you mentored someone"<br />
+- "How do you handle knowledge transfer?"</p>
+<p><strong>Your STAR Story:</strong></p>
+<p><strong>Situation:</strong><br />
+"At Billtrust, our team had 2 new developers (&lt; 1 year experience) who were struggling with NJQRT triage. They would spend 6-8 hours on cases that should take 2 hours, and their root cause findings were often incorrect (inferring behavior from code comments instead of reading actual logic)."</p>
+<p><strong>Task:</strong><br />
+"As the senior NJQRT triage lead, I needed to get them productive faster without micromanaging every case."</p>
+<p><strong>Action:</strong><br />
+"I created a structured mentorship approach:</p>
+<ol>
+<li>
+<p><strong>Skill Assessment</strong>: Paired with each dev for 1 week<br />
+   - Watched them triage a live case<br />
+   - Identified gaps: not using grep effectively, skipping DB queries, assuming behavior from variable names</p>
+</li>
+<li>
+<p><strong>Created Training Materials</strong>:<br />
+   - <strong>RC-5 Root Cause Checklist</strong> (5 questions to ask before concluding)<br />
+   - <strong>Global Rules Document</strong> (CLAUDE.md): 50+ patterns I've learned from 100+ cases<br />
+   - <strong>Custom Skills</strong>: <code>/karthik-triage</code>, <code>/db-query</code> → packaged my workflow into reusable tools</p>
+</li>
+<li>
+<p><strong>Weekly Code Reviews</strong>:<br />
+   - Reviewed their triage findings before they posted to Jira<br />
+   - Used 'Ask, Don't Tell': 'Have you verified this function actually executes on the failing request?' instead of 'You're wrong'</p>
+</li>
+<li>
+<p><strong>Measured Progress</strong>:<br />
+   - Tracked time-to-resolution: 8h → 4h → 2h over 3 months<br />
+   - Tracked accuracy: false root causes dropped from 40% → 5%"</p>
+</li>
+</ol>
+<p><strong>Result:</strong><br />
+"✅ Both devs now handle NJQRT cases independently (from 50% dependent → 90% independent in 3 months)<br />
+✅ One dev adopted my RC-5 protocol and created their own checklist variant<br />
+✅ Team velocity increased: We went from 15 cases/month → 25 cases/month (same headcount)<br />
+✅ My training materials are now part of team onboarding (used by 10+ developers)"</p>
+<p><strong>Key Phrases:</strong><br />
+- "Structured mentorship approach" (not ad-hoc help)<br />
+- "Ask, Don't Tell" (coaching style)<br />
+- "Measured progress" (data-driven)<br />
+- "Materials now part of onboarding" (lasting impact)</p>
+<hr />
+<h3 id="6-handling-ambiguous-requirements"><strong>6. Handling Ambiguous Requirements</strong></h3>
+<p><strong>Common Questions:</strong><br />
+- "Tell me about a time you dealt with unclear requirements"<br />
+- "Describe a situation where the goal wasn't well-defined"</p>
+<p><strong>Your STAR Story:</strong></p>
+<p><strong>Situation:</strong><br />
+"I received NJQRT-14794: 'Some customers are receiving eBill notifications they shouldn't get.' The ticket had no reproduction steps, no customer list, no error messages — just a vague complaint from a sales rep."</p>
+<p><strong>Task:</strong><br />
+"I needed to clarify the actual problem before I could investigate. Was it: all eBill notifications? Specific notification types? Specific customer segments? Configuration issue or code bug?"</p>
+<p><strong>Action:</strong><br />
+"I took a structured clarification approach:</p>
+<ol>
+<li>
+<p><strong>Asked Targeted Questions</strong> (not 'tell me more'):<br />
+   - 'Which notification type? Invoice reminders? Payment receipts? Autopay confirmations?'<br />
+   - 'All customers or specific types (Account-Centric vs User-Centric)?'<br />
+   - 'What does "shouldn't get" mean? They opted out? Or they have no email address?'</p>
+</li>
+<li>
+<p><strong>Gathered Examples</strong>:<br />
+   - Asked sales: 'Give me 3 specific customer IDs where this happened'<br />
+   - Queried prod DB: Compared customer notification flags vs emails actually sent<br />
+   - Found pattern: User-Centric customers with <code>AutoSendEBills='Y'</code> but <code>NotifyEBill='N'</code></p>
+</li>
+<li>
+<p><strong>Defined Acceptance Criteria</strong>:<br />
+   - Wrote back to sales: 'Confirmed the bug affects UC customers with these 2 flags. Expected behavior: no email sent. Actual: email sent anyway.'<br />
+   - Proposed fix: 'Check both flags, not just AutoSendEBills'<br />
+   - Asked: 'If we fix this, do you want historical emails stopped too, or just future?'</p>
+</li>
+<li>
+<p><strong>Prototyped Before Full Investigation</strong>:<br />
+   - Wrote a quick SQL query to count affected customers: 42 found<br />
+   - Showed sales: 'Here are the 42 affected customers — confirm this matches your report'<br />
+   - Got approval before spending 10 hours on code investigation"</p>
+</li>
+</ol>
+<p><strong>Result:</strong><br />
+"✅ Clarified requirements in 1 hour (before spending 10 hours investigating the wrong thing)<br />
+✅ Identified 42 affected customers with proof (not guessing)<br />
+✅ Sales confirmed: 'This is exactly the issue'<br />
+✅ Fixed the code, wrote a DML to backfill flags, closed in 3 days"</p>
+<p><strong>Key Phrases:</strong><br />
+- "Structured clarification approach" (not random questions)<br />
+- "Defined acceptance criteria" (turned vague into specific)<br />
+- "Prototyped before full investigation" (time management)</p>
+<hr />
+<h3 id="7-working-under-tight-deadlines"><strong>7. Working Under Tight Deadlines</strong></h3>
+<p><strong>Common Questions:</strong><br />
+- "Tell me about a time you worked under pressure"<br />
+- "Describe a situation with a tight deadline"</p>
+<p><strong>Your STAR Story:</strong></p>
+<p><strong>Situation:</strong><br />
+"During month-end billing (Oct 31, 2026), our invoice PDF generation queue backed up to 15,000 messages. Customers expected invoices by 9 AM, but at 7 AM we were 4 hours behind. The VP of Operations was on a call asking: 'Can we hit the deadline or do we delay billing?'"</p>
+<p><strong>Task:</strong><br />
+"I had 2 hours to either clear the queue or give an honest 'no' so the business could notify customers."</p>
+<p><strong>Action:</strong><br />
+"I prioritized triage over perfection:</p>
+<ol>
+<li>
+<p><strong>Quick Diagnosis (15 min)</strong>:<br />
+   - Checked Datadog: Workers were healthy, no crashes<br />
+   - Checked RabbitMQ: Messages/sec = 20 (should be 200)<br />
+   - Checked logs: S3 upload timeouts (slow network to AWS)</p>
+</li>
+<li>
+<p><strong>Immediate Fix (30 min)</strong>:<br />
+   - Scaled Kubernetes pods: 5 → 20 (manual override, didn't wait for HPA)<br />
+   - Increased S3 upload timeout: 5s → 30s (temp workaround)<br />
+   - Requeued 500 DLQ messages that failed due to timeout</p>
+</li>
+<li>
+<p><strong>Monitored Closely (1 hour)</strong>:<br />
+   - Watched queue depth drop: 15k → 10k → 5k → 1k<br />
+   - Projected: 'At 200 msgs/sec, we'll finish by 8:45 AM'<br />
+   - Told VP at 7:45 AM: 'We'll hit 9 AM deadline'</p>
+</li>
+<li>
+<p><strong>Root Cause After Crisis</strong>:<br />
+   - After billing cleared, investigated S3 slowness<br />
+   - Found: AWS region had a minor outage (us-east-1 latency spike)<br />
+   - Long-term fix: Multi-region S3 upload fallback"</p>
+</li>
+</ol>
+<p><strong>Result:</strong><br />
+"✅ Cleared queue by 8:50 AM (10 min before deadline)<br />
+✅ Zero invoice delays reported by customers<br />
+✅ Learned: Don't wait for automation during crisis (manual scale was faster)<br />
+✅ Implemented multi-region S3 fallback for future"</p>
+<p><strong>Key Phrases:</strong><br />
+- "Prioritized triage over perfection" (judgment under pressure)<br />
+- "Gave honest projection" (communication with stakeholders)<br />
+- "Root cause after crisis" (don't skip follow-up)</p>
+<hr />
+<h3 id="8-influencing-technical-decisions"><strong>8. Influencing Technical Decisions</strong></h3>
+<p><strong>Common Questions:</strong><br />
+- "Tell me about a time you influenced an architecture decision"<br />
+- "Describe a technical disagreement you resolved"</p>
+<p><strong>Your STAR Story:</strong></p>
+<p><strong>Situation:</strong><br />
+"Our team was planning to migrate invoice generation from RabbitMQ to Kafka. The lead architect argued: 'Kafka is more modern, scalable, and everyone else is using it.' The plan was to rewrite 5 services to use Kafka consumers instead of RabbitMQ workers."</p>
+<p><strong>Task:</strong><br />
+"I believed this was the wrong choice for invoice generation, but I was not the architect. I needed to present a data-driven argument without sounding like I was blocking progress."</p>
+<p><strong>Action:</strong><br />
+"I prepared a comparison with proof:</p>
+<ol>
+<li>
+<p><strong>Defined Requirements</strong>:<br />
+   - Invoice generation: 1 worker per invoice (exactly-once processing)<br />
+   - Completed invoices deleted (no retention needed)<br />
+   - Peak load: 100k invoices/month = 100 msgs/sec<br />
+   - Latency: Customers expect PDF in 15 seconds</p>
+</li>
+<li>
+<p><strong>Compared Trade-offs</strong>:<br />
+   | Factor | RabbitMQ | Kafka |<br />
+   |--------|----------|-------|<br />
+   | Exactly-once | ✅ Single consumer per message | ⚠️ Requires consumer group + idempotency logic |<br />
+   | Message deletion | ✅ Deleted after processing | ❌ Retained for days (unnecessary storage) |<br />
+   | Throughput | ✅ 100 msgs/sec easy | ✅ Overkill (designed for 10k+ msgs/sec) |<br />
+   | Complexity | ✅ Workers already written | ❌ Rewrite 5 services, test, deploy |<br />
+   | Cost | ✅ Current infra | ❌ $X/month for Kafka cluster |</p>
+</li>
+<li>
+<p><strong>Proposed Compromise</strong>:<br />
+   - 'Keep RabbitMQ for invoice generation (task queue pattern)'<br />
+   - 'Use Kafka for payment events (pub/sub pattern where multiple teams need same events)'<br />
+   - 'This is about right tool for the job, not Kafka vs RabbitMQ'</p>
+</li>
+<li>
+<p><strong>Escalated to Decision-Maker</strong>:<br />
+   - Presented the table in architecture review meeting<br />
+   - Architect argued: 'But Kafka is more scalable'<br />
+   - I responded: 'We don't need Kafka's scalability for 100 msgs/sec. We're optimizing for the wrong problem.'"</p>
+</li>
+</ol>
+<p><strong>Result:</strong><br />
+"✅ Decision: Keep RabbitMQ for invoice generation, adopt Kafka for payment events<br />
+✅ Saved 6 weeks of rewrite effort<br />
+✅ Saved $5k/month in Kafka cluster costs<br />
+✅ Team adopted 'Right tool for the job' decision framework"</p>
+<p><strong>Key Phrases:</strong><br />
+- "Data-driven argument" (not opinion)<br />
+- "Defined requirements first" (what do we actually need?)<br />
+- "Proposed compromise" (not 'my way or nothing')<br />
+- "Right tool for the job" (principle, not technology preference)</p>
+<hr />
+<h3 id="9-dealing-with-production-incidents"><strong>9. Dealing With Production Incidents</strong></h3>
+<p><strong>Common Questions:</strong><br />
+- "Tell me about a time you handled a production outage"<br />
+- "Describe how you debug under pressure"</p>
+<p><strong>Your STAR Story:</strong></p>
+<p><strong>Situation:</strong><br />
+"On Oct 15, 2026 at 3 PM, our invoice generation system stopped processing. Customers were calling support: 'Where are my invoices?' The queue had 5000 messages, but no PDFs were being generated. The oncall engineer escalated to me because I own the invoice workers."</p>
+<p><strong>Task:</strong><br />
+"I had 30 minutes to restore service before the VP got involved. No time to do a full root cause — first priority was 'get it working.'"</p>
+<p><strong>Action:</strong><br />
+"I followed an incident response protocol:</p>
+<p><strong>Step 1: Immediate Triage (5 min)</strong><br />
+- Checked Datadog dashboards: 20 worker pods running, all healthy<br />
+- Checked RabbitMQ: Messages queuing up, but no consumers connected<br />
+- Checked logs: No errors, no crashes — workers were alive but idle</p>
+<p><strong>Step 2: Quick Fix Attempt (10 min)</strong><br />
+- Hypothesis: RabbitMQ connection lost but not detected<br />
+- Action: Restarted all 20 worker pods<br />
+- Result: ✅ Workers reconnected, started processing immediately</p>
+<p><strong>Step 3: Monitor Recovery (10 min)</strong><br />
+- Queue depth dropping: 5000 → 3000 → 1000 → 0<br />
+- Invoice generation resumed: Customers receiving PDFs<br />
+- Told oncall: 'Service restored, monitoring for 30 more minutes'</p>
+<p><strong>Step 4: Root Cause After Recovery (1 hour later)</strong><br />
+- Investigated RabbitMQ logs: Found a network partition event at 2:55 PM<br />
+- Workers' connection library didn't have auto-reconnect enabled<br />
+- When network hiccup happened, workers stayed 'connected' but no messages delivered<br />
+- Long-term fix: Enabled auto-reconnect in RabbitMQ client library</p>
+<p><strong>Step 5: Post-Incident Review</strong><br />
+- Wrote incident report: timeline, root cause, prevention steps<br />
+- Added monitoring alert: 'No messages consumed for 5 min → page oncall'<br />
+- Updated runbook: 'If queue backing up but workers healthy → restart workers'"</p>
+<p><strong>Result:</strong><br />
+"✅ Service restored in 15 minutes (before VP escalation)<br />
+✅ Zero data loss (messages stayed in queue)<br />
+✅ Root cause found and fixed (auto-reconnect enabled)<br />
+✅ Added monitoring to catch this earlier next time (5 min alert vs 30 min manual detection)"</p>
+<p><strong>Key Phrases:</strong><br />
+- "Immediate triage, then root cause" (prioritization)<br />
+- "Monitored recovery" (don't assume fix worked)<br />
+- "Post-incident review" (prevention mindset)</p>
+<hr />
+<h3 id="10-taking-initiative-going-above-and-beyond"><strong>10. Taking Initiative / Going Above and Beyond</strong></h3>
+<p><strong>Common Questions:</strong><br />
+- "Tell me about a time you went beyond your job description"<br />
+- "Describe a process improvement you initiated"</p>
+<p><strong>Your STAR Story:</strong></p>
+<p><strong>Situation:</strong><br />
+"At Billtrust, our NJQRT triage process was manual and inconsistent. Each developer had their own approach, and new team members took 6 months to get productive. There was no standard for 'what does a good root cause look like?' or 'when is triage complete?'"</p>
+<p><strong>Task:</strong><br />
+"This wasn't my assigned project — I was just one of 5 triage engineers. But I saw an opportunity to improve the team's effectiveness."</p>
+<p><strong>Action:</strong><br />
+"I took initiative to systematize the process:</p>
+<p><strong>Phase 1: Observed Patterns (1 month)</strong><br />
+- Reviewed 50 closed NJQRT cases<br />
+- Identified common failure modes:<br />
+  - Root causes based on code comments, not actual logic<br />
+  - Interim conclusions presented as final ('I checked table X, didn't find it, so it's ruled out')<br />
+  - Missing verification: no DB queries, no code line numbers<br />
+  - Skipped universality check: 'This flag is set' but didn't check if it's also set on working cases</p>
+<p><strong>Phase 2: Created RC-5 Protocol (2 weeks)</strong><br />
+- Wrote a 5-question checklist:<br />
+  1. Prior conclusion: What did earlier investigators think?<br />
+  2. Universality: Is this also present on working cases?<br />
+  3. Reachability: Does this code actually execute?<br />
+  4. Signature: Does my chain produce the exact error message?<br />
+  5. Fix vs mask: Am I restoring function or just hiding the error?<br />
+- Tested on 10 new cases: Caught 3 wrong root causes before they were posted</p>
+<p><strong>Phase 3: Shared With Team (1 month)</strong><br />
+- Created global CLAUDE.md file with RC-5 + 50+ learned rules<br />
+- Created custom skills: <code>/karthik-triage</code>, <code>/db-query</code> → packaged my workflow<br />
+- Ran 2 training sessions with team (1 hour each)<br />
+- Offered to review anyone's triage findings before posting</p>
+<p><strong>Phase 4: Measured Impact (3 months)</strong><br />
+- False root cause rate: 30% → 8%<br />
+- Time to resolution: 6 hours → 3 hours (average)<br />
+- Repeat incidents: 15% → 2%<br />
+- 5 team members adopted RC-5, 2 created their own variants"</p>
+<p><strong>Result:</strong><br />
+"✅ RC-5 protocol adopted by team, now part of onboarding<br />
+✅ Team velocity increased: 15 cases/month → 25 cases/month<br />
+✅ My global rules document has 50+ patterns (open-sourced internally)<br />
+✅ Presented at internal tech talk: 'How AI Workflows Scaled NJQRT Triage'"</p>
+<p><strong>Key Phrases:</strong><br />
+- "Took initiative" (not assigned)<br />
+- "Observed patterns" (data-driven, not opinion)<br />
+- "Measured impact" (quantified results)<br />
+- "Adopted by team" (influence beyond your work)</p>
+<hr />
+<h2 id="how-to-use-these-stories">🎯 How to Use These Stories</h2>
+<h3 id="1-record-yourself"><strong>1. Record Yourself</strong></h3>
+<ul>
+<li>📹 Video/audio record each story (2-3 min each)</li>
+<li>Watch yourself: Do you sound confident? Too fast? Too many "umm"s?</li>
+<li>Rerecord until it flows naturally</li>
+</ul>
+<h3 id="2-practice-the-pivot"><strong>2. Practice the Pivot</strong></h3>
+<p>When interviewer asks: "Tell me about a time you debugged a hard problem"</p>
+<p>Your mental checklist:<br />
+1. Which STAR story fits? → <strong>Story #1 (Root Cause Investigation)</strong><br />
+2. Start with Situation (10 sec): "At Billtrust, NJQRT-14987..."<br />
+3. Task (10 sec): "48-hour SLA, find root cause..."<br />
+4. Action (60 sec): "RC-5 protocol: checked prior conclusion, ran DB queries..."<br />
+5. Result (20 sec): "24 hours, $128k saved, adopted by team"<br />
+6. Total: <strong>100 seconds = 1:40 min</strong></p>
+<h3 id="3-customize-to-job-description"><strong>3. Customize to Job Description</strong></h3>
+<p>If applying to a <strong>fintech company</strong>:<br />
+- Emphasize: Payment processing, fraud detection, revenue protection</p>
+<p>If applying to a <strong>SaaS company</strong>:<br />
+- Emphasize: Multi-tenant architecture, scalability, customer impact</p>
+<p>If applying to a <strong>leadership role</strong>:<br />
+- Emphasize: Mentorship, process improvement, cross-team influence</p>
+<h3 id="4-have-3-ready-for-each-category"><strong>4. Have 3 Ready For Each Category</strong></h3>
+<table>
+<thead>
+<tr>
+<th>Category</th>
+<th>Your 3 Stories</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Technical problem-solving</td>
+<td>#1 Root Cause, #2 Performance, #9 Incident</td>
+</tr>
+<tr>
+<td>Leadership/Mentorship</td>
+<td>#5 Mentoring, #10 Initiative, #3 Collaboration</td>
+</tr>
+<tr>
+<td>Failure/Learning</td>
+<td>#4 Learning From Failure, #7 Tight Deadline</td>
+</tr>
+<tr>
+<td>Communication</td>
+<td>#6 Ambiguous Requirements, #3 Conflict Resolution</td>
+</tr>
+<tr>
+<td>Influence</td>
+<td>#8 Architecture Decision, #10 Process Improvement</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="practice-template">📝 Practice Template</h2>
+<p>For each of your own additional stories:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">SITUATION</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="mi">2</span><span class="w"> </span><span class="n">sentences</span><span class="p">):</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="n">Where</span><span class="p">,</span><span class="w"> </span><span class="n">when</span><span class="p">,</span><span class="w"> </span><span class="n">what</span><span class="w"> </span><span class="n">was</span><span class="w"> </span><span class="n">happening</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="n">Why</span><span class="w"> </span><span class="n">it</span><span class="w"> </span><span class="n">mattered</span>
+
+<span class="n">TASK</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="w"> </span><span class="n">sentence</span><span class="p">):</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="n">Your</span><span class="w"> </span><span class="n">specific</span><span class="w"> </span><span class="n">responsibility</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="n">The</span><span class="w"> </span><span class="n">constraint</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="n">challenge</span>
+
+<span class="n">ACTION</span><span class="w"> </span><span class="p">(</span><span class="mi">3</span><span class="o">-</span><span class="mi">5</span><span class="w"> </span><span class="n">bullets</span><span class="p">):</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="n">What</span><span class="w"> </span><span class="n">YOU</span><span class="w"> </span><span class="n">specifically</span><span class="w"> </span><span class="n">did</span><span class="w"> </span><span class="p">(</span><span class="ow">not</span><span class="w"> </span><span class="s2">"we"</span><span class="p">,</span><span class="w"> </span><span class="n">use</span><span class="w"> </span><span class="s2">"I"</span><span class="p">)</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="n">Use</span><span class="w"> </span><span class="n">technical</span><span class="w"> </span><span class="n">details</span><span class="w"> </span><span class="p">(</span><span class="k">tool</span><span class="w"> </span><span class="n">names</span><span class="p">,</span><span class="w"> </span><span class="n">metrics</span><span class="p">)</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="n">Show</span><span class="w"> </span><span class="n">your</span><span class="w"> </span><span class="n">thought</span><span class="w"> </span><span class="n">process</span>
+
+<span class="n">RESULT</span><span class="w"> </span><span class="p">(</span><span class="mi">2</span><span class="o">-</span><span class="mi">3</span><span class="w"> </span><span class="n">metrics</span><span class="p">):</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="n">Quantified</span><span class="w"> </span><span class="n">impact</span><span class="w"> </span><span class="p">(</span><span class="n">time</span><span class="p">,</span><span class="w"> </span><span class="n">money</span><span class="p">,</span><span class="w"> </span><span class="n">quality</span><span class="p">)</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="n">Lasting</span><span class="w"> </span><span class="n">impact</span><span class="w"> </span><span class="p">(</span><span class="n">adopted</span><span class="w"> </span><span class="n">by</span><span class="w"> </span><span class="n">team</span><span class="p">,</span><span class="w"> </span><span class="n">now</span><span class="w"> </span><span class="n">standard</span><span class="w"> </span><span class="n">practice</span><span class="p">)</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="n">What</span><span class="w"> </span><span class="n">you</span><span class="w"> </span><span class="n">learned</span>
+</code></pre></div>
+
+<hr />
+<h2 id="your-homework">🚀 Your Homework</h2>
+<p><strong>Week 1:</strong><br />
+- ✅ Read all 10 stories above<br />
+- 📹 Record yourself telling Story #1 (practice run)</p>
+<p><strong>Week 2:</strong><br />
+- 📹 Record all 10 stories (2-3 min each)<br />
+- ✍️ Write 5 MORE stories from your own experience (not in this guide)</p>
+<p><strong>Week 3:</strong><br />
+- 🎤 Practice with a friend (mock interview)<br />
+- ⏱️ Time yourself: Keep each answer under 2 minutes</p>
+<p><strong>Week 4:</strong><br />
+- 🎯 Customize stories to 5 target companies<br />
+- 🔥 You're now ready for behavioral interviews!</p>
+<hr />
+<h2 id="key-takeaways">💡 Key Takeaways</h2>
+<p>✅ <strong>STAR is a structure, not a script</strong>: Don't memorize word-for-word<br />
+✅ <strong>Quantify everything</strong>: "$128k saved" beats "saved money"<br />
+✅ <strong>Show ownership</strong>: "I did X" not "We did X"<br />
+✅ <strong>Lasting impact</strong>: "Adopted by team" proves leadership<br />
+✅ <strong>Practice out loud</strong>: Reading ≠ Speaking under pressure</p>
+<p>Your NJQRT work is a goldmine of stories. You've already DONE the work — now you just need to tell it well. 🚀</p>
+        </div>
+    </div>
+
+    <script>
+        // Progress Tracker JavaScript
+        const STORAGE_KEY = 'course_progress_behavioral_interview_star_method';
+
+        // Extract all H2 and H3 headings from content
+        function extractSections() {
+            const content = document.querySelector('.content');
+            const headings = content.querySelectorAll('h2, h3');
+            const sections = [];
+
+            headings.forEach((heading, index) => {
+                const level = heading.tagName === 'H2' ? 2 : 3;
+                const text = heading.textContent.trim();
+                const id = `section-${index}`;
+
+                // Add ID to heading for linking
+                heading.id = id;
+
+                sections.push({
+                    id: id,
+                    text: text,
+                    level: level
+                });
+            });
+
+            return sections;
+        }
+
+        // Load saved progress from localStorage
+        function loadProgress() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            return saved ? JSON.parse(saved) : {};
+        }
+
+        // Save progress to localStorage
+        function saveProgress(progress) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+        }
+
+        // Calculate progress percentage
+        function calculateProgress() {
+            const checkboxes = document.querySelectorAll('.progress-checkbox');
+            const total = checkboxes.length;
+            if (total === 0) return 0;
+
+            const completed = Array.from(checkboxes).filter(cb => cb.checked).length;
+            return Math.round((completed / total) * 100);
+        }
+
+        // Update progress display
+        function updateProgressDisplay() {
+            const percentage = calculateProgress();
+            document.getElementById('progress-pct').textContent = percentage + '%';
+            document.getElementById('progress-bar').style.width = percentage + '%';
+
+            // Update completed class on items
+            document.querySelectorAll('.progress-item').forEach(item => {
+                const checkbox = item.querySelector('.progress-checkbox');
+                if (checkbox.checked) {
+                    item.classList.add('completed');
+                } else {
+                    item.classList.remove('completed');
+                }
+            });
+        }
+
+        // Toggle checkbox
+        function toggleCheckbox(sectionId) {
+            const checkbox = document.getElementById('cb-' + sectionId);
+            const progress = loadProgress();
+
+            progress[sectionId] = checkbox.checked;
+            saveProgress(progress);
+            updateProgressDisplay();
+        }
+
+        // Reset all progress
+        function resetProgress() {
+            if (confirm('Reset all progress for this page?')) {
+                localStorage.removeItem(STORAGE_KEY);
+                document.querySelectorAll('.progress-checkbox').forEach(cb => {
+                    cb.checked = false;
+                });
+                updateProgressDisplay();
+            }
+        }
+
+        // Toggle progress list visibility
+        function toggleProgressList() {
+            const list = document.getElementById('progress-items');
+            const btn = document.querySelector('.toggle-progress');
+
+            if (list.classList.contains('collapsed')) {
+                list.classList.remove('collapsed');
+                btn.textContent = '▼ Hide';
+            } else {
+                list.classList.add('collapsed');
+                btn.textContent = '▶ Show';
+            }
+        }
+
+        // Initialize progress tracker
+        function initProgressTracker() {
+            const sections = extractSections();
+            const progress = loadProgress();
+            const container = document.getElementById('progress-items');
+
+            if (sections.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No sections found</p>';
+                return;
+            }
+
+            sections.forEach(section => {
+                const item = document.createElement('div');
+                item.className = 'progress-item';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'progress-checkbox';
+                checkbox.id = 'cb-' + section.id;
+                checkbox.checked = progress[section.id] || false;
+                checkbox.onchange = () => toggleCheckbox(section.id);
+
+                const label = document.createElement('label');
+                label.className = 'progress-label';
+                label.htmlFor = 'cb-' + section.id;
+                label.textContent = section.text;
+                label.style.paddingLeft = section.level === 3 ? '20px' : '0';
+                label.onclick = () => {
+                    document.getElementById(section.id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+                };
+
+                item.appendChild(checkbox);
+                item.appendChild(label);
+                container.appendChild(item);
+            });
+
+            updateProgressDisplay();
+        }
+
+        // Run on page load
+        document.addEventListener('DOMContentLoaded', initProgressTracker);
+    </script>
+</body>
+</html>

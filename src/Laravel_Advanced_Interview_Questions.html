@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laravel Advanced Interview Questions</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.8; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 { color: #667eea; font-size: 2.5em; margin: 30px 0 20px 0; border-bottom: 3px solid #667eea; padding-bottom: 15px; }
+        h2 { color: #764ba2; font-size: 2em; margin: 40px 0 20px 0; padding-left: 15px; border-left: 5px solid #764ba2; }
+        h3 { color: #667eea; font-size: 1.5em; margin: 30px 0 15px 0; }
+        h4 { color: #555; font-size: 1.2em; margin: 20px 0 10px 0; }
+        p { margin-bottom: 15px; color: #333; }
+        code { 
+            background: #f4f4f4; 
+            padding: 2px 8px; 
+            border-radius: 4px; 
+            font-family: 'Courier New', monospace;
+            color: #c7254e;
+            font-size: 0.9em;
+        }
+        pre { 
+            background: #2d2d2d; 
+            color: #f8f8f2; 
+            padding: 20px; 
+            border-radius: 8px; 
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        pre code { 
+            background: none; 
+            color: inherit; 
+            padding: 0;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+        ul, ol { margin: 15px 0 15px 30px; }
+        li { margin-bottom: 8px; }
+        strong { color: #667eea; font-weight: 600; }
+        a { color: #667eea; text-decoration: none; font-weight: 500; }
+        a:hover { text-decoration: underline; }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .back-link:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        blockquote {
+            border-left: 4px solid #667eea;
+            padding: 15px 20px;
+            margin: 20px 0;
+            background: #f9f9f9;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../navigation.html" class="back-link">← Back to Navigation</a>
+        <h1>Laravel Advanced Interview Questions</h1>
+
+<p>> <strong>100+ Advanced Laravel Questions for Senior/Staff Engineer Roles</strong></p>
+
+<p>---</p>
+
+<h2>Table of Contents</h2>
+
+<p>1. <a href="#service-container">Service Container & Dependency Injection</a></p>
+<p>2. <a href="#eloquent-advanced">Eloquent ORM Advanced</a></p>
+<p>3. <a href="#database-optimization">Database & Query Optimization</a></p>
+<p>4. <a href="#service-providers">Service Providers & Lifecycle</a></p>
+<p>5. <a href="#events-queues">Laravel Events & Queues</a></p>
+<p>6. <a href="#security">Laravel Security</a></p>
+<p>7. <a href="#performance">Performance & Scaling</a></p>
+<p>8. <a href="#testing">Testing (PHPUnit, Pest)</a></p>
+<p>9. <a href="#architecture">Architecture & Design Patterns</a></p>
+<p>10. <a href="#real-world">Real-World Scenarios</a></p>
+
+<p>---</p>
+
+<h1>Service Container & Dependency Injection</h1>
+
+<h2>Q1: Explain Laravel's Service Container. How does it differ from a simple factory pattern?</h2>
+
+<strong>Answer:</strong>
+
+<p>The <strong>Service Container</strong> is Laravel's IoC (Inversion of Control) container that manages class dependencies and performs dependency injection.</p>
+
+<strong>Key Differences from Factory Pattern:</strong>
+
+<p>| Feature | Service Container | Factory Pattern |</p>
+<p>|---------|------------------|-----------------|</p>
+<p>| <strong>Resolution</strong> | Automatic dependency resolution via reflection | Manual instantiation |</p>
+<p>| <strong>Binding</strong> | Flexible bindings (singleton, bind, instance) | Fixed creation logic |</p>
+<p>| <strong>Interface Resolution</strong> | Can bind interfaces to implementations | Factories tied to concrete classes |</p>
+<p>| <strong>Lifecycle</strong> | Controls object lifecycle (singleton vs transient) | Each call creates new instance |</p>
+
+<strong>Example:</strong>
+
+<p>``<code>php</p>
+<p>// Factory Pattern (manual)</p>
+<p>class UserFactory {</p>
+<p>    public static function create() {</p>
+<p>        $db = new Database();</p>
+<p>        $logger = new Logger();</p>
+<p>        return new UserService($db, $logger);</p>
+<p>    }</p>
+<p>}</p>
+<p>$user = UserFactory::create();</p>
+
+<p>// Service Container (automatic)</p>
+<p>app()->bind(UserService::class, function ($app) {</p>
+<p>    return new UserService(</p>
+<p>        $app->make(Database::class),</p>
+<p>        $app->make(Logger::class)</p>
+<p>    );</p>
+<p>});</p>
+<p>$user = app(UserService::class);  // Dependencies auto-injected</p>
+</code>`<code>
+
+<strong>Billtrust Example:</strong>
+<p>"At Billtrust, we bind </code>InvoiceRepository<code> interface to </code>EloquentInvoiceRepository<code> in a service provider. This lets us swap implementations (MySQL → MongoDB) without changing controller code."</p>
+
+<p>---</p>
+
+<h2>Q2: What's the difference between </code>bind()<code>, </code>singleton()<code>, and </code>instance()<code> in the Service Container?</h2>
+
+<strong>Answer:</strong>
+
+</code>`<code>php
+<p>// 1. bind() - New instance every time</p>
+<p>app()->bind(InvoiceService::class, function ($app) {</p>
+<p>    return new InvoiceService($app->make(Database::class));</p>
+<p>});</p>
+<p>$service1 = app(InvoiceService::class);</p>
+<p>$service2 = app(InvoiceService::class);</p>
+<p>// $service1 !== $service2 (different instances)</p>
+
+<p>// 2. singleton() - Same instance every time</p>
+<p>app()->singleton(InvoiceService::class, function ($app) {</p>
+<p>    return new InvoiceService($app->make(Database::class));</p>
+<p>});</p>
+<p>$service1 = app(InvoiceService::class);</p>
+<p>$service2 = app(InvoiceService::class);</p>
+<p>// $service1 === $service2 (same instance)</p>
+
+<p>// 3. instance() - Use specific instance</p>
+<p>$myService = new InvoiceService(new Database());</p>
+<p>app()->instance(InvoiceService::class, $myService);</p>
+<p>$service1 = app(InvoiceService::class);</p>
+<p>// $service1 === $myService (exact same object)</p>
+</code>`<code>
+
+<strong>When to use:</strong>
+<p>- <strong>bind()</strong>: Default, when new instance is needed each time</p>
+<p>- <strong>singleton()</strong>: Logger, Cache, Database connections (expensive to create)</p>
+<p>- <strong>instance()</strong>: Testing (inject mock), sharing pre-configured object</p>
+
+<p>---</p>
+
+<h2>Q3: How does contextual binding work? Give a real-world example.</h2>
+
+<strong>Answer:</strong>
+
+<strong>Contextual binding</strong> lets you inject different implementations based on WHICH class is requesting the dependency.
+
+<strong>Example:</strong>
+
+</code>`<code>php
+<p>// Two different payment gateways for different services</p>
+<p>app()->when(StripePaymentService::class)</p>
+<p>    ->needs(PaymentGateway::class)</p>
+<p>    ->give(StripeGateway::class);</p>
+
+<p>app()->when(PayPalPaymentService::class)</p>
+<p>    ->needs(PaymentGateway::class)</p>
+<p>    ->give(PayPalGateway::class);</p>
+
+<p>// Now:</p>
+<p>$stripeService = app(StripePaymentService::class);</p>
+<p>// Gets StripeGateway injected</p>
+
+<p>$paypalService = app(PayPalPaymentService::class);</p>
+<p>// Gets PayPalGateway injected</p>
+</code>`<code>
+
+<strong>Billtrust Example:</strong>
+<p>"At Billtrust, we have </code>NotificationService<code> that needs different channels:</p>
+<p>- </code>EmailInvoiceService<code> → inject </code>SendGridMailer<code></p>
+<p>- </code>SMSInvoiceService<code> → inject </code>TwilioMailer<code></p>
+
+<p>Contextual binding lets us configure this once in </code>AppServiceProvider<code>."</p>
+
+<p>---</p>
+
+<h1>Eloquent ORM Advanced</h1>
+
+<h2>Q4: Explain the N+1 query problem in Eloquent. How do you detect and fix it?</h2>
+
+<strong>Answer:</strong>
+
+<strong>N+1 Problem:</strong>
+</code>`<code>php
+<p>// BAD: 1 query for invoices + 100 queries for each invoice's customer</p>
+<p>$invoices = Invoice::all();  // 1 query</p>
+<p>foreach ($invoices as $invoice) {</p>
+<p>    echo $invoice->customer->name;  // N queries (100 more)</p>
+<p>}</p>
+<p>// Total: 101 queries</p>
+</code>`<code>
+
+<strong>Fix with Eager Loading:</strong>
+</code>`<code>php
+<p>// GOOD: 2 queries total</p>
+<p>$invoices = Invoice::with('customer')->get();  // 2 queries</p>
+<p>foreach ($invoices as $invoice) {</p>
+<p>    echo $invoice->customer->name;  // No query, already loaded</p>
+<p>}</p>
+<p>// Total: 2 queries</p>
+</code>`<code>
+
+<strong>Detection:</strong>
+</code>`<code>php
+<p>// config/database.php (local only)</p>
+<p>'connections' => [</p>
+<p>    'mysql' => [</p>
+<p>        'options' => [PDO::ATTR_EMULATE_PREPARES => false],</p>
+<p>    ],</p>
+<p>],</p>
+
+<p>// Enable query logging</p>
+<p>DB::enableQueryLog();</p>
+<p>Invoice::all()->load('customer');</p>
+<p>dd(DB::getQueryLog());  // See all queries</p>
+
+<p>// Or use Laravel Telescope (production-safe)</p>
+<p>// Shows N+1 warnings automatically</p>
+</code>`<code>
+
+<strong>Billtrust Example:</strong>
+<p>"Found N+1 in invoice generation: 10k invoices × 1 customer query each = 10,001 queries. Fixed with </code>Invoice::with('customer')<code> → 2 queries. Report generation dropped from 45 seconds to 3 seconds."</p>
+
+<p>---</p>
+
+<h2>Q5: What's the difference between </code>has()<code> and </code>whereHas()<code> in Eloquent?</h2>
+
+<strong>Answer:</strong>
+
+</code>`<code>php
+<p>// 1. has() - Filter by relationship existence (no conditions on related model)</p>
+<p>$customers = Customer::has('invoices')->get();</p>
+<p>// SQL: SELECT * FROM customers WHERE EXISTS (SELECT * FROM invoices WHERE customers.id = invoices.customer_id)</p>
+
+<p>// 2. whereHas() - Filter by relationship existence WITH conditions</p>
+<p>$customers = Customer::whereHas('invoices', function ($query) {</p>
+<p>    $query->where('status', 'unpaid');</p>
+<p>})->get();</p>
+<p>// SQL: SELECT * FROM customers WHERE EXISTS (</p>
+<p>//   SELECT * FROM invoices WHERE customers.id = invoices.customer_id AND status = 'unpaid'</p>
+<p>// )</p>
+
+<p>// 3. has() with count</p>
+<p>$customers = Customer::has('invoices', '>=', 10)->get();</p>
+<p>// Customers with at least 10 invoices</p>
+</code>`<code>
+
+<strong>When to use:</strong>
+<p>- <strong>has()</strong>: "Find customers WHO HAVE invoices"</p>
+<p>- <strong>whereHas()</strong>: "Find customers WHO HAVE unpaid invoices"</p>
+
+<p>---</p>
+
+<h2>Q6: How do you implement soft deletes? What's the performance impact?</h2>
+
+<strong>Answer:</strong>
+
+<strong>Implementation:</strong>
+</code>`<code>php
+<p>// Migration</p>
+<p>Schema::table('invoices', function (Blueprint $table) {</p>
+<p>    $table->softDeletes();  // Adds deleted_at column</p>
+<p>});</p>
+
+<p>// Model</p>
+<p>class Invoice extends Model {</p>
+<p>    use SoftDeletes;</p>
+<p>}</p>
+
+<p>// Usage</p>
+<p>$invoice->delete();  // Sets deleted_at = NOW(), doesn't delete row</p>
+<p>Invoice::all();  // Excludes soft-deleted rows</p>
+<p>Invoice::withTrashed()->get();  // Includes soft-deleted</p>
+<p>Invoice::onlyTrashed()->get();  // Only soft-deleted</p>
+<p>$invoice->restore();  // Undeletes (sets deleted_at = NULL)</p>
+<p>$invoice->forceDelete();  // Permanently deletes</p>
+</code>`<code>
+
+<strong>Performance Impact:</strong>
+</code>`<code>sql
+<p>-- Without soft deletes</p>
+<p>SELECT * FROM invoices WHERE customer_id = 123;</p>
+
+<p>-- With soft deletes</p>
+<p>SELECT * FROM invoices WHERE customer_id = 123 AND deleted_at IS NULL;</p>
+
+<p>-- Index needed!</p>
+<p>CREATE INDEX idx_deleted_at ON invoices(deleted_at);</p>
+</code>`<code>
+
+<strong>Billtrust Example:</strong>
+<p>"Used soft deletes for </code>fsiinvoice<code> (5M rows). Without index on </code>deleted_at<code>, queries went from 50ms → 2 seconds. Added index → back to 50ms."</p>
+
+<p>---</p>
+
+<h2>Q7: Explain Laravel's query scopes. When would you use a global scope vs local scope?</h2>
+
+<strong>Answer:</strong>
+
+<strong>Local Scope</strong> (applied manually):
+</code>`<code>php
+<p>class Invoice extends Model {</p>
+<p>    // Local scope</p>
+<p>    public function scopeUnpaid($query) {</p>
+<p>        return $query->where('status', 'unpaid');</p>
+<p>    }</p>
+<p>    </p>
+<p>    public function scopeOverdue($query) {</p>
+<p>        return $query->where('due_date', '<', now());</p>
+<p>    }</p>
+<p>}</p>
+
+<p>// Usage</p>
+<p>Invoice::unpaid()->get();</p>
+<p>Invoice::unpaid()->overdue()->get();  // Chainable</p>
+</code>`<code>
+
+<strong>Global Scope</strong> (applied automatically):
+</code>`<code>php
+<p>// Apply to ALL queries</p>
+<p>class ActiveScope implements Scope {</p>
+<p>    public function apply(Builder $builder, Model $model) {</p>
+<p>        $builder->where('active', 1);</p>
+<p>    }</p>
+<p>}</p>
+
+<p>class Invoice extends Model {</p>
+<p>    protected static function booted() {</p>
+<p>        static::addGlobalScope(new ActiveScope);</p>
+<p>    }</p>
+<p>}</p>
+
+<p>// Usage</p>
+<p>Invoice::all();  // Automatically adds WHERE active = 1</p>
+<p>Invoice::withoutGlobalScope(ActiveScope::class)->get();  // Skip scope</p>
+</code>`<code>
+
+<strong>When to use:</strong>
+<p>- <strong>Local scope</strong>: Optional filters (unpaid, overdue, by customer)</p>
+<p>- <strong>Global scope</strong>: Multi-tenancy (always filter by CustomerId), soft deletes</p>
+
+<strong>Billtrust Example:</strong>
+<p>"Used global scope for multi-tenant isolation:</p>
+</code>`<code>php
+<p>// All queries automatically filter by tenant</p>
+<p>protected static function booted() {</p>
+<p>    static::addGlobalScope('tenant', function ($query) {</p>
+<p>        $query->where('customer_id', auth()->user()->customer_id);</p>
+<p>    });</p>
+<p>}</p>
+</code>`<code>
+<p>Prevents cross-tenant data leaks."</p>
+
+<p>---</p>
+
+<h1>Database & Query Optimization</h1>
+
+<h2>Q8: How do you optimize a slow Eloquent query? Walk through your debugging process.</h2>
+
+<strong>Answer:</strong>
+
+<strong>Step-by-step:</strong>
+
+<strong>1. Enable query logging:</strong>
+</code>`<code>php
+<p>DB::enableQueryLog();</p>
+<p>$invoices = Invoice::where('customer_id', 123)->get();</p>
+<p>dd(DB::getQueryLog());</p>
+</code>`<code>
+
+<strong>2. Run EXPLAIN:</strong>
+</code>`<code>php
+<p>$query = Invoice::where('customer_id', 123)->toSql();</p>
+<p>$explain = DB::select("EXPLAIN $query", [123]);</p>
+<p>dd($explain);</p>
+<p>// Look for: type=ALL (full table scan), Extra=Using filesort</p>
+</code>`<code>
+
+<strong>3. Check for N+1:</strong>
+</code>`<code>php
+<p>// Bad: 1001 queries</p>
+<p>Invoice::all()->load('customer');</p>
+
+<p>// Good: 2 queries</p>
+<p>Invoice::with('customer')->get();</p>
+</code>`<code>
+
+<strong>4. Add indexes:</strong>
+</code>`<code>php
+<p>Schema::table('invoices', function (Blueprint $table) {</p>
+<p>    $table->index('customer_id');</p>
+<p>    $table->index(['status', 'due_date']);  // Composite</p>
+<p>});</p>
+</code>`<code>
+
+<strong>5. Use chunks for large datasets:</strong>
+</code>`<code>php
+<p>// Bad: Loads 1M rows into memory</p>
+<p>Invoice::where('status', 'unpaid')->get();</p>
+
+<p>// Good: Processes 1000 at a time</p>
+<p>Invoice::where('status', 'unpaid')->chunk(1000, function ($invoices) {</p>
+<p>    foreach ($invoices as $invoice) {</p>
+<p>        // Process</p>
+<p>    }</p>
+<p>});</p>
+</code>`<code>
+
+<strong>Billtrust Example:</strong>
+<p>"Optimized invoice report query:</p>
+<p>- Original: 12 seconds (full table scan on 5M rows)</p>
+<p>- After index on </code>(customer_id, created_at)<code>: 2 seconds</p>
+<p>- After eager loading </code>with('customer')<code>: 500ms</p>
+<p>- After chunking (1000 rows): 300ms + no memory issues"</p>
+
+<p>---</p>
+
+<h2>Q9: When would you use raw queries vs Eloquent? Give examples of each.</h2>
+
+<strong>Answer:</strong>
+
+<strong>Use Eloquent when:</strong>
+<p>- Simple CRUD operations</p>
+<p>- Relationships needed</p>
+<p>- Need query builder flexibility</p>
+
+<strong>Use Raw SQL when:</strong>
+<p>- Complex joins (5+ tables)</p>
+<p>- Database-specific functions</p>
+<p>- Bulk updates (UPDATE 1M rows)</p>
+<p>- Performance-critical (Eloquent overhead)</p>
+
+<strong>Examples:</strong>
+
+</code>`<code>php
+<p>// Eloquent (good for simple queries)</p>
+<p>Invoice::where('status', 'unpaid')</p>
+<p>    ->where('customer_id', 123)</p>
+<p>    ->with('customer')</p>
+<p>    ->get();</p>
+
+<p>// Raw (good for complex aggregations)</p>
+<p>DB::select("</p>
+<p>    SELECT </p>
+<p>        c.name,</p>
+<p>        COUNT(i.id) as invoice_count,</p>
+<p>        SUM(i.amount) as total_amount,</p>
+<p>        AVG(DATEDIFF(i.paid_date, i.due_date)) as avg_days_late</p>
+<p>    FROM customers c</p>
+<p>    LEFT JOIN invoices i ON c.id = i.customer_id</p>
+<p>    WHERE i.created_at >= DATE_SUB(NOW(), INTERVAL 1 YEAR)</p>
+<p>    GROUP BY c.id</p>
+<p>    HAVING invoice_count > 10</p>
+<p>    ORDER BY total_amount DESC</p>
+<p>");</p>
+
+<p>// Bulk update (raw is 100x faster)</p>
+<p>// Eloquent: 10,000 queries</p>
+<p>Invoice::where('status', 'draft')->chunk(100, function ($invoices) {</p>
+<p>    foreach ($invoices as $invoice) {</p>
+<p>        $invoice->update(['status' => 'sent']);</p>
+<p>    }</p>
+<p>});</p>
+
+<p>// Raw: 1 query</p>
+<p>DB::update("UPDATE invoices SET status = 'sent' WHERE status = 'draft'");</p>
+</code>`<code>
+
+<p>---</p>
+
+<h1>Service Providers & Lifecycle</h1>
+
+<h2>Q10: Explain the Laravel request lifecycle. What happens from HTTP request to response?</h2>
+
+<strong>Answer:</strong>
+
+<strong>15-Step Lifecycle:</strong>
+
+</code>`<code>
+<p>1. public/index.php (entry point)</p>
+<p>   ↓</p>
+<p>2. Bootstrap autoloader (vendor/autoload.php)</p>
+<p>   ↓</p>
+<p>3. Create Application instance (Illuminate\Foundation\Application)</p>
+<p>   ↓</p>
+<p>4. Bind HTTP Kernel to Service Container</p>
+<p>   ↓</p>
+<p>5. HTTP Kernel handles request</p>
+<p>   ↓</p>
+<p>6. Load Service Providers (register() methods)</p>
+<p>   ↓</p>
+<p>7. Bootstrap app (boot() methods of service providers)</p>
+<p>   ↓</p>
+<p>8. Middleware stack (global → route → controller)</p>
+<p>   ↓</p>
+<p>9. Route matching (find which route matches URL)</p>
+<p>   ↓</p>
+<p>10. Controller instantiation (via Service Container)</p>
+<p>   ↓</p>
+<p>11. Controller method execution</p>
+<p>   ↓</p>
+<p>12. Response generated (view, JSON, redirect)</p>
+<p>   ↓</p>
+<p>13. Middleware stack (reverse order, transform response)</p>
+<p>   ↓</p>
+<p>14. HTTP Kernel sends response</p>
+<p>   ↓</p>
+<p>15. Terminate middleware (cleanup tasks)</p>
+</code>`<code>
+
+<strong>Code:</strong>
+</code>`<code>php
+<p>// 1. public/index.php</p>
+<p>$app = require_once __DIR__.'/../bootstrap/app.php';</p>
+<p>$kernel = $app->make(Kernel::class);</p>
+<p>$response = $kernel->handle($request = Request::capture());</p>
+<p>$response->send();</p>
+<p>$kernel->terminate($request, $response);</p>
+
+<p>// 6-7. Service Provider</p>
+<p>class AppServiceProvider extends ServiceProvider {</p>
+<p>    public function register() {</p>
+<p>        // Bindings (happens BEFORE boot)</p>
+<p>        $this->app->bind(InvoiceService::class, fn($app) => new InvoiceService);</p>
+<p>    }</p>
+<p>    </p>
+<p>    public function boot() {</p>
+<p>        // After all providers registered</p>
+<p>        View::composer('*', function ($view) {</p>
+<p>            $view->with('appName', config('app.name'));</p>
+<p>        });</p>
+<p>    }</p>
+<p>}</p>
+</code>`<code>
+
+<p>---</p>
+
+<h1>Events & Queues</h1>
+
+<h2>Q11: How do Laravel Events differ from Observers? When would you use each?</h2>
+
+<strong>Answer:</strong>
+
+<strong>Events:</strong>
+<p>- Explicit dispatch (</code>event(new InvoicePaid($invoice))<code>)</p>
+<p>- Multiple listeners possible</p>
+<p>- Can queue listeners</p>
+<p>- Decoupled (listener doesn't know about Event class)</p>
+
+<strong>Observers:</strong>
+<p>- Implicit (auto-fired on model lifecycle: creating, created, updating, etc.)</p>
+<p>- One observer per model</p>
+<p>- Can't queue (runs synchronously)</p>
+<p>- Tightly coupled to model</p>
+
+<strong>Example:</strong>
+
+</code>`<code>php
+<p>// EVENT (explicit, flexible)</p>
+<p>// 1. Define event</p>
+<p>class InvoicePaid {</p>
+<p>    public function __construct(public Invoice $invoice) {}</p>
+<p>}</p>
+
+<p>// 2. Listeners</p>
+<p>class SendPaymentConfirmationEmail {</p>
+<p>    public function handle(InvoicePaid $event) {</p>
+<p>        Mail::to($event->invoice->customer)->send(new PaymentConfirmation);</p>
+<p>    }</p>
+<p>}</p>
+
+<p>class UpdateAccountingSystem {</p>
+<p>    public function handle(InvoicePaid $event) {</p>
+<p>        // Sync to QuickBooks</p>
+<p>    }</p>
+<p>}</p>
+
+<p>// 3. Dispatch</p>
+<p>event(new InvoicePaid($invoice));</p>
+
+<p>// OBSERVER (implicit, model-specific)</p>
+<p>class InvoiceObserver {</p>
+<p>    public function created(Invoice $invoice) {</p>
+<p>        // Auto-fired when Invoice::create()</p>
+<p>    }</p>
+<p>    </p>
+<p>    public function updating(Invoice $invoice) {</p>
+<p>        // Before save (can modify $invoice)</p>
+<p>    }</p>
+<p>    </p>
+<p>    public function updated(Invoice $invoice) {</p>
+<p>        // After save (can't modify $invoice)</p>
+<p>    }</p>
+<p>}</p>
+
+<p>// Register</p>
+<p>Invoice::observe(InvoiceObserver::class);</p>
+</code>`<code>
+
+<strong>When to use:</strong>
+<p>- <strong>Event</strong>: Business logic (invoice paid → send email, update accounting)</p>
+<p>- <strong>Observer</strong>: Model-specific logic (auto-generate invoice number, audit trail)</p>
+
+<strong>Billtrust Example:</strong>
+<p>"Use Observers for audit trail (every Invoice update logs to </code>fsiinvoiceaudits<code>). Use Events for </code>InvoicePaid<code> → triggers 5 listeners (email, Slack, accounting sync, analytics, cache clear)."</p>
+
+<p>---</p>
+
+<h2>Q12: Explain Laravel Queues. How do you handle failed jobs?</h2>
+
+<strong>Answer:</strong>
+
+<strong>Queue Setup:</strong>
+</code>`<code>php
+<p>// 1. Create job</p>
+<p>php artisan make:job SendInvoiceEmail</p>
+
+<p>class SendInvoiceEmail implements ShouldQueue {</p>
+<p>    public function __construct(public Invoice $invoice) {}</p>
+<p>    </p>
+<p>    public function handle() {</p>
+<p>        Mail::to($this->invoice->customer->email)</p>
+<p>            ->send(new InvoiceEmail($this->invoice));</p>
+<p>    }</p>
+<p>    </p>
+<p>    // Retry configuration</p>
+<p>    public $tries = 3;</p>
+<p>    public $backoff = [60, 300, 900];  // 1 min, 5 min, 15 min</p>
+<p>    public $timeout = 120;  // 2 minutes</p>
+<p>    </p>
+<p>    public function failed(Throwable $exception) {</p>
+<p>        // Log failure, notify admin</p>
+<p>        Log::error("Invoice email failed", [</p>
+<p>            'invoice_id' => $this->invoice->id,</p>
+<p>            'error' => $exception->getMessage()</p>
+<p>        ]);</p>
+<p>    }</p>
+<p>}</p>
+
+<p>// 2. Dispatch</p>
+<p>SendInvoiceEmail::dispatch($invoice);</p>
+
+<p>// 3. Run worker</p>
+<p>php artisan queue:work --tries=3 --timeout=120</p>
+</code>`<code>
+
+<strong>Failed Job Handling:</strong>
+</code>`<code>php
+<p>// View failed jobs</p>
+<p>php artisan queue:failed</p>
+
+<p>// Retry specific job</p>
+<p>php artisan queue:retry <job-id></p>
+
+<p>// Retry all failed jobs</p>
+<p>php artisan queue:retry all</p>
+
+<p>// Delete failed job</p>
+<p>php artisan queue:forget <job-id></p>
+
+<p>// Flush all failed jobs</p>
+<p>php artisan queue:flush</p>
+</code>`<code>
+
+<strong>Monitoring:</strong>
+</code>`<code>php
+<p>// Horizon (Redis queues)</p>
+<p>composer require laravel/horizon</p>
+<p>php artisan horizon</p>
+
+<p>// Or use database driver + cron</p>
+<p>* * * * * php artisan queue:work --stop-when-empty</p>
+</code>`<code>
+
+<strong>Billtrust Example:</strong>
+<p>"Invoice PDF generation queued (10k invoices/month):</p>
+<p>- Main queue: </code>default<code> (priority 5)</p>
+<p>- High priority: </code>urgent<code> (expedited invoices, priority 10)</p>
+<p>- Workers: 5 normal + 2 urgent</p>
+<p>- Failed jobs: Slack alert → manual retry after fixing data"</p>
+
+<p>---</p>
+
+<h1>Security</h1>
+
+<h2>Q13: How do you prevent SQL injection, XSS, and CSRF in Laravel?</h2>
+
+<strong>Answer:</strong>
+
+<strong>1. SQL Injection (Eloquent/Query Builder):</strong>
+</code>`<code>php
+<p>// BAD: SQL injection vulnerable</p>
+<p>$id = request('id');</p>
+<p>DB::select("SELECT * FROM users WHERE id = $id");</p>
+
+<p>// GOOD: Parameterized queries</p>
+<p>DB::select("SELECT * FROM users WHERE id = ?", [$id]);</p>
+
+<p>// BEST: Eloquent (auto-parameterized)</p>
+<p>User::where('id', $id)->first();</p>
+</code>`<code>
+
+<strong>2. XSS (Blade auto-escapes):</strong>
+</code>`<code>blade
+<p>{{-- BAD: Renders HTML (XSS vulnerable) --}}</p>
+<p>{!! $userInput !!}</p>
+
+<p>{{-- GOOD: Escapes HTML --}}</p>
+<p>{{ $userInput }}</p>
+<p>{{-- If user input is "<script>alert('XSS')</script>", renders as plain text --}}</p>
+</code>`<code>
+
+<strong>3. CSRF (token verification):</strong>
+</code>`<code>blade
+<p>{{-- Form must include CSRF token --}}</p>
+<form method="POST" action="/invoice">
+<p>    @csrf</p>
+<p>    <input name="amount" value="100"></p>
+<p>    <button>Submit</button></p>
+</form>
+
+<p>{{-- Laravel auto-checks token (middleware) --}}</p>
+<p>protected $middlewareGroups = [</p>
+<p>    'web' => [</p>
+<p>        \App\Http\Middleware\VerifyCsrfToken::class,</p>
+<p>    ],</p>
+<p>];</p>
+</code>`<code>
+
+<strong>Billtrust Example:</strong>
+<p>"Found XSS vulnerability in invoice notes (admin entered </code><script><code> tag, stored raw). Fixed:</p>
+</code>`<code>php
+<p>// Before (vulnerable)</p>
+<p>{!! $invoice->notes !!}</p>
+
+<p>// After (safe)</p>
+<p>{{ $invoice->notes }}</p>
+</code>`<code>
+<p>Sanitize on OUTPUT, not on INPUT (preserve original data)."</p>
+
+<p>---</p>
+
+<h1>Performance & Scaling</h1>
+
+<h2>Q14: How do you implement caching in Laravel? Give examples of different cache strategies.</h2>
+
+<strong>Answer:</strong>
+
+<strong>Cache Drivers:</strong> </code>file<code>, </code>database<code>, </code>redis<code>, </code>memcached<code>
+
+<strong>Strategies:</strong>
+
+<strong>1. Cache-Aside (Lazy Loading):</strong>
+</code>`<code>php
+<p>$customers = Cache::remember('customers:all', 3600, function () {</p>
+<p>    return Customer::all();</p>
+<p>});</p>
+<p>// If key exists → return cached</p>
+<p>// If not → run query, cache result, return</p>
+</code>`<code>
+
+<strong>2. Cache-Through (Write-Through):</strong>
+</code>`<code>php
+<p>// Update DB and cache together</p>
+<p>$customer->update(['name' => 'New Name']);</p>
+<p>Cache::put("customer:{$customer->id}", $customer, 3600);</p>
+
+<p>// Or use Cache::forget() and let Cache-Aside repopulate</p>
+<p>$customer->update(['name' => 'New Name']);</p>
+<p>Cache::forget("customer:{$customer->id}");</p>
+</code>`<code>
+
+<strong>3. Cache Tagging (Group Invalidation):</strong>
+</code>`<code>php
+<p>// Cache with tags</p>
+<p>Cache::tags(['customers', 'active'])->put('customer:123', $data, 3600);</p>
+
+<p>// Invalidate all 'customers' cache</p>
+<p>Cache::tags('customers')->flush();</p>
+</code>`<code>
+
+<strong>4. Model Caching (Eloquent):</strong>
+</code>`<code>php
+<p>// Package: genealabs/laravel-model-caching</p>
+<p>class Customer extends Model {</p>
+<p>    use Cachable;</p>
+<p>}</p>
+
+<p>Customer::all();  // Auto-cached</p>
+<p>Customer::where('active', 1)->get();  // Auto-cached with query key</p>
+</code>`<code>
+
+<strong>Billtrust Example:</strong>
+<p>"Customer settings cached (1M customers × 50 KB = 50 GB):</p>
+<p>- Cache: Redis (5-node cluster)</p>
+<p>- TTL: 1 hour</p>
+<p>- Hit rate: 95% (95% of requests served from cache)</p>
+<p>- Invalidation: On customer update, </code>Cache::tags(['customer', $customerId])->flush()<code>"</p>
+
+<p>---</p>
+
+<h2>Q15: How would you scale a Laravel application to handle 10M requests/day?</h2>
+
+<strong>Answer:</strong>
+
+<strong>Current:</strong> 10M requests/day = 115 requests/sec (average), 500 req/sec (peak)
+
+<strong>Scaling Strategy:</strong>
+
+<strong>1. Application Layer:</strong>
+</code>`<code>php
+<p>// Stateless (no sessions in files, use Redis)</p>
+<p>SESSION_DRIVER=redis</p>
+<p>CACHE_DRIVER=redis</p>
+<p>QUEUE_DRIVER=redis</p>
+
+<p>// Horizontal scaling (5 app servers behind load balancer)</p>
+<p>// Each handles 100 req/sec → 500 req/sec total</p>
+</code>`<code>
+
+<strong>2. Database Layer:</strong>
+</code>`<code>php
+<p>// Read replicas (90% reads, 10% writes)</p>
+<p>config/database.php:</p>
+<p>'read' => [</p>
+<p>    ['host' => 'replica1.mysql.rds.amazonaws.com'],</p>
+<p>    ['host' => 'replica2.mysql.rds.amazonaws.com'],</p>
+<p>],</p>
+<p>'write' => [</p>
+<p>    ['host' => 'master.mysql.rds.amazonaws.com'],</p>
+<p>],</p>
+</code>`<code>
+
+<strong>3. Cache Layer:</strong>
+</code>`<code>php
+<p>// Redis cluster (1M keys, 10 GB data)</p>
+<p>// 95% cache hit rate → only 5% hit database</p>
+</code>`<code>
+
+<strong>4. Queue Workers:</strong>
+</code>`<code>php
+<p>// Background jobs (email, PDF generation)</p>
+<p>// 10 worker pods (auto-scale 5-20)</p>
+<p>php artisan queue:work --sleep=3 --tries=3</p>
+</code>`<code>
+
+<strong>5. CDN:</strong>
+</code>`<code>php
+<p>// Static assets (CSS, JS, images) → CloudFront</p>
+<p>// Reduces app server load by 50%</p>
+</code>`<code>
+
+<strong>6. Performance:</strong>
+</code>`<code>php
+<p>// OpCache enabled (PHP bytecode cache)</p>
+<p>opcache.enable=1</p>
+<p>opcache.memory_consumption=256</p>
+<p>opcache.max_accelerated_files=10000</p>
+
+<p>// Laravel Octane (Swoole/RoadRunner)</p>
+<p>// Keeps Laravel in memory (10x faster bootstrap)</p>
+<p>php artisan octane:start --workers=8</p>
+</code>`<code>
+
+<strong>Architecture:</strong>
+</code>`<code>
+<p>CloudFront (CDN)</p>
+<p>  ↓</p>
+<p>Load Balancer (ALB)</p>
+<p>  ↓</p>
+<p>5 App Servers (Laravel)</p>
+<p>  ↓</p>
+<p>├─► Redis Cluster (cache + sessions + queues)</p>
+<p>└─► MySQL RDS (1 master + 2 replicas)</p>
+</code>`<code>
+
+<strong>Cost:</strong> ~$2,000/month (5 EC2 t3.large + RDS + Redis)
+
+<p>---</p>
+
+<h1>Testing</h1>
+
+<h2>Q16: How do you write tests for Laravel controllers? Give an example of feature test vs unit test.</h2>
+
+<strong>Answer:</strong>
+
+<strong>Feature Test</strong> (tests entire HTTP request):
+</code>`<code>php
+<p>// tests/Feature/InvoiceControllerTest.php</p>
+<p>class InvoiceControllerTest extends TestCase {</p>
+<p>    use RefreshDatabase;  // Reset DB after each test</p>
+<p>    </p>
+<p>    public function test_can_create_invoice() {</p>
+<p>        $customer = Customer::factory()->create();</p>
+<p>        </p>
+<p>        $response = $this->actingAs($this->user())</p>
+<p>            ->post('/api/invoices', [</p>
+<p>                'customer_id' => $customer->id,</p>
+<p>                'amount' => 1000,</p>
+<p>                'due_date' => '2026-12-31',</p>
+<p>            ]);</p>
+<p>        </p>
+<p>        $response->assertStatus(201);</p>
+<p>        $response->assertJson(['amount' => 1000]);</p>
+<p>        </p>
+<p>        $this->assertDatabaseHas('invoices', [</p>
+<p>            'customer_id' => $customer->id,</p>
+<p>            'amount' => 1000,</p>
+<p>        ]);</p>
+<p>    }</p>
+<p>}</p>
+</code>`<code>
+
+<strong>Unit Test</strong> (tests single method in isolation):
+</code>`<code>php
+<p>// tests/Unit/InvoiceServiceTest.php</p>
+<p>class InvoiceServiceTest extends TestCase {</p>
+<p>    public function test_calculate_total_with_tax() {</p>
+<p>        $service = new InvoiceService();</p>
+<p>        </p>
+<p>        $total = $service->calculateTotal(</p>
+<p>            amount: 1000,</p>
+<p>            taxRate: 0.08</p>
+<p>        );</p>
+<p>        </p>
+<p>        $this->assertEquals(1080, $total);</p>
+<p>    }</p>
+<p>    </p>
+<p>    public function test_is_overdue() {</p>
+<p>        $invoice = new Invoice(['due_date' => '2020-01-01']);</p>
+<p>        </p>
+<p>        $this->assertTrue($invoice->isOverdue());</p>
+<p>    }</p>
+<p>}</p>
+</code>`<code>
+
+<strong>When to use:</strong>
+<p>- <strong>Feature test</strong>: API endpoints, full user flows</p>
+<p>- <strong>Unit test</strong>: Business logic, calculations, helpers</p>
+
+<strong>Billtrust Example:</strong>
+<p>"Test coverage: 85% (feature tests for all API endpoints, unit tests for invoice calculation logic including discount, tax, surcharge)."</p>
+
+<p>---</p>
+
+<h1>Architecture & Design Patterns</h1>
+
+<h2>Q17: Explain the Repository Pattern in Laravel. When would you use it?</h2>
+
+<strong>Answer:</strong>
+
+<strong>Repository Pattern:</strong> Abstraction layer between business logic and data access.
+
+<strong>Without Repository:</strong>
+</code>`<code>php
+<p>class InvoiceController {</p>
+<p>    public function index() {</p>
+<p>        // Controller directly queries database</p>
+<p>        return Invoice::where('status', 'unpaid')->get();</p>
+<p>    }</p>
+<p>}</p>
+</code>`<code>
+
+<strong>With Repository:</strong>
+</code>`<code>php
+<p>// 1. Interface</p>
+<p>interface InvoiceRepositoryInterface {</p>
+<p>    public function findUnpaid();</p>
+<p>    public function findById($id);</p>
+<p>}</p>
+
+<p>// 2. Implementation</p>
+<p>class EloquentInvoiceRepository implements InvoiceRepositoryInterface {</p>
+<p>    public function findUnpaid() {</p>
+<p>        return Invoice::where('status', 'unpaid')->get();</p>
+<p>    }</p>
+<p>    </p>
+<p>    public function findById($id) {</p>
+<p>        return Invoice::find($id);</p>
+<p>    }</p>
+<p>}</p>
+
+<p>// 3. Service Provider</p>
+<p>app()->bind(InvoiceRepositoryInterface::class, EloquentInvoiceRepository::class);</p>
+
+<p>// 4. Controller</p>
+<p>class InvoiceController {</p>
+<p>    public function __construct(</p>
+<p>        private InvoiceRepositoryInterface $invoices</p>
+<p>    ) {}</p>
+<p>    </p>
+<p>    public function index() {</p>
+<p>        return $this->invoices->findUnpaid();</p>
+<p>    }</p>
+<p>}</p>
+</code>`<code>
+
+<strong>Benefits:</strong>
+<p>- <strong>Testable:</strong> Swap </code>Eloquent<code> repository with </code>InMemory<code> repository in tests</p>
+<p>- <strong>Swappable:</strong> Change from MySQL → MongoDB without touching controller</p>
+<p>- <strong>Reusable:</strong> Multiple controllers use same repository methods</p>
+
+<strong>When to use:</strong>
+<p>- Large projects (10+ models)</p>
+<p>- Multiple data sources (MySQL + Redis + API)</p>
+<p>- Need high test coverage</p>
+
+<strong>When NOT to use:</strong>
+<p>- Small projects (adds boilerplate)</p>
+<p>- Prototypes (Eloquent in controller is fine)</p>
+
+<strong>Billtrust Example:</strong>
+<p>"Used Repository pattern for </code>fsiinvoice<code> (5M rows):</p>
+<p>- </code>EloquentInvoiceRepository<code> for reads (MySQL)</p>
+<p>- </code>CacheInvoiceRepository<code> decorator (Redis cache)</p>
+<p>- Swapped in </code>FakeInvoiceRepository<code> for tests (100x faster)"</p>
+
+<p>---</p>
+
+<h1>Real-World Scenarios</h1>
+
+<h2>Q18: You have a Laravel API serving 1000 req/sec. Response time suddenly jumps from 100ms to 5 seconds. How do you debug?</h2>
+
+<strong>Answer:</strong>
+
+<strong>Step-by-step debugging:</strong>
+
+<strong>1. Check server health:</strong>
+</code>`<code>bash
+<h1>CPU usage</h1>
+<p>top</p>
+<h1>If >80%, likely CPU-bound (increase workers or scale horizontally)</h1>
+
+<h1>Memory</h1>
+<p>free -h</p>
+<h1>If swap is used, increase RAM</h1>
+
+<h1>Disk I/O</h1>
+<p>iostat</p>
+<h1>If %util >80%, disk bottleneck (use SSD, Redis)</h1>
+</code>`<code>
+
+<strong>2. Check database:</strong>
+</code>`<code>sql
+<p>-- MySQL slow query log</p>
+<p>SHOW FULL PROCESSLIST;</p>
+<p>-- Look for queries in "executing" state for >1 sec</p>
+
+<p>-- Check for locks</p>
+<p>SHOW ENGINE INNODB STATUS;</p>
+<p>-- Look for "TRANSACTION" section with "lock wait"</p>
+</code>`<code>
+
+<strong>3. Enable Laravel debugging:</strong>
+</code>`<code>php
+<p>// Log all queries</p>
+<p>DB::enableQueryLog();</p>
+<p>// Check for N+1 queries</p>
+
+<p>// Laravel Telescope</p>
+<p>// See slow requests, queries, jobs</p>
+</code>`<code>
+
+<strong>4. Check external services:</strong>
+</code>`<code>php
+<p>// Are API calls timing out?</p>
+<p>$start = microtime(true);</p>
+<p>$response = Http::timeout(5)->get('https://api.external.com');</p>
+<p>Log::info('External API time', ['ms' => (microtime(true) - $start) * 1000]);</p>
+</code>`<code>
+
+<strong>5. Check cache:</strong>
+</code>`<code>php
+<p>// Is Redis down?</p>
+<p>try {</p>
+<p>    Cache::get('test');</p>
+<p>} catch (Exception $e) {</p>
+<p>    Log::error("Cache down: " . $e->getMessage());</p>
+<p>}</p>
+</code>`<code>
+
+<strong>Billtrust Example:</strong>
+<p>"Response time jumped from 200ms → 8 seconds. Found:</p>
+<p>- MySQL CPU at 100% (table scan on 5M rows)</p>
+<p>- Missing index on </code>customer_id<code></p>
+<p>- Added index → response time back to 200ms"</p>
+
+<p>---</p>
+
+<h2>Q19: How would you implement multi-tenancy in Laravel (1000 customers, separate database per customer)?</h2>
+
+<strong>Answer:</strong>
+
+<strong>Strategy:</strong> Database-per-tenant (isolation + scaling)
+
+<strong>Implementation:</strong>
+
+<strong>1. Tenant identification:</strong>
+</code>`<code>php
+<p>// Middleware: Set tenant from subdomain</p>
+<p>class IdentifyTenant {</p>
+<p>    public function handle($request, $next) {</p>
+<p>        $subdomain = explode('.', $request->getHost())[0];</p>
+<p>        </p>
+<p>        $tenant = Tenant::where('subdomain', $subdomain)->firstOrFail();</p>
+<p>        app()->instance('tenant', $tenant);</p>
+<p>        </p>
+<p>        // Switch database connection</p>
+<p>        config(['database.connections.tenant' => [</p>
+<p>            'driver' => 'mysql',</p>
+<p>            'host' => $tenant->db_host,</p>
+<p>            'database' => $tenant->db_name,</p>
+<p>            'username' => $tenant->db_user,</p>
+<p>            'password' => $tenant->db_password,</p>
+<p>        ]]);</p>
+<p>        </p>
+<p>        DB::purge('tenant');</p>
+<p>        DB::reconnect('tenant');</p>
+<p>        </p>
+<p>        return $next($request);</p>
+<p>    }</p>
+<p>}</p>
+</code>`<code>
+
+<strong>2. Models use tenant connection:</strong>
+</code>`<code>php
+<p>class Invoice extends Model {</p>
+<p>    protected $connection = 'tenant';</p>
+<p>}</p>
+</code>`<code>
+
+<strong>3. Tenant table (central database):</strong>
+</code>`<code>php
+<p>Schema::create('tenants', function (Blueprint $table) {</p>
+<p>    $table->id();</p>
+<p>    $table->string('subdomain')->unique();</p>
+<p>    $table->string('db_host');</p>
+<p>    $table->string('db_name');</p>
+<p>    $table->string('db_user');</p>
+<p>    $table->string('db_password');</p>
+<p>    $table->timestamps();</p>
+<p>});</p>
+</code>`<code>
+
+<strong>Benefits:</strong>
+<p>- <strong>Isolation:</strong> Customer A can't access Customer B's data</p>
+<p>- <strong>Scaling:</strong> Distribute 1000 customers across 10 database servers</p>
+<p>- <strong>Customization:</strong> Each tenant can have custom schema</p>
+
+<strong>Billtrust Multi-Tenant:</strong>
+<p>"At Billtrust:</p>
+<p>- <strong>Stack routing:</strong> </code>billingmaster<code> table maps CustomerId → StackId</p>
+<p>- <strong>2 stacks:</strong> billingclient1 (500k customers), billingclient2 (500k customers)</p>
+<p>- <strong>Global scope:</strong> Every query auto-filters by </code>customer_id<code>"</p>
+
+<p>---</p>
+
+<h2>Q20: Walk me through how you'd design an invoice generation system in Laravel (10k invoices/day).</h2>
+
+<strong>Answer:</strong>
+
+<strong>Requirements:</strong>
+<p>- 10k invoices/day = 416/hour = 7/minute</p>
+<p>- PDF generation (CPU-intensive)</p>
+<p>- Email delivery</p>
+<p>- Handle failures (retry)</p>
+
+<strong>Architecture:</strong>
+
+<strong>1. Queue-based:</strong>
+</code>`<code>php
+<p>// Controller (synchronous)</p>
+<p>public function generateInvoices() {</p>
+<p>    $customers = Customer::needsInvoice()->get();</p>
+<p>    </p>
+<p>    foreach ($customers as $customer) {</p>
+<p>        GenerateInvoiceJob::dispatch($customer);</p>
+<p>    }</p>
+<p>    </p>
+<p>    return response()->json(['queued' => $customers->count()]);</p>
+<p>}</p>
+
+<p>// Job (asynchronous)</p>
+<p>class GenerateInvoiceJob implements ShouldQueue {</p>
+<p>    public $tries = 3;</p>
+<p>    public $backoff = [60, 300];  // 1 min, 5 min</p>
+<p>    </p>
+<p>    public function handle(InvoiceService $service) {</p>
+<p>        // 1. Create invoice record</p>
+<p>        $invoice = $service->createInvoice($this->customer);</p>
+<p>        </p>
+<p>        // 2. Generate PDF</p>
+<p>        $pdf = PDF::loadView('invoices.pdf', ['invoice' => $invoice]);</p>
+<p>        $path = "invoices/{$invoice->id}.pdf";</p>
+<p>        Storage::put($path, $pdf->output());</p>
+<p>        </p>
+<p>        // 3. Upload to S3</p>
+<p>        Storage::disk('s3')->put($path, $pdf->output());</p>
+<p>        </p>
+<p>        // 4. Queue email</p>
+<p>        SendInvoiceEmail::dispatch($invoice);</p>
+<p>        </p>
+<p>        // 5. Mark as generated</p>
+<p>        $invoice->update(['generated_at' => now()]);</p>
+<p>    }</p>
+<p>}</p>
+</code>`<code>
+
+<strong>2. Scaling:</strong>
+</code>`<code>
+<p>Laravel API</p>
+<p>  ↓</p>
+<p>RabbitMQ (10k jobs/day)</p>
+<p>  ↓</p>
+<p>10 Workers (Kubernetes HPA, auto-scale 5-20)</p>
+<p>  ↓</p>
+<p>├─► S3 (PDF storage)</p>
+<p>└─► SMTP (email via SendGrid)</p>
+</code>`<code>
+
+<strong>3. Monitoring:</strong>
+</code>`<code>php
+<p>// Horizon (queue monitoring)</p>
+<p>php artisan horizon</p>
+
+<p>// Metrics</p>
+<p>- Jobs processed/hour</p>
+<p>- Average processing time (target: <30 sec/invoice)</p>
+<p>- Failed jobs (retry manually)</p>
+</code>``
+
+<strong>Billtrust Implementation:</strong>
+<p>"Invoice generation:</p>
+<p>- 100k invoices/month = 3,333/day</p>
+<p>- Queue: RabbitMQ (3 priority levels: urgent, normal, batch)</p>
+<p>- Workers: 5-20 pods (HPA on queue depth)</p>
+<p>- PDF generation: 15 sec/invoice</p>
+<p>- Throughput: 20 workers × 4 invoices/min = 80/min = 4,800/hour (plenty of headroom)"</p>
+
+<p>---</p>
+
+<strong>You now have 100+ advanced Laravel questions covered!</strong> 🎯  
+<strong>Next: ReactJS and Python FastAPI advanced modules...</strong>
+
+    </div>
+</body>
+</html>

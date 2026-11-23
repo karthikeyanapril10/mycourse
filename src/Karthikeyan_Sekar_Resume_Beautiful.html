@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Karthikeyan Sekar - AI-First Senior Full-Stack Engineer</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+        @page {
+            size: A4;
+            margin: 0.4in;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', 'Arial', sans-serif;
+            font-size: 10pt;
+            line-height: 1.5;
+            color: #2d3748;
+            background: #ffffff;
+            max-width: 8.5in;
+            margin: 0 auto;
+            padding: 0.4in;
+        }
+
+        /* Header Section */
+        .header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: #ffffff;
+            padding: 24pt 20pt;
+            margin: -0.4in -0.4in 16pt -0.4in;
+            border-radius: 0 0 8pt 8pt;
+        }
+
+        h1 {
+            font-size: 28pt;
+            font-weight: 700;
+            margin-bottom: 4pt;
+            letter-spacing: 0.5pt;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            font-size: 12pt;
+            font-weight: 400;
+            opacity: 0.95;
+            margin-bottom: 12pt;
+            letter-spacing: 0.3pt;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 6pt;
+            font-size: 9.5pt;
+            line-height: 1.6;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 6pt;
+        }
+
+        .contact-icon {
+            font-size: 11pt;
+            opacity: 0.9;
+        }
+
+        .contact-grid a {
+            color: #ffffff;
+            text-decoration: none;
+            border-bottom: 1px solid rgba(255,255,255,0.3);
+            transition: border-color 0.2s;
+        }
+
+        .contact-grid a:hover {
+            border-bottom-color: #ffffff;
+        }
+
+        /* Section Headers */
+        h2 {
+            font-size: 12pt;
+            font-weight: 700;
+            color: #1e3a8a;
+            margin-top: 16pt;
+            margin-bottom: 10pt;
+            text-transform: uppercase;
+            letter-spacing: 0.8pt;
+            padding-bottom: 6pt;
+            border-bottom: 2pt solid #3b82f6;
+            position: relative;
+        }
+
+        h2::before {
+            content: '';
+            position: absolute;
+            bottom: -2pt;
+            left: 0;
+            width: 40pt;
+            height: 2pt;
+            background: #1e3a8a;
+        }
+
+        /* Summary Section */
+        .summary {
+            background: #f8fafc;
+            padding: 12pt;
+            border-radius: 6pt;
+            border-left: 3pt solid #3b82f6;
+            text-align: justify;
+            line-height: 1.6;
+            margin-bottom: 12pt;
+        }
+
+        /* Skills Grid */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 8pt;
+            margin-bottom: 10pt;
+        }
+
+        .skill-row {
+            display: flex;
+            gap: 8pt;
+            align-items: baseline;
+        }
+
+        .skill-category {
+            font-weight: 700;
+            color: #1e3a8a;
+            min-width: 120pt;
+            flex-shrink: 0;
+        }
+
+        .skill-items {
+            color: #4b5563;
+            flex: 1;
+        }
+
+        /* Job Entries */
+        .job-entry {
+            margin-bottom: 14pt;
+            page-break-inside: avoid;
+        }
+
+        .job-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 6pt;
+            gap: 12pt;
+        }
+
+        .job-left {
+            flex: 1;
+        }
+
+        .job-title {
+            font-weight: 700;
+            font-size: 11pt;
+            color: #1e3a8a;
+            margin-bottom: 2pt;
+        }
+
+        .company {
+            color: #3b82f6;
+            font-weight: 600;
+            font-size: 10pt;
+        }
+
+        .date {
+            font-style: italic;
+            color: #6b7280;
+            font-size: 9.5pt;
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        /* Lists */
+        ul {
+            margin-left: 16pt;
+            margin-bottom: 8pt;
+        }
+
+        li {
+            margin-bottom: 5pt;
+            text-align: justify;
+            position: relative;
+            padding-left: 4pt;
+        }
+
+        li::marker {
+            color: #3b82f6;
+            font-weight: bold;
+        }
+
+        /* Highlight Numbers */
+        strong {
+            font-weight: 700;
+            color: #1e3a8a;
+        }
+
+        /* Projects */
+        .project-entry {
+            margin-bottom: 12pt;
+            page-break-inside: avoid;
+        }
+
+        .project-title {
+            font-weight: 700;
+            font-size: 10.5pt;
+            color: #1e3a8a;
+            margin-bottom: 2pt;
+        }
+
+        .project-tech {
+            font-style: italic;
+            color: #6b7280;
+            font-size: 9pt;
+            margin-bottom: 4pt;
+        }
+
+        /* Leadership Section */
+        .leadership-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8pt 12pt;
+            margin-bottom: 10pt;
+        }
+
+        .leadership-item {
+            display: flex;
+            gap: 6pt;
+            align-items: flex-start;
+        }
+
+        .leadership-icon {
+            color: #3b82f6;
+            font-size: 12pt;
+            flex-shrink: 0;
+            margin-top: 2pt;
+        }
+
+        .leadership-content strong {
+            color: #1e3a8a;
+            display: block;
+            margin-bottom: 2pt;
+        }
+
+        .leadership-content {
+            font-size: 9.5pt;
+            line-height: 1.5;
+        }
+
+        /* Education */
+        .education-entry {
+            margin-bottom: 6pt;
+        }
+
+        .degree {
+            font-weight: 700;
+            color: #1e3a8a;
+        }
+
+        .institution {
+            color: #4b5563;
+            font-size: 9.5pt;
+        }
+
+        /* Certifications */
+        .cert-entry {
+            margin-bottom: 8pt;
+            display: flex;
+            align-items: baseline;
+            gap: 8pt;
+        }
+
+        .cert-icon {
+            color: #3b82f6;
+            font-size: 12pt;
+        }
+
+        .cert-name {
+            font-weight: 600;
+            color: #1e3a8a;
+        }
+
+        .cert-status {
+            color: #6b7280;
+            font-style: italic;
+            font-size: 9pt;
+        }
+
+        /* Additional Info */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 6pt;
+            font-size: 9.5pt;
+        }
+
+        .info-item {
+            display: flex;
+            gap: 6pt;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #1e3a8a;
+            min-width: 100pt;
+        }
+
+        /* Print Optimizations */
+        @media print {
+            body {
+                padding: 0;
+            }
+
+            .header {
+                margin: 0 0 16pt 0;
+                border-radius: 0;
+            }
+
+            h2 {
+                page-break-after: avoid;
+            }
+
+            .job-entry, .project-entry {
+                page-break-inside: avoid;
+            }
+        }
+
+        /* Subtle animations for screen view */
+        @media screen {
+            .job-entry:hover {
+                background: #f8fafc;
+                padding: 8pt;
+                margin-left: -8pt;
+                margin-right: -8pt;
+                border-radius: 6pt;
+                transition: all 0.2s;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <h1>KARTHIKEYAN SEKAR</h1>
+        <div class="subtitle">AI-First Senior Full-Stack Engineer | Technical Lead</div>
+
+        <div class="contact-grid">
+            <div class="contact-item">
+                <span class="contact-icon">📍</span>
+                <span>Bengaluru, India</span>
+            </div>
+            <div class="contact-item">
+                <span class="contact-icon">📞</span>
+                <span>+91 9962072730</span>
+            </div>
+            <div class="contact-item">
+                <span class="contact-icon">✉️</span>
+                <span>karthikeyanapril10@gmail.com</span>
+            </div>
+            <div class="contact-item">
+                <span class="contact-icon">🔗</span>
+                <a href="https://linkedin.com/in/karthikeyan-sekar-714a6185">linkedin.com/in/karthikeyan-sekar</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Professional Summary -->
+    <h2>Professional Summary</h2>
+    <div class="summary">
+        Senior Software Engineer with <strong>12+ years</strong> of experience architecting and delivering scalable web applications, REST APIs, and microservices. Technical lead with expertise in <strong>PHP/Laravel, Python/FastAPI, React.js</strong>, and cloud infrastructure (<strong>AWS, Kubernetes</strong>). Proven track record in <strong>production reliability (99.9% uptime)</strong>, <strong>performance optimization (40% latency reduction)</strong>, and <strong>team leadership</strong>. Strong background in <strong>fintech/payments</strong>, multi-tenant SaaS, and AI-assisted engineering workflows. Specialized in <strong>security investigations, fraud detection, and malicious actor tracking</strong> with expertise in <strong>Datadog, Splunk, Pendo, and SendGrid monitoring</strong>. Skilled in <strong>cross-functional collaboration</strong>, data quality validation, and <strong>Mermaid diagram documentation</strong> for business logic.
+    </div>
+
+    <!-- Core Technical Skills -->
+    <h2>Core Technical Skills</h2>
+    <div class="skills-grid">
+        <div class="skill-row">
+            <div class="skill-category">Backend</div>
+            <div class="skill-items">PHP, Laravel, Phalcon, Python, FastAPI, REST APIs, Microservices</div>
+        </div>
+        <div class="skill-row">
+            <div class="skill-category">Frontend</div>
+            <div class="skill-items">React.js, JavaScript (ES6+), HTML5, CSS3, AJAX, JSON/XML</div>
+        </div>
+        <div class="skill-row">
+            <div class="skill-category">Databases</div>
+            <div class="skill-items">MySQL, PostgreSQL, MongoDB, Redis, Memcached, Query Optimization, Stored Procedures</div>
+        </div>
+        <div class="skill-row">
+            <div class="skill-category">Cloud & DevOps</div>
+            <div class="skill-items">AWS (RDS, S3, EC2, Lambda, CloudFront), Docker, Kubernetes, CI/CD, Jenkins, Git</div>
+        </div>
+        <div class="skill-row">
+            <div class="skill-category">Observability</div>
+            <div class="skill-items">Datadog APM/Traces, Splunk Audit Logs, Pendo Activity Tracking, SendGrid Email Monitoring, CloudWatch</div>
+        </div>
+        <div class="skill-row">
+            <div class="skill-category">Security & Investigations</div>
+            <div class="skill-items">Malicious Actor Tracking, Fraud Detection, Timeline Reconstruction, DB Audit Analysis, Incident Reporting</div>
+        </div>
+        <div class="skill-row">
+            <div class="skill-category">Payments</div>
+            <div class="skill-items">Razorpay, Payment Gateways, Webhook Validation, PCI Compliance</div>
+        </div>
+        <div class="skill-row">
+            <div class="skill-category">Data Quality</div>
+            <div class="skill-items">Gap Analysis, Validation Rules, Data Cleanup Strategies, Legacy System Modernization</div>
+        </div>
+        <div class="skill-row">
+            <div class="skill-category">Methodologies</div>
+            <div class="skill-items">Agile, Scrum, Sprint Planning, Code Review, Mermaid Diagrams, Technical Documentation</div>
+        </div>
+        <div class="skill-row">
+            <div class="skill-category">AI Development</div>
+            <div class="skill-items">Claude AI Skills, GitHub Copilot, Automated Testing, Code Analysis, Cross-Team Case Management</div>
+        </div>
+    </div>
+
+    <!-- Professional Experience -->
+    <h2>Professional Experience</h2>
+
+    <div class="job-entry">
+        <div class="job-header">
+            <div class="job-left">
+                <div class="job-title">Production Support Engineer / Systems Reliability</div>
+                <div class="company">Future Focus Info Tech Pvt Ltd</div>
+            </div>
+            <div class="date">Aug 2024 - Nov 2026<br>Bengaluru</div>
+        </div>
+        <ul>
+            <li><strong>On-Call & Incident Response:</strong> Provided <strong>PagerDuty support</strong> weekly (2 days/7 hours) for P1 incidents, responding to critical production issues within 15-minute SLA, triaged and resolved <strong>50+ P1/P2 incidents</strong> over 2 years with <strong>99.9% uptime</strong> maintained</li>
+            <li><strong>Proactive Monitoring & Issue Detection:</strong> Monitored Datadog dashboards daily, identified <strong>500 Internal Server Errors</strong> in negative-scenario edge cases post-PHP upgrades (5.6→7.4→8.0), debugged stack traces, fixed <strong>20+ latent bugs</strong> before customer impact — reduced error rate from <strong>2% → 0.3%</strong></li>
+            <li><strong>Code & DML Review:</strong> Conducted <strong>100+ code reviews</strong> and <strong>50+ DML/DDL reviews</strong> for team members, enforcing PHP/Laravel best practices, SQL injection prevention, and PCI compliance — caught <strong>15 critical security issues</strong> pre-production</li>
+            <li><strong>Agile Process Management:</strong> Actively participated in daily scrums, sprint planning, and retrospectives; managed <strong>Kanban board in Jira</strong> (backlog grooming, story estimation, ticket prioritization) — improved sprint velocity by <strong>25%</strong> through better task breakdown</li>
+            <li><strong>Security & Fraud Investigation:</strong> Led malicious actor investigations for client-reported incidents, reconstructing <strong>event timelines</strong> from Datadog traces, Splunk audit logs, Pendo activity tracking, SendGrid email monitoring, and MySQL audit tables — delivered comprehensive reports to customers detailing breach scope, affected data, and remediation steps</li>
+            <li><strong>Data Quality & Validation:</strong> Identified <strong>legacy data gaps</strong> (missing columns, incorrect defaults, unvalidated inputs) across 10+ years of production data, designed and implemented validation rules at API/database layers to prevent future corruption, created cleanup scripts reconciling <strong>500K+ historical records</strong></li>
+            <li><strong>Cross-Team Collaboration:</strong> Partnered with .NET Core, Python, and Java teams via Slack to investigate cross-service issues, used <strong>Claude AI skills</strong> to analyze external codebases, created Jira cases with repro steps, followed up on resolutions — reduced cross-team Mean Time to Fix (MTTF) by <strong>35%</strong></li>
+            <li><strong>Business Logic Documentation:</strong> Created <strong>Mermaid diagrams</strong> for complex workflows (autopay thresholds, payment gateway routing, multi-tenant provisioning), presented to Product/Management for feature validation and alignment — prevented <strong>3 major scope mismatches</strong> pre-development</li>
+            <li>Reduced API latency by <strong>40%</strong> through Redis/Memcached optimization and MySQL query tuning on AWS RDS</li>
+            <li>Decreased Mean Time to Resolution (MTTR) by <strong>40%</strong> using Datadog APM trace analysis and automated log correlation</li>
+            <li>Optimized AWS RDS MySQL read overhead, reducing database load by <strong>35%</strong> through connection pooling and indexing</li>
+        </ul>
+    </div>
+
+    <div class="job-entry">
+        <div class="job-header">
+            <div class="job-left">
+                <div class="job-title">Lead Engineer / Senior Software Engineer</div>
+                <div class="company">Relevantz Technology Services</div>
+            </div>
+            <div class="date">Oct 2018 - Aug 2024<br>Chennai</div>
+        </div>
+        <ul>
+            <li>Led technical delivery for Laravel/PHP REST APIs across 5-member engineering team for enterprise SaaS platform</li>
+            <li>Architected and deployed microservices handling <strong>1M+ monthly transactions</strong> across dev, stage, and production environments</li>
+            <li>Mentored <strong>3 junior developers</strong>, conducting code reviews and establishing PHP best practices for team adoption</li>
+            <li>Drove PHP modernization from <strong>5.6 → 7.4</strong>, improving performance by <strong>25%</strong> and ensuring compatibility across codebase</li>
+            <li>Owned sprint planning, backlog grooming, and story point estimation for agile development cycles</li>
+            <li>Designed MySQL stored procedures and triggers for automated billing workflows, reducing manual processing by <strong>60%</strong></li>
+            <li>Implemented automated testing suite using Codeception, increasing test coverage from <strong>30% → 75%</strong></li>
+            <li>Collaborated with DevOps to establish CI/CD pipeline, reducing deployment time from <strong>2 hours → 15 minutes</strong></li>
+        </ul>
+    </div>
+
+    <div class="job-entry">
+        <div class="job-header">
+            <div class="job-left">
+                <div class="job-title">Software Engineer</div>
+                <div class="company">Object Frontier Software</div>
+            </div>
+            <div class="date">Dec 2015 - Oct 2018<br>Chennai</div>
+        </div>
+        <ul>
+            <li>Designed and developed RESTful APIs using PHP (Zend MVC) and MySQL for enterprise web applications</li>
+            <li>Built dynamic user interfaces with JavaScript, AJAX, and jQuery, improving page load time by <strong>30%</strong></li>
+            <li>Maintained unit and integration test suites using Codeception with <strong>80%+ code coverage</strong></li>
+            <li>Optimized database queries, reducing API response time from <strong>800ms → 200ms</strong> for high-traffic endpoints</li>
+        </ul>
+    </div>
+
+    <div class="job-entry">
+        <div class="job-header">
+            <div class="job-left">
+                <div class="job-title">Software Engineer</div>
+                <div class="company">Knobay Educational Technologies Pvt Ltd</div>
+            </div>
+            <div class="date">Nov 2013 - Nov 2015<br>Chennai</div>
+        </div>
+        <ul>
+            <li>Developed multi-tenant Zend MVC/MySQL platform for education, fitness, and salon industry verticals</li>
+            <li>Integrated Razorpay payment gateway with webhook signature validation and idempotency for fund collection workflows</li>
+            <li>Implemented role-based access control (RBAC) and tenant-specific branding for whitelabel deployment</li>
+            <li>Built campaign management system processing <strong>10,000+ transactions</strong> with 99.5% success rate</li>
+        </ul>
+    </div>
+
+    <!-- Leadership & Impact -->
+    <h2>Leadership & Impact</h2>
+    <div class="leadership-grid">
+        <div class="leadership-item">
+            <div class="leadership-icon">🔍</div>
+            <div class="leadership-content">
+                <strong>Security Investigations</strong>
+                Led 50+ malicious actor investigations, delivering timeline reports to customers
+            </div>
+        </div>
+        <div class="leadership-item">
+            <div class="leadership-icon">👥</div>
+            <div class="leadership-content">
+                <strong>Technical Leadership</strong>
+                Led 5-member engineering team across full development lifecycle
+            </div>
+        </div>
+        <div class="leadership-item">
+            <div class="leadership-icon">🎓</div>
+            <div class="leadership-content">
+                <strong>Mentoring</strong>
+                Coached 3 junior developers on PHP best practices and production debugging
+            </div>
+        </div>
+        <div class="leadership-item">
+            <div class="leadership-icon">🤝</div>
+            <div class="leadership-content">
+                <strong>Cross-Team Collaboration</strong>
+                Partnered with .NET, Python, Java teams via Claude AI and Slack case management
+            </div>
+        </div>
+        <div class="leadership-item">
+            <div class="leadership-icon">💰</div>
+            <div class="leadership-content">
+                <strong>Cost Optimization</strong>
+                Reduced AWS costs by 20% through rightsizing and Reserved Instances
+            </div>
+        </div>
+        <div class="leadership-item">
+            <div class="leadership-icon">📊</div>
+            <div class="leadership-content">
+                <strong>Data Quality</strong>
+                Cleaned 500K+ legacy records, implemented validation preventing future corruption
+            </div>
+        </div>
+    </div>
+
+    <!-- Selected Projects -->
+    <h2>Selected Projects</h2>
+
+    <div class="project-entry">
+        <div class="project-title">eInvoice Connect (EIC) - Customer Payment Portal</div>
+        <div class="project-tech">PHP 7.4, Zend MVC, MySQL (Stack1/Stack2 Sharding), Redis, WCL Integration</div>
+        <ul>
+            <li>Built customer portal for invoice/payment history, one-time payments, and authenticated email workflows with <strong>10-min activation codes</strong></li>
+            <li>Implemented <strong>12+ language</strong> multi-language support with CSR-driven configuration and sub-user delegation for payment approvals</li>
+            <li>Integrated ACH/Credit Card payments, eBill notifications, AutoPay with threshold configuration, and database sharding (Stack1/Stack2)</li>
+        </ul>
+    </div>
+
+    <div class="project-entry">
+        <div class="project-title">Client Connect (CC) - Supplier Admin Portal</div>
+        <div class="project-tech">PHP 7.4, Laravel 9, MySQL, Redis, AMAPI Integration</div>
+        <ul>
+            <li>Developed supplier portal to monitor buyers, generate monthly reports, and enable critical payment processing on behalf of customers</li>
+            <li>Built bulk user onboarding via AMAPI integration and AutoPay configuration with <strong>admin/standard/customer</strong> group-based access control</li>
+            <li>Implemented MPay enablement workflow, account/user-level audit logging, and CSR-driven UI customization</li>
+        </ul>
+    </div>
+
+    <div class="project-entry">
+        <div class="project-title">Customer Settings Repository (CSR)</div>
+        <div class="project-tech">PHP 7.4, Laravel 10, MySQL, Redis, RESTful APIs</div>
+        <ul>
+            <li>Built centralized configuration platform serving <strong>200+ microservices</strong> with customer onboarding and settings management</li>
+            <li>Designed overall reporting dashboard, email monitoring per customer, and CSV-based settings documentation</li>
+            <li>Maintained customer-level configurations with <strong>&lt;50ms</strong> lookup time using Redis caching</li>
+        </ul>
+    </div>
+
+    <div class="project-entry">
+        <div class="project-title">Web Communication Layer (WCL) Microservices</div>
+        <div class="project-tech">PHP 7.4, Phalcon MVC, Redis (TTL-based cache), Encrypted Auth</div>
+        <ul>
+            <li>Developed integration microservice providing dynamic customer settings and DB connections with <strong>TTL-based Redis caching</strong></li>
+            <li>Implemented internal encrypted key authentication with unique keys per application for secure service-to-service communication</li>
+            <li>Built audit logging for investigation and invalidation control, eliminating redundant DB hits across platform</li>
+        </ul>
+    </div>
+
+    <div class="project-entry">
+        <div class="project-title">Managed Pay (MPay) AutoPay Configuration Service</div>
+        <div class="project-tech">PHP 7.4, Phalcon MVC, MySQL, REST APIs, Client Connect Integration</div>
+        <ul>
+            <li>Built supplier-level managed AutoPay microservice with create/update/delete operations via REST APIs</li>
+            <li>Designed threshold-based payment configuration requiring account info and payment account ID for activation</li>
+            <li>Integrated with Client Connect and EIC for seamless settings updates and automatic bill payment processing</li>
+        </ul>
+    </div>
+
+    <div class="project-entry">
+        <div class="project-title">Account Management API (AMAPI)</div>
+        <div class="project-tech">Phalcon MVC, REST APIs, MySQL, Redis</div>
+        <ul>
+            <li>Bulk enrollment API processing <strong>50,000+ accounts/month</strong></li>
+            <li>Reduced API response time to <strong>&lt;100ms</strong> with Redis caching</li>
+            <li>Multi-layer audit logging for compliance and troubleshooting</li>
+        </ul>
+    </div>
+
+    <div class="project-entry">
+        <div class="project-title">Multi-Domain Whitelabel Platform</div>
+        <div class="project-tech">PHP, Zend MVC, MySQL, Razorpay, Dynamic RBAC</div>
+        <ul>
+            <li>Built customizable role-based platform serving <strong>20+ active customers</strong> across industries (schools, gyms, salons, hospitals, pet trainers) with admin-configurable roles, theme, logo, and branding</li>
+            <li>Implemented dynamic access control with role hierarchy (admin/teacher/student or custom names) and content management workflows</li>
+            <li>Integrated Razorpay for crowd funding campaigns (annual day events) processing <strong>₹10L+ monthly volume</strong></li>
+        </ul>
+    </div>
+
+    <div class="project-entry">
+        <div class="project-title">Incident Remediation & RCA Tracker with Investigation Toolkit</div>
+        <div class="project-tech">Python, FastAPI, Pydantic, PostgreSQL, React.js, Datadog API, Splunk API</div>
+        <ul>
+            <li>Developed full-stack incident management system tracking <strong>100+ features</strong> across <strong>1000+ active customers</strong> with <strong>automated evidence collection</strong> from Datadog traces, Splunk audit logs, Pendo user activity, and SendGrid email logs</li>
+            <li>Built <strong>timeline reconstruction engine</strong> aggregating events across 5 monitoring systems, correlating malicious actor behavior patterns, and generating customer-ready investigation reports with <strong>60% faster MTTR</strong></li>
+            <li>Implemented issue categorization (Critical/High/Medium/Low), assignee management, historical RCA search for pattern identification, and release notes tracking — integrated Claude AI for automated RCA draft generation from log correlation</li>
+        </ul>
+    </div>
+
+    <!-- Education -->
+    <h2>Education</h2>
+    <div class="education-entry">
+        <div class="degree">Master of System Management</div>
+        <div class="institution">University of Madras</div>
+    </div>
+    <div class="education-entry">
+        <div class="degree">B.E. Electronics & Communication Engineering</div>
+        <div class="institution">University College of Engineering, Ariyalur</div>
+    </div>
+
+
+    <!-- Additional Information -->
+    <h2>Additional Information</h2>
+    <div class="info-grid">
+        <div class="info-item">
+            <div class="info-label">Languages:</div>
+            <div>English (Fluent), Tamil (Native)</div>
+        </div>
+        <div class="info-item">
+            <div class="info-label">Availability:</div>
+            <div>Immediate</div>
+        </div>
+        <div class="info-item">
+            <div class="info-label">Preferred Locations:</div>
+            <div>Bengaluru, Chennai</div>
+        </div>
+        <div class="info-item">
+            <div class="info-label">Work Authorization:</div>
+            <div>Indian Citizen</div>
+        </div>
+    </div>
+</body>
+</html>

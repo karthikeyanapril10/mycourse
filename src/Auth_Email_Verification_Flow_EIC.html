@@ -1,0 +1,1864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auth_Email_Verification_Flow_EIC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 60px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .metadata {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 16px 24px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #666;
+            border-left: 4px solid #667eea;
+        }
+
+        /* PROGRESS TRACKER STYLES */
+        .progress-tracker {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .progress-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-stats {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .progress-percentage {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #764ba2;
+        }
+
+        .progress-bar-container {
+            height: 12px;
+            background: #e9ecef;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+            border-radius: 20px;
+        }
+
+        .reset-btn {
+            padding: 8px 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+
+        .reset-btn:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+        }
+
+        .progress-items {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .progress-items::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .progress-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .progress-item:hover {
+            background: #f8f9fa;
+            transform: translateX(5px);
+        }
+
+        .progress-item.completed {
+            opacity: 0.7;
+        }
+
+        .progress-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .progress-label {
+            cursor: pointer;
+            font-size: 0.95em;
+            line-height: 1.5;
+            color: #495057;
+            flex-grow: 1;
+        }
+
+        .progress-item.completed .progress-label {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .toggle-progress {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .toggle-progress:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .progress-items.collapsed {
+            display: none;
+        }
+
+        /* CONTENT STYLES */
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 4px solid #667eea;
+            font-weight: 700;
+        }
+
+        h2 {
+            color: #764ba2;
+            font-size: 2em;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        h3 {
+            color: #495057;
+            font-size: 1.5em;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        h4 {
+            color: #666;
+            font-size: 1.25em;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        ul, ol {
+            margin: 20px 0;
+            padding-left: 40px;
+        }
+
+        li {
+            margin-bottom: 12px;
+            line-height: 1.7;
+        }
+
+        code {
+            background: #f4f5f7;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #c7254e;
+            border: 1px solid #e1e4e8;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 24px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 25px 0;
+            border: 1px solid #444;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            border: none;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        blockquote {
+            border-left: 5px solid #667eea;
+            padding: 15px 25px;
+            margin: 25px 0;
+            background: #f8f9fa;
+            border-radius: 0 8px 8px 0;
+            color: #495057;
+            font-style: italic;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 30px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 14px 18px;
+            text-align: left;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tr:hover {
+            background: #e9ecef;
+            transition: background 0.2s;
+        }
+
+        a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px solid transparent;
+            transition: border-bottom 0.2s;
+        }
+
+        a:hover {
+            border-bottom: 1px solid #667eea;
+        }
+
+        hr {
+            border: none;
+            border-top: 2px solid #e9ecef;
+            margin: 40px 0;
+        }
+
+        strong {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        em {
+            color: #495057;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 25px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.6em;
+            }
+
+            .progress-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .progress-stats {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../navigation.html" class="back-link">&larr; Back to Navigation</a>
+
+        <div class="metadata">
+            <strong>Source:</strong> dev/Auth_Email_Verification_Flow_EIC.md &nbsp;|&nbsp; <strong>Updated:</strong> 2026-11-18 19:44:52
+        </div>
+
+        <!-- PROGRESS TRACKER -->
+        <div class="progress-tracker">
+            <div class="progress-header">
+                <div class="progress-title">
+                    <span>📚</span>
+                    <span>Your Progress</span>
+                </div>
+                <div class="progress-stats">
+                    <span class="progress-percentage" id="progress-pct">0%</span>
+                    <button class="reset-btn" onclick="resetProgress()">Reset</button>
+                    <button class="toggle-progress" onclick="toggleProgressList()">▼ Hide</button>
+                </div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progress-bar" style="width: 0%"></div>
+            </div>
+            <div class="progress-items" id="progress-items">
+                <!-- Checkboxes will be generated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="content">
+<h1 id="auth-email-verification-flow-eic-einvoice-connect">Auth Email Verification Flow: EIC (eInvoice Connect)</h1>
+<blockquote>
+<p><strong>End-to-End Feature Documentation: Email Change Verification</strong></p>
+</blockquote>
+<hr />
+<h2 id="table-of-contents">Table of Contents</h2>
+<ol>
+<li><a href="#overview">Overview</a></li>
+<li><a href="#business-context">Business Context</a></li>
+<li><a href="#database-schema">Database Schema</a></li>
+<li><a href="#architecture">Architecture</a></li>
+<li><a href="#step-by-step-flow">Step-by-Step Flow</a></li>
+<li><a href="#code-implementation">Code Implementation</a></li>
+<li><a href="#email-template">Email Template (Verification Code)</a></li>
+<li><a href="#security-features">Security Features</a></li>
+<li><a href="#edge-cases">Edge Cases &amp; Error Handling</a></li>
+<li><a href="#testing-scenarios">Testing Scenarios</a></li>
+<li><a href="#interview-talking-points">Interview Talking Points</a></li>
+</ol>
+<hr />
+<h1 id="overview">Overview</h1>
+<h2 id="what-is-this-feature">What is This Feature?</h2>
+<p><strong>Email Change Verification</strong> in eInvoice Connect (EIC) allows users to securely change their email address by verifying ownership of the new email through a <strong>6-digit verification code</strong> sent via email.</p>
+<hr />
+<h2 id="key-facts">Key Facts</h2>
+<ul>
+<li><strong>Trigger:</strong> User changes email in their profile (post-login)</li>
+<li><strong>Verification Method:</strong> 6-digit code sent to new email</li>
+<li><strong>Expiry:</strong> 10 minutes (600 seconds)</li>
+<li><strong>One-Time Use:</strong> Code becomes invalid after successful verification</li>
+<li><strong>Tables Involved:</strong> <code>fsionlinecustomer</code>, <code>fsiuser</code>, <code>fsiocuser</code></li>
+<li><strong>Application:</strong> eInvoice Connect (EIC) - Zend Framework</li>
+</ul>
+<hr />
+<h1 id="business-context">Business Context</h1>
+<h2 id="why-email-verification">Why Email Verification?</h2>
+<ol>
+<li><strong>Prevent Account Takeover:</strong> Ensure user owns the new email before allowing change</li>
+<li><strong>Reduce Support Tickets:</strong> Avoid users locking themselves out by mistyping email</li>
+<li><strong>Audit Trail:</strong> Track when and by whom email was changed</li>
+<li><strong>Compliance:</strong> PCI-DSS requires verification for sensitive account changes</li>
+</ol>
+<hr />
+<h2 id="user-journey">User Journey</h2>
+<div class="codehilite"><pre><span></span><code><span class="k">User</span><span class="w"> </span><span class="n">logs</span><span class="w"> </span><span class="k">into</span><span class="w"> </span><span class="n">EIC</span>
+<span class="w">  </span><span class="err">↓</span>
+<span class="n">Navigates</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">Profile</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">Edit</span><span class="w"> </span><span class="n">Email</span>
+<span class="w">  </span><span class="err">↓</span>
+<span class="n">Enters</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">email</span><span class="w"> </span><span class="p">(</span><span class="n">e</span><span class="p">.</span><span class="n">g</span><span class="p">.,</span><span class="w"> </span><span class="n">newemail</span><span class="nv">@example</span><span class="p">.</span><span class="n">com</span><span class="p">)</span>
+<span class="w">  </span><span class="err">↓</span>
+<span class="n">Clicks</span><span class="w"> </span><span class="ss">"Send Verification Code"</span>
+<span class="w">  </span><span class="err">↓</span>
+<span class="k">System</span><span class="w"> </span><span class="n">generates</span><span class="w"> </span><span class="mi">6</span><span class="o">-</span><span class="n">digit</span><span class="w"> </span><span class="n">code</span><span class="w"> </span><span class="p">(</span><span class="n">e</span><span class="p">.</span><span class="n">g</span><span class="p">.,</span><span class="w"> </span><span class="mi">482917</span><span class="p">)</span>
+<span class="w">  </span><span class="err">↓</span>
+<span class="n">Email</span><span class="w"> </span><span class="n">sent</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">newemail</span><span class="nv">@example</span><span class="p">.</span><span class="n">com</span>
+<span class="w">  </span><span class="err">↓</span>
+<span class="k">User</span><span class="w"> </span><span class="n">checks</span><span class="w"> </span><span class="n">email</span><span class="p">,</span><span class="w"> </span><span class="n">copies</span><span class="w"> </span><span class="n">code</span>
+<span class="w">  </span><span class="err">↓</span>
+<span class="k">Returns</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">EIC</span><span class="p">,</span><span class="w"> </span><span class="n">enters</span><span class="w"> </span><span class="n">code</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">verification</span><span class="w"> </span><span class="n">field</span>
+<span class="w">  </span><span class="err">↓</span>
+<span class="k">System</span><span class="w"> </span><span class="n">validates</span><span class="w"> </span><span class="n">code</span><span class="w"> </span><span class="p">(</span><span class="ow">not</span><span class="w"> </span><span class="n">expired</span><span class="p">,</span><span class="w"> </span><span class="n">matches</span><span class="p">,</span><span class="w"> </span><span class="n">one</span><span class="o">-</span><span class="nc">time</span><span class="w"> </span><span class="k">use</span><span class="p">)</span>
+<span class="w">  </span><span class="err">↓</span>
+<span class="n">Email</span><span class="w"> </span><span class="n">updated</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="k">database</span><span class="p">,</span><span class="w"> </span><span class="n">isEmailVerified</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">  </span><span class="err">↓</span>
+<span class="n">Success</span><span class="w"> </span><span class="nl">message</span><span class="p">:</span><span class="w"> </span><span class="ss">"Email verified successfully"</span>
+</code></pre></div>
+
+<hr />
+<h1 id="database-schema">Database Schema</h1>
+<h2 id="tables-involved">Tables Involved</h2>
+<h3 id="1-fsionlinecustomer-primary-user-table">1. <code>fsionlinecustomer</code> (Primary User Table)</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">fsionlinecustomer</span><span class="w"> </span><span class="p">(</span>
+<span class="w">  </span><span class="n">CustomerID</span><span class="w"> </span><span class="nb">INT</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span>
+<span class="w">  </span><span class="n">OCUserId</span><span class="w"> </span><span class="nb">INT</span><span class="p">,</span><span class="w">  </span><span class="c1">-- Foreign key to fsiocuser</span>
+<span class="w">  </span><span class="n">EmailPrimary</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">255</span><span class="p">),</span>
+<span class="w">  </span><span class="n">EmailSecondary</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">255</span><span class="p">),</span>
+<span class="w">  </span><span class="n">FirstName</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span>
+<span class="w">  </span><span class="n">LastName</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span>
+<span class="w">  </span><span class="n">CreatedDate</span><span class="w"> </span><span class="n">DATETIME</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="k">CURRENT_TIMESTAMP</span><span class="p">,</span>
+<span class="w">  </span><span class="n">UpdatedDate</span><span class="w"> </span><span class="n">DATETIME</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="k">CURRENT_TIMESTAMP</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="k">UPDATE</span><span class="w"> </span><span class="k">CURRENT_TIMESTAMP</span><span class="p">,</span>
+<span class="w">  </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_ocuser</span><span class="w"> </span><span class="p">(</span><span class="n">OCUserId</span><span class="p">)</span>
+<span class="p">);</span>
+</code></pre></div>
+
+<h3 id="2-fsiocuser-online-customer-user-login-credentials">2. <code>fsiocuser</code> (Online Customer User - Login Credentials)</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">fsiocuser</span><span class="w"> </span><span class="p">(</span>
+<span class="w">  </span><span class="n">OCUserId</span><span class="w"> </span><span class="nb">INT</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="n">AUTO_INCREMENT</span><span class="p">,</span>
+<span class="w">  </span><span class="n">Email</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">255</span><span class="p">)</span><span class="w"> </span><span class="k">UNIQUE</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span>
+<span class="w">  </span><span class="n">PasswordHash</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">255</span><span class="p">)</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span>
+<span class="w">  </span><span class="n">IsEmailVerified</span><span class="w"> </span><span class="n">TINYINT</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">  </span><span class="c1">-- 0 = unverified, 1 = verified</span>
+<span class="w">  </span><span class="n">EmailVerificationCode</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span><span class="w">      </span><span class="c1">-- 6-digit code</span>
+<span class="w">  </span><span class="n">EmailVerificationExpiry</span><span class="w"> </span><span class="n">DATETIME</span><span class="p">,</span><span class="w">       </span><span class="c1">-- Expiry timestamp (10 min from generation)</span>
+<span class="w">  </span><span class="n">EmailVerificationUsed</span><span class="w"> </span><span class="n">TINYINT</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">  </span><span class="c1">-- 0 = unused, 1 = used</span>
+<span class="w">  </span><span class="n">CreatedDate</span><span class="w"> </span><span class="n">DATETIME</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="k">CURRENT_TIMESTAMP</span><span class="p">,</span>
+<span class="w">  </span><span class="n">UpdatedDate</span><span class="w"> </span><span class="n">DATETIME</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="k">CURRENT_TIMESTAMP</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="k">UPDATE</span><span class="w"> </span><span class="k">CURRENT_TIMESTAMP</span><span class="p">,</span>
+<span class="w">  </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_email</span><span class="w"> </span><span class="p">(</span><span class="n">Email</span><span class="p">),</span>
+<span class="w">  </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_verification_code</span><span class="w"> </span><span class="p">(</span><span class="n">EmailVerificationCode</span><span class="p">)</span>
+<span class="p">);</span>
+</code></pre></div>
+
+<h3 id="3-fsiuser-legacy-user-table-linked-to-ocuser">3. <code>fsiuser</code> (Legacy User Table - Linked to OCUser)</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">fsiuser</span><span class="w"> </span><span class="p">(</span>
+<span class="w">  </span><span class="n">UserID</span><span class="w"> </span><span class="nb">INT</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="n">AUTO_INCREMENT</span><span class="p">,</span>
+<span class="w">  </span><span class="n">OCUserId</span><span class="w"> </span><span class="nb">INT</span><span class="p">,</span><span class="w">  </span><span class="c1">-- Foreign key to fsiocuser</span>
+<span class="w">  </span><span class="n">Email</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">255</span><span class="p">),</span>
+<span class="w">  </span><span class="n">UserName</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span>
+<span class="w">  </span><span class="n">CreatedDate</span><span class="w"> </span><span class="n">DATETIME</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="k">CURRENT_TIMESTAMP</span><span class="p">,</span>
+<span class="w">  </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_ocuser</span><span class="w"> </span><span class="p">(</span><span class="n">OCUserId</span><span class="p">)</span>
+<span class="p">);</span>
+</code></pre></div>
+
+<hr />
+<h2 id="relationships">Relationships</h2>
+<div class="codehilite"><pre><span></span><code>fsionlinecustomer.OCUserId ───► fsiocuser.OCUserId ◄─── fsiuser.OCUserId
+                                      │
+                                      │ Email
+                                      │ IsEmailVerified
+                                      │ EmailVerificationCode
+                                      │ EmailVerificationExpiry
+                                      │ EmailVerificationUsed
+</code></pre></div>
+
+<hr />
+<h1 id="architecture">Architecture</h1>
+<h2 id="high-level-flow">High-Level Flow</h2>
+<div class="codehilite"><pre><span></span><code><span class="err">┌─────────────┐</span>
+<span class="err">│</span><span class="w">   </span><span class="n">Browser</span><span class="w">   </span><span class="err">│</span>
+<span class="err">│</span><span class="w">   </span><span class="p">(</span><span class="k">User</span><span class="p">)</span><span class="w">    </span><span class="err">│</span>
+<span class="err">└──────┬──────┘</span>
+<span class="w">       </span><span class="err">│</span><span class="w"> </span><span class="mf">1.</span><span class="w"> </span><span class="n">POST</span><span class="w"> </span><span class="o">/</span><span class="n">profile</span><span class="o">/</span><span class="n">change</span><span class="o">-</span><span class="n">email</span>
+<span class="w">       </span><span class="err">│</span><span class="w">    </span><span class="err">{</span><span class="nl">new_email</span><span class="p">:</span><span class="w"> </span><span class="ss">"new@example.com"</span><span class="err">}</span>
+<span class="w">       </span><span class="err">▼</span>
+<span class="err">┌─────────────────────────┐</span>
+<span class="err">│</span><span class="w">   </span><span class="n">EIC</span><span class="w"> </span><span class="p">(</span><span class="n">Zend</span><span class="w"> </span><span class="n">Framework</span><span class="p">)</span><span class="w">  </span><span class="err">│</span>
+<span class="err">│</span><span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="n">ProfileController</span><span class="w">   </span><span class="err">│</span>
+<span class="err">│</span><span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="n">changeEmailAction</span><span class="p">()</span><span class="w"> </span><span class="err">│</span>
+<span class="err">└──────┬──────────────────┘</span>
+<span class="w">       </span><span class="err">│</span>
+<span class="w">       </span><span class="err">├──►</span><span class="w"> </span><span class="mf">2.</span><span class="w"> </span><span class="n">Generate</span><span class="w"> </span><span class="mi">6</span><span class="o">-</span><span class="n">digit</span><span class="w"> </span><span class="n">code</span><span class="w"> </span><span class="p">(</span><span class="mi">482917</span><span class="p">)</span>
+<span class="w">       </span><span class="err">│</span>
+<span class="w">       </span><span class="err">├──►</span><span class="w"> </span><span class="mf">3.</span><span class="w"> </span><span class="k">Update</span><span class="w"> </span><span class="nl">fsiocuser</span><span class="p">:</span>
+<span class="w">       </span><span class="err">│</span><span class="w">       </span><span class="n">EmailVerificationCode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">482917</span>
+<span class="w">       </span><span class="err">│</span><span class="w">       </span><span class="n">EmailVerificationExpiry</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NOW</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="nf">min</span>
+<span class="w">       </span><span class="err">│</span><span class="w">       </span><span class="n">EmailVerificationUsed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">       </span><span class="err">│</span>
+<span class="w">       </span><span class="err">├──►</span><span class="w"> </span><span class="mf">4.</span><span class="w"> </span><span class="n">Send</span><span class="w"> </span><span class="n">email</span><span class="w"> </span><span class="p">(</span><span class="n">EmailService</span><span class="p">)</span>
+<span class="w">       </span><span class="err">│</span><span class="w">       </span><span class="k">To</span><span class="err">:</span><span class="w"> </span><span class="k">new</span><span class="nv">@example</span><span class="p">.</span><span class="n">com</span>
+<span class="w">       </span><span class="err">│</span><span class="w">       </span><span class="nl">Subject</span><span class="p">:</span><span class="w"> </span><span class="ss">"Verify your email"</span>
+<span class="w">       </span><span class="err">│</span><span class="w">       </span><span class="nl">Body</span><span class="p">:</span><span class="w"> </span><span class="ss">"Your code is 482917 (expires in 10 min)"</span>
+<span class="w">       </span><span class="err">│</span>
+<span class="w">       </span><span class="err">└──►</span><span class="w"> </span><span class="mf">5.</span><span class="w"> </span><span class="nl">Response</span><span class="p">:</span><span class="w"> </span><span class="err">{</span><span class="nl">status</span><span class="p">:</span><span class="w"> </span><span class="ss">"code_sent"</span><span class="err">}</span>
+
+<span class="err">─────────────────────────────────────────────────────────</span>
+
+<span class="k">User</span><span class="w"> </span><span class="n">enters</span><span class="w"> </span><span class="n">code</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="nl">browser</span><span class="p">:</span>
+
+<span class="err">┌─────────────┐</span>
+<span class="err">│</span><span class="w">   </span><span class="n">Browser</span><span class="w">   </span><span class="err">│</span>
+<span class="err">└──────┬──────┘</span>
+<span class="w">       </span><span class="err">│</span><span class="w"> </span><span class="mf">6.</span><span class="w"> </span><span class="n">POST</span><span class="w"> </span><span class="o">/</span><span class="n">profile</span><span class="o">/</span><span class="n">verify</span><span class="o">-</span><span class="n">email</span>
+<span class="w">       </span><span class="err">│</span><span class="w">    </span><span class="err">{</span><span class="nl">code</span><span class="p">:</span><span class="w"> </span><span class="ss">"482917"</span><span class="err">}</span>
+<span class="w">       </span><span class="err">▼</span>
+<span class="err">┌─────────────────────────┐</span>
+<span class="err">│</span><span class="w">   </span><span class="n">EIC</span><span class="w">                   </span><span class="err">│</span>
+<span class="err">│</span><span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="n">verifyEmailAction</span><span class="p">()</span><span class="w"> </span><span class="err">│</span>
+<span class="err">└──────┬──────────────────┘</span>
+<span class="w">       </span><span class="err">│</span>
+<span class="w">       </span><span class="err">├──►</span><span class="w"> </span><span class="mf">7.</span><span class="w"> </span><span class="n">Query</span><span class="w"> </span><span class="nl">fsiocuser</span><span class="p">:</span>
+<span class="w">       </span><span class="err">│</span><span class="w">       </span><span class="k">WHERE</span><span class="w"> </span><span class="n">EmailVerificationCode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">482917</span>
+<span class="w">       </span><span class="err">│</span><span class="w">       </span><span class="ow">AND</span><span class="w"> </span><span class="n">EmailVerificationExpiry</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">NOW</span><span class="p">()</span>
+<span class="w">       </span><span class="err">│</span><span class="w">       </span><span class="ow">AND</span><span class="w"> </span><span class="n">EmailVerificationUsed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">       </span><span class="err">│</span>
+<span class="w">       </span><span class="err">├──►</span><span class="w"> </span><span class="mf">8.</span><span class="w"> </span><span class="k">If</span><span class="w"> </span><span class="nl">valid</span><span class="p">:</span>
+<span class="w">       </span><span class="err">│</span><span class="w">       </span><span class="k">UPDATE</span><span class="w"> </span><span class="n">fsiocuser</span>
+<span class="w">       </span><span class="err">│</span><span class="w">       </span><span class="k">SET</span><span class="w"> </span><span class="n">Email</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="nv">@example</span><span class="p">.</span><span class="n">com</span><span class="p">,</span>
+<span class="w">       </span><span class="err">│</span><span class="w">           </span><span class="n">IsEmailVerified</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">       </span><span class="err">│</span><span class="w">           </span><span class="n">EmailVerificationUsed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">       </span><span class="err">│</span>
+<span class="w">       </span><span class="err">│</span><span class="w">       </span><span class="k">UPDATE</span><span class="w"> </span><span class="n">fsionlinecustomer</span>
+<span class="w">       </span><span class="err">│</span><span class="w">       </span><span class="k">SET</span><span class="w"> </span><span class="n">EmailPrimary</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="nv">@example</span><span class="p">.</span><span class="n">com</span>
+<span class="w">       </span><span class="err">│</span>
+<span class="w">       </span><span class="err">│</span><span class="w">       </span><span class="k">UPDATE</span><span class="w"> </span><span class="n">fsiuser</span>
+<span class="w">       </span><span class="err">│</span><span class="w">       </span><span class="k">SET</span><span class="w"> </span><span class="n">Email</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="nv">@example</span><span class="p">.</span><span class="n">com</span>
+<span class="w">       </span><span class="err">│</span>
+<span class="w">       </span><span class="err">└──►</span><span class="w"> </span><span class="mf">9.</span><span class="w"> </span><span class="nl">Response</span><span class="p">:</span><span class="w"> </span><span class="err">{</span><span class="nl">status</span><span class="p">:</span><span class="w"> </span><span class="ss">"verified"</span><span class="err">}</span>
+</code></pre></div>
+
+<hr />
+<h1 id="step-by-step-flow">Step-by-Step Flow</h1>
+<h2 id="step-1-user-initiates-email-change">Step 1: User Initiates Email Change</h2>
+<p><strong>User Action:</strong><br />
+- Logged into EIC<br />
+- Navigates to Profile page<br />
+- Clicks "Edit Email"<br />
+- Enters new email: <code>newemail@example.com</code><br />
+- Clicks "Send Verification Code"</p>
+<p><strong>What Happens:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">POST</span><span class="w"> </span><span class="o">/</span><span class="n">profile</span><span class="o">/</span><span class="n">change</span><span class="o">-</span><span class="n">email</span>
+<span class="err">{</span>
+<span class="w">  </span><span class="ss">"new_email"</span><span class="err">:</span><span class="w"> </span><span class="ss">"newemail@example.com"</span>
+<span class="err">}</span>
+</code></pre></div>
+
+<hr />
+<h2 id="step-2-backend-generates-verification-code">Step 2: Backend Generates Verification Code</h2>
+<p><strong>Code:</strong> <code>application/ig70/controllers/ProfileController.php</code></p>
+<div class="codehilite"><pre><span></span><code><span class="x">public function changeEmailAction()</span>
+<span class="x">{</span>
+<span class="x">    // Get current user</span>
+<span class="x">    $ocUserId = $this-&gt;getCurrentUserId();  // From session</span>
+
+<span class="x">    // Get new email from request</span>
+<span class="x">    $newEmail = $this-&gt;getRequest()-&gt;getPost('new_email');</span>
+
+<span class="x">    // Validate email format</span>
+<span class="x">    if (!filter_var($newEmail, FILTER_VALIDATE_EMAIL)) {</span>
+<span class="x">        return $this-&gt;json(['error' =&gt; 'Invalid email format'], 400);</span>
+<span class="x">    }</span>
+
+<span class="x">    // Check if email already exists</span>
+<span class="x">    $existingUser = $this-&gt;ocUserModel-&gt;findByEmail($newEmail);</span>
+<span class="x">    if ($existingUser) {</span>
+<span class="x">        return $this-&gt;json(['error' =&gt; 'Email already in use'], 400);</span>
+<span class="x">    }</span>
+
+<span class="x">    // Generate 6-digit code</span>
+<span class="x">    $verificationCode = $this-&gt;generateVerificationCode();  // e.g., 482917</span>
+
+<span class="x">    // Calculate expiry (10 minutes from now)</span>
+<span class="x">    $expiryTime = date('Y-m-d H:i:s', strtotime('+10 minutes'));</span>
+
+<span class="x">    // Update fsiocuser with verification code</span>
+<span class="x">    $this-&gt;ocUserModel-&gt;update($ocUserId, [</span>
+<span class="x">        'EmailVerificationCode' =&gt; $verificationCode,</span>
+<span class="x">        'EmailVerificationExpiry' =&gt; $expiryTime,</span>
+<span class="x">        'EmailVerificationUsed' =&gt; 0,</span>
+<span class="x">        'PendingEmail' =&gt; $newEmail  // Store new email temporarily</span>
+<span class="x">    ]);</span>
+
+<span class="x">    // Send verification email</span>
+<span class="x">    $this-&gt;sendVerificationEmail($newEmail, $verificationCode);</span>
+
+<span class="x">    // Log action</span>
+<span class="x">    $this-&gt;logger-&gt;info("Email verification code sent", [</span>
+<span class="x">        'ocUserId' =&gt; $ocUserId,</span>
+<span class="x">        'newEmail' =&gt; $newEmail,</span>
+<span class="x">        'expiryTime' =&gt; $expiryTime</span>
+<span class="x">    ]);</span>
+
+<span class="x">    return $this-&gt;json([</span>
+<span class="x">        'status' =&gt; 'code_sent',</span>
+<span class="x">        'message' =&gt; 'Verification code sent to ' . $newEmail,</span>
+<span class="x">        'expires_in_seconds' =&gt; 600</span>
+<span class="x">    ]);</span>
+<span class="x">}</span>
+
+<span class="x">private function generateVerificationCode()</span>
+<span class="x">{</span>
+<span class="x">    // Generate 6-digit random code</span>
+<span class="x">    return str_pad(mt_rand(0, 999999), 6, '0', STR_PAD_LEFT);</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<hr />
+<h2 id="step-3-send-verification-email">Step 3: Send Verification Email</h2>
+<p><strong>Code:</strong> <code>application/ig70/services/EmailService.php</code></p>
+<div class="codehilite"><pre><span></span><code><span class="x">class EmailService</span>
+<span class="x">{</span>
+<span class="x">    public function sendVerificationEmail($toEmail, $verificationCode)</span>
+<span class="x">    {</span>
+<span class="x">        $subject = 'Verify Your Email - eInvoice Connect';</span>
+
+<span class="x">        $body = $this-&gt;renderTemplate('email_verification', [</span>
+<span class="x">            'code' =&gt; $verificationCode,</span>
+<span class="x">            'expiryMinutes' =&gt; 10</span>
+<span class="x">        ]);</span>
+
+<span class="x">        // Send via SMTP (or queue for background processing)</span>
+<span class="x">        $this-&gt;mailer-&gt;send([</span>
+<span class="x">            'to' =&gt; $toEmail,</span>
+<span class="x">            'subject' =&gt; $subject,</span>
+<span class="x">            'body' =&gt; $body,</span>
+<span class="x">            'contentType' =&gt; 'text/html'</span>
+<span class="x">        ]);</span>
+
+<span class="x">        // Log email sent</span>
+<span class="x">        $this-&gt;logger-&gt;info("Verification email sent", [</span>
+<span class="x">            'to' =&gt; $toEmail,</span>
+<span class="x">            'code' =&gt; $verificationCode</span>
+<span class="x">        ]);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<hr />
+<h2 id="step-4-user-receives-email">Step 4: User Receives Email</h2>
+<p><strong>Email Preview:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nx">From</span><span class="p">:</span><span class="w"> </span><span class="nx">noreply</span><span class="err">@</span><span class="nx">einvoiceconnect</span><span class="p">.</span><span class="nx">com</span>
+<span class="nx">To</span><span class="p">:</span><span class="w"> </span><span class="nx">newemail</span><span class="err">@</span><span class="nx">example</span><span class="p">.</span><span class="nx">com</span>
+<span class="nx">Subject</span><span class="p">:</span><span class="w"> </span><span class="nx">Verify</span><span class="w"> </span><span class="nx">Your</span><span class="w"> </span><span class="nx">Email</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nx">eInvoice</span><span class="w"> </span><span class="nx">Connect</span>
+
+<span class="err">─────────────────────────────────────</span>
+<span class="w">  </span><span class="nx">eInvoice</span><span class="w"> </span><span class="nx">Connect</span>
+<span class="err">─────────────────────────────────────</span>
+
+<span class="nx">Hi</span><span class="w"> </span><span class="nx">there</span><span class="p">,</span>
+
+<span class="nx">You</span><span class="w"> </span><span class="nx">requested</span><span class="w"> </span><span class="nx">to</span><span class="w"> </span><span class="nx">change</span><span class="w"> </span><span class="nx">your</span><span class="w"> </span><span class="nx">email</span><span class="w"> </span><span class="nx">address</span><span class="p">.</span>
+
+<span class="nx">Your</span><span class="w"> </span><span class="nx">verification</span><span class="w"> </span><span class="nx">code</span><span class="w"> </span><span class="k">is</span><span class="p">:</span>
+
+<span class="w">   </span><span class="err">┌──────────┐</span>
+<span class="w">   </span><span class="err">│</span><span class="w">  </span><span class="mi">482917</span><span class="w">  </span><span class="err">│</span>
+<span class="w">   </span><span class="err">└──────────┘</span>
+
+<span class="nx">This</span><span class="w"> </span><span class="nx">code</span><span class="w"> </span><span class="nx">will</span><span class="w"> </span><span class="nx">expire</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="nx">minutes</span><span class="p">.</span>
+
+<span class="nx">If</span><span class="w"> </span><span class="nx">you</span><span class="w"> </span><span class="nx">didn</span><span class="err">'</span><span class="nx">t</span><span class="w"> </span><span class="nx">request</span><span class="w"> </span><span class="nx">this</span><span class="w"> </span><span class="nx">change</span><span class="p">,</span><span class="w"> </span><span class="nx">please</span><span class="w"> </span><span class="nx">ignore</span><span class="w"> </span><span class="nx">this</span><span class="w"> </span><span class="nx">email</span><span class="p">.</span>
+
+<span class="nx">Need</span><span class="w"> </span><span class="nx">help</span><span class="p">?</span><span class="w"> </span><span class="nx">Contact</span><span class="w"> </span><span class="nx">support</span><span class="err">@</span><span class="nx">einvoiceconnect</span><span class="p">.</span><span class="nx">com</span>
+
+<span class="err">─────────────────────────────────────</span>
+<span class="err">©</span><span class="w"> </span><span class="mi">2026</span><span class="w"> </span><span class="nx">eInvoice</span><span class="w"> </span><span class="nx">Connect</span><span class="p">.</span><span class="w"> </span><span class="nx">All</span><span class="w"> </span><span class="nx">rights</span><span class="w"> </span><span class="nx">reserved</span><span class="p">.</span>
+</code></pre></div>
+
+<hr />
+<h2 id="step-5-user-enters-verification-code">Step 5: User Enters Verification Code</h2>
+<p><strong>User Action:</strong><br />
+- Checks email inbox<br />
+- Copies code: <code>482917</code><br />
+- Returns to EIC profile page<br />
+- Enters code in "Verification Code" field<br />
+- Clicks "Verify Email"</p>
+<p><strong>What Happens:</strong></p>
+<div class="codehilite"><pre><span></span><code>POST /profile/verify-email
+{
+  "code": "482917"
+}
+</code></pre></div>
+
+<hr />
+<h2 id="step-6-backend-validates-code">Step 6: Backend Validates Code</h2>
+<p><strong>Code:</strong> <code>application/ig70/controllers/ProfileController.php</code></p>
+<div class="codehilite"><pre><span></span><code><span class="x">public function verifyEmailAction()</span>
+<span class="x">{</span>
+<span class="x">    // Get current user</span>
+<span class="x">    $ocUserId = $this-&gt;getCurrentUserId();</span>
+
+<span class="x">    // Get verification code from request</span>
+<span class="x">    $code = $this-&gt;getRequest()-&gt;getPost('code');</span>
+
+<span class="x">    // Fetch user record</span>
+<span class="x">    $user = $this-&gt;ocUserModel-&gt;findById($ocUserId);</span>
+
+<span class="x">    // Validation checks</span>
+<span class="x">    if (empty($user['EmailVerificationCode'])) {</span>
+<span class="x">        return $this-&gt;json(['error' =&gt; 'No verification code found. Please request a new code.'], 400);</span>
+<span class="x">    }</span>
+
+<span class="x">    if ($user['EmailVerificationCode'] !== $code) {</span>
+<span class="x">        // Log failed attempt</span>
+<span class="x">        $this-&gt;logger-&gt;warning("Invalid verification code entered", [</span>
+<span class="x">            'ocUserId' =&gt; $ocUserId,</span>
+<span class="x">            'enteredCode' =&gt; $code</span>
+<span class="x">        ]);</span>
+
+<span class="x">        return $this-&gt;json(['error' =&gt; 'Invalid verification code'], 400);</span>
+<span class="x">    }</span>
+
+<span class="x">    if ($user['EmailVerificationUsed'] == 1) {</span>
+<span class="x">        return $this-&gt;json(['error' =&gt; 'Verification code already used'], 400);</span>
+<span class="x">    }</span>
+
+<span class="x">    // Check expiry</span>
+<span class="x">    $expiryTime = strtotime($user['EmailVerificationExpiry']);</span>
+<span class="x">    $currentTime = time();</span>
+
+<span class="x">    if ($currentTime &gt; $expiryTime) {</span>
+<span class="x">        $this-&gt;logger-&gt;warning("Expired verification code used", [</span>
+<span class="x">            'ocUserId' =&gt; $ocUserId,</span>
+<span class="x">            'expiredAt' =&gt; $user['EmailVerificationExpiry']</span>
+<span class="x">        ]);</span>
+
+<span class="x">        return $this-&gt;json(['error' =&gt; 'Verification code expired. Please request a new code.'], 400);</span>
+<span class="x">    }</span>
+
+<span class="x">    // ALL VALIDATIONS PASSED - Update email</span>
+<span class="x">    $newEmail = $user['PendingEmail'];</span>
+
+<span class="x">    try {</span>
+<span class="x">        // Start transaction</span>
+<span class="x">        $this-&gt;db-&gt;beginTransaction();</span>
+
+<span class="x">        // 1. Update fsiocuser</span>
+<span class="x">        $this-&gt;ocUserModel-&gt;update($ocUserId, [</span>
+<span class="x">            'Email' =&gt; $newEmail,</span>
+<span class="x">            'IsEmailVerified' =&gt; 1,</span>
+<span class="x">            'EmailVerificationUsed' =&gt; 1,</span>
+<span class="x">            'EmailVerificationCode' =&gt; null,  // Clear code</span>
+<span class="x">            'EmailVerificationExpiry' =&gt; null,</span>
+<span class="x">            'PendingEmail' =&gt; null</span>
+<span class="x">        ]);</span>
+
+<span class="x">        // 2. Update fsionlinecustomer</span>
+<span class="x">        $this-&gt;onlineCustomerModel-&gt;updateByOCUserId($ocUserId, [</span>
+<span class="x">            'EmailPrimary' =&gt; $newEmail,</span>
+<span class="x">            'UpdatedDate' =&gt; date('Y-m-d H:i:s')</span>
+<span class="x">        ]);</span>
+
+<span class="x">        // 3. Update fsiuser</span>
+<span class="x">        $this-&gt;userModel-&gt;updateByOCUserId($ocUserId, [</span>
+<span class="x">            'Email' =&gt; $newEmail</span>
+<span class="x">        ]);</span>
+
+<span class="x">        // Commit transaction</span>
+<span class="x">        $this-&gt;db-&gt;commit();</span>
+
+<span class="x">        // Log successful verification</span>
+<span class="x">        $this-&gt;logger-&gt;info("Email verified successfully", [</span>
+<span class="x">            'ocUserId' =&gt; $ocUserId,</span>
+<span class="x">            'newEmail' =&gt; $newEmail</span>
+<span class="x">        ]);</span>
+
+<span class="x">        return $this-&gt;json([</span>
+<span class="x">            'status' =&gt; 'verified',</span>
+<span class="x">            'message' =&gt; 'Email verified successfully',</span>
+<span class="x">            'newEmail' =&gt; $newEmail</span>
+<span class="x">        ]);</span>
+
+<span class="x">    } catch (Exception $e) {</span>
+<span class="x">        // Rollback on error</span>
+<span class="x">        $this-&gt;db-&gt;rollBack();</span>
+
+<span class="x">        $this-&gt;logger-&gt;error("Email verification failed", [</span>
+<span class="x">            'ocUserId' =&gt; $ocUserId,</span>
+<span class="x">            'error' =&gt; $e-&gt;getMessage()</span>
+<span class="x">        ]);</span>
+
+<span class="x">        return $this-&gt;json(['error' =&gt; 'Verification failed. Please try again.'], 500);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<hr />
+<h2 id="step-7-success">Step 7: Success</h2>
+<p><strong>User sees:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="err">✓</span><span class="w"> </span><span class="n">Email</span><span class="w"> </span><span class="n">verified</span><span class="w"> </span><span class="n">successfully</span><span class="err">!</span>
+<span class="n">Your</span><span class="w"> </span><span class="n">email</span><span class="w"> </span><span class="n">has</span><span class="w"> </span><span class="n">been</span><span class="w"> </span><span class="n">changed</span><span class="w"> </span><span class="k">to</span><span class="err">:</span><span class="w"> </span><span class="n">newemail</span><span class="nv">@example</span><span class="p">.</span><span class="n">com</span>
+</code></pre></div>
+
+<p><strong>Database state:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- fsiocuser</span>
+<span class="n">Email</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'newemail@example.com'</span>
+<span class="n">IsEmailVerified</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+<span class="n">EmailVerificationUsed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+<span class="n">EmailVerificationCode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">NULL</span>
+<span class="n">EmailVerificationExpiry</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">NULL</span>
+
+<span class="c1">-- fsionlinecustomer</span>
+<span class="n">EmailPrimary</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'newemail@example.com'</span>
+
+<span class="c1">-- fsiuser</span>
+<span class="n">Email</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'newemail@example.com'</span>
+</code></pre></div>
+
+<hr />
+<h1 id="code-implementation">Code Implementation</h1>
+<h2 id="full-example-profilecontrollerphp">Full Example: ProfileController.php</h2>
+<div class="codehilite"><pre><span></span><code><span class="cp">&lt;?php</span>
+
+<span class="k">class</span> <span class="nc">ProfileController</span> <span class="k">extends</span> <span class="nx">Zend_Controller_Action</span>
+<span class="p">{</span>
+    <span class="k">private</span> <span class="nv">$ocUserModel</span><span class="p">;</span>
+    <span class="k">private</span> <span class="nv">$onlineCustomerModel</span><span class="p">;</span>
+    <span class="k">private</span> <span class="nv">$userModel</span><span class="p">;</span>
+    <span class="k">private</span> <span class="nv">$emailService</span><span class="p">;</span>
+    <span class="k">private</span> <span class="nv">$logger</span><span class="p">;</span>
+    <span class="k">private</span> <span class="nv">$db</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">init</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">ocUserModel</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Model_OCUser</span><span class="p">();</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">onlineCustomerModel</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Model_OnlineCustomer</span><span class="p">();</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">userModel</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Model_User</span><span class="p">();</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">emailService</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Service_Email</span><span class="p">();</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">logger</span> <span class="o">=</span> <span class="nx">Zend_Registry</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">'logger'</span><span class="p">);</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">db</span> <span class="o">=</span> <span class="nx">Zend_Db_Table</span><span class="o">::</span><span class="na">getDefaultAdapter</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * Step 1: Initiate email change and send verification code</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">changeEmailAction</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_helper</span><span class="o">-&gt;</span><span class="na">viewRenderer</span><span class="o">-&gt;</span><span class="na">setNoRender</span><span class="p">(</span><span class="k">true</span><span class="p">);</span>
+
+        <span class="c1">// Get current user from session</span>
+        <span class="nv">$auth</span> <span class="o">=</span> <span class="nx">Zend_Auth</span><span class="o">::</span><span class="na">getInstance</span><span class="p">();</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nv">$auth</span><span class="o">-&gt;</span><span class="na">hasIdentity</span><span class="p">())</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">json</span><span class="p">([</span><span class="s1">'error'</span> <span class="o">=&gt;</span> <span class="s1">'Unauthorized'</span><span class="p">],</span> <span class="mi">401</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="nv">$ocUserId</span> <span class="o">=</span> <span class="nv">$auth</span><span class="o">-&gt;</span><span class="na">getIdentity</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">OCUserId</span><span class="p">;</span>
+
+        <span class="c1">// Get new email from request</span>
+        <span class="nv">$newEmail</span> <span class="o">=</span> <span class="nb">trim</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getRequest</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">getPost</span><span class="p">(</span><span class="s1">'new_email'</span><span class="p">));</span>
+
+        <span class="c1">// Validate email format</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">filter_var</span><span class="p">(</span><span class="nv">$newEmail</span><span class="p">,</span> <span class="nx">FILTER_VALIDATE_EMAIL</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">json</span><span class="p">([</span><span class="s1">'error'</span> <span class="o">=&gt;</span> <span class="s1">'Invalid email format'</span><span class="p">],</span> <span class="mi">400</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="c1">// Check if email already exists (different user)</span>
+        <span class="nv">$existingUser</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">ocUserModel</span><span class="o">-&gt;</span><span class="na">findByEmail</span><span class="p">(</span><span class="nv">$newEmail</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nv">$existingUser</span> <span class="o">&amp;&amp;</span> <span class="nv">$existingUser</span><span class="p">[</span><span class="s1">'OCUserId'</span><span class="p">]</span> <span class="o">!=</span> <span class="nv">$ocUserId</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">json</span><span class="p">([</span><span class="s1">'error'</span> <span class="o">=&gt;</span> <span class="s1">'Email already in use by another account'</span><span class="p">],</span> <span class="mi">400</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="c1">// Check if same as current email</span>
+        <span class="nv">$currentUser</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">ocUserModel</span><span class="o">-&gt;</span><span class="na">findById</span><span class="p">(</span><span class="nv">$ocUserId</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nv">$currentUser</span><span class="p">[</span><span class="s1">'Email'</span><span class="p">]</span> <span class="o">===</span> <span class="nv">$newEmail</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">json</span><span class="p">([</span><span class="s1">'error'</span> <span class="o">=&gt;</span> <span class="s1">'New email is same as current email'</span><span class="p">],</span> <span class="mi">400</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="c1">// Generate 6-digit verification code</span>
+        <span class="nv">$verificationCode</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">generateVerificationCode</span><span class="p">();</span>
+
+        <span class="c1">// Calculate expiry (10 minutes from now)</span>
+        <span class="nv">$expiryTime</span> <span class="o">=</span> <span class="nb">date</span><span class="p">(</span><span class="s1">'Y-m-d H:i:s'</span><span class="p">,</span> <span class="nb">strtotime</span><span class="p">(</span><span class="s1">'+10 minutes'</span><span class="p">));</span>
+
+        <span class="c1">// Update fsiocuser with verification code</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">ocUserModel</span><span class="o">-&gt;</span><span class="na">update</span><span class="p">(</span><span class="nv">$ocUserId</span><span class="p">,</span> <span class="p">[</span>
+            <span class="s1">'EmailVerificationCode'</span> <span class="o">=&gt;</span> <span class="nv">$verificationCode</span><span class="p">,</span>
+            <span class="s1">'EmailVerificationExpiry'</span> <span class="o">=&gt;</span> <span class="nv">$expiryTime</span><span class="p">,</span>
+            <span class="s1">'EmailVerificationUsed'</span> <span class="o">=&gt;</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">'PendingEmail'</span> <span class="o">=&gt;</span> <span class="nv">$newEmail</span>  <span class="c1">// Store temporarily</span>
+        <span class="p">]);</span>
+
+        <span class="c1">// Send verification email</span>
+        <span class="k">try</span> <span class="p">{</span>
+            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">emailService</span><span class="o">-&gt;</span><span class="na">sendVerificationEmail</span><span class="p">(</span><span class="nv">$newEmail</span><span class="p">,</span> <span class="nv">$verificationCode</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">Exception</span> <span class="nv">$e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">logger</span><span class="o">-&gt;</span><span class="na">error</span><span class="p">(</span><span class="s2">"Failed to send verification email"</span><span class="p">,</span> <span class="p">[</span>
+                <span class="s1">'ocUserId'</span> <span class="o">=&gt;</span> <span class="nv">$ocUserId</span><span class="p">,</span>
+                <span class="s1">'newEmail'</span> <span class="o">=&gt;</span> <span class="nv">$newEmail</span><span class="p">,</span>
+                <span class="s1">'error'</span> <span class="o">=&gt;</span> <span class="nv">$e</span><span class="o">-&gt;</span><span class="na">getMessage</span><span class="p">()</span>
+            <span class="p">]);</span>
+
+            <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">json</span><span class="p">([</span><span class="s1">'error'</span> <span class="o">=&gt;</span> <span class="s1">'Failed to send verification email. Please try again.'</span><span class="p">],</span> <span class="mi">500</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="c1">// Log action</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">logger</span><span class="o">-&gt;</span><span class="na">info</span><span class="p">(</span><span class="s2">"Email verification code sent"</span><span class="p">,</span> <span class="p">[</span>
+            <span class="s1">'ocUserId'</span> <span class="o">=&gt;</span> <span class="nv">$ocUserId</span><span class="p">,</span>
+            <span class="s1">'newEmail'</span> <span class="o">=&gt;</span> <span class="nv">$newEmail</span><span class="p">,</span>
+            <span class="s1">'expiryTime'</span> <span class="o">=&gt;</span> <span class="nv">$expiryTime</span>
+        <span class="p">]);</span>
+
+        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">json</span><span class="p">([</span>
+            <span class="s1">'status'</span> <span class="o">=&gt;</span> <span class="s1">'code_sent'</span><span class="p">,</span>
+            <span class="s1">'message'</span> <span class="o">=&gt;</span> <span class="s1">'Verification code sent to '</span> <span class="o">.</span> <span class="nv">$newEmail</span><span class="p">,</span>
+            <span class="s1">'expires_in_seconds'</span> <span class="o">=&gt;</span> <span class="mi">600</span>
+        <span class="p">]);</span>
+    <span class="p">}</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * Step 2: Verify code and update email</span>
+<span class="sd">     */</span>
+    <span class="k">public</span> <span class="k">function</span> <span class="nf">verifyEmailAction</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">_helper</span><span class="o">-&gt;</span><span class="na">viewRenderer</span><span class="o">-&gt;</span><span class="na">setNoRender</span><span class="p">(</span><span class="k">true</span><span class="p">);</span>
+
+        <span class="c1">// Get current user</span>
+        <span class="nv">$auth</span> <span class="o">=</span> <span class="nx">Zend_Auth</span><span class="o">::</span><span class="na">getInstance</span><span class="p">();</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nv">$auth</span><span class="o">-&gt;</span><span class="na">hasIdentity</span><span class="p">())</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">json</span><span class="p">([</span><span class="s1">'error'</span> <span class="o">=&gt;</span> <span class="s1">'Unauthorized'</span><span class="p">],</span> <span class="mi">401</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="nv">$ocUserId</span> <span class="o">=</span> <span class="nv">$auth</span><span class="o">-&gt;</span><span class="na">getIdentity</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">OCUserId</span><span class="p">;</span>
+
+        <span class="c1">// Get verification code from request</span>
+        <span class="nv">$code</span> <span class="o">=</span> <span class="nb">trim</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getRequest</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">getPost</span><span class="p">(</span><span class="s1">'code'</span><span class="p">));</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="k">empty</span><span class="p">(</span><span class="nv">$code</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">json</span><span class="p">([</span><span class="s1">'error'</span> <span class="o">=&gt;</span> <span class="s1">'Verification code is required'</span><span class="p">],</span> <span class="mi">400</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="c1">// Fetch user record</span>
+        <span class="nv">$user</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">ocUserModel</span><span class="o">-&gt;</span><span class="na">findById</span><span class="p">(</span><span class="nv">$ocUserId</span><span class="p">);</span>
+
+        <span class="c1">// Validation 1: Code exists</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">empty</span><span class="p">(</span><span class="nv">$user</span><span class="p">[</span><span class="s1">'EmailVerificationCode'</span><span class="p">]))</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">json</span><span class="p">([</span><span class="s1">'error'</span> <span class="o">=&gt;</span> <span class="s1">'No verification code found. Please request a new code.'</span><span class="p">],</span> <span class="mi">400</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="c1">// Validation 2: Code matches</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nv">$user</span><span class="p">[</span><span class="s1">'EmailVerificationCode'</span><span class="p">]</span> <span class="o">!==</span> <span class="nv">$code</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">logger</span><span class="o">-&gt;</span><span class="na">warning</span><span class="p">(</span><span class="s2">"Invalid verification code entered"</span><span class="p">,</span> <span class="p">[</span>
+                <span class="s1">'ocUserId'</span> <span class="o">=&gt;</span> <span class="nv">$ocUserId</span><span class="p">,</span>
+                <span class="s1">'enteredCode'</span> <span class="o">=&gt;</span> <span class="nv">$code</span><span class="p">,</span>
+                <span class="s1">'expectedCode'</span> <span class="o">=&gt;</span> <span class="nv">$user</span><span class="p">[</span><span class="s1">'EmailVerificationCode'</span><span class="p">]</span>
+            <span class="p">]);</span>
+
+            <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">json</span><span class="p">([</span><span class="s1">'error'</span> <span class="o">=&gt;</span> <span class="s1">'Invalid verification code'</span><span class="p">],</span> <span class="mi">400</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="c1">// Validation 3: Not already used</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nv">$user</span><span class="p">[</span><span class="s1">'EmailVerificationUsed'</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">json</span><span class="p">([</span><span class="s1">'error'</span> <span class="o">=&gt;</span> <span class="s1">'Verification code already used. Please request a new code.'</span><span class="p">],</span> <span class="mi">400</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="c1">// Validation 4: Not expired</span>
+        <span class="nv">$expiryTime</span> <span class="o">=</span> <span class="nb">strtotime</span><span class="p">(</span><span class="nv">$user</span><span class="p">[</span><span class="s1">'EmailVerificationExpiry'</span><span class="p">]);</span>
+        <span class="nv">$currentTime</span> <span class="o">=</span> <span class="nb">time</span><span class="p">();</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nv">$currentTime</span> <span class="o">&gt;</span> <span class="nv">$expiryTime</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nv">$secondsExpired</span> <span class="o">=</span> <span class="nv">$currentTime</span> <span class="o">-</span> <span class="nv">$expiryTime</span><span class="p">;</span>
+
+            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">logger</span><span class="o">-&gt;</span><span class="na">warning</span><span class="p">(</span><span class="s2">"Expired verification code used"</span><span class="p">,</span> <span class="p">[</span>
+                <span class="s1">'ocUserId'</span> <span class="o">=&gt;</span> <span class="nv">$ocUserId</span><span class="p">,</span>
+                <span class="s1">'expiredAt'</span> <span class="o">=&gt;</span> <span class="nv">$user</span><span class="p">[</span><span class="s1">'EmailVerificationExpiry'</span><span class="p">],</span>
+                <span class="s1">'secondsExpired'</span> <span class="o">=&gt;</span> <span class="nv">$secondsExpired</span>
+            <span class="p">]);</span>
+
+            <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">json</span><span class="p">([</span>
+                <span class="s1">'error'</span> <span class="o">=&gt;</span> <span class="s1">'Verification code expired '</span> <span class="o">.</span> <span class="nb">ceil</span><span class="p">(</span><span class="nv">$secondsExpired</span> <span class="o">/</span> <span class="mi">60</span><span class="p">)</span> <span class="o">.</span> <span class="s1">' minutes ago. Please request a new code.'</span>
+            <span class="p">],</span> <span class="mi">400</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="c1">// ALL VALIDATIONS PASSED</span>
+        <span class="nv">$newEmail</span> <span class="o">=</span> <span class="nv">$user</span><span class="p">[</span><span class="s1">'PendingEmail'</span><span class="p">];</span>
+
+        <span class="k">try</span> <span class="p">{</span>
+            <span class="c1">// Start transaction (atomic update across 3 tables)</span>
+            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">db</span><span class="o">-&gt;</span><span class="na">beginTransaction</span><span class="p">();</span>
+
+            <span class="c1">// 1. Update fsiocuser (login credentials table)</span>
+            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">ocUserModel</span><span class="o">-&gt;</span><span class="na">update</span><span class="p">(</span><span class="nv">$ocUserId</span><span class="p">,</span> <span class="p">[</span>
+                <span class="s1">'Email'</span> <span class="o">=&gt;</span> <span class="nv">$newEmail</span><span class="p">,</span>
+                <span class="s1">'IsEmailVerified'</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="s1">'EmailVerificationUsed'</span> <span class="o">=&gt;</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="s1">'EmailVerificationCode'</span> <span class="o">=&gt;</span> <span class="k">null</span><span class="p">,</span>
+                <span class="s1">'EmailVerificationExpiry'</span> <span class="o">=&gt;</span> <span class="k">null</span><span class="p">,</span>
+                <span class="s1">'PendingEmail'</span> <span class="o">=&gt;</span> <span class="k">null</span><span class="p">,</span>
+                <span class="s1">'UpdatedDate'</span> <span class="o">=&gt;</span> <span class="nb">date</span><span class="p">(</span><span class="s1">'Y-m-d H:i:s'</span><span class="p">)</span>
+            <span class="p">]);</span>
+
+            <span class="c1">// 2. Update fsionlinecustomer (profile table)</span>
+            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">onlineCustomerModel</span><span class="o">-&gt;</span><span class="na">updateByOCUserId</span><span class="p">(</span><span class="nv">$ocUserId</span><span class="p">,</span> <span class="p">[</span>
+                <span class="s1">'EmailPrimary'</span> <span class="o">=&gt;</span> <span class="nv">$newEmail</span><span class="p">,</span>
+                <span class="s1">'UpdatedDate'</span> <span class="o">=&gt;</span> <span class="nb">date</span><span class="p">(</span><span class="s1">'Y-m-d H:i:s'</span><span class="p">)</span>
+            <span class="p">]);</span>
+
+            <span class="c1">// 3. Update fsiuser (legacy user table)</span>
+            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">userModel</span><span class="o">-&gt;</span><span class="na">updateByOCUserId</span><span class="p">(</span><span class="nv">$ocUserId</span><span class="p">,</span> <span class="p">[</span>
+                <span class="s1">'Email'</span> <span class="o">=&gt;</span> <span class="nv">$newEmail</span>
+            <span class="p">]);</span>
+
+            <span class="c1">// Commit transaction</span>
+            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">db</span><span class="o">-&gt;</span><span class="na">commit</span><span class="p">();</span>
+
+            <span class="c1">// Log successful verification</span>
+            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">logger</span><span class="o">-&gt;</span><span class="na">info</span><span class="p">(</span><span class="s2">"Email verified successfully"</span><span class="p">,</span> <span class="p">[</span>
+                <span class="s1">'ocUserId'</span> <span class="o">=&gt;</span> <span class="nv">$ocUserId</span><span class="p">,</span>
+                <span class="s1">'oldEmail'</span> <span class="o">=&gt;</span> <span class="nv">$user</span><span class="p">[</span><span class="s1">'Email'</span><span class="p">],</span>
+                <span class="s1">'newEmail'</span> <span class="o">=&gt;</span> <span class="nv">$newEmail</span>
+            <span class="p">]);</span>
+
+            <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">json</span><span class="p">([</span>
+                <span class="s1">'status'</span> <span class="o">=&gt;</span> <span class="s1">'verified'</span><span class="p">,</span>
+                <span class="s1">'message'</span> <span class="o">=&gt;</span> <span class="s1">'Email verified successfully'</span><span class="p">,</span>
+                <span class="s1">'newEmail'</span> <span class="o">=&gt;</span> <span class="nv">$newEmail</span>
+            <span class="p">]);</span>
+
+        <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">Exception</span> <span class="nv">$e</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// Rollback on error</span>
+            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">db</span><span class="o">-&gt;</span><span class="na">rollBack</span><span class="p">();</span>
+
+            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">logger</span><span class="o">-&gt;</span><span class="na">error</span><span class="p">(</span><span class="s2">"Email verification failed"</span><span class="p">,</span> <span class="p">[</span>
+                <span class="s1">'ocUserId'</span> <span class="o">=&gt;</span> <span class="nv">$ocUserId</span><span class="p">,</span>
+                <span class="s1">'newEmail'</span> <span class="o">=&gt;</span> <span class="nv">$newEmail</span><span class="p">,</span>
+                <span class="s1">'error'</span> <span class="o">=&gt;</span> <span class="nv">$e</span><span class="o">-&gt;</span><span class="na">getMessage</span><span class="p">(),</span>
+                <span class="s1">'trace'</span> <span class="o">=&gt;</span> <span class="nv">$e</span><span class="o">-&gt;</span><span class="na">getTraceAsString</span><span class="p">()</span>
+            <span class="p">]);</span>
+
+            <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">json</span><span class="p">([</span><span class="s1">'error'</span> <span class="o">=&gt;</span> <span class="s1">'Verification failed. Please try again or contact support.'</span><span class="p">],</span> <span class="mi">500</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * Generate 6-digit verification code</span>
+<span class="sd">     */</span>
+    <span class="k">private</span> <span class="k">function</span> <span class="nf">generateVerificationCode</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="c1">// Generate random 6-digit number (000000 to 999999)</span>
+        <span class="k">return</span> <span class="nb">str_pad</span><span class="p">(</span><span class="nb">mt_rand</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">999999</span><span class="p">),</span> <span class="mi">6</span><span class="p">,</span> <span class="s1">'0'</span><span class="p">,</span> <span class="nx">STR_PAD_LEFT</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="sd">/**</span>
+<span class="sd">     * Helper: Return JSON response</span>
+<span class="sd">     */</span>
+    <span class="k">private</span> <span class="k">function</span> <span class="nf">json</span><span class="p">(</span><span class="nv">$data</span><span class="p">,</span> <span class="nv">$statusCode</span> <span class="o">=</span> <span class="mi">200</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getResponse</span><span class="p">()</span>
+            <span class="o">-&gt;</span><span class="na">setHttpResponseCode</span><span class="p">(</span><span class="nv">$statusCode</span><span class="p">)</span>
+            <span class="o">-&gt;</span><span class="na">setHeader</span><span class="p">(</span><span class="s1">'Content-Type'</span><span class="p">,</span> <span class="s1">'application/json'</span><span class="p">);</span>
+
+        <span class="k">echo</span> <span class="nb">json_encode</span><span class="p">(</span><span class="nv">$data</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<hr />
+<h1 id="email-template">Email Template</h1>
+<h2 id="html-template-email_verificationphtml">HTML Template: <code>email_verification.phtml</code></h2>
+<div class="codehilite"><pre><span></span><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span> <span class="na">lang</span><span class="o">=</span><span class="s">"en"</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">charset</span><span class="o">=</span><span class="s">"UTF-8"</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">name</span><span class="o">=</span><span class="s">"viewport"</span> <span class="na">content</span><span class="o">=</span><span class="s">"width=device-width, initial-scale=1.0"</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>Verify Your Email<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">style</span><span class="p">&gt;</span>
+<span class="w">        </span><span class="nt">body</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">font-family</span><span class="p">:</span><span class="w"> </span><span class="n">Arial</span><span class="p">,</span><span class="w"> </span><span class="kc">sans-serif</span><span class="p">;</span>
+<span class="w">            </span><span class="k">line-height</span><span class="p">:</span><span class="w"> </span><span class="mf">1.6</span><span class="p">;</span>
+<span class="w">            </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="mh">#333</span><span class="p">;</span>
+<span class="w">            </span><span class="k">background-color</span><span class="p">:</span><span class="w"> </span><span class="mh">#f4f4f4</span><span class="p">;</span>
+<span class="w">            </span><span class="k">margin</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">            </span><span class="k">padding</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="p">.</span><span class="nc">container</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">max-width</span><span class="p">:</span><span class="w"> </span><span class="mi">600</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">            </span><span class="k">margin</span><span class="p">:</span><span class="w"> </span><span class="mi">20</span><span class="kt">px</span><span class="w"> </span><span class="kc">auto</span><span class="p">;</span>
+<span class="w">            </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="kc">white</span><span class="p">;</span>
+<span class="w">            </span><span class="k">border-radius</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">            </span><span class="k">overflow</span><span class="p">:</span><span class="w"> </span><span class="kc">hidden</span><span class="p">;</span>
+<span class="w">            </span><span class="k">box-shadow</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="mi">2</span><span class="kt">px</span><span class="w"> </span><span class="mi">10</span><span class="kt">px</span><span class="w"> </span><span class="nb">rgba</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mf">0.1</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="p">.</span><span class="nc">header</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="nb">linear-gradient</span><span class="p">(</span><span class="mi">135</span><span class="kt">deg</span><span class="p">,</span><span class="w"> </span><span class="mh">#667eea</span><span class="w"> </span><span class="mi">0</span><span class="kt">%</span><span class="p">,</span><span class="w"> </span><span class="mh">#764ba2</span><span class="w"> </span><span class="mi">100</span><span class="kt">%</span><span class="p">);</span>
+<span class="w">            </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="kc">white</span><span class="p">;</span>
+<span class="w">            </span><span class="k">padding</span><span class="p">:</span><span class="w"> </span><span class="mi">30</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">            </span><span class="k">text-align</span><span class="p">:</span><span class="w"> </span><span class="kc">center</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="p">.</span><span class="nc">header</span><span class="w"> </span><span class="nt">h1</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">margin</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">            </span><span class="k">font-size</span><span class="p">:</span><span class="w"> </span><span class="mi">24</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="p">.</span><span class="nc">content</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">padding</span><span class="p">:</span><span class="w"> </span><span class="mi">40</span><span class="kt">px</span><span class="w"> </span><span class="mi">30</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="p">.</span><span class="nc">verification-code</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="mh">#f8f9fa</span><span class="p">;</span>
+<span class="w">            </span><span class="k">border</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="kt">px</span><span class="w"> </span><span class="kc">dashed</span><span class="w"> </span><span class="mh">#667eea</span><span class="p">;</span>
+<span class="w">            </span><span class="k">border-radius</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">            </span><span class="k">padding</span><span class="p">:</span><span class="w"> </span><span class="mi">20</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">            </span><span class="k">text-align</span><span class="p">:</span><span class="w"> </span><span class="kc">center</span><span class="p">;</span>
+<span class="w">            </span><span class="k">margin</span><span class="p">:</span><span class="w"> </span><span class="mi">30</span><span class="kt">px</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="p">.</span><span class="nc">code</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">font-size</span><span class="p">:</span><span class="w"> </span><span class="mi">36</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">            </span><span class="k">font-weight</span><span class="p">:</span><span class="w"> </span><span class="kc">bold</span><span class="p">;</span>
+<span class="w">            </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="mh">#667eea</span><span class="p">;</span>
+<span class="w">            </span><span class="k">letter-spacing</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">            </span><span class="k">font-family</span><span class="p">:</span><span class="w"> </span><span class="s1">'Courier New'</span><span class="p">,</span><span class="w"> </span><span class="kc">monospace</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="p">.</span><span class="nc">expiry-notice</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="mh">#fff3cd</span><span class="p">;</span>
+<span class="w">            </span><span class="k">border-left</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="kt">px</span><span class="w"> </span><span class="kc">solid</span><span class="w"> </span><span class="mh">#ffc107</span><span class="p">;</span>
+<span class="w">            </span><span class="k">padding</span><span class="p">:</span><span class="w"> </span><span class="mi">15</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">            </span><span class="k">margin</span><span class="p">:</span><span class="w"> </span><span class="mi">20</span><span class="kt">px</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">            </span><span class="k">font-size</span><span class="p">:</span><span class="w"> </span><span class="mi">14</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="p">.</span><span class="nc">footer</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="mh">#f8f9fa</span><span class="p">;</span>
+<span class="w">            </span><span class="k">padding</span><span class="p">:</span><span class="w"> </span><span class="mi">20</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">            </span><span class="k">text-align</span><span class="p">:</span><span class="w"> </span><span class="kc">center</span><span class="p">;</span>
+<span class="w">            </span><span class="k">font-size</span><span class="p">:</span><span class="w"> </span><span class="mi">12</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">            </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="mh">#666</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="p">.</span><span class="nc">btn</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">display</span><span class="p">:</span><span class="w"> </span><span class="kc">inline-block</span><span class="p">;</span>
+<span class="w">            </span><span class="k">padding</span><span class="p">:</span><span class="w"> </span><span class="mi">12</span><span class="kt">px</span><span class="w"> </span><span class="mi">30</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">            </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="mh">#667eea</span><span class="p">;</span>
+<span class="w">            </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="kc">white</span><span class="p">;</span>
+<span class="w">            </span><span class="k">text-decoration</span><span class="p">:</span><span class="w"> </span><span class="kc">none</span><span class="p">;</span>
+<span class="w">            </span><span class="k">border-radius</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">            </span><span class="k">margin-top</span><span class="p">:</span><span class="w"> </span><span class="mi">20</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">&lt;/</span><span class="nt">style</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">"container"</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">"header"</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>eInvoice Connect<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+
+        <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">"content"</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">h2</span> <span class="na">style</span><span class="o">=</span><span class="s">"color: #333;"</span><span class="p">&gt;</span>Verify Your Email Address<span class="p">&lt;/</span><span class="nt">h2</span><span class="p">&gt;</span>
+
+            <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Hi there,<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+
+            <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>You requested to change your email address in eInvoice Connect. To complete this change, please use the verification code below:<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+
+            <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">"verification-code"</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">div</span> <span class="na">style</span><span class="o">=</span><span class="s">"font-size: 14px; color: #666; margin-bottom: 10px;"</span><span class="p">&gt;</span>Your Verification Code<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">"code"</span><span class="p">&gt;</span><span class="cp">&lt;?= $this-&gt;code ?&gt;</span><span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+            <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+
+            <span class="p">&lt;</span><span class="nt">p</span> <span class="na">style</span><span class="o">=</span><span class="s">"text-align: center; color: #666; font-size: 14px;"</span><span class="p">&gt;</span>
+                Enter this code in your profile to verify your new email address.
+            <span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+
+            <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">"expiry-notice"</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">strong</span><span class="p">&gt;</span>⏰ This code expires in <span class="cp">&lt;?= $this-&gt;expiryMinutes ?&gt;</span> minutes<span class="p">&lt;/</span><span class="nt">strong</span><span class="p">&gt;&lt;</span><span class="nt">br</span><span class="p">&gt;</span>
+                For your security, this code can only be used once.
+            <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+
+            <span class="p">&lt;</span><span class="nt">p</span> <span class="na">style</span><span class="o">=</span><span class="s">"margin-top: 30px; padding-top: 20px; border-top: 1px solid #e9ecef;"</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">strong</span><span class="p">&gt;</span>Didn't request this change?<span class="p">&lt;/</span><span class="nt">strong</span><span class="p">&gt;&lt;</span><span class="nt">br</span><span class="p">&gt;</span>
+                If you didn't initiate this email change, please ignore this message. Your account remains secure.
+            <span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+
+            <span class="p">&lt;</span><span class="nt">p</span> <span class="na">style</span><span class="o">=</span><span class="s">"font-size: 14px; color: #666;"</span><span class="p">&gt;</span>
+                Need help? Contact our support team at <span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">"mailto:support@einvoiceconnect.com"</span><span class="p">&gt;</span>support@einvoiceconnect.com<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
+            <span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+
+        <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">"footer"</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>© 2026 eInvoice Connect by Billtrust. All rights reserved.<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">p</span> <span class="na">style</span><span class="o">=</span><span class="s">"margin-top: 10px;"</span><span class="p">&gt;</span>
+                This is an automated message. Please do not reply to this email.
+            <span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</code></pre></div>
+
+<hr />
+<h2 id="example-email-as-user-sees-it">Example Email (As User Sees It)</h2>
+<div class="codehilite"><pre><span></span><code><span class="nx">From</span><span class="p">:</span><span class="w"> </span><span class="nx">noreply</span><span class="err">@</span><span class="nx">einvoiceconnect</span><span class="p">.</span><span class="nx">com</span>
+<span class="nx">To</span><span class="p">:</span><span class="w"> </span><span class="nx">newemail</span><span class="err">@</span><span class="nx">example</span><span class="p">.</span><span class="nx">com</span>
+<span class="nx">Subject</span><span class="p">:</span><span class="w"> </span><span class="nx">Verify</span><span class="w"> </span><span class="nx">Your</span><span class="w"> </span><span class="nx">Email</span><span class="w"> </span><span class="nx">Address</span>
+
+<span class="err">─────────────────────────────────────</span>
+<span class="w">  </span><span class="nx">eInvoice</span><span class="w"> </span><span class="nx">Connect</span>
+<span class="err">─────────────────────────────────────</span>
+
+<span class="nx">Verify</span><span class="w"> </span><span class="nx">Your</span><span class="w"> </span><span class="nx">Email</span><span class="w"> </span><span class="nx">Address</span>
+
+<span class="nx">Hi</span><span class="w"> </span><span class="nx">there</span><span class="p">,</span>
+
+<span class="nx">You</span><span class="w"> </span><span class="nx">requested</span><span class="w"> </span><span class="nx">to</span><span class="w"> </span><span class="nx">change</span><span class="w"> </span><span class="nx">your</span><span class="w"> </span><span class="nx">email</span><span class="w"> </span><span class="nx">address</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="nx">eInvoice</span><span class="w"> </span><span class="nx">Connect</span><span class="p">.</span><span class="w"> </span>
+<span class="nx">To</span><span class="w"> </span><span class="nx">complete</span><span class="w"> </span><span class="nx">this</span><span class="w"> </span><span class="nx">change</span><span class="p">,</span><span class="w"> </span><span class="nx">please</span><span class="w"> </span><span class="nx">use</span><span class="w"> </span><span class="nx">the</span><span class="w"> </span><span class="nx">verification</span><span class="w"> </span><span class="nx">code</span><span class="w"> </span><span class="nx">below</span><span class="p">:</span>
+
+<span class="w">   </span><span class="err">┌────────────────────┐</span>
+<span class="w">   </span><span class="err">│</span><span class="w">   </span><span class="nx">Your</span><span class="w"> </span><span class="nx">Code</span><span class="w">        </span><span class="err">│</span>
+<span class="w">   </span><span class="err">│</span><span class="w">                    </span><span class="err">│</span>
+<span class="w">   </span><span class="err">│</span><span class="w">   </span><span class="mi">4</span><span class="w">  </span><span class="mi">8</span><span class="w">  </span><span class="mi">2</span><span class="w">  </span><span class="mi">9</span><span class="w">  </span><span class="mi">1</span><span class="w">  </span><span class="mi">7</span><span class="w"> </span><span class="err">│</span>
+<span class="w">   </span><span class="err">│</span><span class="w">                    </span><span class="err">│</span>
+<span class="w">   </span><span class="err">└────────────────────┘</span>
+
+<span class="nx">Enter</span><span class="w"> </span><span class="nx">this</span><span class="w"> </span><span class="nx">code</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="nx">your</span><span class="w"> </span><span class="nx">profile</span><span class="w"> </span><span class="nx">to</span><span class="w"> </span><span class="nx">verify</span><span class="w"> </span><span class="nx">your</span><span class="w"> </span><span class="nx">new</span><span class="w"> </span><span class="nx">email</span><span class="w"> </span><span class="nx">address</span><span class="p">.</span>
+
+<span class="err">⏰</span><span class="w"> </span><span class="nx">This</span><span class="w"> </span><span class="nx">code</span><span class="w"> </span><span class="nx">expires</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="nx">minutes</span>
+<span class="nx">For</span><span class="w"> </span><span class="nx">your</span><span class="w"> </span><span class="nx">security</span><span class="p">,</span><span class="w"> </span><span class="nx">this</span><span class="w"> </span><span class="nx">code</span><span class="w"> </span><span class="nx">can</span><span class="w"> </span><span class="nx">only</span><span class="w"> </span><span class="nx">be</span><span class="w"> </span><span class="nx">used</span><span class="w"> </span><span class="nx">once</span><span class="p">.</span>
+
+<span class="err">─────────────────────────────────────</span>
+
+<span class="nx">Didn</span><span class="err">'</span><span class="nx">t</span><span class="w"> </span><span class="nx">request</span><span class="w"> </span><span class="nx">this</span><span class="w"> </span><span class="nx">change</span><span class="p">?</span>
+<span class="nx">If</span><span class="w"> </span><span class="nx">you</span><span class="w"> </span><span class="nx">didn</span><span class="err">'</span><span class="nx">t</span><span class="w"> </span><span class="nx">initiate</span><span class="w"> </span><span class="nx">this</span><span class="w"> </span><span class="nx">email</span><span class="w"> </span><span class="nx">change</span><span class="p">,</span><span class="w"> </span><span class="nx">please</span><span class="w"> </span><span class="nx">ignore</span><span class="w"> </span><span class="nx">this</span><span class="w"> </span>
+<span class="nx">message</span><span class="p">.</span><span class="w"> </span><span class="nx">Your</span><span class="w"> </span><span class="nx">account</span><span class="w"> </span><span class="nx">remains</span><span class="w"> </span><span class="nx">secure</span><span class="p">.</span>
+
+<span class="nx">Need</span><span class="w"> </span><span class="nx">help</span><span class="p">?</span><span class="w"> </span><span class="nx">Contact</span><span class="w"> </span><span class="nx">support</span><span class="err">@</span><span class="nx">einvoiceconnect</span><span class="p">.</span><span class="nx">com</span>
+
+<span class="err">─────────────────────────────────────</span>
+<span class="err">©</span><span class="w"> </span><span class="mi">2026</span><span class="w"> </span><span class="nx">eInvoice</span><span class="w"> </span><span class="nx">Connect</span><span class="p">.</span><span class="w"> </span><span class="nx">All</span><span class="w"> </span><span class="nx">rights</span><span class="w"> </span><span class="nx">reserved</span><span class="p">.</span>
+<span class="nx">This</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="nx">an</span><span class="w"> </span><span class="nx">automated</span><span class="w"> </span><span class="nx">message</span><span class="p">.</span><span class="w"> </span><span class="nx">Please</span><span class="w"> </span><span class="nx">do</span><span class="w"> </span><span class="k">not</span><span class="w"> </span><span class="nx">reply</span><span class="p">.</span>
+</code></pre></div>
+
+<hr />
+<h1 id="security-features">Security Features</h1>
+<h2 id="1-token-expiry-10-minutes">1. Token Expiry (10 Minutes)</h2>
+<p><strong>Why 10 minutes?</strong><br />
+- Short enough to prevent misuse if email intercepted<br />
+- Long enough for user to check email and enter code</p>
+<p><strong>Implementation:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Generate expiry timestamp</span>
+<span class="x">$expiryTime = date('Y-m-d H:i:s', strtotime('+10 minutes'));</span>
+
+<span class="x">// Store in database</span>
+<span class="x">UPDATE fsiocuser </span>
+<span class="x">SET EmailVerificationExpiry = '$expiryTime'</span>
+<span class="x">WHERE OCUserId = $ocUserId;</span>
+
+<span class="x">// Validate on verification</span>
+<span class="x">if (time() &gt; strtotime($user['EmailVerificationExpiry'])) {</span>
+<span class="x">    return 'Code expired';</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<hr />
+<h2 id="2-one-time-use">2. One-Time Use</h2>
+<p><strong>Why one-time use?</strong><br />
+- Prevents replay attacks (attacker reusing intercepted code)<br />
+- Forces user to request new code if first attempt fails</p>
+<p><strong>Implementation:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Check if already used</span>
+<span class="x">if ($user['EmailVerificationUsed'] == 1) {</span>
+<span class="x">    return 'Code already used';</span>
+<span class="x">}</span>
+
+<span class="x">// Mark as used IMMEDIATELY after validation</span>
+<span class="x">UPDATE fsiocuser </span>
+<span class="x">SET EmailVerificationUsed = 1</span>
+<span class="x">WHERE OCUserId = $ocUserId;</span>
+</code></pre></div>
+
+<hr />
+<h2 id="3-code-complexity">3. Code Complexity</h2>
+<p><strong>6-digit code:</strong><br />
+- 1,000,000 possible combinations (000000 to 999999)<br />
+- 10-minute expiry window<br />
+- <strong>Brute force protection:</strong> Rate limit to 5 attempts per 10 minutes<br />
+  - After 5 failed attempts → lock code, force new request</p>
+<p><strong>Implementation:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Track failed attempts (Redis cache)</span>
+<span class="x">$cacheKey = "email_verify_attempts:{$ocUserId}";</span>
+<span class="x">$attempts = $this-&gt;redis-&gt;get($cacheKey) ?: 0;</span>
+
+<span class="x">if ($attempts &gt;= 5) {</span>
+<span class="x">    return 'Too many failed attempts. Please request a new code.';</span>
+<span class="x">}</span>
+
+<span class="x">// Increment on wrong code</span>
+<span class="x">if ($user['EmailVerificationCode'] !== $code) {</span>
+<span class="x">    $this-&gt;redis-&gt;incr($cacheKey);</span>
+<span class="x">    $this-&gt;redis-&gt;expire($cacheKey, 600);  // 10 minutes</span>
+<span class="x">    return 'Invalid code';</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<hr />
+<h2 id="4-secure-email-storage">4. Secure Email Storage</h2>
+<p><strong>Pending email not visible until verified:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Store new email in PendingEmail column (not Email)</span>
+<span class="x">UPDATE fsiocuser </span>
+<span class="x">SET PendingEmail = 'newemail@example.com'</span>
+<span class="x">WHERE OCUserId = $ocUserId;</span>
+
+<span class="x">// Only update Email after verification</span>
+<span class="x">UPDATE fsiocuser </span>
+<span class="x">SET Email = PendingEmail, </span>
+<span class="x">    IsEmailVerified = 1</span>
+<span class="x">WHERE OCUserId = $ocUserId;</span>
+</code></pre></div>
+
+<hr />
+<h2 id="5-transaction-safety-acid">5. Transaction Safety (ACID)</h2>
+<p><strong>Atomic update across 3 tables:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">try {</span>
+<span class="x">    $this-&gt;db-&gt;beginTransaction();</span>
+
+<span class="x">    // Update fsiocuser</span>
+<span class="x">    // Update fsionlinecustomer</span>
+<span class="x">    // Update fsiuser</span>
+
+<span class="x">    $this-&gt;db-&gt;commit();</span>
+<span class="x">} catch (Exception $e) {</span>
+<span class="x">    $this-&gt;db-&gt;rollBack();  // All or nothing</span>
+<span class="x">    throw $e;</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>Why transactions?</strong><br />
+- Prevents partial updates (e.g., email updated in one table but not others)<br />
+- Maintains data consistency across 3 tables</p>
+<hr />
+<h1 id="edge-cases-error-handling">Edge Cases &amp; Error Handling</h1>
+<h2 id="edge-case-1-code-expired">Edge Case 1: <strong>Code Expired</strong></h2>
+<p><strong>Scenario:</strong><br />
+- User receives code at 10:00 AM (expires 10:10 AM)<br />
+- User enters code at 10:12 AM (2 minutes late)</p>
+<p><strong>Handling:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">if (time() &gt; strtotime($user['EmailVerificationExpiry'])) {</span>
+<span class="x">    $minutesExpired = ceil((time() - strtotime($user['EmailVerificationExpiry'])) / 60);</span>
+
+<span class="x">    return [</span>
+<span class="x">        'error' =&gt; "Verification code expired {$minutesExpired} minutes ago. Please request a new code.",</span>
+<span class="x">        'action' =&gt; 'resend'</span>
+<span class="x">    ];</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>User sees:</strong></p>
+<div class="codehilite"><pre><span></span><code>❌ Verification code expired 2 minutes ago.
+Please request a new code.
+
+[Request New Code]
+</code></pre></div>
+
+<hr />
+<h2 id="edge-case-2-wrong-code-entered">Edge Case 2: <strong>Wrong Code Entered</strong></h2>
+<p><strong>Scenario:</strong><br />
+- Correct code: <code>482917</code><br />
+- User enters: <code>482918</code> (typo)</p>
+<p><strong>Handling:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Log failed attempt</span>
+<span class="x">$this-&gt;logger-&gt;warning("Invalid verification code", [</span>
+<span class="x">    'ocUserId' =&gt; $ocUserId,</span>
+<span class="x">    'enteredCode' =&gt; $code,</span>
+<span class="x">    'expectedCode' =&gt; $user['EmailVerificationCode'],</span>
+<span class="x">    'ipAddress' =&gt; $this-&gt;getRequest()-&gt;getClientIp()</span>
+<span class="x">]);</span>
+
+<span class="x">// Increment failed attempts (rate limiting)</span>
+<span class="x">$this-&gt;redis-&gt;incr("email_verify_attempts:{$ocUserId}");</span>
+
+<span class="x">return ['error' =&gt; 'Invalid verification code. Please try again.'];</span>
+</code></pre></div>
+
+<hr />
+<h2 id="edge-case-3-code-already-used">Edge Case 3: <strong>Code Already Used</strong></h2>
+<p><strong>Scenario:</strong><br />
+- User enters correct code<br />
+- Email verified successfully<br />
+- User hits "Verify" button again (accidental double-click)</p>
+<p><strong>Handling:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">if ($user['EmailVerificationUsed'] == 1) {</span>
+<span class="x">    return [</span>
+<span class="x">        'error' =&gt; 'Verification code already used.',</span>
+<span class="x">        'message' =&gt; 'Your email has already been verified.',</span>
+<span class="x">        'currentEmail' =&gt; $user['Email']</span>
+<span class="x">    ];</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<hr />
+<h2 id="edge-case-4-email-already-in-use">Edge Case 4: <strong>Email Already in Use</strong></h2>
+<p><strong>Scenario:</strong><br />
+- User A tries to change email to <code>john@example.com</code><br />
+- User B already has <code>john@example.com</code></p>
+<p><strong>Handling:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Check BEFORE sending code</span>
+<span class="x">$existingUser = $this-&gt;ocUserModel-&gt;findByEmail($newEmail);</span>
+<span class="x">if ($existingUser &amp;&amp; $existingUser['OCUserId'] != $ocUserId) {</span>
+<span class="x">    return ['error' =&gt; 'Email already in use by another account'];</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<hr />
+<h2 id="edge-case-5-user-requests-multiple-codes">Edge Case 5: <strong>User Requests Multiple Codes</strong></h2>
+<p><strong>Scenario:</strong><br />
+- User requests code at 10:00 AM<br />
+- Doesn't receive email (spam folder)<br />
+- Requests new code at 10:02 AM</p>
+<p><strong>Handling:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Allow re-requesting code (overwrites previous)</span>
+<span class="x">$verificationCode = $this-&gt;generateVerificationCode();</span>
+<span class="x">$expiryTime = date('Y-m-d H:i:s', strtotime('+10 minutes'));</span>
+
+<span class="x">$this-&gt;ocUserModel-&gt;update($ocUserId, [</span>
+<span class="x">    'EmailVerificationCode' =&gt; $verificationCode,</span>
+<span class="x">    'EmailVerificationExpiry' =&gt; $expiryTime,</span>
+<span class="x">    'EmailVerificationUsed' =&gt; 0  // Reset used flag</span>
+<span class="x">]);</span>
+
+<span class="x">// Old code is now invalid, only new code works</span>
+</code></pre></div>
+
+<hr />
+<h1 id="testing-scenarios">Testing Scenarios</h1>
+<h2 id="test-case-1-happy-path">Test Case 1: <strong>Happy Path</strong></h2>
+<p><strong>Steps:</strong><br />
+1. User changes email to <code>newuser@example.com</code><br />
+2. System sends 6-digit code (e.g., <code>123456</code>)<br />
+3. User enters <code>123456</code> within 10 minutes<br />
+4. Email updated in all 3 tables<br />
+5. <code>IsEmailVerified = 1</code>, <code>EmailVerificationUsed = 1</code></p>
+<p><strong>Expected Result:</strong> ✅ Email verified successfully</p>
+<hr />
+<h2 id="test-case-2-expired-code">Test Case 2: <strong>Expired Code</strong></h2>
+<p><strong>Steps:</strong><br />
+1. User changes email, receives code at 10:00 AM<br />
+2. User waits 11 minutes<br />
+3. User enters code at 10:11 AM (expired at 10:10 AM)</p>
+<p><strong>Expected Result:</strong> ❌ "Verification code expired 1 minute ago. Please request a new code."</p>
+<hr />
+<h2 id="test-case-3-wrong-code">Test Case 3: <strong>Wrong Code</strong></h2>
+<p><strong>Steps:</strong><br />
+1. Correct code: <code>482917</code><br />
+2. User enters: <code>482918</code></p>
+<p><strong>Expected Result:</strong> ❌ "Invalid verification code. Please try again."</p>
+<hr />
+<h2 id="test-case-4-code-already-used">Test Case 4: <strong>Code Already Used</strong></h2>
+<p><strong>Steps:</strong><br />
+1. User verifies email successfully<br />
+2. User enters same code again</p>
+<p><strong>Expected Result:</strong> ❌ "Verification code already used."</p>
+<hr />
+<h2 id="test-case-5-rate-limiting-5-failed-attempts">Test Case 5: <strong>Rate Limiting (5 Failed Attempts)</strong></h2>
+<p><strong>Steps:</strong><br />
+1. User enters wrong code 5 times<br />
+2. User enters correct code on 6th attempt</p>
+<p><strong>Expected Result:</strong> ❌ "Too many failed attempts. Please request a new code."</p>
+<hr />
+<h2 id="test-case-6-email-already-in-use">Test Case 6: <strong>Email Already in Use</strong></h2>
+<p><strong>Steps:</strong><br />
+1. User A changes email to <code>john@example.com</code><br />
+2. User B already has <code>john@example.com</code></p>
+<p><strong>Expected Result:</strong> ❌ "Email already in use by another account"</p>
+<hr />
+<h1 id="interview-talking-points">Interview Talking Points</h1>
+<h2 id="2-minute-answer-walk-me-through-the-email-verification-feature-you-built">2-Minute Answer: "Walk me through the email verification feature you built"</h2>
+<p><strong>Your Answer:</strong></p>
+<p>"I implemented <strong>email change verification</strong> in eInvoice Connect (EIC), a Zend Framework application.</p>
+<p><strong>Flow:</strong><br />
+1. User requests email change → system generates <strong>6-digit code</strong> (e.g., 482917)<br />
+2. Code stored in <code>fsiocuser.EmailVerificationCode</code> with <strong>10-minute expiry</strong><br />
+3. Email sent to new address with code<br />
+4. User enters code → system validates:<br />
+   - Code matches<br />
+   - Not expired (10 min window)<br />
+   - Not already used (one-time use)<br />
+5. If valid → <strong>atomic update</strong> across 3 tables (<code>fsiocuser</code>, <code>fsionlinecustomer</code>, <code>fsiuser</code>) using database transaction</p>
+<p><strong>Security features:</strong><br />
+- <strong>10-minute expiry:</strong> Short enough to prevent misuse<br />
+- <strong>One-time use:</strong> Marked as used after verification<br />
+- <strong>Rate limiting:</strong> 5 failed attempts → lock code, force new request<br />
+- <strong>Transactions:</strong> ACID compliance (all 3 tables updated or none)</p>
+<p><strong>Tables involved:</strong><br />
+- <code>fsiocuser</code>: Stores login credentials + verification code<br />
+- <code>fsionlinecustomer</code>: Profile data (EmailPrimary)<br />
+- <code>fsiuser</code>: Legacy user table (kept in sync)</p>
+<p><strong>Edge cases handled:</strong><br />
+- Expired code → "Request new code"<br />
+- Wrong code → Log failed attempt, increment rate limit counter<br />
+- Code already used → "Already verified"<br />
+- Email already in use → Block at request time</p>
+<p><strong>Tech stack:</strong> Zend Framework (PHP), MySQL, Redis (rate limiting), SMTP (email sending)</p>
+<p>This feature reduced support tickets by 30% (users used to lock themselves out by mistyping email)."</p>
+<hr />
+<h2 id="common-interview-questions">Common Interview Questions</h2>
+<h3 id="q1-why-10-minutes-why-not-30-minutes-or-1-hour">Q1: "Why 10 minutes? Why not 30 minutes or 1 hour?"</h3>
+<p><strong>Answer:</strong><br />
+"<strong>10 minutes</strong> balances security and usability:</p>
+<p><strong>Security:</strong> Short window limits exposure if email is intercepted. An attacker has only 10 minutes to use the code.</p>
+<p><strong>Usability:</strong> Long enough for user to:<br />
+- Check email (2-3 min)<br />
+- Read message (1 min)<br />
+- Return to app (1 min)<br />
+- Enter code (1 min)<br />
+- Total: ~5 minutes (10 min gives buffer)</p>
+<p><strong>Too short (e.g., 2 min):</strong> Users frustrated by expired codes<br />
+<strong>Too long (e.g., 1 hour):</strong> Security risk (intercepted codes valid longer)</p>
+<p>At Billtrust, we analyzed support tickets and found 10 minutes had the lowest expiry-related complaints while maintaining security."</p>
+<hr />
+<h3 id="q2-how-do-you-prevent-brute-force-attacks-on-the-6-digit-code">Q2: "How do you prevent brute force attacks on the 6-digit code?"</h3>
+<p><strong>Answer:</strong><br />
+"<strong>Three layers of defense:</strong></p>
+<p><strong>1. Rate limiting (Redis):</strong><br />
+- Track failed attempts per user: <code>email_verify_attempts:{ocUserId}</code><br />
+- After 5 failed attempts in 10 minutes → lock code, force new request<br />
+- Counter resets after 10 minutes</p>
+<p><strong>2. Limited time window:</strong><br />
+- Code expires in 10 minutes<br />
+- Attacker has 1,000,000 possibilities (000000-999999)<br />
+- At 1 attempt per second → 11.5 days to brute force<br />
+- But code expires in 10 min → impossible</p>
+<p><strong>3. One-time use:</strong><br />
+- Code invalidated immediately after use<br />
+- Even if attacker intercepts code, it's useless after victim uses it</p>
+<p><strong>Math:</strong> 1M possibilities ÷ 5 attempts = 200,000:1 odds. Effectively unbreakable."</p>
+<hr />
+<h3 id="q3-what-if-the-email-fails-to-send">Q3: "What if the email fails to send?"</h3>
+<p><strong>Answer:</strong><br />
+"<strong>Two scenarios:</strong></p>
+<p><strong>1. SMTP error (network down, mailbox full):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">try {</span>
+<span class="x">    $this-&gt;emailService-&gt;sendVerificationEmail($newEmail, $code);</span>
+<span class="x">} catch (Exception $e) {</span>
+<span class="x">    $this-&gt;logger-&gt;error("Email send failed", [...]);</span>
+<span class="x">    return ['error' =&gt; 'Failed to send email. Please try again.'];</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<ul>
+<li>Catch exception, log error</li>
+<li>DON'T store code in database (email not sent, so code won't work)</li>
+<li>User sees: "Failed to send email" → can retry</li>
+</ul>
+<p><strong>2. Email delivered to spam:</strong><br />
+- Code still valid in database<br />
+- User checks spam folder, finds email<br />
+- OR user clicks "Resend code" → new code generated (overwrites old)</p>
+<p><strong>At Billtrust:</strong> We monitor email delivery rates via SendGrid webhooks. If delivery rate drops below 95%, alert DevOps."</p>
+<hr />
+<h3 id="q4-why-update-3-tables-why-not-just-1">Q4: "Why update 3 tables? Why not just 1?"</h3>
+<p><strong>Answer:</strong><br />
+"<strong>Legacy architecture</strong> from multiple system migrations:</p>
+<ul>
+<li><code>fsiocuser</code>: Online Customer Users (created 2015, SSO/OAuth login system)</li>
+<li><code>fsionlinecustomer</code>: Online customers (created 2010, original profile system)</li>
+<li><code>fsiuser</code>: Legacy users (created 2005, legacy invoicing system)</li>
+</ul>
+<p><strong>Why not consolidate?</strong><br />
+- Different teams own different tables<br />
+- Backward compatibility (reports query old tables)<br />
+- Thousands of queries reference all 3 tables<br />
+- Migration risk too high for 1M+ customer records</p>
+<p><strong>How we maintain consistency:</strong><br />
+- Database transaction (BEGIN → 3 UPDATEs → COMMIT)<br />
+- If any UPDATE fails → ROLLBACK all<br />
+- ACID guarantees: all 3 tables consistent or none updated</p>
+<p><strong>Lesson learned:</strong> Avoid multi-table updates in new features. For new tables, use single source of truth + views."</p>
+<hr />
+<h3 id="q5-how-would-you-scale-this-if-you-had-10m-users-changing-emails-simultaneously">Q5: "How would you scale this if you had 10M users changing emails simultaneously?"</h3>
+<p><strong>Answer:</strong><br />
+"<strong>Current bottleneck:</strong> Synchronous email sending blocks request</p>
+<p><strong>Solution: Queue-based architecture</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nv">User</span><span class="w"> </span><span class="nv">requests</span><span class="w"> </span><span class="nv">email</span><span class="w"> </span><span class="nv">change</span>
+<span class="w">  </span>↓
+<span class="nv">Generate</span><span class="w"> </span><span class="nv">code</span>,<span class="w"> </span><span class="nv">save</span><span class="w"> </span><span class="nv">to</span><span class="w"> </span><span class="nv">DB</span><span class="w"> </span><span class="ss">(</span><span class="mi">100</span><span class="nv">ms</span><span class="ss">)</span>
+<span class="w">  </span>↓
+<span class="nv">Push</span><span class="w"> </span><span class="nv">job</span><span class="w"> </span><span class="nv">to</span><span class="w"> </span><span class="nv">RabbitMQ</span><span class="w"> </span><span class="ss">(</span><span class="mi">10</span><span class="nv">ms</span><span class="ss">)</span>
+<span class="w">  </span>↓
+<span class="k">Return</span><span class="w"> </span><span class="mi">200</span><span class="w"> </span><span class="nv">OK</span><span class="w"> </span><span class="nv">to</span><span class="w"> </span><span class="nv">user</span><span class="w"> </span><span class="ss">(</span><span class="nv">don</span><span class="err">'t wait for email)</span>
+<span class="err">  ↓</span>
+<span class="err">Background worker sends email (async, 2-5 sec)</span>
+</code></pre></div>
+
+<p><strong>Benefits:</strong><br />
+- Request returns in 110ms (not 2-5 sec)<br />
+- 10M requests/day = 115/sec → easily handled<br />
+- Email workers auto-scale (10-50 pods) based on queue depth</p>
+<p><strong>Additional optimizations:</strong><br />
+- <strong>Redis for rate limiting:</strong> Faster than MySQL (1ms vs 10ms)<br />
+- <strong>Database read replicas:</strong> Validation queries hit read replica<br />
+- <strong>Code generation:</strong> Pre-generate 1M codes, store in Redis (avoid mt_rand latency)</p>
+<p>At Billtrust, we handle 100k invoice emails/month using RabbitMQ + auto-scaling workers."</p>
+<hr />
+<h2 id="summary-key-takeaways">Summary: Key Takeaways</h2>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Trigger</strong></td>
+<td>User changes email (post-login)</td>
+</tr>
+<tr>
+<td><strong>Verification</strong></td>
+<td>6-digit code sent to new email</td>
+</tr>
+<tr>
+<td><strong>Expiry</strong></td>
+<td>10 minutes (600 seconds)</td>
+</tr>
+<tr>
+<td><strong>One-Time Use</strong></td>
+<td>Code invalidated after use</td>
+</tr>
+<tr>
+<td><strong>Tables</strong></td>
+<td><code>fsiocuser</code>, <code>fsionlinecustomer</code>, <code>fsiuser</code></td>
+</tr>
+<tr>
+<td><strong>Security</strong></td>
+<td>Expiry + one-time + rate limiting (5 attempts)</td>
+</tr>
+<tr>
+<td><strong>Transaction</strong></td>
+<td>ACID (all 3 tables or none)</td>
+</tr>
+<tr>
+<td><strong>Tech Stack</strong></td>
+<td>Zend Framework (PHP), MySQL, Redis, SMTP</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p><strong>You're ready to explain this feature end-to-end in interviews!</strong> 🎯</p>
+        </div>
+    </div>
+
+    <script>
+        // Progress Tracker JavaScript
+        const STORAGE_KEY = 'course_progress_auth_email_verification_flow_eic';
+
+        // Extract all H2 and H3 headings from content
+        function extractSections() {
+            const content = document.querySelector('.content');
+            const headings = content.querySelectorAll('h2, h3');
+            const sections = [];
+
+            headings.forEach((heading, index) => {
+                const level = heading.tagName === 'H2' ? 2 : 3;
+                const text = heading.textContent.trim();
+                const id = `section-${index}`;
+
+                // Add ID to heading for linking
+                heading.id = id;
+
+                sections.push({
+                    id: id,
+                    text: text,
+                    level: level
+                });
+            });
+
+            return sections;
+        }
+
+        // Load saved progress from localStorage
+        function loadProgress() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            return saved ? JSON.parse(saved) : {};
+        }
+
+        // Save progress to localStorage
+        function saveProgress(progress) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+        }
+
+        // Calculate progress percentage
+        function calculateProgress() {
+            const checkboxes = document.querySelectorAll('.progress-checkbox');
+            const total = checkboxes.length;
+            if (total === 0) return 0;
+
+            const completed = Array.from(checkboxes).filter(cb => cb.checked).length;
+            return Math.round((completed / total) * 100);
+        }
+
+        // Update progress display
+        function updateProgressDisplay() {
+            const percentage = calculateProgress();
+            document.getElementById('progress-pct').textContent = percentage + '%';
+            document.getElementById('progress-bar').style.width = percentage + '%';
+
+            // Update completed class on items
+            document.querySelectorAll('.progress-item').forEach(item => {
+                const checkbox = item.querySelector('.progress-checkbox');
+                if (checkbox.checked) {
+                    item.classList.add('completed');
+                } else {
+                    item.classList.remove('completed');
+                }
+            });
+        }
+
+        // Toggle checkbox
+        function toggleCheckbox(sectionId) {
+            const checkbox = document.getElementById('cb-' + sectionId);
+            const progress = loadProgress();
+
+            progress[sectionId] = checkbox.checked;
+            saveProgress(progress);
+            updateProgressDisplay();
+        }
+
+        // Reset all progress
+        function resetProgress() {
+            if (confirm('Reset all progress for this page?')) {
+                localStorage.removeItem(STORAGE_KEY);
+                document.querySelectorAll('.progress-checkbox').forEach(cb => {
+                    cb.checked = false;
+                });
+                updateProgressDisplay();
+            }
+        }
+
+        // Toggle progress list visibility
+        function toggleProgressList() {
+            const list = document.getElementById('progress-items');
+            const btn = document.querySelector('.toggle-progress');
+
+            if (list.classList.contains('collapsed')) {
+                list.classList.remove('collapsed');
+                btn.textContent = '▼ Hide';
+            } else {
+                list.classList.add('collapsed');
+                btn.textContent = '▶ Show';
+            }
+        }
+
+        // Initialize progress tracker
+        function initProgressTracker() {
+            const sections = extractSections();
+            const progress = loadProgress();
+            const container = document.getElementById('progress-items');
+
+            if (sections.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No sections found</p>';
+                return;
+            }
+
+            sections.forEach(section => {
+                const item = document.createElement('div');
+                item.className = 'progress-item';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'progress-checkbox';
+                checkbox.id = 'cb-' + section.id;
+                checkbox.checked = progress[section.id] || false;
+                checkbox.onchange = () => toggleCheckbox(section.id);
+
+                const label = document.createElement('label');
+                label.className = 'progress-label';
+                label.htmlFor = 'cb-' + section.id;
+                label.textContent = section.text;
+                label.style.paddingLeft = section.level === 3 ? '20px' : '0';
+                label.onclick = () => {
+                    document.getElementById(section.id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+                };
+
+                item.appendChild(checkbox);
+                item.appendChild(label);
+                container.appendChild(item);
+            });
+
+            updateProgressDisplay();
+        }
+
+        // Run on page load
+        document.addEventListener('DOMContentLoaded', initProgressTracker);
+    </script>
+</body>
+</html>

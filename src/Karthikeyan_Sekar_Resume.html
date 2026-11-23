@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Karthikeyan_Sekar_Resume</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 60px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .metadata {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 16px 24px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #666;
+            border-left: 4px solid #667eea;
+        }
+
+        /* PROGRESS TRACKER STYLES */
+        .progress-tracker {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .progress-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-stats {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .progress-percentage {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #764ba2;
+        }
+
+        .progress-bar-container {
+            height: 12px;
+            background: #e9ecef;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+            border-radius: 20px;
+        }
+
+        .reset-btn {
+            padding: 8px 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+
+        .reset-btn:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+        }
+
+        .progress-items {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .progress-items::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .progress-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .progress-item:hover {
+            background: #f8f9fa;
+            transform: translateX(5px);
+        }
+
+        .progress-item.completed {
+            opacity: 0.7;
+        }
+
+        .progress-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .progress-label {
+            cursor: pointer;
+            font-size: 0.95em;
+            line-height: 1.5;
+            color: #495057;
+            flex-grow: 1;
+        }
+
+        .progress-item.completed .progress-label {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .toggle-progress {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .toggle-progress:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .progress-items.collapsed {
+            display: none;
+        }
+
+        /* CONTENT STYLES */
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 4px solid #667eea;
+            font-weight: 700;
+        }
+
+        h2 {
+            color: #764ba2;
+            font-size: 2em;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        h3 {
+            color: #495057;
+            font-size: 1.5em;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        h4 {
+            color: #666;
+            font-size: 1.25em;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        ul, ol {
+            margin: 20px 0;
+            padding-left: 40px;
+        }
+
+        li {
+            margin-bottom: 12px;
+            line-height: 1.7;
+        }
+
+        code {
+            background: #f4f5f7;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #c7254e;
+            border: 1px solid #e1e4e8;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 24px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 25px 0;
+            border: 1px solid #444;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            border: none;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        blockquote {
+            border-left: 5px solid #667eea;
+            padding: 15px 25px;
+            margin: 25px 0;
+            background: #f8f9fa;
+            border-radius: 0 8px 8px 0;
+            color: #495057;
+            font-style: italic;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 30px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 14px 18px;
+            text-align: left;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tr:hover {
+            background: #e9ecef;
+            transition: background 0.2s;
+        }
+
+        a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px solid transparent;
+            transition: border-bottom 0.2s;
+        }
+
+        a:hover {
+            border-bottom: 1px solid #667eea;
+        }
+
+        hr {
+            border: none;
+            border-top: 2px solid #e9ecef;
+            margin: 40px 0;
+        }
+
+        strong {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        em {
+            color: #495057;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 25px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.6em;
+            }
+
+            .progress-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .progress-stats {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../navigation.html" class="back-link">&larr; Back to Navigation</a>
+
+        <div class="metadata">
+            <strong>Source:</strong> dev/Karthikeyan_Sekar_Resume.md &nbsp;|&nbsp; <strong>Updated:</strong> 2026-11-18 19:44:55
+        </div>
+
+        <!-- PROGRESS TRACKER -->
+        <div class="progress-tracker">
+            <div class="progress-header">
+                <div class="progress-title">
+                    <span>📚</span>
+                    <span>Your Progress</span>
+                </div>
+                <div class="progress-stats">
+                    <span class="progress-percentage" id="progress-pct">0%</span>
+                    <button class="reset-btn" onclick="resetProgress()">Reset</button>
+                    <button class="toggle-progress" onclick="toggleProgressList()">▼ Hide</button>
+                </div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progress-bar" style="width: 0%"></div>
+            </div>
+            <div class="progress-items" id="progress-items">
+                <!-- Checkboxes will be generated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="content">
+<h1 id="karthikeyan-sekar">Karthikeyan Sekar</h1>
+<p><strong>Senior Software Engineer &amp; Technical Lead</strong></p>
+<p>📧 kasekar@Enterprise SaaS Company.com<br />
+🔧 GitHub: Enterprise SaaS CompanyGH</p>
+<hr />
+<h2 id="professional-summary">Professional Summary</h2>
+<p>Senior Software Engineer with extensive expertise in enterprise billing and invoicing platforms. Specialized in <strong>system design, multi-tenant architecture, database optimization</strong>, and security analysis across PHP and .NET ecosystems. <strong>Pioneer in AI-assisted development workflows</strong>, having designed and implemented agentic systems that reduce incident resolution time by 40% and automate complex code review processes. Proven track record in production support, root cause analysis (RC-5 methodology), code review, and cross-functional technical leadership. Strong background in event-driven architectures using message queuing systems and cloud infrastructure.</p>
+<hr />
+<h2 id="core-technical-skills">Core Technical Skills</h2>
+<p><strong>Languages &amp; Frameworks:</strong><br />
+- PHP (Laravel 9/10, Phalcon, Zend Framework) - 8+ years<br />
+- .NET (C#, EF Core, Dapper) - 5+ years<br />
+- SQL (MySQL, stored procedures, query optimization)<br />
+- JavaScript/TypeScript (Node.js)</p>
+<p><strong>Architecture &amp; Design:</strong><br />
+- Multi-tenant SaaS architecture (Account-Centric &amp; User-Centric models)<br />
+- Microservices architecture<br />
+- RESTful API design<br />
+- Database design and normalization<br />
+- Event-driven architecture<br />
+- Message queuing systems (RabbitMQ - production usage, Kafka - knowledge &amp; comparison)</p>
+<p><strong>System Design &amp; Architecture:</strong><br />
+- Large-scale system design (invoice delivery, payment processing, authentication flows)<br />
+- Scalability and performance optimization patterns<br />
+- High-availability and fault-tolerant design<br />
+- Asynchronous processing and queue-based architectures</p>
+<p><strong>DevOps &amp; Tools:</strong><br />
+- Git/GitHub (advanced workflows, PR reviews, branch management)<br />
+- Docker &amp; containerization<br />
+- CI/CD pipelines (GitHub Actions, automated testing, deployment automation)<br />
+- AWS cloud services (EC2, RDS, S3, SQS, SNS - working knowledge of pre-existing infrastructure)</p>
+<p><strong>Security &amp; Compliance:</strong><br />
+- OWASP Top 10 vulnerability mitigation<br />
+- PCI-DSS compliance<br />
+- HIPAA data handling<br />
+- SQL injection prevention<br />
+- Security code reviews<br />
+- Checkmarx static analysis</p>
+<p><strong>Development Practices:</strong><br />
+- Test-driven development (Cypress, Protractor, Postman/Newman)<br />
+- Code review and quality assurance<br />
+- Agile/Scrum methodologies<br />
+- Technical documentation<br />
+- Root cause analysis</p>
+<p><strong>AI &amp; Automation:</strong><br />
+- AI agentic workflow design and implementation<br />
+- LLM integration (Claude API, Anthropic SDK)<br />
+- Prompt engineering and tool-use patterns<br />
+- Multi-agent orchestration systems<br />
+- Automated code review and security scanning<br />
+- AI-assisted incident triage and root cause analysis<br />
+- Retrieval-augmented generation (RAG) for knowledge bases</p>
+<hr />
+<h2 id="professional-experience">Professional Experience</h2>
+<h3 id="enterprise-saas-company-senior-software-engineer-technical-lead">Enterprise SaaS Company | Senior Software Engineer &amp; Technical Lead</h3>
+<p><em>Location: Remote | 2018 - Present</em></p>
+<h4 id="core-responsibilities">Core Responsibilities</h4>
+<p><strong>Production Support &amp; Incident Management (NJQRT/QRT Team)</strong><br />
+- Lead triage and root cause analysis for critical production incidents across the Invoicing platform<br />
+- Investigate complex multi-system issues involving authentication, payment processing, and data synchronization<br />
+- Reduced mean time to resolution by 40% through systematic investigation frameworks<br />
+- Developed automated investigation workflows using AI-assisted analysis<br />
+- Collaborate with Product, QA, and DevOps teams to coordinate emergency fixes</p>
+<p><strong>Technical Leadership &amp; Code Review</strong><br />
+- Conduct comprehensive code reviews for pull requests across 8+ microservices<br />
+- Enforce security standards, architectural patterns, and coding best practices<br />
+- Mentor junior developers on database design, multi-tenant patterns, and PHP/Laravel conventions<br />
+- Lead technical design discussions for feature implementations<br />
+- Establish code review checklists and quality gates</p>
+<p><strong>Database Engineering &amp; Optimization</strong><br />
+- Design and review DDL/DML changes for production databases (100M+ row tables)<br />
+- Optimize slow-running queries and reports (reduced query times from minutes to seconds)<br />
+- Maintain data integrity across multi-tenant MySQL databases<br />
+- Create stored procedures and database migration scripts<br />
+- Ensure zero-downtime deployments for schema changes</p>
+<p><strong>Security &amp; Compliance</strong><br />
+- Perform security audits and vulnerability assessments using Checkmarx<br />
+- Remediate SQL injection, XSS, and authentication bypass vulnerabilities<br />
+- Maintain PCI-DSS and HIPAA compliance for payment and healthcare data<br />
+- Implement parameterized queries and input validation across applications<br />
+- Conduct pre-deployment security reviews</p>
+<h4 id="key-projects-achievements">Key Projects &amp; Achievements</h4>
+<p><strong>eInvoice Connect (EIC) - Zend Framework Application</strong><br />
+- Architected authentication flow improvements for SSO and direct login paths<br />
+- Fixed critical autopay enrollment issues affecting enterprise customers<br />
+- Implemented email validation and account linking improvements<br />
+- Reduced authentication-related support tickets by 35%</p>
+<p><strong>Client Connect (CC) - Laravel 9 Application</strong><br />
+- Led migration from legacy Zend codebase to modern Laravel architecture<br />
+- Designed and implemented RESTful API endpoints for mobile app integration<br />
+- Built customer settings management system using atom-based configuration<br />
+- Improved application performance by 50% through query optimization</p>
+<p><strong>Customer Settings Repository (CSR) - Laravel 10 Service</strong><br />
+- Created centralized configuration service for cross-application settings<br />
+- Implemented tenant-aware routing and database connection management<br />
+- Built audit trail system for configuration changes<br />
+- Reduced configuration deployment time from hours to minutes</p>
+<p><strong>AP Network Integration</strong><br />
+- Debugged and fixed account linking audit trail issues<br />
+- Corrected invisible account records in fsiAccountAudits table<br />
+- Implemented proper audit logging for Account-Centric and User-Centric models<br />
+- Validated fix across 50,000+ customer accounts in production</p>
+<p><strong>Payment Platform Integration</strong><br />
+- Investigated and resolved BTPay guest-user notification enrollment issues<br />
+- Identified platform-wide data quality issues affecting 39 customers<br />
+- Coordinated cross-team handoff to Payments Platform team<br />
+- Prevented future incorrect enrollments through schema default changes</p>
+<p><strong>Multi-Tenant Database Architecture</strong><br />
+- Designed stack routing system for 2-stack MySQL deployment<br />
+- Implemented customer-to-database mapping in billingmaster<br />
+- Built query safety patterns to prevent cross-tenant data leakage<br />
+- Documented Account-Centric vs User-Centric model differences</p>
+<p><strong>DML/DDL Automation &amp; Safety</strong><br />
+- Created standardized templates for database change requests<br />
+- Implemented validation gates for production database changes<br />
+- Built rollback script generation workflows<br />
+- Achieved 100% success rate for 200+ production database changes</p>
+<p><strong>Checkmarx Integration</strong><br />
+- Integrated Checkmarx CLI for pre-commit security scanning<br />
+- Established workflows to catch vulnerabilities before code review<br />
+- Reduced security findings in production by 60%<br />
+- Trained team on security scanning and remediation practices</p>
+<p><strong>AI-Assisted Development Workflows &amp; Agentic Systems</strong><br />
+- <strong>Designed and deployed multi-agent workflow orchestration system</strong> for production incident management<br />
+  - Automated triage agent: analyzes Jira tickets, correlates with codebase, queries databases, generates root cause analysis<br />
+  - Code review agent: performs security scanning, architectural compliance checks, regression analysis<br />
+  - Database query agent: validates SQL safety, checks PCI/HIPAA compliance, optimizes query performance<br />
+  - Research agent: parallel codebase exploration across 8+ microservices<br />
+- <strong>Built AI-powered investigation framework (RC-5 methodology)</strong> that combines:<br />
+  - Code verification agents (static analysis + live code tracing)<br />
+  - Data validation agents (SQL query execution + result verification)<br />
+  - Cross-system correlation (logs, metrics, audit trails)<br />
+  - Adversarial verification (multiple independent agents validate findings)<br />
+- <strong>Reduced incident resolution time by 40%</strong> through systematic AI-assisted root cause analysis<br />
+- <strong>Created 50+ reusable AI workflows</strong> covering: code review, DML/DDL validation, security audits, compliance checks<br />
+- <strong>Implemented verification protocols</strong> to ensure AI-generated conclusions are data-grounded (code proof + query results)<br />
+- <strong>Developed dual-audience communication system</strong>: AI generates both technical (engineer-facing) and business (stakeholder-facing) summaries from same investigation<br />
+- <strong>Integrated LLM APIs</strong> (Claude, Anthropic SDK) with existing tools: Jira, GitHub, Checkmarx, Datadog, Splunk<br />
+- <strong>Built retrieval-augmented generation (RAG) system</strong> for internal knowledge base (50+ technical docs, architectural patterns)<br />
+- <strong>Pioneered prompt engineering patterns</strong> for code analysis: chain-of-thought reasoning, tool use, structured output validation<br />
+- <strong>Technical stack</strong>: Claude API, MCP (Model Context Protocol), GitHub Actions, Python orchestration, Redis caching</p>
+<h4 id="technologies-used">Technologies Used</h4>
+<ul>
+<li><strong>Backend:</strong> PHP 8.0+, Laravel 9/10, Phalcon, Zend Framework, .NET Core</li>
+<li><strong>Database:</strong> MySQL, Eloquent ORM, Zend_Db, Dapper, stored procedures</li>
+<li><strong>Frontend:</strong> JavaScript, jQuery, React (basic)</li>
+<li><strong>Testing:</strong> Cypress, Protractor, Postman/Newman</li>
+<li><strong>DevOps:</strong> Docker, GitHub Actions, Kubernetes, AWS EKS</li>
+<li><strong>Tools:</strong> Git, Jira, Confluence, Slack, Datadog, Splunk, Checkmarx</li>
+</ul>
+<hr />
+<h2 id="education">Education</h2>
+<p><strong>Bachelor of Engineering in Computer Science</strong><br />
+<em>[University Name]</em> | <em>[Year]</em></p>
+<hr />
+<h2 id="certifications-training">Certifications &amp; Training</h2>
+<ul>
+<li>AWS Certified Solutions Architect (or relevant AWS cert)</li>
+<li>Checkmarx Security Training</li>
+<li>OWASP Top 10 Security Training</li>
+<li>Advanced SQL Performance Tuning</li>
+</ul>
+<hr />
+<h2 id="key-achievements">Key Achievements</h2>
+<ul>
+<li><strong>Revenue Protection:</strong> Prevented $500k+ in revenue loss through 100+ critical NJQRT production incident investigations over 2.5 years</li>
+<li><strong>Process Innovation:</strong> Created RC-5 root cause analysis methodology, reducing investigation time by 40% and adopted by entire QRT team</li>
+<li><strong>Team Productivity:</strong> Mentored 2 junior developers, reducing their average triage time from 8 hours to 2 hours within 3 months</li>
+<li><strong>Production Stability:</strong> Maintained 99.9% uptime for critical invoicing services handling millions of transactions monthly</li>
+<li><strong>Database Reliability:</strong> Achieved 100% success rate across 200+ production DML/DDL changes with zero data loss incidents</li>
+<li><strong>Security Excellence:</strong> Zero PCI/HIPAA compliance violations under oversight; reduced security findings by 60% through pre-commit scanning</li>
+<li><strong>Code Quality:</strong> Established code review standards and quality gates adopted across 5 engineering teams</li>
+<li><strong>Knowledge Transfer:</strong> Documented 50+ technical processes, architectural patterns, and AI-assisted investigation workflows</li>
+<li><strong>Cross-Team Leadership:</strong> Coordinated releases across 8 microservices with zero rollback incidents</li>
+</ul>
+<hr />
+<h2 id="professional-skills">Professional Skills</h2>
+<p><strong>Problem Solving:</strong><br />
+- Systematic root cause analysis using RC-5 methodology<br />
+- Data-driven investigation with code and query verification<br />
+- Cross-system debugging (web apps, APIs, databases, workers)</p>
+<p><strong>Communication:</strong><br />
+- Dual-audience technical writing (engineers and business stakeholders)<br />
+- Technical documentation and knowledge base creation<br />
+- Cross-functional collaboration with Product, QA, DevOps, and Support teams</p>
+<p><strong>Process Improvement:</strong><br />
+- Created standardized workflows for code review, DML/DDL review, and incident triage<br />
+- Established verification protocols to ensure accuracy before production changes<br />
+- Built AI-assisted investigation frameworks</p>
+<p><strong>Technical Leadership:</strong><br />
+- Mentored 5+ junior developers<br />
+- Led architectural discussions and design reviews<br />
+- Set coding standards and best practices</p>
+<hr />
+<h2 id="additional-information">Additional Information</h2>
+<p><strong>Work Style:</strong> Remote-first, comfortable with async communication and distributed teams<br />
+<strong>Availability:</strong> Open to full-time opportunities and consulting engagements<br />
+<strong>Interests:</strong> AI-assisted development, database optimization, security engineering, developer tooling</p>
+<hr />
+<p><em>References available upon request</em></p>
+        </div>
+    </div>
+
+    <script>
+        // Progress Tracker JavaScript
+        const STORAGE_KEY = 'course_progress_karthikeyan_sekar_resume';
+
+        // Extract all H2 and H3 headings from content
+        function extractSections() {
+            const content = document.querySelector('.content');
+            const headings = content.querySelectorAll('h2, h3');
+            const sections = [];
+
+            headings.forEach((heading, index) => {
+                const level = heading.tagName === 'H2' ? 2 : 3;
+                const text = heading.textContent.trim();
+                const id = `section-${index}`;
+
+                // Add ID to heading for linking
+                heading.id = id;
+
+                sections.push({
+                    id: id,
+                    text: text,
+                    level: level
+                });
+            });
+
+            return sections;
+        }
+
+        // Load saved progress from localStorage
+        function loadProgress() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            return saved ? JSON.parse(saved) : {};
+        }
+
+        // Save progress to localStorage
+        function saveProgress(progress) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+        }
+
+        // Calculate progress percentage
+        function calculateProgress() {
+            const checkboxes = document.querySelectorAll('.progress-checkbox');
+            const total = checkboxes.length;
+            if (total === 0) return 0;
+
+            const completed = Array.from(checkboxes).filter(cb => cb.checked).length;
+            return Math.round((completed / total) * 100);
+        }
+
+        // Update progress display
+        function updateProgressDisplay() {
+            const percentage = calculateProgress();
+            document.getElementById('progress-pct').textContent = percentage + '%';
+            document.getElementById('progress-bar').style.width = percentage + '%';
+
+            // Update completed class on items
+            document.querySelectorAll('.progress-item').forEach(item => {
+                const checkbox = item.querySelector('.progress-checkbox');
+                if (checkbox.checked) {
+                    item.classList.add('completed');
+                } else {
+                    item.classList.remove('completed');
+                }
+            });
+        }
+
+        // Toggle checkbox
+        function toggleCheckbox(sectionId) {
+            const checkbox = document.getElementById('cb-' + sectionId);
+            const progress = loadProgress();
+
+            progress[sectionId] = checkbox.checked;
+            saveProgress(progress);
+            updateProgressDisplay();
+        }
+
+        // Reset all progress
+        function resetProgress() {
+            if (confirm('Reset all progress for this page?')) {
+                localStorage.removeItem(STORAGE_KEY);
+                document.querySelectorAll('.progress-checkbox').forEach(cb => {
+                    cb.checked = false;
+                });
+                updateProgressDisplay();
+            }
+        }
+
+        // Toggle progress list visibility
+        function toggleProgressList() {
+            const list = document.getElementById('progress-items');
+            const btn = document.querySelector('.toggle-progress');
+
+            if (list.classList.contains('collapsed')) {
+                list.classList.remove('collapsed');
+                btn.textContent = '▼ Hide';
+            } else {
+                list.classList.add('collapsed');
+                btn.textContent = '▶ Show';
+            }
+        }
+
+        // Initialize progress tracker
+        function initProgressTracker() {
+            const sections = extractSections();
+            const progress = loadProgress();
+            const container = document.getElementById('progress-items');
+
+            if (sections.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No sections found</p>';
+                return;
+            }
+
+            sections.forEach(section => {
+                const item = document.createElement('div');
+                item.className = 'progress-item';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'progress-checkbox';
+                checkbox.id = 'cb-' + section.id;
+                checkbox.checked = progress[section.id] || false;
+                checkbox.onchange = () => toggleCheckbox(section.id);
+
+                const label = document.createElement('label');
+                label.className = 'progress-label';
+                label.htmlFor = 'cb-' + section.id;
+                label.textContent = section.text;
+                label.style.paddingLeft = section.level === 3 ? '20px' : '0';
+                label.onclick = () => {
+                    document.getElementById(section.id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+                };
+
+                item.appendChild(checkbox);
+                item.appendChild(label);
+                container.appendChild(item);
+            });
+
+            updateProgressDisplay();
+        }
+
+        // Run on page load
+        document.addEventListener('DOMContentLoaded', initProgressTracker);
+    </script>
+</body>
+</html>
