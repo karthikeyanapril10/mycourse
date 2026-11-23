@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Interview Storylines - STAR Method</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.8; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 { color: #667eea; font-size: 2.5em; margin: 30px 0 20px 0; border-bottom: 3px solid #667eea; padding-bottom: 15px; }
+        h2 { color: #764ba2; font-size: 2em; margin: 40px 0 20px 0; padding-left: 15px; border-left: 5px solid #764ba2; }
+        h3 { color: #667eea; font-size: 1.5em; margin: 30px 0 15px 0; }
+        p { margin-bottom: 15px; color: #333; }
+        code { 
+            background: #f4f4f4; 
+            padding: 2px 8px; 
+            border-radius: 4px; 
+            font-family: 'Courier New', monospace;
+            color: #c7254e;
+        }
+        pre { 
+            background: #2d2d2d; 
+            color: #f8f8f2; 
+            padding: 20px; 
+            border-radius: 8px; 
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        pre code { background: none; color: inherit; padding: 0; }
+        strong { color: #667eea; font-weight: 600; }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .back-link:hover { background: #764ba2; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background: #667eea;
+            color: white;
+        }
+        tr:nth-child(even) { background: #f9f9f9; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../navigation.html" class="back-link">← Back to Navigation</a>
+        <h1>My Interview Storylines - STAR Method</h1>
+
+<p>> <strong>5 Ready-to-Use Stories from Your Actual Billtrust Experience</strong>  </p>
+<p>> <strong>Memorize these - they answer 80% of behavioral questions</strong></p>
+
+<p>---</p>
+
+<h2>How to Use This Document</h2>
+
+<strong>Before EVERY interview:</strong>
+<p>1. Read all 5 stories once (15 minutes)</p>
+<p>2. Practice telling 2-3 out loud (5 minutes each)</p>
+<p>3. Have this open during virtual interviews (reference if needed)</p>
+
+<strong>Each story answers multiple questions:</strong>
+<p>- "Tell me about a time when..."</p>
+<p>- "Give me an example of..."</p>
+<p>- "Describe a situation where..."</p>
+
+<p>---</p>
+
+<h1>Story 1: The $500k Revenue Loss Prevention (Impact Story)</h1>
+
+<h2>STAR Breakdown</h2>
+
+<strong>Situation:</strong>
+<p>Billtrust's invoicing platform was experiencing production incidents where invoices failed to generate correctly, causing revenue leakage. As the NJQRT (New Jersey Quality Response Team) engineer for 2.5 years, I was responsible for investigating these high-priority cases.</p>
+
+<strong>Task:</strong>
+<p>Investigate root causes of 100+ production incidents, prevent future occurrences, and implement systematic improvements to reduce investigation time and prevent revenue loss.</p>
+
+<strong>Action:</strong>
+<p>1. <strong>Developed RC-5 Methodology</strong> - Created a 5-checkpoint root cause analysis framework:</p>
+<p>   - Prior conclusion (what did we already conclude?)</p>
+<p>   - Universality (is this present on successful cases too?)</p>
+<p>   - Reachability (does the blamed code actually execute?)</p>
+<p>   - Signature (does it produce the exact error we see?)</p>
+<p>   - Fix vs mask (are we fixing the function or just hiding the error?)</p>
+
+<p>2. <strong>Investigated 100+ NJQRT Cases</strong> systematically using RC-5</p>
+<p>   - Average case: 8 tables, 3 services, 5-10M rows of data</p>
+<p>   - Used custom Docker DB gateway for safe production queries</p>
+<p>   - Documented every finding with code proof + data proof</p>
+
+<p>3. <strong>Mentored Team</strong> - Trained 2 junior developers on:</p>
+<p>   - RC-5 methodology</p>
+<p>   - Database query optimization</p>
+<p>   - Multi-tenant debugging techniques</p>
+<p>   - Reduced their average triage time from 8 hours → 2 hours</p>
+
+<strong>Result:</strong>
+<p>- <strong>Prevented $500k+ revenue loss</strong> across 100+ incidents over 2.5 years</p>
+<p>- <strong>Reduced investigation time by 40%</strong> (using RC-5 vs ad-hoc debugging)</p>
+<p>- <strong>100% success rate</strong> on 200+ production DML/DDL changes (database fixes)</p>
+<p>- <strong>Zero repeat incidents</strong> - root causes were permanently fixed, not band-aided</p>
+
+<p>---</p>
+
+<h2>Interview Questions This Answers</h2>
+
+<p>✅ <strong>"Tell me about your most impactful project"</strong>  </p>
+<p>✅ <strong>"Describe a time you prevented a major issue"</strong>  </p>
+<p>✅ <strong>"Give an example of when you improved a process"</strong>  </p>
+<p>✅ <strong>"Tell me about a time you mentored others"</strong>  </p>
+<p>✅ <strong>"How do you approach debugging complex production issues?"</strong></p>
+
+<p>---</p>
+
+<h2>2-Minute Version (Practice this!)</h2>
+
+<p>> "At Billtrust, I was responsible for investigating production incidents in our invoicing platform - these were high-stakes because invoice failures directly impact revenue. Over 2.5 years, I handled 100+ NJQRT cases.</p>
+<p>></p>
+<p>> Early on, I noticed our root cause analysis was inconsistent - we'd sometimes blame the wrong code and deploy fixes that didn't actually solve the problem. So I developed the RC-5 methodology, a 5-checkpoint framework that ensures every root cause is verified against code and data before we deploy a fix.</p>
+<p>></p>
+<p>> Using RC-5, I investigated incidents involving 8+ database tables and 5-10M rows of data. I'd trace through 3-4 microservices to find the exact line of code causing the issue, verify it with production queries using our Docker DB gateway, and document every claim with proof.</p>
+<p>></p>
+<p>> The impact: we prevented over $500k in revenue loss, reduced average investigation time by 40%, and achieved a 100% success rate on 200+ production database fixes. I also trained 2 junior developers on this methodology, reducing their triage time from 8 hours to 2 hours.</p>
+<p>></p>
+<p>> What I'm most proud of: zero repeat incidents. We didn't just patch symptoms - we fixed root causes permanently."</p>
+
+<p>---</p>
+
+<h1>Story 2: Cross-Team Fraud Investigation (Collaboration Story)</h1>
+
+<h2>STAR Breakdown</h2>
+
+<strong>Situation:</strong>
+<p>Billtrust's payment platform was experiencing suspicious activity - multiple payment accounts created with identical patterns, potential fraud or malicious testing. The issue spanned 3 teams: Invoicing (my team), Payments (BTPay), and Customer Support.</p>
+
+<strong>Task:</strong>
+<p>Investigate the full timeline of events across multiple systems, identify the source of the accounts, determine if it was fraud or legitimate testing, and coordinate with 3 teams to resolve it.</p>
+
+<strong>Action:</strong>
+<p>1. <strong>Built Custom Fraud Investigation Skill</strong> - Created <code>/fraud-malicious-investigator</code> skill (now a reusable tool):</p>
+<p>   - Merged data from Database (MySQL production), Pendo (user analytics), and Datadog (APM traces)</p>
+<p>   - Generated timeline showing: account creation → payment attempts → email notifications → what triggered each</p>
+
+<p>2. <strong>Cross-System Investigation:</strong></p>
+<p>   - <strong>Database</strong>: Queried 5 tables (<code>fsiocuser</code>, <code>fsiaccountautopay</code>, <code>fsiinvoice</code>, <code>fsiuser</code>, <code>fsionlinecustomer</code>)</p>
+<p>   - <strong>Pendo</strong>: Checked user behavior (clicks, page views, session length)</p>
+<p>   - <strong>Datadog</strong>: Traced API calls across services (which endpoints were hit, in what order)</p>
+<p>   - <strong>Email Logs (Splunk)</strong>: Verified what emails were sent (eBill notifications)</p>
+
+<p>3. <strong>Collaborated with 3 Teams:</strong></p>
+<p>   - <strong>Payments Team</strong>: Shared findings - guest user creation flow was enrolling payment stubs into eBill notifications (default 'Y' flag)</p>
+<p>   - <strong>Customer Support</strong>: Confirmed reporter wasn't impacted (the accounts were test data)</p>
+<p>   - <strong>Product Team</strong>: Got approval for DML fix (update flags for affected accounts)</p>
+
+<strong>Result:</strong>
+<p>- <strong>Identified root cause</strong>: BTPay guest-user creation omits notification flags, so schema default 'Y' enrolls payment stubs into eBill</p>
+<p>- <strong>Platform-wide impact</strong>: 39 customers affected (and still creating new ones - the code bug was still active)</p>
+<p>- <strong>Fix deployed</strong>: DML to update existing accounts + code fix to prevent new occurrences</p>
+<p>- <strong>Reusable tool created</strong>: Fraud investigation skill now used by entire QRT team</p>
+
+<p>---</p>
+
+<h2>Interview Questions This Answers</h2>
+
+<p>✅ <strong>"Tell me about a time you collaborated across teams"</strong>  </p>
+<p>✅ <strong>"Describe a complex technical investigation you led"</strong>  </p>
+<p>✅ <strong>"Give an example of when you built a reusable tool/process"</strong>  </p>
+<p>✅ <strong>"Tell me about a time you had to work with incomplete information"</strong>  </p>
+<p>✅ <strong>"How do you approach cross-system debugging?"</strong></p>
+
+<p>---</p>
+
+<h2>2-Minute Version (Practice this!)</h2>
+
+<p>> "We had a suspected fraud case - multiple payment accounts with suspicious patterns, and it wasn't clear if it was malicious activity or legitimate testing. The challenge: the data was spread across 3 systems and involved 3 teams.</p>
+<p>></p>
+<p>> I built a custom fraud investigation workflow that merged data from MySQL production database, Pendo analytics, and Datadog APM. This gave me a complete timeline: when each account was created, what actions they took, which APIs were called, and what emails were sent.</p>
+<p>></p>
+<p>> Through this investigation, I discovered the root cause wasn't fraud - it was a bug in BTPay's guest-user creation flow. When payment guests were created, the code omitted notification preference flags, so they defaulted to 'Y' and enrolled into eBill notifications. This affected 39 customers platform-wide, and the bug was still active.</p>
+<p>></p>
+<p>> I coordinated with the Payments team to understand their flow, Customer Support to verify impact, and Product to approve the fix. We deployed a DML to update existing accounts and a code fix to prevent new occurrences.</p>
+<p>></p>
+<p>> The investigation workflow I built became a reusable skill - the whole QRT team now uses it for similar cases. What I learned: cross-system bugs require cross-team collaboration, and tools that merge data from multiple sources are incredibly valuable."</p>
+
+<p>---</p>
+
+<h1>Story 3: Mentoring Junior Developers (Leadership Story)</h1>
+
+<h2>STAR Breakdown</h2>
+
+<strong>Situation:</strong>
+<p>Two junior developers joined my team to help with NJQRT triage. They had solid coding skills but no experience with:</p>
+<p>- Multi-tenant debugging (8 stacks, 1000+ customers)</p>
+<p>- Production database queries (5-10M rows, query optimization needed)</p>
+<p>- Root cause analysis (distinguishing correlation from causation)</p>
+
+<strong>Task:</strong>
+<p>Bring them up to speed so they could independently handle NJQRT cases within 3 months, without compromising quality or causing production issues.</p>
+
+<strong>Action:</strong>
+<p>1. <strong>Structured Onboarding (Week 1-2):</strong></p>
+<p>   - Walked through data model (8 repos, 50+ tables, stack routing)</p>
+<p>   - Explained multi-tenant architecture (how customer data is isolated)</p>
+<p>   - Showed them safe production query patterns (Docker DB gateway, read-only access)</p>
+
+<p>2. <strong>Shadowing & Pair Triage (Week 3-6):</strong></p>
+<p>   - They observed me triaging 10 cases (I narrated my thought process out loud)</p>
+<p>   - Then we pair-triaged 10 cases together (they drove, I guided)</p>
+<p>   - Focus: "How do you know?" (verify every claim with code or data)</p>
+
+<p>3. <strong>Independent Triage with Code Review (Week 7-12):</strong></p>
+<p>   - They handled cases independently</p>
+<p>   - I code-reviewed their findings before posting to Jira</p>
+<p>   - Gave feedback on: SQL query optimization, root cause verification, communication clarity</p>
+
+<p>4. <strong>Taught RC-5 Methodology:</strong></p>
+<p>   - Trained them on the 5-checkpoint framework</p>
+<p>   - Showed examples of "wrong root cause" vs "verified root cause"</p>
+<p>   - Emphasized: "Data-grounded conclusions only - no speculation"</p>
+
+<strong>Result:</strong>
+<p>- <strong>8 hours → 2 hours</strong> average triage time within 3 months</p>
+<p>- <strong>100% quality maintained</strong> - no incorrect root causes posted</p>
+<p>- <strong>Independent contributors</strong> - both now handle cases without supervision</p>
+<p>- <strong>Methodology adopted</strong> - RC-5 is now standard for the whole team</p>
+
+<p>---</p>
+
+<h2>Interview Questions This Answers</h2>
+
+<p>✅ <strong>"Tell me about a time you mentored someone"</strong>  </p>
+<p>✅ <strong>"Describe how you onboard new team members"</strong>  </p>
+<p>✅ <strong>"Give an example of when you improved team efficiency"</strong>  </p>
+<p>✅ <strong>"Tell me about your leadership experience"</strong>  </p>
+<p>✅ <strong>"How do you ensure knowledge transfer on your team?"</strong></p>
+
+<p>---</p>
+
+<h2>2-Minute Version (Practice this!)</h2>
+
+<p>> "When two junior developers joined my team to help with production incident triage, I was responsible for getting them up to speed. The challenge: our environment is complex - 8 microservices, multi-tenant architecture across 8 stacks, and production databases with 5-10M rows where one wrong query could cause performance issues.</p>
+<p>></p>
+<p>> I created a structured 12-week onboarding plan. First 2 weeks: data model and architecture. Next 4 weeks: they shadowed me on 10 cases while I explained my thought process out loud, then we pair-triaged 10 more together. Final 6 weeks: they triaged independently while I code-reviewed their findings before they posted to Jira.</p>
+<p>></p>
+<p>> The key was teaching them the RC-5 methodology I'd developed - a 5-checkpoint framework that ensures every root cause is verified with code proof and data proof before we commit to a fix. I emphasized: 'Never state a cause as fact until you've seen the actual code line or query result that proves it.'</p>
+<p>></p>
+<p>> Results: within 3 months, their average triage time went from 8 hours down to 2 hours, we maintained 100% quality with no incorrect root causes posted, and both are now fully independent contributors. The RC-5 methodology I taught them is now the standard for our entire team."</p>
+
+<p>---</p>
+
+<h1>Story 4: 100% Success Rate on 200+ Production Database Changes (Quality Story)</h1>
+
+<h2>STAR Breakdown</h2>
+
+<strong>Situation:</strong>
+<p>Production DML/DDL changes are high-risk - one wrong SQL statement can corrupt data for thousands of customers in a multi-tenant SaaS platform. At Billtrust, I was responsible for creating and reviewing these database changes.</p>
+
+<strong>Task:</strong>
+<p>Achieve 100% success rate on production database changes - zero data corruption, zero rollbacks, zero customer impact.</p>
+
+<strong>Action:</strong>
+<p>1. <strong>Pre-Flight Verification Protocol:</strong></p>
+<p>   - <strong>Never trust the ticket description</strong> - always verify the data yourself</p>
+<p>   - Query production (read-only) to confirm the problem exists</p>
+<p>   - Count affected rows (if ticket says "5 rows" and query finds 500 → investigate the gap)</p>
+<p>   - Check for similar patterns across all stacks (is this a 1-customer or platform-wide issue?)</p>
+
+<p>2. <strong>DML/DDL Review Checklist</strong> (every change goes through this):</p>
+<p>   - ✅ USE statement matches target environment (stage/UAT/production)</p>
+<p>   - ✅ WHERE clause is correct (business key columns, never PK alone)</p>
+<p>   - ✅ Affected Records count matches actual query result</p>
+<p>   - ✅ Rollback script provided (exact reverse of forward change)</p>
+<p>   - ✅ Byte-fidelity check (CRC32 hash of data to INSERT matches source)</p>
+
+<p>3. <strong>Data Verification Before and After:</strong></p>
+<p>   - <strong>Before</strong>: Query production to get current state → save result as evidence</p>
+<p>   - <strong>After</strong>: Query again to verify change applied correctly → compare counts</p>
+
+<p>4. <strong>Conservative Philosophy:</strong></p>
+<p>   - If anything is uncertain → flag it and ask (don't guess)</p>
+<p>   - If documentation conflicts with data → trust the data</p>
+<p>   - If impact is larger than expected → escalate to product team for approval</p>
+
+<strong>Result:</strong>
+<p>- <strong>200+ DML/DDL changes executed</strong> over 2.5 years</p>
+<p>- <strong>100% success rate</strong> - zero data corruption, zero rollbacks</p>
+<p>- <strong>Zero customer-impacting incidents</strong> from database changes</p>
+<p>- <strong>Review process adopted</strong> - my checklist is now the team standard</p>
+
+<p>---</p>
+
+<h2>Interview Questions This Answers</h2>
+
+<p>✅ <strong>"Tell me about a time you maintained high quality under pressure"</strong>  </p>
+<p>✅ <strong>"Describe your approach to risk management"</strong>  </p>
+<p>✅ <strong>"Give an example of when attention to detail mattered"</strong>  </p>
+<p>✅ <strong>"Tell me about a time you established a process that others adopted"</strong>  </p>
+<p>✅ <strong>"How do you ensure production safety?"</strong></p>
+
+<p>---</p>
+
+<h2>2-Minute Version (Practice this!)</h2>
+
+<p>> "At Billtrust, I was responsible for creating and reviewing production database changes in a multi-tenant SaaS environment - one wrong SQL statement could corrupt data for thousands of customers. Over 2.5 years, I executed 200+ DML/DDL changes with a 100% success rate - zero rollbacks, zero data corruption.</p>
+<p>></p>
+<p>> The key was my verification protocol. First, I never trust the ticket description - I always query production myself to confirm the problem exists and count the affected rows. If the ticket says '5 rows' and I find 500, that's a red flag - investigate why.</p>
+<p>></p>
+<p>> Second, I use a comprehensive review checklist: verify the USE statement matches the target environment, the WHERE clause is correct, the affected records count matches reality, and a rollback script is provided. For data migrations, I do byte-fidelity checks - CRC32 hash of the data being inserted must match the source.</p>
+<p>></p>
+<p>> Third, I query before and after to verify the change applied correctly. And throughout, I follow a conservative philosophy: if anything is uncertain, I flag it and ask rather than guessing.</p>
+<p>></p>
+<p>> The result: 200+ changes with zero incidents. My review process was adopted as the team standard, and other engineers now follow the same checklist. What I learned: in production, it's not about being fast - it's about being right every time."</p>
+
+<p>---</p>
+
+<h1>Story 5: Email Change Verification Feature (Technical Implementation Story)</h1>
+
+<h2>STAR Breakdown</h2>
+
+<strong>Situation:</strong>
+<p>Billtrust's EIC (eInvoice Connect) platform needed a secure way for users to change their email address post-login. Security requirements: verify new email ownership, prevent unauthorized changes, rate-limit abuse.</p>
+
+<strong>Task:</strong>
+<p>Design and implement a complete email change verification flow with security features: 6-digit code, 10-minute expiry, one-time use, rate limiting, ACID transactions.</p>
+
+<strong>Action:</strong>
+<p>1. <strong>System Design:</strong></p>
+<p>   - <strong>Tables involved</strong>: <code>fsiocuser</code> (OC user), <code>fsionlinecustomer</code> (customer), <code>fsiuser</code> (legacy user) - all 3 must stay in sync</p>
+<p>   - <strong>Verification code</strong>: 6-digit random (<code>str_pad(mt_rand(0, 999999), 6, '0', STR_PAD_LEFT)</code>)</p>
+<p>   - <strong>Expiry</strong>: 10 minutes (<code>date('Y-m-d H:i:s', strtotime('+10 minutes'))</code>)</p>
+<p>   - <strong>One-time use</strong>: <code>EmailVerificationUsed</code> flag</p>
+<p>   - <strong>Rate limiting</strong>: Redis-based (5 failed attempts → block for 1 hour)</p>
+
+<p>2. <strong>Implementation (Zend Framework, PHP):</strong></p>
+<p>   - <strong>Step 1</strong>: User changes email → generate code → store in DB → send email</p>
+<p>   - <strong>Step 2</strong>: User enters code → validate (not expired, not used, matches)</p>
+<p>   - <strong>Step 3</strong>: ACID transaction updates all 3 tables atomically</p>
+<p>   </p>
+<p>3. <strong>Security Features:</strong></p>
+<p>   - <strong>Expiry check</strong>: <code>if (time() > strtotime($user['EmailVerificationExpiry'])) return error;</code></p>
+<p>   - <strong>One-time use</strong>: <code>if ($user['EmailVerificationUsed'] == 1) return error;</code></p>
+<p>   - <strong>Rate limiting</strong>: Track failed attempts in Redis (5 attempts → block)</p>
+<p>   - <strong>ACID transactions</strong>: <code>beginTransaction()</code> → 3 <code>UPDATE</code> statements → <code>commit()</code> (rollback on any failure)</p>
+
+<p>4. <strong>Edge Cases Handled:</strong></p>
+<p>   - Expired code → clear error message</p>
+<p>   - Code already used → prevent replay attacks</p>
+<p>   - Email already in use by another account → reject</p>
+<p>   - Multiple code requests → invalidate old code, generate new one</p>
+<p>   - User changes email again before verifying first → allow (new code, new expiry)</p>
+
+<strong>Result:</strong>
+<p>- <strong>Secure email change flow</strong> deployed to production</p>
+<p>- <strong>Zero security incidents</strong> - no unauthorized email changes</p>
+<p>- <strong>User-friendly</strong>: Clear error messages, 10-minute window (not too short)</p>
+<p>- <strong>Scalable</strong>: Rate limiting prevents abuse, ACID ensures data consistency</p>
+
+<p>---</p>
+
+<h2>Interview Questions This Answers</h2>
+
+<p>✅ <strong>"Walk me through a feature you built end-to-end"</strong>  </p>
+<p>✅ <strong>"Tell me about a time you implemented security features"</strong>  </p>
+<p>✅ <strong>"Describe how you handle edge cases"</strong>  </p>
+<p>✅ <strong>"Give an example of when you ensured data consistency"</strong>  </p>
+<p>✅ <strong>"Tell me about a time you balanced security with user experience"</strong></p>
+
+<p>---</p>
+
+<h2>2-Minute Version (Practice this!)</h2>
+
+<p>> "I designed and implemented a secure email change verification feature for Billtrust's eInvoice Connect platform. The requirement: users can change their email post-login, but we need to verify they own the new email before updating it in the system.</p>
+<p>></p>
+<p>> My design: when a user changes their email, we generate a 6-digit verification code, store it in the database with a 10-minute expiry, and email it to the new address. The user enters the code, and if valid, we update all 3 tables in an ACID transaction - <code>fsiocuser</code>, <code>fsionlinecustomer</code>, and <code>fsiuser</code> - because they all store the email and must stay in sync.</p>
+<p>></p>
+<p>> Security features: the code expires after 10 minutes, it's one-time use with an <code>EmailVerificationUsed</code> flag to prevent replay attacks, and we rate-limit failed attempts using Redis - 5 wrong codes and you're blocked for an hour.</p>
+<p>></p>
+<p>> I also handled edge cases: if the email is already in use by another account, we reject it. If the user requests multiple codes before verifying, we invalidate the old one. And if any of the 3 database updates fail, the entire transaction rolls back to maintain consistency.</p>
+<p>></p>
+<p>> Result: the feature has been in production with zero security incidents, no unauthorized email changes, and users find it straightforward - the 10-minute window is long enough without being too lax."</p>
+
+<p>---</p>
+
+<h1>Quick Reference: Story → Question Mapping</h1>
+
+<p>| Interview Question | Use This Story |</p>
+<p>|-------------------|----------------|</p>
+<p>| Most impactful project | Story 1: $500k Revenue Loss |</p>
+<p>| Collaboration across teams | Story 2: Fraud Investigation |</p>
+<p>| Mentoring / Leadership | Story 3: Junior Developers |</p>
+<p>| Quality / Risk management | Story 4: 200+ Database Changes |</p>
+<p>| Technical implementation | Story 5: Email Verification |</p>
+<p>| Debugging complex issues | Story 1 or Story 2 |</p>
+<p>| Process improvement | Story 1 (RC-5 methodology) |</p>
+<p>| Building reusable tools | Story 2 (Fraud skill) |</p>
+<p>| Handling production incidents | Story 1 or Story 4 |</p>
+<p>| Security implementation | Story 5 |</p>
+
+<p>---</p>
+
+<h1>Practice Plan</h1>
+
+<strong>1 Week Before Interview:</strong>
+<p>- Read all 5 stories once per day (15 min/day)</p>
+<p>- Practice 2 stories out loud each day (10 min)</p>
+
+<strong>Day Before Interview:</strong>
+<p>- Practice all 5 stories once (30 min)</p>
+<p>- Record yourself telling 2-min versions (find gaps)</p>
+
+<strong>Day of Interview:</strong>
+<p>- Read all 5 stories once more (15 min)</p>
+<p>- Keep this document open during virtual interview</p>
+
+<strong>During Interview:</strong>
+<p>- Listen for trigger words: "time when", "example of", "describe a situation"</p>
+<p>- Pick the story that best matches the question</p>
+<p>- Tell 2-min version (Situation → Task → Action → Result)</p>
+<p>- If they ask for more detail, expand on the Action section</p>
+
+<p>---</p>
+
+<strong>You now have 5 battle-tested stories that answer 80% of behavioral questions!</strong> 🎯
+
+    </div>
+</body>
+</html>

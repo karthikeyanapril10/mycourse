@@ -1,0 +1,1423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mock_Interview_Questions</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 60px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .metadata {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 16px 24px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #666;
+            border-left: 4px solid #667eea;
+        }
+
+        /* PROGRESS TRACKER STYLES */
+        .progress-tracker {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .progress-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-stats {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .progress-percentage {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #764ba2;
+        }
+
+        .progress-bar-container {
+            height: 12px;
+            background: #e9ecef;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+            border-radius: 20px;
+        }
+
+        .reset-btn {
+            padding: 8px 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+
+        .reset-btn:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+        }
+
+        .progress-items {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .progress-items::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .progress-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .progress-item:hover {
+            background: #f8f9fa;
+            transform: translateX(5px);
+        }
+
+        .progress-item.completed {
+            opacity: 0.7;
+        }
+
+        .progress-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .progress-label {
+            cursor: pointer;
+            font-size: 0.95em;
+            line-height: 1.5;
+            color: #495057;
+            flex-grow: 1;
+        }
+
+        .progress-item.completed .progress-label {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .toggle-progress {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .toggle-progress:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .progress-items.collapsed {
+            display: none;
+        }
+
+        /* CONTENT STYLES */
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 4px solid #667eea;
+            font-weight: 700;
+        }
+
+        h2 {
+            color: #764ba2;
+            font-size: 2em;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        h3 {
+            color: #495057;
+            font-size: 1.5em;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        h4 {
+            color: #666;
+            font-size: 1.25em;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        ul, ol {
+            margin: 20px 0;
+            padding-left: 40px;
+        }
+
+        li {
+            margin-bottom: 12px;
+            line-height: 1.7;
+        }
+
+        code {
+            background: #f4f5f7;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #c7254e;
+            border: 1px solid #e1e4e8;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 24px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 25px 0;
+            border: 1px solid #444;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            border: none;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        blockquote {
+            border-left: 5px solid #667eea;
+            padding: 15px 25px;
+            margin: 25px 0;
+            background: #f8f9fa;
+            border-radius: 0 8px 8px 0;
+            color: #495057;
+            font-style: italic;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 30px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 14px 18px;
+            text-align: left;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tr:hover {
+            background: #e9ecef;
+            transition: background 0.2s;
+        }
+
+        a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px solid transparent;
+            transition: border-bottom 0.2s;
+        }
+
+        a:hover {
+            border-bottom: 1px solid #667eea;
+        }
+
+        hr {
+            border: none;
+            border-top: 2px solid #e9ecef;
+            margin: 40px 0;
+        }
+
+        strong {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        em {
+            color: #495057;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 25px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.6em;
+            }
+
+            .progress-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .progress-stats {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../navigation.html" class="back-link">&larr; Back to Navigation</a>
+
+        <div class="metadata">
+            <strong>Source:</strong> dev/Mock_Interview_Questions.md &nbsp;|&nbsp; <strong>Updated:</strong> 2026-11-18 19:44:56
+        </div>
+
+        <!-- PROGRESS TRACKER -->
+        <div class="progress-tracker">
+            <div class="progress-header">
+                <div class="progress-title">
+                    <span>📚</span>
+                    <span>Your Progress</span>
+                </div>
+                <div class="progress-stats">
+                    <span class="progress-percentage" id="progress-pct">0%</span>
+                    <button class="reset-btn" onclick="resetProgress()">Reset</button>
+                    <button class="toggle-progress" onclick="toggleProgressList()">▼ Hide</button>
+                </div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progress-bar" style="width: 0%"></div>
+            </div>
+            <div class="progress-items" id="progress-items">
+                <!-- Checkboxes will be generated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="content">
+<h1 id="mock-interview-questions">Mock Interview Questions</h1>
+<p><strong>Complete Interview Simulations for 12+ Years Senior Full-Stack Engineer</strong></p>
+<p><strong>How to Use:</strong> Set a timer, record yourself, answer WITHOUT looking at the answers first!</p>
+<hr />
+<h2 id="mock-interview-1-technical-phone-screen-45-minutes">🎤 <strong>Mock Interview #1: Technical Phone Screen (45 Minutes)</strong></h2>
+<p><strong>Format:</strong> One-on-one with technical recruiter or senior engineer<br />
+<strong>Goal:</strong> Assess technical depth on resume projects<br />
+<strong>Setup:</strong> Have paper + pen ready, IDE optional  </p>
+<hr />
+<h3 id="part-1-warm-up-5-minutes"><strong>Part 1: Warm-Up (5 minutes)</strong></h3>
+<p><strong>Q1:</strong> "Tell me about yourself — 2-minute pitch."</p>
+<p><strong>What they're looking for:</strong><br />
+- Concise career summary<br />
+- Highlights of key projects<br />
+- Why you're interested in THIS role<br />
+- Confidence and communication</p>
+<p><strong>Your Answer Template:</strong><br />
+"I'm a full-stack engineer with 12+ years of experience building scalable SaaS platforms. Most recently, I've worked on [Company]'s payment processing system serving 10,000+ customers. My expertise spans PHP/Laravel, Python/FastAPI, React.js, and AWS, with a focus on performance optimization and AI-first development.</p>
+<p>Highlights: I've architected a database sharding strategy handling 100M+ rows, implemented Redis caching that reduced database load by 80%, and built microservices serving 200+ downstream services with &lt;50ms response times. I also mentor junior developers and have resolved 500+ production incidents.</p>
+<p>I'm looking for a senior role where I can leverage my full-stack + AI skills to build impactful products at scale."</p>
+<p><strong>[2 minutes — STOP]</strong></p>
+<hr />
+<p><strong>Q2:</strong> "Great! Tell me about your most technically challenging project."</p>
+<p><strong>What they're looking for:</strong><br />
+- Technical depth<br />
+- Problem-solving approach<br />
+- Impact measurement<br />
+- Ownership</p>
+<p><strong>Your Answer (EIC Database Sharding):</strong><br />
+"The most challenging project was architecting the database sharding strategy for our customer payment portal, which served 10,000+ customers with 100M+ rows.</p>
+<p><strong>The Challenge:</strong> We had a monolithic MySQL database hitting performance limits — queries were taking 2-3 seconds, and we couldn't scale vertically anymore. We needed to shard by customer but maintain data integrity across features like multi-language support (12+ languages), sub-user delegation, and AutoPay workflows.</p>
+<p><strong>The Approach:</strong> I designed a Stack1/Stack2 sharding strategy:<br />
+1. Stack1 for high-volume customers (500K+ invoices/year)<br />
+2. Stack2 for all other customers<br />
+3. A routing layer in the application that determines which stack to query based on CustomerId<br />
+4. Redis caching for frequently accessed customer metadata</p>
+<p><strong>Technical Decisions:</strong><br />
+- Chose sharding over partitioning because we needed true write isolation (different MySQL instances, not just table partitions)<br />
+- Used consistent hashing for future-proof re-sharding<br />
+- Implemented connection pooling per stack to prevent connection exhaustion</p>
+<p><strong>Impact:</strong><br />
+- Query times dropped from 2-3 seconds to &lt;100ms (95%+ improvement)<br />
+- Supported 50% customer growth without infrastructure changes<br />
+- 99.9% uptime maintained during migration</p>
+<p><strong>What I Learned:</strong> Sharding is powerful but complex — you can't do cross-stack JOINs, so you need careful schema design. We also had to build tooling for database schema changes across both stacks simultaneously."</p>
+<p><strong>[3-4 minutes]</strong></p>
+<hr />
+<h3 id="part-2-deep-dive-on-resume-projects-25-minutes"><strong>Part 2: Deep Dive on Resume Projects (25 minutes)</strong></h3>
+<p><strong>Q3:</strong> "I see you built a Customer Settings Repository (CSR) serving 200+ microservices with &lt;50ms lookups. How did you achieve that performance?"</p>
+<p><strong>Expected Answer:</strong><br />
+"Three-layer caching strategy:<br />
+1. <strong>APCu (in-memory, application-level)</strong> — settings live in PHP's shared memory within the same process. TTL: 5 minutes. This handles ~95% of requests without leaving the application.<br />
+2. <strong>Redis (centralized cache)</strong> — when APCu misses, check Redis. TTL: 15 minutes. This handles multi-server invalidation and cross-service consistency.<br />
+3. <strong>MySQL (source of truth)</strong> — when Redis also misses, hit the database, then backfill both caches.</p>
+<p><strong>Why this works:</strong><br />
+- APCu eliminates network overhead (fastest)<br />
+- Redis handles distributed environments (shared across servers)<br />
+- MySQL only hit for cold starts or new settings</p>
+<p><strong>Cache invalidation:</strong> When a setting changes via the CSR admin UI:<br />
+1. Update MySQL<br />
+2. Increment a version number in Redis (<code>settings_version:&lt;customerId&gt;</code>)<br />
+3. Microservices check the version on each lookup; if mismatched, they invalidate their local APCu cache</p>
+<p><strong>Result:</strong> &lt;50ms p99 response time, with 95%+ cache hit rate at the APCu layer."</p>
+<p><strong>[2-3 minutes]</strong></p>
+<hr />
+<p><strong>Q4:</strong> "Your resume mentions an idempotency pattern that reduced duplicate charge disputes by 80%. Explain how that works."</p>
+<p><strong>Expected Answer:</strong><br />
+"This was for MPay (Managed Pay), where suppliers could initiate AutoPay charges on behalf of their customers.</p>
+<p><strong>The Problem:</strong> Network retries or user impatience (double-clicking 'Submit Payment') could cause duplicate charges. This led to disputes, refunds, and angry customers.</p>
+<p><strong>The Solution — Idempotency Keys:</strong><br />
+1. When a client initiates a payment request, they generate a unique <code>idempotency_key</code> (UUID).<br />
+2. The API stores this key in a <code>payment_requests</code> table with status <code>PROCESSING</code>.<br />
+3. If the same key arrives again (retry), the API:<br />
+   - Checks if a request with this key already exists<br />
+   - If status is <code>PROCESSING</code>: return 409 Conflict ("already processing")<br />
+   - If status is <code>COMPLETED</code>: return the original response (200 OK with transaction ID)<br />
+   - If status is <code>FAILED</code>: allow retry (treat as new request)</p>
+<p><strong>Implementation (PHP/Laravel):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">public function processPayment(Request $request)</span>
+<span class="x">{</span>
+<span class="x">    $idempotencyKey = $request-&gt;header('Idempotency-Key');</span>
+
+<span class="x">    // Check for existing request</span>
+<span class="x">    $existing = PaymentRequest::where('idempotency_key', $idempotencyKey)-&gt;first();</span>
+
+<span class="x">    if ($existing) {</span>
+<span class="x">        if ($existing-&gt;status === 'PROCESSING') {</span>
+<span class="x">            return response()-&gt;json(['error' =&gt; 'Request already processing'], 409);</span>
+<span class="x">        }</span>
+<span class="x">        if ($existing-&gt;status === 'COMPLETED') {</span>
+<span class="x">            return response()-&gt;json($existing-&gt;response_data, 200);</span>
+<span class="x">        }</span>
+<span class="x">    }</span>
+
+<span class="x">    // Create new request</span>
+<span class="x">    $paymentRequest = PaymentRequest::create([</span>
+<span class="x">        'idempotency_key' =&gt; $idempotencyKey,</span>
+<span class="x">        'status' =&gt; 'PROCESSING',</span>
+<span class="x">        'payload' =&gt; $request-&gt;all(),</span>
+<span class="x">    ]);</span>
+
+<span class="x">    // Process payment...</span>
+<span class="x">    $result = $this-&gt;gateway-&gt;charge($amount, $customerId);</span>
+
+<span class="x">    // Update status</span>
+<span class="x">    $paymentRequest-&gt;update([</span>
+<span class="x">        'status' =&gt; 'COMPLETED',</span>
+<span class="x">        'response_data' =&gt; $result,</span>
+<span class="x">    ]);</span>
+
+<span class="x">    return response()-&gt;json($result, 200);</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>Impact:</strong> Duplicate disputes dropped 80% (from ~100/month to ~20/month)."</p>
+<p><strong>[3-4 minutes]</strong></p>
+<hr />
+<p><strong>Q5:</strong> "You mentioned 'encrypted key authentication' for WCL (Web Communication Layer). What does that mean?"</p>
+<p><strong>Expected Answer:</strong><br />
+"WCL is an integration microservice that sits between our platform and third-party APIs (payment gateways, email services, etc.).</p>
+<p><strong>Security Requirement:</strong> We couldn't use OAuth for every integration (some partners only supported API keys), but we also couldn't store plaintext keys in the database (PCI-DSS compliance).</p>
+<p><strong>The Solution — Encrypted Key Authentication:</strong><br />
+1. <strong>Storage:</strong> API keys are encrypted using AES-256-GCM and stored in <code>integration_credentials</code> table<br />
+2. <strong>Encryption key:</strong> Stored in AWS Secrets Manager, never in code or database<br />
+3. <strong>Per-integration keys:</strong> Each integration has its own unique encryption key (key rotation doesn't affect all integrations)</p>
+<p><strong>Flow:</strong><br />
+1. Service requests integration to partner (e.g., charge a card via payment gateway)<br />
+2. WCL retrieves encrypted key from database<br />
+3. Decrypts it using the master key from Secrets Manager<br />
+4. Makes API call to partner with decrypted key<br />
+5. Key is immediately discarded from memory (never logged)</p>
+<p><strong>Key Rotation:</strong><br />
+1. Admin UI generates new integration key<br />
+2. Encrypt new key, store alongside old one (both valid during transition)<br />
+3. Expire old key after 30 days</p>
+<p><strong>Why this approach:</strong><br />
+- <strong>Compliance:</strong> Keys never stored in plaintext<br />
+- <strong>Auditability:</strong> Every key retrieval is logged (who, when, which integration)<br />
+- <strong>Rotation:</strong> Easy to rotate without downtime</p>
+<p><strong>Alternative considered:</strong> HashiCorp Vault (decided against it due to ops overhead for our small team)."</p>
+<p><strong>[3 minutes]</strong></p>
+<hr />
+<p><strong>Q6:</strong> "Walk me through how you'd debug a production API that's suddenly responding in 500ms instead of the usual 50ms."</p>
+<p><strong>Expected Answer:</strong><br />
+"I follow a systematic debugging process:</p>
+<p><strong>Step 1: Confirm the Scope (1-2 minutes)</strong><br />
+- <strong>Datadog APM:</strong> Check if it's all endpoints or just one<br />
+- <strong>Identify the spike:</strong> When did it start? Gradual or sudden?<br />
+- <strong>Customer impact:</strong> How many customers affected?</p>
+<p><strong>Step 2: Check Recent Changes (2 minutes)</strong><br />
+- <strong>Git log:</strong> Any recent deployments?<br />
+- <strong>Database changes:</strong> New migrations, schema changes?<br />
+- <strong>Infrastructure:</strong> Any AWS/server changes?<br />
+- <strong>Rollback if obvious:</strong> If a deployment caused it and no data corruption, rollback immediately</p>
+<p><strong>Step 3: Identify the Bottleneck (5-10 minutes)</strong><br />
+- <strong>Datadog traces:</strong> Drill into slow requests, see which span takes longest (database? external API? Redis?)<br />
+- <strong>Database:</strong><br />
+  - Run <code>SHOW PROCESSLIST</code> — are queries queued?<br />
+  - Run <code>EXPLAIN</code> on slow queries — missing index?<br />
+  - Check <code>slow_query_log</code> for new patterns<br />
+- <strong>Redis:</strong><br />
+  - Check <code>INFO stats</code> — is memory full? Keys being evicted?<br />
+  - Check latency with <code>LATENCY DOCTOR</code><br />
+- <strong>External APIs:</strong><br />
+  - Check partner status pages<br />
+  - Check network latency (AWS CloudWatch)</p>
+<p><strong>Step 4: Mitigation (immediate fix, 5 minutes)</strong><br />
+- <strong>If database:</strong> Add missing index, kill long-running queries<br />
+- <strong>If Redis:</strong> Increase memory, adjust TTL, clear unnecessary keys<br />
+- <strong>If external API:</strong> Implement timeout + circuit breaker, return cached response</p>
+<p><strong>Step 5: Permanent Fix (after immediate mitigation)</strong><br />
+- <strong>Write post-mortem:</strong> Root cause, timeline, permanent fix<br />
+- <strong>Add monitoring:</strong> Alert if p99 latency &gt; 100ms<br />
+- <strong>Load testing:</strong> Reproduce the issue in staging, verify fix</p>
+<p><strong>Real Example (from my experience):</strong><br />
+- Symptoms: API response time 500ms (usually 50ms)<br />
+- Found: A new query was doing a full table scan on 100M rows<br />
+- Cause: Developer added <code>WHERE status IN ('pending', 'processing')</code> but <code>status</code> column had no index<br />
+- Fix: Added composite index on (<code>customer_id</code>, <code>status</code>, <code>created_at</code>) → back to 45ms<br />
+- Permanent: Added automated EXPLAIN analysis in CI to catch missing indexes before prod."</p>
+<p><strong>[5 minutes]</strong></p>
+<hr />
+<h3 id="part-3-technical-skills-10-minutes"><strong>Part 3: Technical Skills (10 minutes)</strong></h3>
+<p><strong>Q7:</strong> "What's the difference between MySQL and PostgreSQL, and when would you choose one over the other?"</p>
+<p><strong>Expected Answer:</strong><br />
+"Both are excellent relational databases, but they have different strengths:</p>
+<p><strong>MySQL:</strong><br />
+- <strong>Strengths:</strong> Simpler, faster for read-heavy workloads, excellent replication (master-slave)<br />
+- <strong>Use when:</strong> You need high read throughput, simple transactions, wide ecosystem (AWS RDS, PlanetScale)<br />
+- <strong>Example:</strong> Our customer portal (EIC) uses MySQL because 90% of queries are reads (invoices, accounts)</p>
+<p><strong>PostgreSQL:</strong><br />
+- <strong>Strengths:</strong> Advanced features (JSONB, full-text search, window functions), better for complex queries, ACID-compliant<br />
+- <strong>Use when:</strong> You need complex queries, full-text search, geospatial data, or strict ACID compliance<br />
+- <strong>Example:</strong> If I were building a reporting/analytics platform with complex aggregations, I'd pick Postgres</p>
+<p><strong>Key Differences:</strong><br />
+| Feature | MySQL | PostgreSQL |<br />
+|---|---|---|<br />
+| Performance | Faster reads | Faster complex queries |<br />
+| JSON Support | JSON (text-based) | JSONB (binary, indexed) |<br />
+| Full-Text Search | Basic | Advanced (tsvector) |<br />
+| Transactions | Good | Excellent (true MVCC) |<br />
+| Replication | Built-in (simple) | Built-in (advanced) |</p>
+<p><strong>MongoDB (NoSQL):</strong><br />
+- <strong>Use when:</strong> Schema-less data, horizontal scaling, document-oriented (logs, events, session data)<br />
+- <strong>Example:</strong> Our incident tracker stores RCA notes as MongoDB documents (flexible schema, fast writes)</p>
+<p><strong>My default:</strong> MySQL for OLTP (online transaction processing), PostgreSQL for OLAP (analytics), MongoDB for schema-less data."</p>
+<p><strong>[3 minutes]</strong></p>
+<hr />
+<p><strong>Q8:</strong> "Explain how you'd implement a circuit breaker for an external API call."</p>
+<p><strong>Expected Answer:</strong><br />
+"A circuit breaker prevents cascading failures when an external service is down or slow.</p>
+<p><strong>Three States:</strong><br />
+1. <strong>CLOSED</strong> (normal): Requests pass through. If failures exceed threshold (e.g., 5 failures in 10 seconds), open the circuit.<br />
+2. <strong>OPEN</strong> (failing): All requests fail immediately without calling the external API. After a timeout (e.g., 30 seconds), transition to HALF_OPEN.<br />
+3. <strong>HALF_OPEN</strong> (testing): Allow one request through. If it succeeds, close the circuit. If it fails, reopen.</p>
+<p><strong>Implementation (PHP with Redis):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">class CircuitBreaker</span>
+<span class="x">{</span>
+<span class="x">    private $redis;</span>
+<span class="x">    private $serviceName;</span>
+<span class="x">    private $failureThreshold = 5;</span>
+<span class="x">    private $timeout = 30; // seconds</span>
+
+<span class="x">    public function call(callable $action)</span>
+<span class="x">    {</span>
+<span class="x">        $state = $this-&gt;getState();</span>
+
+<span class="x">        if ($state === 'OPEN') {</span>
+<span class="x">            if ($this-&gt;shouldAttemptReset()) {</span>
+<span class="x">                $this-&gt;setState('HALF_OPEN');</span>
+<span class="x">            } else {</span>
+<span class="x">                throw new CircuitOpenException("Circuit breaker is OPEN");</span>
+<span class="x">            }</span>
+<span class="x">        }</span>
+
+<span class="x">        try {</span>
+<span class="x">            $result = $action();</span>
+<span class="x">            $this-&gt;onSuccess();</span>
+<span class="x">            return $result;</span>
+<span class="x">        } catch (Exception $e) {</span>
+<span class="x">            $this-&gt;onFailure();</span>
+<span class="x">            throw $e;</span>
+<span class="x">        }</span>
+<span class="x">    }</span>
+
+<span class="x">    private function onSuccess()</span>
+<span class="x">    {</span>
+<span class="x">        $this-&gt;redis-&gt;del("circuit:{$this-&gt;serviceName}:failures");</span>
+<span class="x">        $this-&gt;setState('CLOSED');</span>
+<span class="x">    }</span>
+
+<span class="x">    private function onFailure()</span>
+<span class="x">    {</span>
+<span class="x">        $failures = $this-&gt;redis-&gt;incr("circuit:{$this-&gt;serviceName}:failures");</span>
+<span class="x">        $this-&gt;redis-&gt;expire("circuit:{$this-&gt;serviceName}:failures", 10);</span>
+
+<span class="x">        if ($failures &gt;= $this-&gt;failureThreshold) {</span>
+<span class="x">            $this-&gt;setState('OPEN');</span>
+<span class="x">            $this-&gt;redis-&gt;setex("circuit:{$this-&gt;serviceName}:opened_at", 60, time());</span>
+<span class="x">        }</span>
+<span class="x">    }</span>
+
+<span class="x">    private function shouldAttemptReset()</span>
+<span class="x">    {</span>
+<span class="x">        $openedAt = $this-&gt;redis-&gt;get("circuit:{$this-&gt;serviceName}:opened_at");</span>
+<span class="x">        return $openedAt &amp;&amp; (time() - $openedAt) &gt;= $this-&gt;timeout;</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>Usage:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">$circuitBreaker = new CircuitBreaker($redis, 'payment_gateway');</span>
+
+<span class="x">try {</span>
+<span class="x">    $response = $circuitBreaker-&gt;call(function() {</span>
+<span class="x">        return $this-&gt;paymentGateway-&gt;charge($amount);</span>
+<span class="x">    });</span>
+<span class="x">} catch (CircuitOpenException $e) {</span>
+<span class="x">    // Return cached response or fallback</span>
+<span class="x">    return $this-&gt;getCachedPaymentStatus();</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>Benefit:</strong> When the payment gateway is down, we fail fast (instead of waiting 30 seconds for timeout on every request), preventing cascading failures."</p>
+<p><strong>[3-4 minutes]</strong></p>
+<hr />
+<h3 id="part-4-wrap-up-5-minutes"><strong>Part 4: Wrap-Up (5 minutes)</strong></h3>
+<p><strong>Q9:</strong> "Do you have any questions for me?"</p>
+<p><strong>What they're looking for:</strong><br />
+- Interest in the role<br />
+- Understanding of the company<br />
+- Thoughtful, specific questions</p>
+<p><strong>Good Questions to Ask:</strong><br />
+1. <strong>Technical:</strong> "What's your tech stack, and what are the biggest technical challenges right now?"<br />
+2. <strong>Team:</strong> "Tell me about the team I'd be working with — how many engineers, what's the experience mix?"<br />
+3. <strong>Growth:</strong> "What does success look like for this role in the first 6 months?"<br />
+4. <strong>Culture:</strong> "How do you balance technical debt with new feature development?"<br />
+5. <strong>Impact:</strong> "What would be my first project, and how does it align with the company's goals?"</p>
+<p><strong>[Pick 3-4 questions]</strong></p>
+<hr />
+<p><strong>[END OF MOCK INTERVIEW #1 — Total: 45 minutes]</strong></p>
+<p><strong>Self-Assessment Checklist:</strong><br />
+- [ ] 2-minute intro was concise and confident<br />
+- [ ] Explained technical depth with code/architecture details<br />
+- [ ] Used metrics (40%, 80%, 500ms → 50ms)<br />
+- [ ] Answered within time limits<br />
+- [ ] Asked thoughtful questions at the end</p>
+<hr />
+<h2 id="mock-interview-2-system-design-60-minutes">🎨 <strong>Mock Interview #2: System Design (60 Minutes)</strong></h2>
+<p><strong>Format:</strong> Whiteboard/diagram-based interview<br />
+<strong>Goal:</strong> Design a scalable system from scratch<br />
+<strong>Setup:</strong> Whiteboard, markers OR online tool (Excalidraw, draw.io)  </p>
+<hr />
+<h3 id="the-question"><strong>The Question:</strong></h3>
+<p><strong>"Design a URL shortener service like bit.ly that can handle 100 million URLs and 1 billion clicks per month."</strong></p>
+<hr />
+<h3 id="part-1-clarify-requirements-5-minutes"><strong>Part 1: Clarify Requirements (5 minutes)</strong></h3>
+<p><strong>What they're looking for:</strong> You ask clarifying questions, not jump straight to design.</p>
+<p><strong>Questions to Ask:</strong><br />
+1. <strong>Functional Requirements:</strong><br />
+   - Should users be able to customize their short URLs?<br />
+   - Do we need analytics (click tracking, geographic data)?<br />
+   - Is there an expiration time for URLs?</p>
+<ol start="2">
+<li>
+<p><strong>Non-Functional Requirements:</strong><br />
+   - What's the read:write ratio? (assume 100:1 — 1B clicks, 10M new URLs)<br />
+   - What's the latency requirement? (&lt;100ms?)<br />
+   - What's the availability requirement? (99.9%?)</p>
+</li>
+<li>
+<p><strong>Scale:</strong><br />
+   - 100 million URLs total<br />
+   - 1 billion clicks/month = ~400 clicks/second<br />
+   - Peak traffic (10x) = 4000 clicks/second</p>
+</li>
+</ol>
+<p><strong>[Write these down on whiteboard]</strong></p>
+<hr />
+<h3 id="part-2-high-level-design-10-minutes"><strong>Part 2: High-Level Design (10 minutes)</strong></h3>
+<p><strong>Components:</strong><br />
+1. <strong>API Gateway</strong> (rate limiting, authentication)<br />
+2. <strong>URL Shortening Service</strong> (generate short URL)<br />
+3. <strong>Redirect Service</strong> (resolve short URL → long URL)<br />
+4. <strong>Database</strong> (store mappings)<br />
+5. <strong>Cache</strong> (Redis for hot URLs)<br />
+6. <strong>Analytics Service</strong> (track clicks)</p>
+<p><strong>Diagram:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="p">[</span><span class="n">Client</span><span class="p">]</span><span class="w"> </span>
+<span class="w">   </span><span class="o">|</span>
+<span class="w">   </span><span class="n">v</span>
+<span class="p">[</span><span class="n">Load</span><span class="w"> </span><span class="n">Balancer</span><span class="p">]</span>
+<span class="w">   </span><span class="o">|</span>
+<span class="w">   </span><span class="o">+---&gt;</span><span class="w"> </span><span class="p">[</span><span class="n">API</span><span class="w"> </span><span class="n">Gateway</span><span class="p">]</span><span class="w"> </span><span class="o">---&gt;</span><span class="w"> </span><span class="p">[</span><span class="n">URL</span><span class="w"> </span><span class="n">Shortening</span><span class="w"> </span><span class="n">Service</span><span class="p">]</span><span class="w"> </span><span class="o">---&gt;</span><span class="w"> </span><span class="p">[</span><span class="n">MySQL</span><span class="p">]</span>
+<span class="w">   </span><span class="o">|</span>
+<span class="w">   </span><span class="o">+---&gt;</span><span class="w"> </span><span class="p">[</span><span class="n">Redirect</span><span class="w"> </span><span class="n">Service</span><span class="p">]</span><span class="w"> </span><span class="o">---&gt;</span><span class="w"> </span><span class="p">[</span><span class="n">Redis</span><span class="w"> </span><span class="n">Cache</span><span class="p">]</span><span class="w"> </span><span class="o">---&gt;</span><span class="w"> </span><span class="p">[</span><span class="n">MySQL</span><span class="p">]</span>
+<span class="w">                                       </span><span class="o">|</span>
+<span class="w">                                       </span><span class="n">v</span>
+<span class="w">                                 </span><span class="p">[</span><span class="n">Analytics</span><span class="w"> </span><span class="n">Service</span><span class="p">]</span><span class="w"> </span><span class="o">---&gt;</span><span class="w"> </span><span class="p">[</span><span class="n">Kafka</span><span class="o">/</span><span class="n">Queue</span><span class="p">]</span>
+</code></pre></div>
+
+<p><strong>[Draw this on whiteboard]</strong></p>
+<hr />
+<h3 id="part-3-deep-dive-30-minutes"><strong>Part 3: Deep Dive (30 minutes)</strong></h3>
+<p><strong>Interviewer:</strong> "How do you generate the short URL?"</p>
+<p><strong>Your Answer:</strong><br />
+"Two approaches:</p>
+<p><strong>Approach 1: Hash-Based (MD5 + Base62)</strong><br />
+1. Take long URL: <code>https://example.com/article/12345</code><br />
+2. Hash it: <code>MD5(url)</code> → <code>a1b2c3d4e5f6g7h8...</code><br />
+3. Take first 7 characters → <code>a1b2c3d</code><br />
+4. Encode in Base62 (a-z, A-Z, 0-9) → <code>a1B2c3D</code></p>
+<p><strong>Pros:</strong><br />
+- Same URL always gets same short code (idempotent)<br />
+- Fast</p>
+<p><strong>Cons:</strong><br />
+- Collision risk (two URLs hash to same code)<br />
+- Need collision handling (append counter, rehash)</p>
+<p><strong>Approach 2: Counter-Based (Auto-increment + Base62)</strong><br />
+1. Use MySQL auto-increment ID: <code>12345</code><br />
+2. Convert to Base62: <code>12345</code> → <code>dnh</code> (3 characters)<br />
+3. Pad to 7 characters: <code>0000dnh</code></p>
+<p><strong>Pros:</strong><br />
+- No collisions<br />
+- Shorter codes for recent URLs</p>
+<p><strong>Cons:</strong><br />
+- Predictable (security concern if URLs are private)<br />
+- Need distributed counter (Zookeeper/Redis)</p>
+<p><strong>My Choice:</strong> Counter-based with Base62 encoding, using Redis INCR for distributed counter.</p>
+<p><strong>Code (PHP):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">class URLShortener</span>
+<span class="x">{</span>
+<span class="x">    private $base62 = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';</span>
+
+<span class="x">    public function encode($id)</span>
+<span class="x">    {</span>
+<span class="x">        if ($id == 0) return $this-&gt;base62[0];</span>
+
+<span class="x">        $short = '';</span>
+<span class="x">        while ($id &gt; 0) {</span>
+<span class="x">            $short = $this-&gt;base62[$id % 62] . $short;</span>
+<span class="x">            $id = floor($id / 62);</span>
+<span class="x">        }</span>
+<span class="x">        return str_pad($short, 7, '0', STR_PAD_LEFT);</span>
+<span class="x">    }</span>
+
+<span class="x">    public function decode($short)</span>
+<span class="x">    {</span>
+<span class="x">        $id = 0;</span>
+<span class="x">        $len = strlen($short);</span>
+<span class="x">        for ($i = 0; $i &lt; $len; $i++) {</span>
+<span class="x">            $id = $id * 62 + strpos($this-&gt;base62, $short[$i]);</span>
+<span class="x">        }</span>
+<span class="x">        return $id;</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>[Write this on whiteboard]</strong></p>
+<hr />
+<p><strong>Interviewer:</strong> "How do you handle caching for 1 billion redirects/month?"</p>
+<p><strong>Your Answer:</strong><br />
+"<strong>Caching Strategy:</strong><br />
+1. <strong>Hot URLs (Pareto principle):</strong> 20% of URLs get 80% of traffic<br />
+2. <strong>Redis Cache:</strong> Store top 1 million URLs in Redis (LRU eviction)<br />
+3. <strong>TTL:</strong> 24 hours (refresh daily)</p>
+<p><strong>Cache-Aside Pattern:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">public function redirect($shortCode)</span>
+<span class="x">{</span>
+<span class="x">    // 1. Check Redis cache</span>
+<span class="x">    $longUrl = $this-&gt;redis-&gt;get("url:$shortCode");</span>
+
+<span class="x">    if ($longUrl) {</span>
+<span class="x">        $this-&gt;logClick($shortCode, 'cache_hit');</span>
+<span class="x">        return redirect($longUrl);</span>
+<span class="x">    }</span>
+
+<span class="x">    // 2. Cache miss — query database</span>
+<span class="x">    $mapping = DB::table('url_mappings')</span>
+<span class="x">        -&gt;where('short_code', $shortCode)</span>
+<span class="x">        -&gt;first();</span>
+
+<span class="x">    if (!$mapping) {</span>
+<span class="x">        return response('Not Found', 404);</span>
+<span class="x">    }</span>
+
+<span class="x">    // 3. Backfill cache</span>
+<span class="x">    $this-&gt;redis-&gt;setex("url:$shortCode", 86400, $mapping-&gt;long_url);</span>
+
+<span class="x">    $this-&gt;logClick($shortCode, 'cache_miss');</span>
+<span class="x">    return redirect($mapping-&gt;long_url);</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>Cache Hit Ratio:</strong> 95%+ (1B requests × 95% = 950M served from cache, only 50M hit database)</p>
+<p><strong>Database Load:</strong> 50M requests/month ÷ 30 days ÷ 86400 seconds = ~20 reads/second (very light)</p>
+<p><strong>[Write this calculation on whiteboard]</strong>"</p>
+<hr />
+<p><strong>Interviewer:</strong> "What's your database schema?"</p>
+<p><strong>Your Answer:</strong><br />
+"Two tables:</p>
+<p><strong>Table 1: <code>url_mappings</code></strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">url_mappings</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="nb">BIGINT</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="n">AUTO_INCREMENT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">short_code</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="w"> </span><span class="k">UNIQUE</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span>
+<span class="w">    </span><span class="n">long_url</span><span class="w"> </span><span class="nb">TEXT</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span>
+<span class="w">    </span><span class="n">user_id</span><span class="w"> </span><span class="nb">BIGINT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">created_at</span><span class="w"> </span><span class="k">TIMESTAMP</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="k">CURRENT_TIMESTAMP</span><span class="p">,</span>
+<span class="w">    </span><span class="n">expires_at</span><span class="w"> </span><span class="k">TIMESTAMP</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span>
+<span class="w">    </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_short_code</span><span class="w"> </span><span class="p">(</span><span class="n">short_code</span><span class="p">),</span>
+<span class="w">    </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_user_id</span><span class="w"> </span><span class="p">(</span><span class="n">user_id</span><span class="p">)</span>
+<span class="p">);</span>
+</code></pre></div>
+
+<p><strong>Table 2: <code>click_analytics</code></strong> (write-heavy, separate DB)</p>
+<div class="codehilite"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">click_analytics</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="nb">BIGINT</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="n">AUTO_INCREMENT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">short_code</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span>
+<span class="w">    </span><span class="n">clicked_at</span><span class="w"> </span><span class="k">TIMESTAMP</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="k">CURRENT_TIMESTAMP</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ip_address</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">45</span><span class="p">),</span>
+<span class="w">    </span><span class="n">user_agent</span><span class="w"> </span><span class="nb">TEXT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">referrer</span><span class="w"> </span><span class="nb">TEXT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">country</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span>
+<span class="w">    </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_short_code_time</span><span class="w"> </span><span class="p">(</span><span class="n">short_code</span><span class="p">,</span><span class="w"> </span><span class="n">clicked_at</span><span class="p">)</span>
+<span class="p">);</span>
+</code></pre></div>
+
+<p><strong>Partitioning:</strong> Partition <code>click_analytics</code> by month (1B rows/month):</p>
+<div class="codehilite"><pre><span></span><code><span class="n">PARTITION</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">RANGE</span><span class="w"> </span><span class="p">(</span><span class="n">TO_DAYS</span><span class="p">(</span><span class="n">clicked_at</span><span class="p">))</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="n">PARTITION</span><span class="w"> </span><span class="n">p202611</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="k">LESS</span><span class="w"> </span><span class="k">THAN</span><span class="w"> </span><span class="p">(</span><span class="n">TO_DAYS</span><span class="p">(</span><span class="s1">'2026-12-01'</span><span class="p">)),</span>
+<span class="w">    </span><span class="n">PARTITION</span><span class="w"> </span><span class="n">p202612</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="k">LESS</span><span class="w"> </span><span class="k">THAN</span><span class="w"> </span><span class="p">(</span><span class="n">TO_DAYS</span><span class="p">(</span><span class="s1">'2027-01-01'</span><span class="p">)),</span>
+<span class="w">    </span><span class="p">...</span>
+<span class="p">);</span>
+</code></pre></div>
+
+<p><strong>Why separate tables:</strong><br />
+- <code>url_mappings</code>: read-heavy, needs fast lookups<br />
+- <code>click_analytics</code>: write-heavy, can tolerate async writes (via Kafka queue)</p>
+<p><strong>[Draw schema on whiteboard]</strong>"</p>
+<hr />
+<p><strong>Interviewer:</strong> "How do you scale to handle peak traffic (10x normal)?"</p>
+<p><strong>Your Answer:</strong><br />
+"<strong>Horizontal Scaling:</strong><br />
+1. <strong>Stateless services:</strong> All services (Shortening, Redirect) are stateless → can scale horizontally<br />
+2. <strong>Load balancer:</strong> AWS ALB distributes traffic across N instances<br />
+3. <strong>Auto-scaling:</strong> CloudWatch triggers scale-up when CPU &gt; 70%</p>
+<p><strong>Database Scaling:</strong><br />
+1. <strong>Read replicas:</strong> 5 read replicas for redirects (read-heavy)<br />
+2. <strong>Write to master:</strong> URL creation goes to master only<br />
+3. <strong>Connection pooling:</strong> Limit connections per instance (avoid exhausting MySQL)</p>
+<p><strong>Redis Scaling:</strong><br />
+1. <strong>Redis Cluster:</strong> Shard across 10 nodes (100M URLs ÷ 10 = 10M per node)<br />
+2. <strong>Replication:</strong> Each shard has 1 replica (failover)</p>
+<p><strong>Analytics (async):</strong><br />
+1. <strong>Kafka queue:</strong> Redirect service publishes click event to Kafka<br />
+2. <strong>Consumer:</strong> Separate service consumes from Kafka and batch-inserts into <code>click_analytics</code> (1000 rows/batch)<br />
+3. <strong>Benefit:</strong> Redirect service doesn't wait for analytics write (faster response)</p>
+<p><strong>Capacity Planning:</strong><br />
+- Normal: 400 redirects/second<br />
+- Peak (10x): 4000 redirects/second<br />
+- Each instance handles 200 req/sec → need 20 instances at peak<br />
+- Auto-scaling range: 5 (min) to 25 (max)</p>
+<p><strong>[Draw scaling diagram on whiteboard]</strong>"</p>
+<hr />
+<h3 id="part-4-trade-offs-follow-ups-10-minutes"><strong>Part 4: Trade-offs &amp; Follow-ups (10 minutes)</strong></h3>
+<p><strong>Interviewer:</strong> "What if you need to delete a URL? How does caching affect this?"</p>
+<p><strong>Your Answer:</strong><br />
+"<strong>Problem:</strong> If a URL is deleted from the database but still cached in Redis, users can still access it for up to 24 hours (TTL).</p>
+<p><strong>Solutions:</strong><br />
+1. <strong>Cache invalidation on delete:</strong><br />
+<code>php
+   public function deleteURL($shortCode)
+   {
+       DB::table('url_mappings')-&gt;where('short_code', $shortCode)-&gt;delete();
+       $this-&gt;redis-&gt;del("url:$shortCode"); // Invalidate cache
+   }</code><br />
+2. <strong>Soft delete:</strong> Add <code>deleted_at</code> column, check it on redirect:<br />
+<code>php
+   if ($mapping-&gt;deleted_at) {
+       return response('URL has been deleted', 410);
+   }</code></p>
+<p><strong>Trade-off:</strong> Soft delete is safer (can restore) but adds DB query overhead. I'd choose soft delete."</p>
+<hr />
+<p><strong>Interviewer:</strong> "How do you prevent abuse (spam, malicious URLs)?"</p>
+<p><strong>Your Answer:</strong><br />
+"<strong>Rate Limiting:</strong><br />
+1. <strong>Per IP:</strong> 10 URL creations/hour (Redis counter)<br />
+2. <strong>Per User:</strong> 100 URL creations/day (authenticated users)</p>
+<p><strong>Malicious URL Detection:</strong><br />
+1. <strong>Blacklist check:</strong> Query Google Safe Browsing API before creating short URL<br />
+2. <strong>User reports:</strong> Add "Report Abuse" button, manual review queue</p>
+<p><strong>CAPTCHA:</strong> Require CAPTCHA after 5 URL creations from same IP in 10 minutes.</p>
+<p><strong>Code:</strong><br />
+```php<br />
+public function createURL(Request $request)<br />
+{<br />
+    $ip = $request-&gt;ip();<br />
+    $key = "rate_limit:$ip";</p>
+<div class="codehilite"><pre><span></span><code><span class="nv">$count</span> = <span class="nv">$this-</span>&gt;<span class="n">redis-</span>&gt;<span class="n">incr</span>(<span class="nv">$key</span>);
+<span class="nv">$this-</span>&gt;<span class="n">redis-</span>&gt;<span class="n">expire</span>(<span class="nv">$key</span>, <span class="mi">3600</span>); // <span class="mi">1</span> <span class="nb">hour</span>
+
+<span class="k">if</span> (<span class="nv">$count</span> &gt; <span class="mi">10</span>) {
+    <span class="k">return</span> <span class="n">response</span>(<span class="s">'Rate limit exceeded'</span>, <span class="mi">429</span>);
+}
+
+// <span class="n">Check</span> <span class="n">blacklist</span>
+<span class="k">if</span> (<span class="nv">$this-</span>&gt;<span class="n">isBlacklisted</span>(<span class="nv">$request-</span>&gt;<span class="n">input</span>(<span class="s">'long_url'</span>))) {
+    <span class="k">return</span> <span class="n">response</span>(<span class="s">'URL is malicious'</span>, <span class="mi">403</span>);
+}
+
+// <span class="n">Create</span> <span class="n">short</span> <span class="n">URL</span>...
+</code></pre></div>
+
+<p>}<br />
+```"</p>
+<hr />
+<h3 id="part-5-wrap-up-5-minutes"><strong>Part 5: Wrap-Up (5 minutes)</strong></h3>
+<p><strong>Interviewer:</strong> "Any questions for me?"</p>
+<p><strong>Your Questions:</strong><br />
+1. "What's the current scale of your URL shortener (or similar service)?"<br />
+2. "How do you handle database migrations at this scale?"<br />
+3. "What monitoring/alerting tools do you use?"</p>
+<hr />
+<p><strong>[END OF MOCK INTERVIEW #2 — Total: 60 minutes]</strong></p>
+<p><strong>Self-Assessment Checklist:</strong><br />
+- [ ] Asked clarifying questions first (requirements, scale)<br />
+- [ ] Drew clear diagrams (components, data flow)<br />
+- [ ] Explained trade-offs (hash vs counter, cache TTL)<br />
+- [ ] Calculated capacity (requests/second, storage)<br />
+- [ ] Discussed scaling, caching, database design<br />
+- [ ] Addressed follow-up questions (delete, abuse)</p>
+<hr />
+<h2 id="mock-interview-3-behavioral-leadership-60-minutes">🎭 <strong>Mock Interview #3: Behavioral + Leadership (60 Minutes)</strong></h2>
+<p><strong>Format:</strong> Conversational, STAR format answers<br />
+<strong>Goal:</strong> Assess leadership, communication, problem-solving  </p>
+<hr />
+<h3 id="part-1-leadership-20-minutes"><strong>Part 1: Leadership (20 minutes)</strong></h3>
+<p><strong>Q1:</strong> "Tell me about a time you mentored a junior developer. What was the outcome?"</p>
+<p><strong>STAR Answer Template:</strong><br />
+- <strong>Situation:</strong> Junior developer X joined our team, fresh out of bootcamp<br />
+- <strong>Task:</strong> I was assigned to mentor them for 3 months<br />
+- <strong>Action:</strong> <br />
+  1. Created a 30/60/90-day onboarding plan<br />
+  2. Weekly 1-on-1s to review code and answer questions<br />
+  3. Pair programming sessions on complex features<br />
+  4. Assigned progressively harder tasks (bug fixes → features → system design)<br />
+- <strong>Result:</strong> <br />
+  - By month 3, they shipped a full feature independently<br />
+  - They're now mentoring another junior developer<br />
+  - Team velocity increased 20% (less bottleneck on senior devs)</p>
+<p><strong>[2-3 minutes]</strong></p>
+<hr />
+<p><strong>Q2:</strong> "Describe a time when you disagreed with your manager's technical decision. How did you handle it?"</p>
+<p><strong>STAR Answer:</strong><br />
+- <strong>Situation:</strong> Manager wanted to migrate our entire API from PHP to Node.js to "modernize"<br />
+- <strong>Task:</strong> I believed the migration would take 6 months and provide minimal benefit<br />
+- <strong>Action:</strong><br />
+  1. <strong>Gathered data:</strong> Measured current API performance (p99: 45ms), error rate (0.01%), uptime (99.9%)<br />
+  2. <strong>Identified the real problem:</strong> Manager's concern was hiring (harder to find PHP devs)<br />
+  3. <strong>Proposed alternative:</strong> Keep PHP, invest in training + better documentation, hire mid-level devs and upskill them<br />
+  4. <strong>Presented a 1-pager:</strong> Cost comparison (migration: 6 months + risk vs training: 1 month + low risk)<br />
+- <strong>Result:</strong><br />
+  - Manager agreed to the alternative<br />
+  - We hired 2 mid-level PHP devs, trained them in 1 month<br />
+  - Avoided 6-month migration, kept shipping features</p>
+<p><strong>Key Lesson:</strong> Disagree with data, not emotion. Propose alternatives, don't just say "no."</p>
+<p><strong>[3 minutes]</strong></p>
+<hr />
+<p><strong>Q3:</strong> "Tell me about a time you had to make a difficult technical decision with incomplete information."</p>
+<p><strong>STAR Answer:</strong><br />
+- <strong>Situation:</strong> Production database was at 85% capacity, needed to scale soon, but we didn't know if sharding or vertical scaling was better<br />
+- <strong>Task:</strong> Make a decision within 1 week (before hitting 90% and triggering performance issues)<br />
+- <strong>Action:</strong><br />
+  1. <strong>Analyzed current usage:</strong> 80% reads, 20% writes → read-heavy<br />
+  2. <strong>Prototyped both:</strong><br />
+     - Vertical scaling: Upgraded staging DB from r5.4xlarge to r5.8xlarge, ran load tests<br />
+     - Sharding: Implemented routing layer in staging, tested with 20% of traffic<br />
+  3. <strong>Measured trade-offs:</strong><br />
+     - Vertical: Faster to implement (1 week), but limited (can only go up to r5.24xlarge)<br />
+     - Sharding: Slower to implement (1 month), but unlimited horizontal scaling<br />
+  4. <strong>Decision:</strong> Vertical scaling now (immediate relief), plan sharding for Q2 (long-term)<br />
+- <strong>Result:</strong><br />
+  - Bought 6 months of runway with vertical scaling<br />
+  - Implemented sharding in Q2 without pressure<br />
+  - Maintained 99.9% uptime throughout</p>
+<p><strong>Key Lesson:</strong> When uncertain, buy time with the fastest solution, then implement the right solution later.</p>
+<p><strong>[3-4 minutes]</strong></p>
+<hr />
+<h3 id="part-2-problem-solving-20-minutes"><strong>Part 2: Problem-Solving (20 minutes)</strong></h3>
+<p><strong>Q4:</strong> "Tell me about the most challenging production incident you've handled."</p>
+<p><strong>STAR Answer:</strong><br />
+- <strong>Situation:</strong> 2 AM, PagerDuty alert: "API error rate spiked to 50%"<br />
+- <strong>Task:</strong> Identify root cause and restore service ASAP<br />
+- <strong>Action (Timeline):</strong><br />
+  - <strong>2:00 AM:</strong> Got alert, jumped on laptop<br />
+  - <strong>2:05 AM:</strong> Checked Datadog → Redis latency spiked from 2ms to 500ms<br />
+  - <strong>2:08 AM:</strong> SSH'd into Redis server → <code>INFO memory</code> showed memory at 100% (evicting keys)<br />
+  - <strong>2:10 AM:</strong> Root cause identified: A recent code deploy started caching entire invoice PDFs (10 MB each) in Redis instead of just metadata<br />
+  - <strong>2:12 AM:</strong> Immediate mitigation: Flushed Redis (<code>FLUSHDB</code>), API error rate dropped to 0%<br />
+  - <strong>2:15 AM:</strong> Rolled back the bad deployment<br />
+  - <strong>2:30 AM:</strong> Service fully restored, wrote incident report</p>
+<ul>
+<li><strong>Result:</strong></li>
+<li><strong>Downtime:</strong> 15 minutes</li>
+<li><strong>Impact:</strong> 1,000 failed requests (out of 100,000 that hour)</li>
+<li><strong>Root cause:</strong> Code review missed the caching change (PDF instead of metadata)</li>
+<li><strong>Permanent fix:</strong> <ol>
+<li>Added Redis memory alerts (&gt; 80% → warning, &gt; 90% → critical)</li>
+<li>Added code review checklist item: "What are you caching, and what's the size?"</li>
+<li>Added automated test: Fail CI if any cached value &gt; 1 MB</li>
+</ol>
+</li>
+</ul>
+<p><strong>Key Lesson:</strong> Fast mitigation first (flush cache, rollback), deep RCA later.</p>
+<p><strong>[4-5 minutes]</strong></p>
+<hr />
+<p><strong>Q5:</strong> "Describe a time when you had to balance technical debt with feature development."</p>
+<p><strong>STAR Answer:</strong><br />
+- <strong>Situation:</strong> Our legacy PHP codebase had 3 years of tech debt (no tests, monolithic controllers, tight coupling)<br />
+- <strong>Task:</strong> Product wanted 5 new features in Q1, but tech debt was slowing us down (every feature took 2x longer)<br />
+- <strong>Action:</strong><br />
+  1. <strong>Quantified the problem:</strong> Measured: New features take 4 weeks (should be 2 weeks), 30% of dev time spent on bug fixes<br />
+  2. <strong>Proposed a "20% Rule":</strong> 80% of sprint capacity for features, 20% for tech debt<br />
+  3. <strong>Prioritized tech debt by ROI:</strong><br />
+     - High ROI: Add unit tests to payment module (prevents production bugs)<br />
+     - Medium ROI: Refactor authentication (makes new features faster)<br />
+     - Low ROI: Migrate to microservices (nice to have, but not urgent)<br />
+  4. <strong>Got buy-in:</strong> Showed product manager that 20% tech debt investment would speed up future features by 50%</p>
+<ul>
+<li><strong>Result:</strong></li>
+<li>Shipped 4 out of 5 features in Q1 (delayed 1 low-priority feature)</li>
+<li>Reduced bug rate by 40%</li>
+<li>Future features now take 2 weeks instead of 4</li>
+</ul>
+<p><strong>Key Lesson:</strong> Tech debt is not all-or-nothing. Prioritize by ROI, and get product buy-in with data.</p>
+<p><strong>[4 minutes]</strong></p>
+<hr />
+<h3 id="part-3-communication-collaboration-15-minutes"><strong>Part 3: Communication &amp; Collaboration (15 minutes)</strong></h3>
+<p><strong>Q6:</strong> "Tell me about a time you had to explain a complex technical concept to a non-technical stakeholder."</p>
+<p><strong>STAR Answer:</strong><br />
+- <strong>Situation:</strong> Our CEO asked why our API was "slow" (he saw a 500ms response time in a demo)<br />
+- <strong>Task:</strong> Explain why 500ms is actually acceptable for this specific endpoint (generating a 100-page invoice PDF)<br />
+- <strong>Action:</strong><br />
+  1. <strong>Used an analogy:</strong> "Think of it like ordering a custom cake. A simple cupcake (fetching an invoice) takes 50ms. A 100-layer wedding cake (generating a PDF) takes 500ms. Both are 'fast' for their complexity."<br />
+  2. <strong>Showed data:</strong> <br />
+     - 95% of API calls are &lt;50ms (simple queries)<br />
+     - 5% are PDF generation (500ms is expected)<br />
+     - User perception: Anything &lt;1 second feels instant<br />
+  3. <strong>Explained the trade-off:</strong> We could pre-generate all PDFs (faster response), but it would cost $5K/month in storage vs current $500/month<br />
+  4. <strong>Recommendation:</strong> Keep current approach, add a loading spinner ("Generating your PDF...") to manage user expectations</p>
+<ul>
+<li><strong>Result:</strong></li>
+<li>CEO understood and approved</li>
+<li>We added the loading spinner, user complaints dropped to zero</li>
+</ul>
+<p><strong>Key Lesson:</strong> Use analogies, show data, explain trade-offs in business terms (cost/UX), not just technical terms.</p>
+<p><strong>[3 minutes]</strong></p>
+<hr />
+<p><strong>Q7:</strong> "Describe a time when you had to work with a difficult teammate."</p>
+<p><strong>STAR Answer:</strong><br />
+- <strong>Situation:</strong> Worked with a senior engineer who frequently criticized others' code in pull requests (harsh tone, not constructive)<br />
+- <strong>Task:</strong> Needed to give feedback without damaging the relationship<br />
+- <strong>Action:</strong><br />
+  1. <strong>Private 1-on-1:</strong> Scheduled coffee, shared my observation ("I noticed your code review comments sometimes come across as harsh")<br />
+  2. <strong>Gave specific examples:</strong> Quoted actual PR comments, explained how they made me feel<br />
+  3. <strong>Asked for their perspective:</strong> "What's going on? Is something bothering you?"<br />
+  4. <strong>Found root cause:</strong> They were stressed about project deadlines and took it out on PR reviews<br />
+  5. <strong>Collaborative solution:</strong> We agreed on a "PR etiquette guide":<br />
+     - Start with positives ("Nice refactoring here!")<br />
+     - Frame suggestions as questions ("Have you considered...?")<br />
+     - Avoid "you" language ("This code has a bug" vs "You wrote buggy code")</p>
+<ul>
+<li><strong>Result:</strong></li>
+<li>Their PR tone improved immediately</li>
+<li>Team morale increased</li>
+<li>We became good friends, still collaborate today</li>
+</ul>
+<p><strong>Key Lesson:</strong> Address difficult behavior privately, with empathy, and propose solutions (not just complaints).</p>
+<p><strong>[3 minutes]</strong></p>
+<hr />
+<h3 id="part-4-self-awareness-5-minutes"><strong>Part 4: Self-Awareness (5 minutes)</strong></h3>
+<p><strong>Q8:</strong> "What's your biggest weakness?"</p>
+<p><strong>Good Answer (shows self-awareness + growth):</strong><br />
+"My biggest weakness is that I sometimes dive too deep into technical details when explaining things, which can lose the audience.</p>
+<p><strong>Example:</strong> Early in my career, I presented an architecture proposal to the product team and spent 20 minutes explaining database normalization. They glazed over — they didn't need that level of detail.</p>
+<p><strong>What I've learned:</strong> Now I tailor my communication to the audience:<br />
+- For engineers: Technical depth<br />
+- For product/stakeholders: High-level benefits + trade-offs<br />
+- I always ask upfront: 'How deep should I go?'</p>
+<p><strong>How I'm improving:</strong> I've started doing '2-minute pitches' where I explain a concept in 2 minutes or less, forcing myself to stay high-level first, then drill down if they ask questions."</p>
+<p><strong>[2 minutes]</strong></p>
+<hr />
+<p><strong>Q9:</strong> "What motivates you?"</p>
+<p><strong>Good Answer:</strong><br />
+"Three things motivate me:</p>
+<ol>
+<li>
+<p><strong>Impact:</strong> I love seeing my code help real people. When a customer says 'Your autopay feature saved me hours,' that's what gets me up in the morning.</p>
+</li>
+<li>
+<p><strong>Learning:</strong> I thrive on solving new problems. Recently I learned FastAPI (Python) to build an AI-powered incident tracker — completely different from my PHP background, and I loved the challenge.</p>
+</li>
+<li>
+<p><strong>Mentorship:</strong> I get energy from helping others grow. Seeing a junior developer I mentored ship their first feature independently — that's as rewarding as my own code.</p>
+</li>
+</ol>
+<p><strong>What I'm looking for:</strong> A role where I can continue doing all three — build impactful products, learn new technologies (especially AI/ML), and mentor the next generation of engineers."</p>
+<p><strong>[2 minutes]</strong></p>
+<hr />
+<h3 id="part-5-wrap-up"><strong>Part 5: Wrap-Up</strong></h3>
+<p><strong>Q10:</strong> "Why do you want to work here?"</p>
+<p><strong>Good Answer Structure:</strong><br />
+1. <strong>What excites you about the company:</strong> "I'm impressed by [specific product/technology/mission]"<br />
+2. <strong>How your skills align:</strong> "My experience in [X] would help solve [Y problem]"<br />
+3. <strong>What you want to learn:</strong> "I'm excited to learn [Z] from your team"</p>
+<p><strong>Example:</strong><br />
+"I'm excited about [Company] for three reasons:</p>
+<p>First, your mission to [mission] resonates with me — I've built similar systems at scale and know the challenges.</p>
+<p>Second, your tech stack (Python/FastAPI, React, AWS) aligns perfectly with my current skill set AND where I want to grow (more AI/ML work).</p>
+<p>Third, your engineering blog shows a culture of learning and sharing knowledge — that's the environment where I thrive.</p>
+<p>I believe my 12 years of experience building scalable SaaS platforms, plus my recent AI-first development work, would help you [specific goal from job description], and I'd learn a ton from your team in return."</p>
+<hr />
+<p><strong>[END OF MOCK INTERVIEW #3 — Total: 60 minutes]</strong></p>
+<p><strong>Self-Assessment Checklist:</strong><br />
+- [ ] All answers followed STAR format<br />
+- [ ] Included metrics/data in answers<br />
+- [ ] Showed self-awareness (weaknesses, growth)<br />
+- [ ] Demonstrated leadership (mentoring, decision-making)<br />
+- [ ] Communicated clearly (no rambling)</p>
+<hr />
+<h2 id="mock-interview-scoring-rubric">✅ <strong>Mock Interview Scoring Rubric</strong></h2>
+<p><strong>After each mock interview, score yourself (1-5):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Criteria</th>
+<th>Score</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Clarity</strong> — Did I explain clearly?</td>
+<td>/5</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>Depth</strong> — Did I show technical expertise?</td>
+<td>/5</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>Conciseness</strong> — Did I stay within time limits?</td>
+<td>/5</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>Data</strong> — Did I use metrics/numbers?</td>
+<td>/5</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>Communication</strong> — Was I confident, not arrogant?</td>
+<td>/5</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>Questions</strong> — Did I ask good questions at the end?</td>
+<td>/5</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Total:</strong> ____ / 30</p>
+<p><strong>Goal:</strong> 25+ / 30 = Ready for real interviews!</p>
+<hr />
+<h2 id="next-steps">🎯 <strong>Next Steps</strong></h2>
+<ol>
+<li><strong>Review recordings</strong> — Watch/listen back, note improvements</li>
+<li><strong>Identify weak areas</strong> — Re-read relevant sections in Q&amp;A guides</li>
+<li><strong>Practice again</strong> — Repeat mock interviews until smooth</li>
+<li><strong>Mock with a friend</strong> — Real human interaction is different</li>
+<li><strong>Adjust timing</strong> — If you ran over, practice being more concise</li>
+</ol>
+<hr />
+<p><strong>YOU'RE READY! Go crush those interviews! 🚀</strong></p>
+        </div>
+    </div>
+
+    <script>
+        // Progress Tracker JavaScript
+        const STORAGE_KEY = 'course_progress_mock_interview_questions';
+
+        // Extract all H2 and H3 headings from content
+        function extractSections() {
+            const content = document.querySelector('.content');
+            const headings = content.querySelectorAll('h2, h3');
+            const sections = [];
+
+            headings.forEach((heading, index) => {
+                const level = heading.tagName === 'H2' ? 2 : 3;
+                const text = heading.textContent.trim();
+                const id = `section-${index}`;
+
+                // Add ID to heading for linking
+                heading.id = id;
+
+                sections.push({
+                    id: id,
+                    text: text,
+                    level: level
+                });
+            });
+
+            return sections;
+        }
+
+        // Load saved progress from localStorage
+        function loadProgress() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            return saved ? JSON.parse(saved) : {};
+        }
+
+        // Save progress to localStorage
+        function saveProgress(progress) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+        }
+
+        // Calculate progress percentage
+        function calculateProgress() {
+            const checkboxes = document.querySelectorAll('.progress-checkbox');
+            const total = checkboxes.length;
+            if (total === 0) return 0;
+
+            const completed = Array.from(checkboxes).filter(cb => cb.checked).length;
+            return Math.round((completed / total) * 100);
+        }
+
+        // Update progress display
+        function updateProgressDisplay() {
+            const percentage = calculateProgress();
+            document.getElementById('progress-pct').textContent = percentage + '%';
+            document.getElementById('progress-bar').style.width = percentage + '%';
+
+            // Update completed class on items
+            document.querySelectorAll('.progress-item').forEach(item => {
+                const checkbox = item.querySelector('.progress-checkbox');
+                if (checkbox.checked) {
+                    item.classList.add('completed');
+                } else {
+                    item.classList.remove('completed');
+                }
+            });
+        }
+
+        // Toggle checkbox
+        function toggleCheckbox(sectionId) {
+            const checkbox = document.getElementById('cb-' + sectionId);
+            const progress = loadProgress();
+
+            progress[sectionId] = checkbox.checked;
+            saveProgress(progress);
+            updateProgressDisplay();
+        }
+
+        // Reset all progress
+        function resetProgress() {
+            if (confirm('Reset all progress for this page?')) {
+                localStorage.removeItem(STORAGE_KEY);
+                document.querySelectorAll('.progress-checkbox').forEach(cb => {
+                    cb.checked = false;
+                });
+                updateProgressDisplay();
+            }
+        }
+
+        // Toggle progress list visibility
+        function toggleProgressList() {
+            const list = document.getElementById('progress-items');
+            const btn = document.querySelector('.toggle-progress');
+
+            if (list.classList.contains('collapsed')) {
+                list.classList.remove('collapsed');
+                btn.textContent = '▼ Hide';
+            } else {
+                list.classList.add('collapsed');
+                btn.textContent = '▶ Show';
+            }
+        }
+
+        // Initialize progress tracker
+        function initProgressTracker() {
+            const sections = extractSections();
+            const progress = loadProgress();
+            const container = document.getElementById('progress-items');
+
+            if (sections.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No sections found</p>';
+                return;
+            }
+
+            sections.forEach(section => {
+                const item = document.createElement('div');
+                item.className = 'progress-item';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'progress-checkbox';
+                checkbox.id = 'cb-' + section.id;
+                checkbox.checked = progress[section.id] || false;
+                checkbox.onchange = () => toggleCheckbox(section.id);
+
+                const label = document.createElement('label');
+                label.className = 'progress-label';
+                label.htmlFor = 'cb-' + section.id;
+                label.textContent = section.text;
+                label.style.paddingLeft = section.level === 3 ? '20px' : '0';
+                label.onclick = () => {
+                    document.getElementById(section.id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+                };
+
+                item.appendChild(checkbox);
+                item.appendChild(label);
+                container.appendChild(item);
+            });
+
+            updateProgressDisplay();
+        }
+
+        // Run on page load
+        document.addEventListener('DOMContentLoaded', initProgressTracker);
+    </script>
+</body>
+</html>

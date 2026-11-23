@@ -1,0 +1,1598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scenario_Based_Case_Studies</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 60px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .metadata {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 16px 24px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #666;
+            border-left: 4px solid #667eea;
+        }
+
+        /* PROGRESS TRACKER STYLES */
+        .progress-tracker {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .progress-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-stats {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .progress-percentage {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #764ba2;
+        }
+
+        .progress-bar-container {
+            height: 12px;
+            background: #e9ecef;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+            border-radius: 20px;
+        }
+
+        .reset-btn {
+            padding: 8px 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+
+        .reset-btn:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+        }
+
+        .progress-items {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .progress-items::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .progress-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .progress-item:hover {
+            background: #f8f9fa;
+            transform: translateX(5px);
+        }
+
+        .progress-item.completed {
+            opacity: 0.7;
+        }
+
+        .progress-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .progress-label {
+            cursor: pointer;
+            font-size: 0.95em;
+            line-height: 1.5;
+            color: #495057;
+            flex-grow: 1;
+        }
+
+        .progress-item.completed .progress-label {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .toggle-progress {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .toggle-progress:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .progress-items.collapsed {
+            display: none;
+        }
+
+        /* CONTENT STYLES */
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 4px solid #667eea;
+            font-weight: 700;
+        }
+
+        h2 {
+            color: #764ba2;
+            font-size: 2em;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        h3 {
+            color: #495057;
+            font-size: 1.5em;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        h4 {
+            color: #666;
+            font-size: 1.25em;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        ul, ol {
+            margin: 20px 0;
+            padding-left: 40px;
+        }
+
+        li {
+            margin-bottom: 12px;
+            line-height: 1.7;
+        }
+
+        code {
+            background: #f4f5f7;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #c7254e;
+            border: 1px solid #e1e4e8;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 24px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 25px 0;
+            border: 1px solid #444;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            border: none;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        blockquote {
+            border-left: 5px solid #667eea;
+            padding: 15px 25px;
+            margin: 25px 0;
+            background: #f8f9fa;
+            border-radius: 0 8px 8px 0;
+            color: #495057;
+            font-style: italic;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 30px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 14px 18px;
+            text-align: left;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tr:hover {
+            background: #e9ecef;
+            transition: background 0.2s;
+        }
+
+        a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px solid transparent;
+            transition: border-bottom 0.2s;
+        }
+
+        a:hover {
+            border-bottom: 1px solid #667eea;
+        }
+
+        hr {
+            border: none;
+            border-top: 2px solid #e9ecef;
+            margin: 40px 0;
+        }
+
+        strong {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        em {
+            color: #495057;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 25px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.6em;
+            }
+
+            .progress-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .progress-stats {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../navigation.html" class="back-link">&larr; Back to Navigation</a>
+
+        <div class="metadata">
+            <strong>Source:</strong> dev/Scenario_Based_Case_Studies.md &nbsp;|&nbsp; <strong>Updated:</strong> 2026-11-18 19:44:58
+        </div>
+
+        <!-- PROGRESS TRACKER -->
+        <div class="progress-tracker">
+            <div class="progress-header">
+                <div class="progress-title">
+                    <span>📚</span>
+                    <span>Your Progress</span>
+                </div>
+                <div class="progress-stats">
+                    <span class="progress-percentage" id="progress-pct">0%</span>
+                    <button class="reset-btn" onclick="resetProgress()">Reset</button>
+                    <button class="toggle-progress" onclick="toggleProgressList()">▼ Hide</button>
+                </div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progress-bar" style="width: 0%"></div>
+            </div>
+            <div class="progress-items" id="progress-items">
+                <!-- Checkboxes will be generated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="content">
+<h1 id="scenario-based-case-studies">Scenario-Based Case Studies</h1>
+<p><strong>Real-World Scenarios for Interview Practice</strong></p>
+<p><strong>How to Use:</strong> Read the scenario, think through your approach, THEN read the solution.</p>
+<hr />
+<h2 id="case-study-1-production-database-performance-crisis">🔥 <strong>Case Study #1: Production Database Performance Crisis</strong></h2>
+<h3 id="the-scenario"><strong>The Scenario:</strong></h3>
+<p>It's Friday at 3 PM. Your production database (MySQL, 100M+ rows) is experiencing severe performance degradation:<br />
+- Query response times increased from 50ms to 3-5 seconds<br />
+- Error rate spiked from 0.01% to 5%<br />
+- Customer complaints are flooding support<br />
+- Your manager is asking for an ETA on the fix</p>
+<p>You have 2 hours before the weekend. What do you do?</p>
+<hr />
+<h3 id="think-first"><strong>Think First:</strong></h3>
+<p>Before reading the solution, write down:<br />
+1. <strong>Your first 3 steps</strong> (what do you check first?)<br />
+2. <strong>How do you prioritize</strong> (fix now vs investigate later?)<br />
+3. <strong>Communication plan</strong> (who do you notify, when?)</p>
+<hr />
+<h3 id="sample-solution"><strong>Sample Solution:</strong></h3>
+<h4 id="phase-1-immediate-triage-10-minutes"><strong>Phase 1: Immediate Triage (10 minutes)</strong></h4>
+<p><strong>Step 1: Confirm the Scope</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Check Datadog/New Relic — which queries are slow?</span>
+<span class="c1"># Is it all queries or specific ones?</span>
+<span class="c1"># When did it start? (correlate with deployments/migrations)</span>
+</code></pre></div>
+
+<p><strong>Step 2: Check Recent Changes</strong></p>
+<div class="codehilite"><pre><span></span><code>git<span class="w"> </span>log<span class="w"> </span>--since<span class="o">=</span><span class="s2">"2 hours ago"</span><span class="w"> </span>--oneline
+<span class="c1"># Any new deployments?</span>
+<span class="c1"># Any database migrations?</span>
+<span class="c1"># Any configuration changes?</span>
+</code></pre></div>
+
+<p><strong>Step 3: Database Health Check</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Check active queries</span>
+<span class="k">SHOW</span><span class="w"> </span><span class="n">PROCESSLIST</span><span class="p">;</span>
+
+<span class="c1">-- Check if queries are locked/waiting</span>
+<span class="k">SHOW</span><span class="w"> </span><span class="n">ENGINE</span><span class="w"> </span><span class="n">INNODB</span><span class="w"> </span><span class="n">STATUS</span><span class="p">;</span>
+
+<span class="c1">-- Check for long-running queries</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">information_schema</span><span class="p">.</span><span class="n">processlist</span><span class="w"> </span>
+<span class="k">WHERE</span><span class="w"> </span><span class="k">time</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">60</span><span class="w"> </span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">time</span><span class="w"> </span><span class="k">DESC</span><span class="p">;</span>
+</code></pre></div>
+
+<p><strong>Discovery:</strong> You find 20+ queries stuck in "Waiting for table metadata lock"</p>
+<hr />
+<h4 id="phase-2-root-cause-identification-20-minutes"><strong>Phase 2: Root Cause Identification (20 minutes)</strong></h4>
+<p><strong>Step 4: Identify the Blocker</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Find what's holding the lock</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">information_schema</span><span class="p">.</span><span class="n">innodb_trx</span><span class="p">;</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">information_schema</span><span class="p">.</span><span class="n">innodb_locks</span><span class="p">;</span>
+</code></pre></div>
+
+<p><strong>Finding:</strong> One query has been running for 2 hours:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">invoices</span><span class="w"> </span><span class="k">ADD</span><span class="w"> </span><span class="k">COLUMN</span><span class="w"> </span><span class="n">pdf_url</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">255</span><span class="p">);</span>
+</code></pre></div>
+
+<p><strong>Root Cause:</strong> A developer triggered a schema change on a 100M-row table without realizing it would lock the entire table.</p>
+<hr />
+<h4 id="phase-3-immediate-mitigation-10-minutes"><strong>Phase 3: Immediate Mitigation (10 minutes)</strong></h4>
+<p><strong>Option 1: Kill the ALTER TABLE (if safe)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Find the process ID</span>
+<span class="k">SHOW</span><span class="w"> </span><span class="n">PROCESSLIST</span><span class="p">;</span><span class="w"> </span><span class="c1">-- Let's say it's ID 12345</span>
+
+<span class="c1">-- Kill it</span>
+<span class="n">KILL</span><span class="w"> </span><span class="mi">12345</span><span class="p">;</span>
+</code></pre></div>
+
+<p><strong>Risk Assessment:</strong><br />
+- If the ALTER TABLE is 90% done, killing it will ROLLBACK (could take another hour)<br />
+- If it's &lt;50% done, killing it is faster</p>
+<p><strong>Decision:</strong> Check progress:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- MySQL 5.7+</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">performance_schema</span><span class="p">.</span><span class="n">events_stages_current</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">EVENT_NAME</span><span class="w"> </span><span class="k">LIKE</span><span class="w"> </span><span class="s1">'stage/innodb/alter%'</span><span class="p">;</span>
+</code></pre></div>
+
+<p><strong>Result:</strong> It's 95% done (50 minutes remaining)</p>
+<p><strong>Choice:</strong> Let it finish (better than rolling back for 2 hours)</p>
+<p><strong>Immediate Action:</strong><br />
+1. <strong>Notify stakeholders:</strong><br />
+   "Database ALTER TABLE in progress, 50 min ETA. No customer data loss. Mitigation: read replica failover."</p>
+<ol start="2">
+<li>
+<p><strong>Failover reads to replicas:</strong><br />
+<code>bash
+   # Update connection string to point to read replica
+   # This handles 80% of queries (read-heavy workload)</code></p>
+</li>
+<li>
+<p><strong>Queue writes:</strong><br />
+<code>php
+   // Temporarily queue write operations in Redis
+   // Process after ALTER TABLE completes</code></p>
+</li>
+</ol>
+<hr />
+<h4 id="phase-4-post-incident-after-resolution"><strong>Phase 4: Post-Incident (after resolution)</strong></h4>
+<p><strong>Step 5: Post-Mortem (30 minutes)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="gh"># Incident Report: Database Performance Degradation</span>
+
+<span class="gs">**Timeline:**</span>
+<span class="k">-</span><span class="w"> </span>3:00 PM: Performance degradation detected
+<span class="k">-</span><span class="w"> </span>3:10 PM: Root cause identified (ALTER TABLE holding lock)
+<span class="k">-</span><span class="w"> </span>3:20 PM: Mitigation deployed (read replica failover)
+<span class="k">-</span><span class="w"> </span>4:10 PM: ALTER TABLE completed, service restored
+
+<span class="gs">**Root Cause:**</span>
+Developer ran ALTER TABLE on production without approval
+
+<span class="gs">**Impact:**</span>
+<span class="k">-</span><span class="w"> </span>70 minutes of degraded performance
+<span class="k">-</span><span class="w"> </span>5% error rate (mostly writes)
+<span class="k">-</span><span class="w"> </span>~1,000 failed requests
+
+<span class="gs">**Permanent Fixes:**</span>
+<span class="k">1.</span> Require approval for schema changes via Jira ticket
+<span class="k">2.</span> Use pt-online-schema-change for large tables (no locking)
+<span class="k">3.</span> Add monitoring: alert if any query runs &gt; 5 minutes
+</code></pre></div>
+
+<p><strong>Step 6: Prevent Future Occurrences</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># 1. Add pre-commit hook to detect ALTER TABLE in migration files</span>
+<span class="c1">#!/bin/bash</span>
+<span class="k">if</span><span class="w"> </span>git<span class="w"> </span>diff<span class="w"> </span>--cached<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span><span class="s2">"ALTER TABLE"</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"ERROR: ALTER TABLE detected. Use pt-online-schema-change instead."</span>
+<span class="w">    </span><span class="nb">exit</span><span class="w"> </span><span class="m">1</span>
+<span class="k">fi</span>
+
+<span class="c1"># 2. Set up pt-online-schema-change (Percona Toolkit)</span>
+pt-online-schema-change<span class="w"> </span>--alter<span class="w"> </span><span class="s2">"ADD COLUMN pdf_url VARCHAR(255)"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="nv">D</span><span class="o">=</span>your_database,t<span class="o">=</span>invoices<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--execute
+</code></pre></div>
+
+<hr />
+<h2 id="case-study-2-memory-leak-in-production">🚨 <strong>Case Study #2: Memory Leak in Production</strong></h2>
+<h3 id="the-scenario_1"><strong>The Scenario:</strong></h3>
+<p>Your Node.js API (serving 1,000 requests/second) is experiencing memory leaks:<br />
+- Memory usage climbs from 500 MB to 4 GB over 2 hours<br />
+- After hitting 4 GB, the process crashes (OOM killed)<br />
+- Auto-restart kicks in, but the cycle repeats<br />
+- This started after yesterday's deployment</p>
+<p>You need to find the leak and fix it. How do you debug?</p>
+<hr />
+<h3 id="sample-solution_1"><strong>Sample Solution:</strong></h3>
+<h4 id="step-1-reproduce-locally"><strong>Step 1: Reproduce Locally</strong></h4>
+<div class="codehilite"><pre><span></span><code><span class="c1"># 1. Load test locally to trigger the leak faster</span>
+artillery<span class="w"> </span>run<span class="w"> </span>load-test.yml
+
+<span class="c1"># 2. Monitor memory in real-time</span>
+node<span class="w"> </span>--max-old-space-size<span class="o">=</span><span class="m">512</span><span class="w"> </span>--expose-gc<span class="w"> </span>app.js<span class="w"> </span><span class="p">&amp;</span>
+watch<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="s1">'ps aux | grep node'</span>
+</code></pre></div>
+
+<hr />
+<h4 id="step-2-heap-snapshot-analysis"><strong>Step 2: Heap Snapshot Analysis</strong></h4>
+<div class="codehilite"><pre><span></span><code><span class="c1">// Add this to your app.js</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">v8</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">require</span><span class="p">(</span><span class="s1">'v8'</span><span class="p">);</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">fs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">require</span><span class="p">(</span><span class="s1">'fs'</span><span class="p">);</span>
+
+<span class="kd">function</span><span class="w"> </span><span class="nx">takeHeapSnapshot</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">filename</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sb">`heap-</span><span class="si">${</span><span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">()</span><span class="si">}</span><span class="sb">.heapsnapshot`</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">heapSnapshot</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">v8</span><span class="p">.</span><span class="nx">writeHeapSnapshot</span><span class="p">();</span>
+<span class="w">    </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`Heap snapshot written to </span><span class="si">${</span><span class="nx">heapSnapshot</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// Take snapshots at intervals</span>
+<span class="nx">setInterval</span><span class="p">(</span><span class="nx">takeHeapSnapshot</span><span class="p">,</span><span class="w"> </span><span class="mf">60000</span><span class="p">);</span><span class="w"> </span><span class="c1">// Every 1 minute</span>
+</code></pre></div>
+
+<p><strong>Analyze with Chrome DevTools:</strong><br />
+1. Open Chrome DevTools → Memory tab<br />
+2. Load snapshot 1 (baseline)<br />
+3. Load snapshot 2 (after 5 minutes)<br />
+4. Compare: "Objects allocated between Snapshot 1 and Snapshot 2"</p>
+<p><strong>Finding:</strong> You see 10,000+ instances of <code>Buffer</code> objects growing</p>
+<hr />
+<h4 id="step-3-find-the-source"><strong>Step 3: Find the Source</strong></h4>
+<p><strong>Check recent code changes:</strong></p>
+<div class="codehilite"><pre><span></span><code>git<span class="w"> </span>log<span class="w"> </span>--since<span class="o">=</span><span class="s2">"1 day ago"</span><span class="w"> </span>--oneline<span class="w"> </span>--name-only<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">'\.(js|ts)$'</span>
+</code></pre></div>
+
+<p><strong>Review the diff:</strong></p>
+<div class="codehilite"><pre><span></span><code>git<span class="w"> </span>show<span class="w"> </span>&lt;commit-hash&gt;
+</code></pre></div>
+
+<p><strong>Discovery:</strong> A new endpoint <code>/export-csv</code> was added:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">// BEFORE (memory leak!)</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'/export-csv'</span><span class="p">,</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="p">(</span><span class="nx">req</span><span class="p">,</span><span class="w"> </span><span class="nx">res</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="s1">'SELECT * FROM invoices'</span><span class="p">);</span><span class="w"> </span><span class="c1">// 1M rows!</span>
+
+<span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="nx">csv</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'ID,Amount,Date\n'</span><span class="p">;</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">const</span><span class="w"> </span><span class="nx">row</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="nx">data</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">csv</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="sb">`</span><span class="si">${</span><span class="nx">row</span><span class="p">.</span><span class="nx">id</span><span class="si">}</span><span class="sb">,</span><span class="si">${</span><span class="nx">row</span><span class="p">.</span><span class="nx">amount</span><span class="si">}</span><span class="sb">,</span><span class="si">${</span><span class="nx">row</span><span class="p">.</span><span class="nx">date</span><span class="si">}</span><span class="sb">\n`</span><span class="p">;</span><span class="w"> </span><span class="c1">// String concatenation!</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nx">res</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">csv</span><span class="p">);</span><span class="w"> </span><span class="c1">// Entire CSV held in memory</span>
+<span class="p">});</span>
+</code></pre></div>
+
+<p><strong>Problem:</strong><br />
+1. <strong>String concatenation in a loop</strong> — creates intermediate strings, memory not released<br />
+2. <strong>1M rows loaded at once</strong> — entire dataset in memory</p>
+<hr />
+<h4 id="step-4-fix-the-leak"><strong>Step 4: Fix the Leak</strong></h4>
+<p><strong>Solution: Streaming + Pagination</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">// AFTER (fixed!)</span>
+<span class="kd">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">Readable</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">require</span><span class="p">(</span><span class="s1">'stream'</span><span class="p">);</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'/export-csv'</span><span class="p">,</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="p">(</span><span class="nx">req</span><span class="p">,</span><span class="w"> </span><span class="nx">res</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">res</span><span class="p">.</span><span class="nx">setHeader</span><span class="p">(</span><span class="s1">'Content-Type'</span><span class="p">,</span><span class="w"> </span><span class="s1">'text/csv'</span><span class="p">);</span>
+<span class="w">    </span><span class="nx">res</span><span class="p">.</span><span class="nx">setHeader</span><span class="p">(</span><span class="s1">'Content-Disposition'</span><span class="p">,</span><span class="w"> </span><span class="s1">'attachment; filename=invoices.csv'</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Create a readable stream</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">csvStream</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">Readable</span><span class="p">({</span>
+<span class="w">        </span><span class="k">async</span><span class="w"> </span><span class="nx">read</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="kd">const</span><span class="w"> </span><span class="nx">BATCH_SIZE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1000</span><span class="p">;</span>
+<span class="w">            </span><span class="kd">let</span><span class="w"> </span><span class="nx">offset</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span><span class="p">;</span>
+
+<span class="w">            </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="kc">true</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="kd">const</span><span class="w"> </span><span class="nx">batch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span>
+<span class="w">                    </span><span class="s1">'SELECT id, amount, date FROM invoices LIMIT ? OFFSET ?'</span><span class="p">,</span>
+<span class="w">                    </span><span class="p">[</span><span class="nx">BATCH_SIZE</span><span class="p">,</span><span class="w"> </span><span class="nx">offset</span><span class="p">]</span>
+<span class="w">                </span><span class="p">);</span>
+
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">batch</span><span class="p">.</span><span class="nx">length</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="mf">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="k">this</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="kc">null</span><span class="p">);</span><span class="w"> </span><span class="c1">// End of stream</span>
+<span class="w">                    </span><span class="k">break</span><span class="p">;</span>
+<span class="w">                </span><span class="p">}</span>
+
+<span class="w">                </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">const</span><span class="w"> </span><span class="nx">row</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="nx">batch</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="k">this</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="sb">`</span><span class="si">${</span><span class="nx">row</span><span class="p">.</span><span class="nx">id</span><span class="si">}</span><span class="sb">,</span><span class="si">${</span><span class="nx">row</span><span class="p">.</span><span class="nx">amount</span><span class="si">}</span><span class="sb">,</span><span class="si">${</span><span class="nx">row</span><span class="p">.</span><span class="nx">date</span><span class="si">}</span><span class="sb">\n`</span><span class="p">);</span>
+<span class="w">                </span><span class="p">}</span>
+
+<span class="w">                </span><span class="nx">offset</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="nx">BATCH_SIZE</span><span class="p">;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="nx">csvStream</span><span class="p">.</span><span class="nx">pipe</span><span class="p">(</span><span class="nx">res</span><span class="p">);</span>
+<span class="p">});</span>
+</code></pre></div>
+
+<p><strong>Why this works:</strong><br />
+- <strong>Streams:</strong> Data flows in chunks, not all at once<br />
+- <strong>Pagination:</strong> Only 1,000 rows in memory at a time<br />
+- <strong>No concatenation:</strong> Strings pushed to stream immediately</p>
+<p><strong>Result:</strong> Memory usage stays at ~500 MB (constant)</p>
+<hr />
+<h4 id="step-5-verify-the-fix"><strong>Step 5: Verify the Fix</strong></h4>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Load test again</span>
+artillery<span class="w"> </span>run<span class="w"> </span>load-test.yml
+
+<span class="c1"># Monitor memory — should stay flat</span>
+watch<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="s1">'ps aux | grep node'</span>
+
+<span class="c1"># Heap snapshot after fix — no growing buffers</span>
+</code></pre></div>
+
+<hr />
+<h2 id="case-study-3-security-incident-api-key-leaked">🛡️ <strong>Case Study #3: Security Incident - API Key Leaked</strong></h2>
+<h3 id="the-scenario_2"><strong>The Scenario:</strong></h3>
+<p>It's Monday morning. Your security team alerts you:<br />
+- One of your AWS API keys was committed to a <strong>public</strong> GitHub repository<br />
+- The key has <code>S3:*</code> permissions (full S3 access)<br />
+- The commit was made 2 days ago (Friday night)<br />
+- You don't know if the key has been used by attackers</p>
+<p><strong>What do you do in the next 60 minutes?</strong></p>
+<hr />
+<h3 id="sample-solution_2"><strong>Sample Solution:</strong></h3>
+<h4 id="step-1-immediate-containment-5-minutes"><strong>Step 1: Immediate Containment (5 minutes)</strong></h4>
+<p><strong>Action 1: Rotate the Key</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># 1. Deactivate the compromised key IMMEDIATELY</span>
+aws<span class="w"> </span>iam<span class="w"> </span>update-access-key<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--access-key-id<span class="w"> </span>AKIAIOSFODNN7EXAMPLE<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--status<span class="w"> </span>Inactive
+
+<span class="c1"># 2. Create a new key (for your app)</span>
+aws<span class="w"> </span>iam<span class="w"> </span>create-access-key<span class="w"> </span>--user-name<span class="w"> </span>your-app-user
+
+<span class="c1"># 3. Update your app's .env with the new key</span>
+<span class="c1"># (Do NOT commit this!)</span>
+</code></pre></div>
+
+<p><strong>Action 2: Remove the Key from Git History</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Use BFG Repo-Cleaner (faster than git-filter-branch)</span>
+bfg<span class="w"> </span>--replace-text<span class="w"> </span>passwords.txt<span class="w"> </span>your-repo.git
+git<span class="w"> </span>reflog<span class="w"> </span>expire<span class="w"> </span>--expire<span class="o">=</span>now<span class="w"> </span>--all
+git<span class="w"> </span>gc<span class="w"> </span>--prune<span class="o">=</span>now<span class="w"> </span>--aggressive
+git<span class="w"> </span>push<span class="w"> </span>--force
+</code></pre></div>
+
+<p><strong>Action 3: Notify GitHub</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Report to GitHub Security (they'll invalidate the key on their side)</span>
+<span class="c1"># https://docs.github.com/en/code-security/secret-scanning</span>
+</code></pre></div>
+
+<hr />
+<h4 id="step-2-assess-damage-20-minutes"><strong>Step 2: Assess Damage (20 minutes)</strong></h4>
+<p><strong>Check CloudTrail for Unauthorized Access</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># 1. Check if the key was used</span>
+aws<span class="w"> </span>cloudtrail<span class="w"> </span>lookup-events<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--lookup-attributes<span class="w"> </span><span class="nv">AttributeKey</span><span class="o">=</span>AccessKeyId,AttributeValue<span class="o">=</span>AKIAIOSFODNN7EXAMPLE<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--start-time<span class="w"> </span><span class="m">2026</span>-11-14T00:00:00Z<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--end-time<span class="w"> </span><span class="m">2026</span>-11-16T23:59:59Z
+
+<span class="c1"># 2. Look for suspicious activities:</span>
+<span class="c1"># - ListBuckets (reconnaissance)</span>
+<span class="c1"># - GetObject (data exfiltration)</span>
+<span class="c1"># - PutObject (malware upload)</span>
+<span class="c1"># - DeleteBucket (destruction)</span>
+</code></pre></div>
+
+<p><strong>Findings:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">    </span><span class="nt">"EventName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ListBuckets"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"EventTime"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2026-11-15T03:45:12Z"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"SourceIPAddress"</span><span class="p">:</span><span class="w"> </span><span class="s2">"185.220.xxx.xxx"</span><span class="p">,</span><span class="w"> </span><span class="c1">// Tor exit node!</span>
+<span class="w">    </span><span class="nt">"UserIdentity"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"AccessKeyId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AKIAIOSFODNN7EXAMPLE"</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong>Verdict:</strong> The key WAS used by an attacker (Tor IP, 3 AM)</p>
+<hr />
+<h4 id="step-3-damage-control-20-minutes"><strong>Step 3: Damage Control (20 minutes)</strong></h4>
+<p><strong>Check What Data Was Accessed</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Filter CloudTrail for GetObject events</span>
+aws<span class="w"> </span>cloudtrail<span class="w"> </span>lookup-events<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--lookup-attributes<span class="w"> </span><span class="nv">AttributeKey</span><span class="o">=</span>EventName,AttributeValue<span class="o">=</span>GetObject<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--start-time<span class="w"> </span><span class="m">2026</span>-11-15T03:00:00Z<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--end-time<span class="w"> </span><span class="m">2026</span>-11-15T04:00:00Z
+</code></pre></div>
+
+<p><strong>Result:</strong> 500 <code>GetObject</code> calls on <code>s3://your-bucket/customer-invoices/*</code></p>
+<p><strong>Impact:</strong> Attacker downloaded 500 customer invoices (potential PII/financial data breach)</p>
+<hr />
+<h4 id="step-4-containment-actions-10-minutes"><strong>Step 4: Containment Actions (10 minutes)</strong></h4>
+<p><strong>1. Enable MFA Delete on S3</strong></p>
+<div class="codehilite"><pre><span></span><code>aws<span class="w"> </span>s3api<span class="w"> </span>put-bucket-versioning<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--bucket<span class="w"> </span>your-bucket<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--versioning-configuration<span class="w"> </span><span class="nv">Status</span><span class="o">=</span>Enabled,MFADelete<span class="o">=</span>Enabled<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--mfa<span class="w"> </span><span class="s2">"arn:aws:iam::123456789012:mfa/root-account-mfa-device 123456"</span>
+</code></pre></div>
+
+<p><strong>2. Restrict S3 Bucket Policy</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">"Version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2012-10-17"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"Statement"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"Effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Deny"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"Principal"</span><span class="p">:</span><span class="w"> </span><span class="s2">"*"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"Action"</span><span class="p">:</span><span class="w"> </span><span class="s2">"s3:*"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"Resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:aws:s3:::your-bucket/*"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"Condition"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"IpAddress"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="nt">"aws:SourceIp"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"185.220.0.0/16"</span><span class="p">]</span><span class="w"> </span><span class="c1">// Block Tor exit nodes</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong>3. Enable S3 Access Logging</strong></p>
+<div class="codehilite"><pre><span></span><code>aws<span class="w"> </span>s3api<span class="w"> </span>put-bucket-logging<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--bucket<span class="w"> </span>your-bucket<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--bucket-logging-status<span class="w"> </span>file://logging.json
+</code></pre></div>
+
+<hr />
+<h4 id="step-5-post-incident-report-5-minutes"><strong>Step 5: Post-Incident Report (5 minutes)</strong></h4>
+<p><strong>Immediate Notification:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="gs">**Subject:**</span> Security Incident - AWS Key Exposure (Resolved)
+
+<span class="gs">**Timeline:**</span>
+<span class="k">-</span><span class="w"> </span>Friday 11 PM: AWS key committed to public GitHub repo
+<span class="k">-</span><span class="w"> </span>Saturday 3 AM: Key used by attacker (Tor IP)
+<span class="k">-</span><span class="w"> </span>Monday 9 AM: Key rotated, attacker access revoked
+
+<span class="gs">**Impact:**</span>
+<span class="k">-</span><span class="w"> </span>500 customer invoices accessed (PDF files)
+<span class="k">-</span><span class="w"> </span>NO write/delete actions detected
+<span class="k">-</span><span class="w"> </span>NO financial loss
+
+<span class="gs">**Actions Taken:**</span>
+<span class="k">1.</span> Key rotated immediately
+<span class="k">2.</span> Git history cleaned
+<span class="k">3.</span> S3 bucket locked down (MFA delete, IP restrictions)
+<span class="k">4.</span> Monitoring enabled (CloudTrail alerts)
+
+<span class="gs">**Next Steps:**</span>
+<span class="k">1.</span> Legal/Compliance review (data breach notification requirements)
+<span class="k">2.</span> Customer notification (if required by law)
+<span class="k">3.</span> Implement secrets scanning in CI/CD
+</code></pre></div>
+
+<hr />
+<h4 id="step-6-prevent-future-leaks"><strong>Step 6: Prevent Future Leaks</strong></h4>
+<p><strong>1. Pre-Commit Hook (git-secrets)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Install git-secrets</span>
+brew<span class="w"> </span>install<span class="w"> </span>git-secrets
+
+<span class="c1"># Set up for all repos</span>
+git<span class="w"> </span>secrets<span class="w"> </span>--install<span class="w"> </span>~/.git-templates/git-secrets
+git<span class="w"> </span>config<span class="w"> </span>--global<span class="w"> </span>init.templateDir<span class="w"> </span>~/.git-templates/git-secrets
+
+<span class="c1"># Add AWS patterns</span>
+git<span class="w"> </span>secrets<span class="w"> </span>--register-aws<span class="w"> </span>--global
+</code></pre></div>
+
+<p><strong>2. CI/CD Secrets Scanning</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># .github/workflows/security.yml</span>
+<span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Secrets Scan</span>
+<span class="nt">on</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">push</span><span class="p p-Indicator">]</span>
+<span class="nt">jobs</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">scan</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">runs-on</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ubuntu-latest</span>
+<span class="w">    </span><span class="nt">steps</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/checkout@v2</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TruffleHog Scan</span>
+<span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">          </span><span class="no">docker run --rm -v $(pwd):/src trufflesecurity/trufflehog:latest \</span>
+<span class="w">            </span><span class="no">filesystem /src --fail</span>
+</code></pre></div>
+
+<p><strong>3. Use AWS Secrets Manager</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">// BEFORE (leaked in code)</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">AWS_ACCESS_KEY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'AKIAIOSFODNN7EXAMPLE'</span><span class="p">;</span>
+
+<span class="c1">// AFTER (fetch from Secrets Manager)</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">AWS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">require</span><span class="p">(</span><span class="s1">'aws-sdk'</span><span class="p">);</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">secretsManager</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">AWS</span><span class="p">.</span><span class="nx">SecretsManager</span><span class="p">();</span>
+
+<span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">getSecret</span><span class="p">(</span><span class="nx">secretName</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">secretsManager</span><span class="p">.</span><span class="nx">getSecretValue</span><span class="p">({</span><span class="w"> </span><span class="nx">SecretId</span><span class="o">:</span><span class="w"> </span><span class="nx">secretName</span><span class="w"> </span><span class="p">}).</span><span class="nx">promise</span><span class="p">();</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">SecretString</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kd">const</span><span class="w"> </span><span class="nx">credentials</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">getSecret</span><span class="p">(</span><span class="s1">'prod/aws/api-keys'</span><span class="p">);</span>
+</code></pre></div>
+
+<hr />
+<h2 id="case-study-4-sudden-traffic-spike-100x-normal">📊 <strong>Case Study #4: Sudden Traffic Spike (100x Normal)</strong></h2>
+<h3 id="the-scenario_3"><strong>The Scenario:</strong></h3>
+<p>It's Black Friday. Your e-commerce API normally handles 100 requests/second. Suddenly:<br />
+- Traffic spikes to 10,000 requests/second (100x!)<br />
+- Error rate jumps to 20%<br />
+- Database connections maxed out<br />
+- Some customers see "503 Service Unavailable"</p>
+<p><strong>How do you handle this?</strong></p>
+<hr />
+<h3 id="sample-solution_3"><strong>Sample Solution:</strong></h3>
+<h4 id="step-1-immediate-triage-2-minutes"><strong>Step 1: Immediate Triage (2 minutes)</strong></h4>
+<p><strong>Check Auto-Scaling</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># AWS Auto Scaling Group</span>
+aws<span class="w"> </span>autoscaling<span class="w"> </span>describe-auto-scaling-groups<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--auto-scaling-group-names<span class="w"> </span>your-api-asg
+
+<span class="c1"># Expected: Scaling from 10 → 50 instances</span>
+<span class="c1"># Reality: Stuck at 10 (max instance limit hit!)</span>
+</code></pre></div>
+
+<p><strong>Problem:</strong> Auto-scaling hit the account limit (50 EC2 instances max)</p>
+<hr />
+<h4 id="step-2-emergency-scaling-5-minutes"><strong>Step 2: Emergency Scaling (5 minutes)</strong></h4>
+<p><strong>Option 1: Request Limit Increase (too slow)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># This takes 1-2 hours</span>
+aws<span class="w"> </span>service-quotas<span class="w"> </span>request-service-quota-increase<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--service-code<span class="w"> </span>ec2<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--quota-code<span class="w"> </span>L-1216C47A<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--desired-value<span class="w"> </span><span class="m">100</span>
+</code></pre></div>
+
+<p><strong>Option 2: Enable Read Replicas (faster)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Point read-heavy endpoints to read replicas</span>
+<span class="c1"># Update connection string in environment variables</span>
+
+<span class="c1"># BEFORE (all traffic hits master)</span>
+<span class="nv">DB_HOST</span><span class="o">=</span>master.db.amazonaws.com
+
+<span class="c1"># AFTER (80% reads go to replicas)</span>
+<span class="nv">DB_READ_HOST</span><span class="o">=</span>replica1.db.amazonaws.com,replica2.db.amazonaws.com
+<span class="nv">DB_WRITE_HOST</span><span class="o">=</span>master.db.amazonaws.com
+</code></pre></div>
+
+<p><strong>Code Change:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Quick fix (deployed in 5 minutes)</span>
+<span class="x">class DB {</span>
+<span class="x">    public static function query($sql) {</span>
+<span class="x">        if (self::isReadQuery($sql)) {</span>
+<span class="x">            return self::readReplica()-&gt;query($sql);</span>
+<span class="x">        } else {</span>
+<span class="x">            return self::master()-&gt;query($sql);</span>
+<span class="x">        }</span>
+<span class="x">    }</span>
+
+<span class="x">    private static function isReadQuery($sql) {</span>
+<span class="x">        return stripos($sql, 'SELECT') === 0;</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<hr />
+<h4 id="step-3-rate-limiting-10-minutes"><strong>Step 3: Rate Limiting (10 minutes)</strong></h4>
+<p><strong>Implement Redis-Based Rate Limiting</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">class RateLimiter {</span>
+<span class="x">    public function allow($userId, $limit = 100, $window = 60) {</span>
+<span class="x">        $key = "rate_limit:$userId:" . floor(time() / $window);</span>
+<span class="x">        $count = $this-&gt;redis-&gt;incr($key);</span>
+<span class="x">        $this-&gt;redis-&gt;expire($key, $window);</span>
+
+<span class="x">        return $count &lt;= $limit;</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">// In your controller</span>
+<span class="x">public function handleRequest(Request $request) {</span>
+<span class="x">    $userId = $request-&gt;user()-&gt;id;</span>
+
+<span class="x">    if (!$this-&gt;rateLimiter-&gt;allow($userId, 100, 60)) {</span>
+<span class="x">        return response('Too Many Requests', 429)</span>
+<span class="x">            -&gt;header('Retry-After', 60);</span>
+<span class="x">    }</span>
+
+<span class="x">    // Process request...</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>Result:</strong> Protects backend from abuse</p>
+<hr />
+<h4 id="step-4-caching-aggressive-15-minutes"><strong>Step 4: Caching Aggressive (15 minutes)</strong></h4>
+<p><strong>Cache Homepage + Product Pages</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// BEFORE (every request hits database)</span>
+<span class="x">public function homepage() {</span>
+<span class="x">    $products = Product::where('featured', true)-&gt;get();</span>
+<span class="x">    return view('homepage', compact('products'));</span>
+<span class="x">}</span>
+
+<span class="x">// AFTER (cache for 5 minutes)</span>
+<span class="x">public function homepage() {</span>
+<span class="x">    $products = Cache::remember('homepage_products', 300, function() {</span>
+<span class="x">        return Product::where('featured', true)-&gt;get();</span>
+<span class="x">    });</span>
+<span class="x">    return view('homepage', compact('products'));</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>Add CDN (CloudFront)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Serve static assets from CDN</span>
+<span class="c1"># BEFORE: https://yoursite.com/images/logo.png (hits your server)</span>
+<span class="c1"># AFTER:  https://d123456.cloudfront.net/images/logo.png (served from edge)</span>
+
+<span class="c1"># Configure CloudFront to cache:</span>
+<span class="c1"># - Images: 1 day</span>
+<span class="c1"># - CSS/JS: 1 week</span>
+<span class="c1"># - HTML: 5 minutes</span>
+</code></pre></div>
+
+<hr />
+<h4 id="step-5-database-connection-pooling"><strong>Step 5: Database Connection Pooling</strong></h4>
+<div class="codehilite"><pre><span></span><code><span class="x">// BEFORE (new connection per request = 10,000 connections!)</span>
+<span class="x">$pdo = new PDO('mysql:host=localhost;dbname=shop', 'user', 'pass');</span>
+
+<span class="x">// AFTER (connection pooling = max 100 connections)</span>
+<span class="x">class ConnectionPool {</span>
+<span class="x">    private static $pool = [];</span>
+<span class="x">    private static $maxConnections = 100;</span>
+
+<span class="x">    public static function getConnection() {</span>
+<span class="x">        if (count(self::$pool) &lt; self::$maxConnections) {</span>
+<span class="x">            self::$pool[] = new PDO('mysql:host=localhost;dbname=shop', 'user', 'pass');</span>
+<span class="x">        }</span>
+<span class="x">        return self::$pool[array_rand(self::$pool)];</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<hr />
+<h4 id="step-6-monitor-adjust-ongoing"><strong>Step 6: Monitor &amp; Adjust (ongoing)</strong></h4>
+<p><strong>Datadog Dashboard:</strong></p>
+<div class="codehilite"><pre><span></span><code>- Requests/second: 10,000 (target: handle without errors)
+- Error rate: 20% → 2% (after fixes)
+- Database connections: 1,000 → 100 (pooling worked!)
+- Response time: 500ms → 150ms (caching + replicas)
+</code></pre></div>
+
+<hr />
+<hr />
+<h2 id="case-study-5-malicious-actor-investigation-customer-reported">🕵️ <strong>Case Study #5: Malicious Actor Investigation (Customer-Reported)</strong></h2>
+<h3 id="the-scenario_4"><strong>The Scenario:</strong></h3>
+<p>It's Monday morning, 9 AM. You receive an urgent email from a customer:</p>
+<p><strong>Subject:</strong> URGENT: Unauthorized Access to Our Account</p>
+<p><strong>Body:</strong><br />
+"We noticed suspicious activity on our account over the weekend. Someone logged in from an IP address we don't recognize and changed our bank account information. We need a full investigation immediately — did they access any sensitive data? Are other accounts affected?"</p>
+<p><strong>Initial Details:</strong><br />
+- <strong>Customer:</strong> ACME Corporation (Customer ID: 54321)<br />
+- <strong>Affected User:</strong> john.doe@acme.com (User ID: 98765)<br />
+- <strong>Time Window:</strong> Saturday, Nov 15, 2026, 2:00 AM - 4:00 AM UTC<br />
+- <strong>IP Address:</strong> 185.220.101.38 (customer says "not ours")</p>
+<p><strong>What do you do in the next 2 hours?</strong></p>
+<hr />
+<h3 id="sample-solution_4"><strong>Sample Solution:</strong></h3>
+<h4 id="phase-1-immediate-response-scope-10-minutes"><strong>Phase 1: Immediate Response &amp; Scope (10 minutes)</strong></h4>
+<p><strong>Step 1: Acknowledge Customer</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nl">Subject</span><span class="p">:</span><span class="w"> </span><span class="n">RE</span><span class="o">:</span><span class="w"> </span><span class="n">URGENT</span><span class="o">:</span><span class="w"> </span><span class="n">Unauthorized</span><span class="w"> </span><span class="n">Access</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">Investigation</span><span class="w"> </span><span class="n">Started</span>
+
+<span class="n">Dear</span><span class="w"> </span><span class="n">ACME</span><span class="w"> </span><span class="n">Security</span><span class="w"> </span><span class="n">Team</span><span class="p">,</span>
+
+<span class="n">Thank</span><span class="w"> </span><span class="n">you</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">reporting</span><span class="w"> </span><span class="n">this</span><span class="p">.</span><span class="w"> </span><span class="n">We</span><span class="w"> </span><span class="n">take</span><span class="w"> </span><span class="n">security</span><span class="w"> </span><span class="n">incidents</span><span class="w"> </span><span class="n">very</span><span class="w"> </span><span class="n">seriously</span><span class="p">.</span>
+
+<span class="n">Investigation</span><span class="w"> </span><span class="n">Status</span><span class="o">:</span><span class="w"> </span><span class="n">IN</span><span class="w"> </span><span class="n">PROGRESS</span>
+<span class="n">Expected</span><span class="w"> </span><span class="n">Timeline</span><span class="o">:</span><span class="w"> </span><span class="n">Full</span><span class="w"> </span><span class="n">report</span><span class="w"> </span><span class="n">within</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="n">hours</span>
+
+<span class="n">Initial</span><span class="w"> </span><span class="n">Actions</span><span class="w"> </span><span class="n">Taken</span><span class="o">:</span>
+<span class="err">✅</span><span class="w"> </span><span class="n">User</span><span class="w"> </span><span class="n">account</span><span class="w"> </span><span class="n">temporarily</span><span class="w"> </span><span class="n">locked</span>
+<span class="err">✅</span><span class="w"> </span><span class="n">Suspicious</span><span class="w"> </span><span class="n">session</span><span class="w"> </span><span class="n">terminated</span>
+<span class="err">✅</span><span class="w"> </span><span class="n">Investigation</span><span class="w"> </span><span class="n">team</span><span class="w"> </span><span class="n">notified</span>
+
+<span class="n">I</span><span class="err">'</span><span class="n">ll</span><span class="w"> </span><span class="n">send</span><span class="w"> </span><span class="n">you</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="n">detailed</span><span class="w"> </span><span class="n">report</span><span class="w"> </span><span class="n">shortly</span><span class="w"> </span><span class="n">with</span><span class="o">:</span>
+<span class="o">-</span><span class="w"> </span><span class="n">Complete</span><span class="w"> </span><span class="n">timeline</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">attacker</span><span class="w"> </span><span class="n">activity</span>
+<span class="o">-</span><span class="w"> </span><span class="n">Data</span><span class="w"> </span><span class="n">accessed</span><span class="o">/</span><span class="n">modified</span>
+<span class="o">-</span><span class="w"> </span><span class="n">Remediation</span><span class="w"> </span><span class="n">steps</span><span class="w"> </span><span class="n">taken</span>
+
+<span class="n">If</span><span class="w"> </span><span class="n">you</span><span class="w"> </span><span class="n">need</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">reach</span><span class="w"> </span><span class="n">me</span><span class="w"> </span><span class="n">urgently</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="n">phone</span><span class="w"> </span><span class="n">number</span><span class="p">]</span>
+
+<span class="n">Best</span><span class="w"> </span><span class="n">regards</span><span class="p">,</span>
+<span class="n">Karthikeyan</span><span class="w"> </span><span class="n">Sekar</span>
+<span class="n">Production</span><span class="w"> </span><span class="n">Support</span><span class="w"> </span><span class="n">Team</span>
+</code></pre></div>
+
+<p><strong>Step 2: Lock the Account (immediate containment)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">UPDATE</span><span class="w"> </span><span class="n">fsiocuser</span><span class="w"> </span>
+<span class="k">SET</span><span class="w"> </span><span class="n">Active</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'N'</span><span class="p">,</span><span class="w"> </span>
+<span class="w">    </span><span class="n">UpdateUser</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'SECURITY_INCIDENT_54321'</span><span class="p">,</span><span class="w"> </span>
+<span class="w">    </span><span class="n">UpdateDate</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NOW</span><span class="p">()</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">UserId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">98765</span><span class="p">;</span>
+</code></pre></div>
+
+<hr />
+<h4 id="phase-2-multi-source-log-collection-30-minutes"><strong>Phase 2: Multi-Source Log Collection (30 minutes)</strong></h4>
+<p><strong>1. Datadog APM Traces</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nl">env</span><span class="p">:</span><span class="n">production</span><span class="w"> </span>
+<span class="nl">service</span><span class="p">:</span><span class="n">api</span><span class="w"> </span>
+<span class="nv">@user</span><span class="p">.</span><span class="nl">id</span><span class="p">:</span><span class="mi">98765</span><span class="w"> </span>
+<span class="nv">@timestamp</span><span class="err">:</span><span class="o">[</span><span class="n">2026-11-15T02:00:00 TO 2026-11-15T04:00:00</span><span class="o">]</span>
+</code></pre></div>
+
+<p><strong>Result:</strong><br />
+| Timestamp | Endpoint | IP Address | Response | Details |<br />
+|---|---|---|---|---|<br />
+| 02:15:33 | POST <code>/api/auth/login</code> | 185.220.101.38 | 200 | Login SUCCESS |<br />
+| 02:16:12 | GET <code>/api/invoices</code> | 185.220.101.38 | 200 | 150 invoices retrieved |<br />
+| 02:17:05 | PUT <code>/api/account/bank</code> | 185.220.101.38 | 200 | Bank account CHANGED |<br />
+| 02:18:22 | POST <code>/api/payments</code> | 185.220.101.38 | 403 | Payment BLOCKED (fraud detection) |<br />
+| 02:19:40 | POST <code>/api/auth/password-reset</code> | 185.220.101.38 | 200 | Password reset initiated |<br />
+| 02:21:15 | POST <code>/api/logout</code> | 185.220.101.38 | 200 | Session ended |</p>
+<p><strong>2. Splunk Audit Logs</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nx">index</span><span class="p">=</span><span class="nx">audit_logs</span><span class="w"> </span><span class="nx">user_id</span><span class="p">=</span><span class="mi">98765</span><span class="w"> </span><span class="nx">earliest</span><span class="p">=</span><span class="s">"2026-11-15:02:00:00"</span><span class="w"> </span><span class="nx">latest</span><span class="p">=</span><span class="s">"2026-11-15:04:00:00"</span>
+<span class="o">|</span><span class="w"> </span><span class="nx">table</span><span class="w"> </span><span class="nx">_time</span><span class="p">,</span><span class="w"> </span><span class="nx">action</span><span class="p">,</span><span class="w"> </span><span class="nx">resource</span><span class="p">,</span><span class="w"> </span><span class="nx">ip_address</span><span class="p">,</span><span class="w"> </span><span class="nx">user_agent</span><span class="p">,</span><span class="w"> </span><span class="nx">details</span>
+</code></pre></div>
+
+<p><strong>Result:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="mf">02</span><span class="p">:</span><span class="mf">17</span><span class="p">:</span><span class="mf">05</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="n">UPDATE</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="n">fsiAccount</span><span class="mf">.</span><span class="n">BankAccount</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="mf">185.220.101.38</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="n">Mozilla</span><span class="o">/</span><span class="mf">5.0</span><span class="w"> </span><span class="p">(</span><span class="kr">To</span><span class="n">r</span><span class="p">)</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="n">Old</span><span class="p">:</span><span class="w"> </span><span class="o">****</span><span class="w"> </span><span class="mf">1234</span><span class="p">,</span><span class="w"> </span><span class="kr">New</span><span class="p">:</span><span class="w"> </span><span class="o">****</span><span class="w"> </span><span class="mf">9999</span>
+<span class="mf">02</span><span class="p">:</span><span class="mf">19</span><span class="p">:</span><span class="mf">40</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="n">INSERT</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="n">password_reset_tokens</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="mf">185.220.101.38</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="n">Mozilla</span><span class="o">/</span><span class="mf">5.0</span><span class="w"> </span><span class="p">(</span><span class="kr">To</span><span class="n">r</span><span class="p">)</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="kr">To</span><span class="n">ken</span><span class="p">:</span><span class="w"> </span><span class="n">abc123</span><span class="mf">...</span>
+</code></pre></div>
+
+<p><strong>3. Pendo User Activity</strong></p>
+<div class="codehilite"><pre><span></span><code>curl<span class="w"> </span>-X<span class="w"> </span>GET<span class="w"> </span><span class="s2">"https://app.pendo.io/api/v1/aggregation"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">"x-pendo-integration-key: YOUR_KEY"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s1">'{</span>
+<span class="s1">    "visitor": {"id": "98765"},</span>
+<span class="s1">    "startTime": "2026-11-15T02:00:00Z",</span>
+<span class="s1">    "endTime": "2026-11-15T04:00:00Z"</span>
+<span class="s1">  }'</span>
+</code></pre></div>
+
+<p><strong>Result:</strong><br />
+- <strong>02:16:30:</strong> Viewed "Invoices" page (150 invoices)<br />
+- <strong>02:17:00:</strong> Clicked "Edit Bank Account" button<br />
+- <strong>02:17:15:</strong> Submitted bank account form<br />
+- <strong>02:18:00:</strong> Navigated to "Payments" page<br />
+- <strong>02:18:30:</strong> Clicked "Make Payment" (failed — fraud detection)</p>
+<p><strong>4. SendGrid Email Logs</strong></p>
+<div class="codehilite"><pre><span></span><code>curl<span class="w"> </span>-X<span class="w"> </span>GET<span class="w"> </span><span class="s2">"https://api.sendgrid.com/v3/messages"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">"Authorization: Bearer YOUR_API_KEY"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s1">'query=to_email:"john.doe@acme.com" AND start_time:"2026-11-15T02:00:00Z"'</span>
+</code></pre></div>
+
+<p><strong>Result:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="mf">02</span><span class="p">:</span><span class="mf">19</span><span class="p">:</span><span class="mf">45</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="s">"Password Reset Request"</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="n">john</span><span class="mf">.</span><span class="n">doe</span><span class="err">@</span><span class="n">acme</span><span class="mf">.</span><span class="n">com</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="n">Delivered</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="kr">Open</span><span class="n">ed</span><span class="p">:</span><span class="w"> </span><span class="n">Yes</span><span class="w"> </span><span class="p">(</span><span class="mf">02</span><span class="p">:</span><span class="mf">20</span><span class="p">:</span><span class="mf">12</span><span class="p">)</span>
+<span class="mf">02</span><span class="p">:</span><span class="mf">20</span><span class="p">:</span><span class="mf">50</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="s">"Bank Account Changed"</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="n">john</span><span class="mf">.</span><span class="n">doe</span><span class="err">@</span><span class="n">acme</span><span class="mf">.</span><span class="n">com</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="n">Delivered</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="kr">Open</span><span class="n">ed</span><span class="p">:</span><span class="w"> </span><span class="n">No</span><span class="w"> </span><span class="p">(</span><span class="ow">not</span><span class="w"> </span><span class="n">yet</span><span class="p">)</span>
+</code></pre></div>
+
+<p><strong>5. MySQL Audit Tables</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Bank account change</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">fsiAccountAudits</span><span class="w"> </span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">CustomerId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">54321</span><span class="w"> </span>
+<span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="n">AuditDate</span><span class="w"> </span><span class="k">BETWEEN</span><span class="w"> </span><span class="s1">'2026-11-15 02:00:00'</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="s1">'2026-11-15 04:00:00'</span><span class="p">;</span>
+</code></pre></div>
+
+<p><strong>Result:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c">| AuditDate           | EventUser     | IPAddress       | Description                           |</span>
+<span class="c">|</span><span class="nb">---------------------</span><span class="c">|</span><span class="nb">---------------</span><span class="c">|</span><span class="nb">-----------------</span><span class="c">|</span><span class="nb">---------------------------------------</span><span class="c">|</span>
+<span class="c">| 2026</span><span class="nb">-</span><span class="c">11</span><span class="nb">-</span><span class="c">15 02:17:05 | john</span><span class="nt">.</span><span class="c">doe@</span><span class="nt">...</span><span class="c">  | 185</span><span class="nt">.</span><span class="c">220</span><span class="nt">.</span><span class="c">101</span><span class="nt">.</span><span class="c">38  | Bank Account Changed: **** 1234 → 9999 |</span>
+</code></pre></div>
+
+<hr />
+<h4 id="phase-3-ip-address-analysis-5-minutes"><strong>Phase 3: IP Address Analysis (5 minutes)</strong></h4>
+<p><strong>Check if IP is known bad actor:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Check AbuseIPDB</span>
+curl<span class="w"> </span>-G<span class="w"> </span>https://api.abuseipdb.com/api/v2/check<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--data-urlencode<span class="w"> </span><span class="s2">"ipAddress=185.220.101.38"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">"Key: YOUR_API_KEY"</span>
+</code></pre></div>
+
+<p><strong>Result:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"ipAddress"</span><span class="p">:</span><span class="w"> </span><span class="s2">"185.220.101.38"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"abuseConfidenceScore"</span><span class="p">:</span><span class="w"> </span><span class="mi">95</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"countryCode"</span><span class="p">:</span><span class="w"> </span><span class="s2">"NL"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"usageType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Reserved"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"isTor"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"totalReports"</span><span class="p">:</span><span class="w"> </span><span class="mi">234</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong>Verdict:</strong> ✅ <strong>Confirmed Tor exit node</strong> (95% abuse confidence score, 234 prior reports)</p>
+<hr />
+<h4 id="phase-4-timeline-reconstruction-10-minutes"><strong>Phase 4: Timeline Reconstruction (10 minutes)</strong></h4>
+<p><strong>Create Customer-Facing Timeline:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Time (UTC)</th>
+<th>Event</th>
+<th>Source</th>
+<th>Attacker Action</th>
+<th>Customer Impact</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>02:15:33</strong></td>
+<td>Login SUCCESS</td>
+<td>Datadog</td>
+<td>Attacker logged in using valid credentials</td>
+<td>⚠️ Account compromised</td>
+</tr>
+<tr>
+<td><strong>02:16:12</strong></td>
+<td>150 Invoices Retrieved</td>
+<td>Datadog</td>
+<td>Attacker downloaded customer invoice data</td>
+<td>⚠️ <strong>PII Exposed</strong> (names, addresses, amounts)</td>
+</tr>
+<tr>
+<td><strong>02:16:30</strong></td>
+<td>Viewed Invoices Page</td>
+<td>Pendo</td>
+<td>Attacker browsed invoice list</td>
+<td>⚠️ Confirmed data access</td>
+</tr>
+<tr>
+<td><strong>02:17:05</strong></td>
+<td>Bank Account Changed</td>
+<td>MySQL Audit</td>
+<td>Attacker changed bank account from **** 1234 → **** 9999</td>
+<td>⚠️ <strong>Data Modified</strong></td>
+</tr>
+<tr>
+<td><strong>02:18:22</strong></td>
+<td>Payment Attempt BLOCKED</td>
+<td>Datadog</td>
+<td>Attacker tried to initiate $5,000 payment</td>
+<td>✅ <strong>Fraud Detection Worked</strong></td>
+</tr>
+<tr>
+<td><strong>02:19:40</strong></td>
+<td>Password Reset Initiated</td>
+<td>SendGrid</td>
+<td>Attacker triggered password reset (lock out real user)</td>
+<td>⚠️ Attempted lockout</td>
+</tr>
+<tr>
+<td><strong>02:21:15</strong></td>
+<td>Logout</td>
+<td>Datadog</td>
+<td>Attacker session ended</td>
+<td>✅ Access terminated</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Key Findings:</strong><br />
+1. ✅ <strong>Login was successful</strong> → Attacker had valid username + password (credential compromise, not platform vulnerability)<br />
+2. ⚠️ <strong>150 invoices accessed</strong> → PII exposure (customer names, addresses, invoice amounts)<br />
+3. ⚠️ <strong>Bank account changed</strong> → Malicious modification (reverted)<br />
+4. ✅ <strong>Payment blocked</strong> → Fraud detection prevented financial loss<br />
+5. ✅ <strong>IP confirmed as Tor</strong> → 95% abuse confidence, known bad actor</p>
+<hr />
+<h4 id="phase-5-impact-assessment-10-minutes"><strong>Phase 5: Impact Assessment (10 minutes)</strong></h4>
+<p><strong>1. Data Accessed (PII Exposure)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Which invoices were accessed?</span>
+<span class="k">SELECT</span><span class="w"> </span>
+<span class="w">    </span><span class="n">InvoiceId</span><span class="p">,</span><span class="w"> </span>
+<span class="w">    </span><span class="n">CustomerId</span><span class="p">,</span><span class="w"> </span>
+<span class="w">    </span><span class="n">CustomerName</span><span class="p">,</span><span class="w"> </span>
+<span class="w">    </span><span class="n">InvoiceAmount</span><span class="p">,</span>
+<span class="w">    </span><span class="n">InvoiceDate</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">fsidocument</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">CustomerId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">54321</span>
+<span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="n">InvoiceDate</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="s1">'2026-01-01'</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">InvoiceDate</span><span class="w"> </span><span class="k">DESC</span>
+<span class="k">LIMIT</span><span class="w"> </span><span class="mi">150</span><span class="p">;</span>
+</code></pre></div>
+
+<p><strong>Result:</strong> 150 invoices (Jan 2026 - Nov 2026)<br />
+- <strong>PII exposed:</strong> Customer names, addresses, invoice amounts ($500K total)<br />
+- <strong>No SSN, credit cards, or bank accounts in invoices</strong> (phew!)</p>
+<p><strong>2. Data Modified</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- What was changed?</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">fsiAccountAudits</span><span class="w"> </span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">CustomerId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">54321</span><span class="w"> </span>
+<span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="n">AuditDate</span><span class="w"> </span><span class="k">BETWEEN</span><span class="w"> </span><span class="s1">'2026-11-15 02:00:00'</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="s1">'2026-11-15 04:00:00'</span><span class="p">;</span>
+</code></pre></div>
+
+<p><strong>Result:</strong> 1 bank account change<br />
+- <strong>Old:</strong> **** 1234 (legitimate customer account)<br />
+- <strong>New:</strong> **** 9999 (attacker's account)<br />
+- <strong>Status:</strong> ✅ Reverted immediately</p>
+<p><strong>3. Financial Loss</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Were any payments successful?</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">fsiPayments</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">CustomerId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">54321</span>
+<span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="n">PaymentDate</span><span class="w"> </span><span class="k">BETWEEN</span><span class="w"> </span><span class="s1">'2026-11-15 02:00:00'</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="s1">'2026-11-15 04:00:00'</span><span class="p">;</span>
+</code></pre></div>
+
+<p><strong>Result:</strong> 0 payments (all blocked by fraud detection)<br />
+- <strong>Financial loss:</strong> $0 ✅</p>
+<p><strong>4. Blast Radius (Are other customers affected?)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Check for other logins from same Tor IP</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="k">DISTINCT</span><span class="w"> </span><span class="n">UserId</span><span class="p">,</span><span class="w"> </span><span class="n">CustomerId</span><span class="p">,</span><span class="w"> </span><span class="n">LoginTime</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">user_sessions</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">ip_address</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'185.220.101.38'</span>
+<span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="n">LoginTime</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="s1">'2026-11-14'</span><span class="p">;</span>
+</code></pre></div>
+
+<p><strong>Result:</strong> Only 1 user (Customer 54321)<br />
+- <strong>Other customers:</strong> ✅ Not affected</p>
+<hr />
+<h4 id="phase-6-remediation-15-minutes"><strong>Phase 6: Remediation (15 minutes)</strong></h4>
+<p><strong>1. Revert Malicious Changes</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Rollback bank account</span>
+<span class="k">UPDATE</span><span class="w"> </span><span class="n">fsiAccount</span><span class="w"> </span>
+<span class="k">SET</span><span class="w"> </span><span class="n">BankAccount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'****1234'</span><span class="p">,</span><span class="w">  </span><span class="c1">-- Original value</span>
+<span class="w">    </span><span class="n">UpdateUser</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'SECURITY_ROLLBACK_54321'</span><span class="p">,</span>
+<span class="w">    </span><span class="n">UpdateDate</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NOW</span><span class="p">()</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">CustomerId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">54321</span><span class="p">;</span>
+</code></pre></div>
+
+<p><strong>2. Terminate All Sessions</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">DELETE</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">user_sessions</span><span class="w"> </span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">UserId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">98765</span><span class="w"> </span><span class="k">OR</span><span class="w"> </span><span class="n">ip_address</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'185.220.101.38'</span><span class="p">;</span>
+</code></pre></div>
+
+<p><strong>3. Force Password Reset</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">UPDATE</span><span class="w"> </span><span class="n">fsiocuser</span><span class="w"> </span>
+<span class="k">SET</span><span class="w"> </span><span class="n">PasswordResetRequired</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'Y'</span><span class="p">,</span>
+<span class="w">    </span><span class="n">Active</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'N'</span><span class="p">,</span><span class="w">  </span><span class="c1">-- Keep locked until customer resets</span>
+<span class="w">    </span><span class="n">UpdateDate</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NOW</span><span class="p">()</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">UserId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">98765</span><span class="p">;</span>
+</code></pre></div>
+
+<p><strong>4. Add IP to Blacklist</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">ip_blacklist</span><span class="w"> </span><span class="p">(</span><span class="n">ip_address</span><span class="p">,</span><span class="w"> </span><span class="n">reason</span><span class="p">,</span><span class="w"> </span><span class="n">added_date</span><span class="p">)</span>
+<span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="s1">'185.220.101.38'</span><span class="p">,</span><span class="w"> </span><span class="s1">'Confirmed Tor exit node - malicious actor'</span><span class="p">,</span><span class="w"> </span><span class="n">NOW</span><span class="p">());</span>
+</code></pre></div>
+
+<p><strong>5. Enable Monitoring</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Create Datadog alert</span>
+curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span><span class="s2">"https://api.datadoghq.com/api/v1/monitor"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">"DD-API-KEY: YOUR_KEY"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s1">'{</span>
+<span class="s1">    "type": "log alert",</span>
+<span class="s1">    "query": "source:api status:success @user.id:98765",</span>
+<span class="s1">    "message": "ALERT: User 98765 (ACME) logged in again - verify legitimacy",</span>
+<span class="s1">    "name": "ACME Account Monitoring (Security Incident 54321)"</span>
+<span class="s1">  }'</span>
+</code></pre></div>
+
+<hr />
+<h4 id="phase-7-customer-report-30-minutes"><strong>Phase 7: Customer Report (30 minutes)</strong></h4>
+<p><strong>Email to Customer:</strong></p>
+<div class="codehilite"><pre><span></span><code>Subject: Security Incident Report - Case <span class="ni">#2026-11-15-54321</span>
+
+Dear ACME Security Team,
+
+<span class="gs">**Investigation Complete**</span>
+
+We've completed a thorough investigation of the unauthorized access incident. Here's what we found:
+
+---
+
+<span class="gs">**EXECUTIVE SUMMARY**</span>
+
+<span class="gs">**What Happened:**</span>
+An attacker gained unauthorized access to your account (john.doe@acme.com) on Saturday, Nov 15, 2026, between 2:15 AM - 2:21 AM UTC (6-minute window).
+
+<span class="gs">**How They Got In:**</span>
+The attacker used <span class="gs">**valid login credentials**</span> (correct username + password). This was not a platform vulnerability — your credentials were likely compromised elsewhere (phishing, password reuse, data breach).
+
+<span class="gs">**What They Did:**</span>
+<span class="k">1.</span> ✅ Logged in successfully
+<span class="k">2.</span> ⚠️ Accessed 150 customer invoices (PII exposure)
+<span class="k">3.</span> ⚠️ Changed your bank account information
+<span class="k">4.</span> ✅ Attempted a $5,000 payment (BLOCKED by our fraud detection)
+<span class="k">5.</span> ⚠️ Triggered a password reset (to lock you out)
+
+<span class="gs">**Financial Impact:**</span>
+<span class="k">-</span><span class="w"> </span><span class="gs">**$0 loss**</span> ✅ (payment blocked)
+
+<span class="gs">**Data Impact:**</span>
+<span class="k">-</span><span class="w"> </span>150 invoices viewed (Jan 2026 - Nov 2026)
+<span class="k">-</span><span class="w"> </span>PII exposed: Customer names, addresses, invoice amounts (~$500K total)
+<span class="k">-</span><span class="w"> </span><span class="gs">**NO**</span> SSN, credit cards, or bank accounts exposed ✅
+
+---
+
+<span class="gs">**DETAILED TIMELINE**</span>
+
+| Time (UTC) | Attacker Action | System Response |
+|---|---|---|
+| 02:15:33 | Logged in from Tor IP (185.220.101.38) | Login successful (valid credentials) |
+| 02:16:12 | Downloaded 150 invoices | ⚠️ <span class="gs">**Data accessed**</span> |
+| 02:17:05 | Changed bank account to \*\*\*\* 9999 | ⚠️ <span class="gs">**Data modified**</span> (now reverted) |
+| 02:18:22 | Tried to initiate $5,000 payment | ✅ <span class="gs">**BLOCKED**</span> (fraud detection) |
+| 02:19:40 | Triggered password reset email | Sent to john.doe@acme.com |
+| 02:21:15 | Logged out | Session ended |
+
+---
+
+<span class="gs">**ACTIONS WE TOOK**</span>
+
+<span class="k">1.</span> ✅ <span class="gs">**Account locked**</span> (Saturday 2:21 AM UTC)
+<span class="k">2.</span> ✅ <span class="gs">**Bank account reverted**</span> to original \*\*\*\* 1234
+<span class="k">3.</span> ✅ <span class="gs">**Attacker IP blacklisted**</span> (185.220.101.38 - confirmed Tor exit node)
+<span class="k">4.</span> ✅ <span class="gs">**All sessions terminated**</span>
+<span class="k">5.</span> ✅ <span class="gs">**Monitoring enabled**</span> (alerts if this user logs in again)
+
+---
+
+<span class="gs">**ACTIONS YOU SHOULD TAKE**</span>
+
+<span class="k">1.</span> <span class="gs">**Reset password immediately**</span> (we've forced this — you'll be prompted on next login)
+<span class="k">2.</span> <span class="gs">**Enable 2FA**</span> (Two-Factor Authentication) — prevents future credential compromise
+<span class="k">3.</span> <span class="gs">**Review invoice data**</span> — 150 invoices were accessed; notify affected customers if required by law (GDPR, etc.)
+<span class="k">4.</span> <span class="gs">**Check for credential reuse**</span> — if john.doe@acme.com used the same password elsewhere, change those too
+<span class="k">5.</span> <span class="gs">**Employee training**</span> — this was likely a phishing attack; train your team to spot suspicious emails
+
+---
+
+<span class="gs">**ARE OTHER ACCOUNTS AFFECTED?**</span>
+
+✅ <span class="gs">**No.**</span> We checked all logins from this Tor IP — only your account was targeted.
+
+---
+
+<span class="gs">**NEXT STEPS**</span>
+
+<span class="k">1.</span> Reply to this email to confirm you've reset the password
+<span class="k">2.</span> Let us know if you'd like help enabling 2FA
+<span class="k">3.</span> We're here to answer any questions: [phone number]
+
+<span class="gs">**Compliance Note:**</span>
+If GDPR applies, you may need to notify affected customers within 72 hours (150 invoices = PII exposure). We can provide supporting documentation if needed.
+
+---
+
+Best regards,
+Karthikeyan Sekar
+Production Support Engineer
+[Company Name]
+</code></pre></div>
+
+<hr />
+<h2 id="self-assessment-questions">🎯 <strong>Self-Assessment Questions</strong></h2>
+<p>After each case study, ask yourself:</p>
+<ol>
+<li><strong>Did I prioritize correctly?</strong> (fix critical issues first)</li>
+<li><strong>Did I communicate clearly?</strong> (notify stakeholders, write clear updates)</li>
+<li><strong>Did I think about trade-offs?</strong> (quick fix vs permanent solution)</li>
+<li><strong>Did I prevent future occurrences?</strong> (post-mortem, monitoring, process changes)</li>
+</ol>
+<hr />
+<h2 id="more-scenario-ideas-try-these-yourself">🚀 <strong>More Scenario Ideas (Try These Yourself!)</strong></h2>
+<ol>
+<li>
+<p><strong>Deployment Gone Wrong:</strong> You deploy a new feature at 5 PM. By 5:15 PM, error rate is 10%. Do you rollback immediately or investigate first?</p>
+</li>
+<li>
+<p><strong>Data Corruption:</strong> A bug caused 10,000 customer records to have incorrect data. How do you fix it without downtime?</p>
+</li>
+<li>
+<p><strong>Third-Party API Down:</strong> Your payment gateway (Stripe/PayPal) goes down. How do you handle checkout requests?</p>
+</li>
+<li>
+<p><strong>Team Conflict:</strong> Two engineers disagree on architecture (microservices vs monolith). How do you mediate?</p>
+</li>
+<li>
+<p><strong>Hiring Decision:</strong> You interview a candidate who's technically brilliant but rude in code reviews. Hire or no?</p>
+</li>
+</ol>
+<hr />
+<p><strong>Practice these scenarios, and you'll be ready for ANYTHING in the interview! 💪</strong></p>
+        </div>
+    </div>
+
+    <script>
+        // Progress Tracker JavaScript
+        const STORAGE_KEY = 'course_progress_scenario_based_case_studies';
+
+        // Extract all H2 and H3 headings from content
+        function extractSections() {
+            const content = document.querySelector('.content');
+            const headings = content.querySelectorAll('h2, h3');
+            const sections = [];
+
+            headings.forEach((heading, index) => {
+                const level = heading.tagName === 'H2' ? 2 : 3;
+                const text = heading.textContent.trim();
+                const id = `section-${index}`;
+
+                // Add ID to heading for linking
+                heading.id = id;
+
+                sections.push({
+                    id: id,
+                    text: text,
+                    level: level
+                });
+            });
+
+            return sections;
+        }
+
+        // Load saved progress from localStorage
+        function loadProgress() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            return saved ? JSON.parse(saved) : {};
+        }
+
+        // Save progress to localStorage
+        function saveProgress(progress) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+        }
+
+        // Calculate progress percentage
+        function calculateProgress() {
+            const checkboxes = document.querySelectorAll('.progress-checkbox');
+            const total = checkboxes.length;
+            if (total === 0) return 0;
+
+            const completed = Array.from(checkboxes).filter(cb => cb.checked).length;
+            return Math.round((completed / total) * 100);
+        }
+
+        // Update progress display
+        function updateProgressDisplay() {
+            const percentage = calculateProgress();
+            document.getElementById('progress-pct').textContent = percentage + '%';
+            document.getElementById('progress-bar').style.width = percentage + '%';
+
+            // Update completed class on items
+            document.querySelectorAll('.progress-item').forEach(item => {
+                const checkbox = item.querySelector('.progress-checkbox');
+                if (checkbox.checked) {
+                    item.classList.add('completed');
+                } else {
+                    item.classList.remove('completed');
+                }
+            });
+        }
+
+        // Toggle checkbox
+        function toggleCheckbox(sectionId) {
+            const checkbox = document.getElementById('cb-' + sectionId);
+            const progress = loadProgress();
+
+            progress[sectionId] = checkbox.checked;
+            saveProgress(progress);
+            updateProgressDisplay();
+        }
+
+        // Reset all progress
+        function resetProgress() {
+            if (confirm('Reset all progress for this page?')) {
+                localStorage.removeItem(STORAGE_KEY);
+                document.querySelectorAll('.progress-checkbox').forEach(cb => {
+                    cb.checked = false;
+                });
+                updateProgressDisplay();
+            }
+        }
+
+        // Toggle progress list visibility
+        function toggleProgressList() {
+            const list = document.getElementById('progress-items');
+            const btn = document.querySelector('.toggle-progress');
+
+            if (list.classList.contains('collapsed')) {
+                list.classList.remove('collapsed');
+                btn.textContent = '▼ Hide';
+            } else {
+                list.classList.add('collapsed');
+                btn.textContent = '▶ Show';
+            }
+        }
+
+        // Initialize progress tracker
+        function initProgressTracker() {
+            const sections = extractSections();
+            const progress = loadProgress();
+            const container = document.getElementById('progress-items');
+
+            if (sections.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No sections found</p>';
+                return;
+            }
+
+            sections.forEach(section => {
+                const item = document.createElement('div');
+                item.className = 'progress-item';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'progress-checkbox';
+                checkbox.id = 'cb-' + section.id;
+                checkbox.checked = progress[section.id] || false;
+                checkbox.onchange = () => toggleCheckbox(section.id);
+
+                const label = document.createElement('label');
+                label.className = 'progress-label';
+                label.htmlFor = 'cb-' + section.id;
+                label.textContent = section.text;
+                label.style.paddingLeft = section.level === 3 ? '20px' : '0';
+                label.onclick = () => {
+                    document.getElementById(section.id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+                };
+
+                item.appendChild(checkbox);
+                item.appendChild(label);
+                container.appendChild(item);
+            });
+
+            updateProgressDisplay();
+        }
+
+        // Run on page load
+        document.addEventListener('DOMContentLoaded', initProgressTracker);
+    </script>
+</body>
+</html>

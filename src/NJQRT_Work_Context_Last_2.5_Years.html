@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NJQRT_Work_Context_Last_2.5_Years</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 60px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .metadata {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 16px 24px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #666;
+            border-left: 4px solid #667eea;
+        }
+
+        /* PROGRESS TRACKER STYLES */
+        .progress-tracker {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .progress-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-stats {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .progress-percentage {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #764ba2;
+        }
+
+        .progress-bar-container {
+            height: 12px;
+            background: #e9ecef;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+            border-radius: 20px;
+        }
+
+        .reset-btn {
+            padding: 8px 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+
+        .reset-btn:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+        }
+
+        .progress-items {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .progress-items::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .progress-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .progress-item:hover {
+            background: #f8f9fa;
+            transform: translateX(5px);
+        }
+
+        .progress-item.completed {
+            opacity: 0.7;
+        }
+
+        .progress-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .progress-label {
+            cursor: pointer;
+            font-size: 0.95em;
+            line-height: 1.5;
+            color: #495057;
+            flex-grow: 1;
+        }
+
+        .progress-item.completed .progress-label {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .toggle-progress {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .toggle-progress:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .progress-items.collapsed {
+            display: none;
+        }
+
+        /* CONTENT STYLES */
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 4px solid #667eea;
+            font-weight: 700;
+        }
+
+        h2 {
+            color: #764ba2;
+            font-size: 2em;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        h3 {
+            color: #495057;
+            font-size: 1.5em;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        h4 {
+            color: #666;
+            font-size: 1.25em;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        ul, ol {
+            margin: 20px 0;
+            padding-left: 40px;
+        }
+
+        li {
+            margin-bottom: 12px;
+            line-height: 1.7;
+        }
+
+        code {
+            background: #f4f5f7;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #c7254e;
+            border: 1px solid #e1e4e8;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 24px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 25px 0;
+            border: 1px solid #444;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            border: none;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        blockquote {
+            border-left: 5px solid #667eea;
+            padding: 15px 25px;
+            margin: 25px 0;
+            background: #f8f9fa;
+            border-radius: 0 8px 8px 0;
+            color: #495057;
+            font-style: italic;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 30px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 14px 18px;
+            text-align: left;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tr:hover {
+            background: #e9ecef;
+            transition: background 0.2s;
+        }
+
+        a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px solid transparent;
+            transition: border-bottom 0.2s;
+        }
+
+        a:hover {
+            border-bottom: 1px solid #667eea;
+        }
+
+        hr {
+            border: none;
+            border-top: 2px solid #e9ecef;
+            margin: 40px 0;
+        }
+
+        strong {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        em {
+            color: #495057;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 25px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.6em;
+            }
+
+            .progress-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .progress-stats {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../navigation.html" class="back-link">&larr; Back to Navigation</a>
+
+        <div class="metadata">
+            <strong>Source:</strong> dev/NJQRT_Work_Context_Last_2.5_Years.md &nbsp;|&nbsp; <strong>Updated:</strong> 2026-11-18 19:44:56
+        </div>
+
+        <!-- PROGRESS TRACKER -->
+        <div class="progress-tracker">
+            <div class="progress-header">
+                <div class="progress-title">
+                    <span>📚</span>
+                    <span>Your Progress</span>
+                </div>
+                <div class="progress-stats">
+                    <span class="progress-percentage" id="progress-pct">0%</span>
+                    <button class="reset-btn" onclick="resetProgress()">Reset</button>
+                    <button class="toggle-progress" onclick="toggleProgressList()">▼ Hide</button>
+                </div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progress-bar" style="width: 0%"></div>
+            </div>
+            <div class="progress-items" id="progress-items">
+                <!-- Checkboxes will be generated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="content">
+<h1 id="njqrt-work-context-last-25-years-2024-2026">📋 NJQRT Work Context - Last 2.5 Years (2024-2026)</h1>
+<p><strong>Role:</strong> Production Support Engineer / QRT Triage Specialist<br />
+<strong>Team:</strong> NJ QRT (Quality Response Team) - Invoicing Platform<br />
+<strong>Duration:</strong> August 2024 - November 2026 (2.5 years)<br />
+<strong>Company:</strong> Future Focus Info Tech Pvt Ltd (Client: Enterprise SaaS Billing Platform)  </p>
+<hr />
+<h2 id="what-is-njqrt">🎯 <strong>What is NJQRT?</strong></h2>
+<p><strong>NJQRT = New Jersey Quality Response Team</strong></p>
+<p><strong>Mission:</strong> Investigate, root-cause, and fix production issues reported by customers for a <strong>multi-tenant SaaS billing/invoicing platform</strong> serving 10,000+ customers processing $500M+ in payments annually.</p>
+<p><strong>Team Structure:</strong><br />
+- <strong>You:</strong> Production Support Engineer (Triage, Investigation, Fix, Review)<br />
+- <strong>Developers:</strong> 5-10 engineers across PHP, .NET, Python, Java stacks<br />
+- <strong>QA:</strong> Testing team (staging/UAT validation)<br />
+- <strong>DBA:</strong> Database admins (DML/DDL approval, performance)<br />
+- <strong>Product:</strong> Requirements, feature prioritization</p>
+<hr />
+<h2 id="your-responsibilities-daily">📊 <strong>Your Responsibilities (Daily)</strong></h2>
+<h3 id="1-triage-investigation-60-of-time"><strong>1. Triage &amp; Investigation (60% of time)</strong></h3>
+<ul>
+<li>Review incoming NJQRT tickets (Jira)</li>
+<li>Reproduce issues in dev/staging/production</li>
+<li>Root cause analysis (RCA) using:</li>
+<li><strong>Datadog APM</strong> (traces, errors, performance)</li>
+<li><strong>Splunk</strong> (audit logs, authentication events)</li>
+<li><strong>Pendo</strong> (user activity, feature usage)</li>
+<li><strong>SendGrid</strong> (email logs, delivery status)</li>
+<li><strong>MySQL audits</strong> (database changes, who/when/what)</li>
+<li>Write detailed RCA in Jira (5-field template: Issue, Impact, Root Cause, Solution, Impact)</li>
+</ul>
+<h3 id="2-code-fix-review-20-of-time"><strong>2. Code Fix &amp; Review (20% of time)</strong></h3>
+<ul>
+<li>Fix bugs in PHP (Laravel, Phalcon, Zend), .NET, Python</li>
+<li>Create PRs (GitHub)</li>
+<li><strong>Code reviews:</strong> 100+ reviews (security, performance, quality)</li>
+<li><strong>DML/DDL reviews:</strong> 50+ reviews (SQL safety, rollback scripts, audit logging)</li>
+</ul>
+<h3 id="3-cross-team-collaboration-10-of-time"><strong>3. Cross-Team Collaboration (10% of time)</strong></h3>
+<ul>
+<li>Work with .NET, Python, Java teams (via Slack, Jira)</li>
+<li>Use <strong>Claude AI skills</strong> to investigate external codebases</li>
+<li>Create high-quality Jira cases with repro steps, stack traces, suggested fixes</li>
+</ul>
+<h3 id="4-security-investigations-5-of-time"><strong>4. Security Investigations (5% of time)</strong></h3>
+<ul>
+<li>Investigate malicious actor incidents (customer-reported)</li>
+<li>Reconstruct event timelines from 5 monitoring systems</li>
+<li>Deliver customer-facing incident reports</li>
+</ul>
+<h3 id="5-monitoring-on-call-5-of-time"><strong>5. Monitoring &amp; On-Call (5% of time)</strong></h3>
+<ul>
+<li><strong>PagerDuty on-call:</strong> Weekly (2 days/7 hours) for P1/P2 incidents</li>
+<li>Daily Datadog monitoring (500 errors, performance regression)</li>
+<li>Proactive issue detection (post-PHP upgrades, negative scenarios)</li>
+</ul>
+<hr />
+<h2 id="repositories-you-worked-on-8-active-repos">🗂️ <strong>Repositories You Worked On (8 Active Repos)</strong></h2>
+<h3 id="1-inv-einvoice-connect-eic-customer-payment-portal"><strong>1. inv-einvoice-connect (EIC) - Customer Payment Portal</strong></h3>
+<p><strong>Tech:</strong> PHP 7.4, Zend MVC, MySQL (Stack1/Stack2 sharding), Redis, WCL Integration<br />
+<strong>Your Work:</strong><br />
+- Fixed invoice display bugs (SQL query optimization, sharding logic)<br />
+- Implemented authenticated email workflows (10-min activation codes)<br />
+- Debugged AutoPay threshold logic (payment gateway integration)<br />
+- Multi-language support fixes (12+ languages, CSR-driven config)</p>
+<p><strong>Key Incidents:</strong><br />
+- NJQRT-14200: AutoPay not charging when threshold met (fixed conditional logic)<br />
+- NJQRT-13761: Sub-user delegation permission bug (fixed RBAC check)</p>
+<hr />
+<h3 id="2-inv-client-connect-cc-supplier-admin-portal"><strong>2. inv-client-connect (CC) - Supplier Admin Portal</strong></h3>
+<p><strong>Tech:</strong> Laravel 9, MySQL, AMAPI Integration, Redis<br />
+<strong>Your Work:</strong><br />
+- Bulk user onboarding via AMAPI (OAuth token refresh bug fix)<br />
+- Payment on behalf of customers (security validation fix)<br />
+- Group-based access control (admin/standard/customer roles)</p>
+<p><strong>Key Incidents:</strong><br />
+- NJQRT-14577: OC user creation not audited (fixed trigger, wrote to correct audit table)<br />
+- NJQRT-15094: Supplier can't enable MPay for customers (fixed permission check)</p>
+<hr />
+<h3 id="3-inv-csr-customer-settings-repository"><strong>3. inv-csr (Customer Settings Repository)</strong></h3>
+<p><strong>Tech:</strong> Laravel 10, MySQL, Redis, APCu<br />
+<strong>Your Work:</strong><br />
+- 3-layer caching optimization (APCu → Redis → MySQL, &lt;50ms p99)<br />
+- Versioned settings with rollback (increment version on update, invalidate cache)<br />
+- Served 200+ microservices (REST API, GET <code>/settings/{customerId}/{key}</code>)</p>
+<p><strong>Key Incidents:</strong><br />
+- NJQRT-14792: CSR returning stale cache (fixed version-based invalidation)</p>
+<hr />
+<h3 id="4-inv-wcl-web-communication-layer-integration-microservice"><strong>4. inv-wcl (Web Communication Layer) - Integration Microservice</strong></h3>
+<p><strong>Tech:</strong> Phalcon MVC, MySQL, Redis, Encrypted Key Auth<br />
+<strong>Your Work:</strong><br />
+- Connection pooling strategy (prevent connection exhaustion)<br />
+- Encrypted key authentication (AES-256-GCM, AWS Secrets Manager)<br />
+- TTL-based caching (reduce external API calls)</p>
+<p><strong>Key Incidents:</strong><br />
+- NJQRT-14943: WCL timeout calling payment gateway (fixed HttpClient timeout config)</p>
+<hr />
+<h3 id="5-inv-mpay-managed-pay-supplier-level-autopay"><strong>5. inv-mpay (Managed Pay) - Supplier-Level AutoPay</strong></h3>
+<p><strong>Tech:</strong> PHP 7.4, Phalcon, MySQL, Payment Gateway Integration<br />
+<strong>Your Work:</strong><br />
+- Idempotency pattern (prevent duplicate charges, 80% dispute reduction)<br />
+- Threshold-based AutoPay (charge only if invoice total &gt;= $X)<br />
+- Integration with CC and EIC (enable/disable AutoPay workflows)</p>
+<p><strong>Key Incidents:</strong><br />
+- NJQRT-15274: Duplicate charges despite idempotency key (fixed race condition in Redis lock)</p>
+<hr />
+<h3 id="6-inv-amapi-account-management-api-bulk-enrollment"><strong>6. inv-amapi (Account Management API) - Bulk Enrollment</strong></h3>
+<p><strong>Tech:</strong> PHP 7.4, Laravel, MySQL, Redis<br />
+<strong>Your Work:</strong><br />
+- Bulk insert optimization (&lt;100ms per account)<br />
+- Bloom filter for duplicate detection (prevent re-enrollment)<br />
+- Multi-layer audit logging (fsiAccountAudits table)</p>
+<p><strong>Key Incidents:</strong><br />
+- NJQRT-14785: AMAPI not writing audit rows (fixed stored procedure call)</p>
+<hr />
+<h3 id="7-inv-bt-invoicing-ai-biscuit-ai-assisted-triage-investigation"><strong>7. inv-bt-invoicing-ai (Biscuit) - AI-Assisted Triage &amp; Investigation</strong></h3>
+<p><strong>Tech:</strong> Python, FastAPI, Claude AI Skills, Pydantic, PostgreSQL<br />
+<strong>Your Work:</strong><br />
+- Built <strong>Claude AI skills</strong> for automated triage:<br />
+  - <code>/karthik-triage</code> (full NJQRT triage workflow)<br />
+  - <code>/db-query</code> (safe MySQL gateway, credential-free)<br />
+  - <code>/developer</code> (load app context before coding)<br />
+  - <code>/researcher</code> (codebase architecture analysis)<br />
+  - <code>/bt-invoicing-qrt-post</code> (standardized Jira posting)<br />
+- <strong>Mermaid diagram generation</strong> for business logic<br />
+- <strong>Automated RCA drafts</strong> from log correlation (Datadog + Splunk + Pendo)<br />
+- <strong>Timeline reconstruction</strong> for security investigations</p>
+<p><strong>Key Features:</strong><br />
+- 40% faster incident resolution (AI workflows)<br />
+- 60% more security findings (automated review)<br />
+- 500+ production incidents resolved with AI assistance</p>
+<p><strong>One-Liner:</strong></p>
+<blockquote>
+<p>"Biscuit = AI assistant (Claude skills) that automates NJQRT triage, investigation, and Jira posting — built with FastAPI + Claude API"</p>
+</blockquote>
+<hr />
+<h3 id="8-pay-workflow-integration-service-payment-repo-net-core-payment-orchestration"><strong>8. pay-workflow-integration-service (Payment Repo) - .NET Core Payment Orchestration</strong></h3>
+<p><strong>Tech:</strong> .NET Core 6, C#, MySQL, RabbitMQ, Payment Gateway APIs<br />
+<strong>Your Work:</strong><br />
+- <strong>Cross-team investigation</strong> (not primary owner, but debugged issues)<br />
+- Investigated payment timeout errors (HttpClient configuration)<br />
+- Debugged webhook signature validation (HMAC-SHA256 mismatch)<br />
+- Created Jira cases for .NET team with repro steps + suggested fixes</p>
+<p><strong>Key Incidents:</strong><br />
+- NJQRT-14947: Payment webhook failing signature validation (fixed base64 encoding issue)<br />
+- NJQRT-15172: Payment charge API returning 500 for amounts &gt; $1000 (suggested validation fix)</p>
+<p><strong>One-Liner:</strong></p>
+<blockquote>
+<p>"Payment repo = .NET microservice orchestrating ACH/credit card charges, refunds, webhooks — you debugged cross-team issues via Claude AI code analysis"</p>
+</blockquote>
+<hr />
+<h2 id="njqrt-workflow-how-you-work">📊 <strong>NJQRT Workflow (How You Work)</strong></h2>
+<h3 id="phase-1-ticket-intake-5-minutes"><strong>Phase 1: Ticket Intake (5 minutes)</strong></h3>
+<ol>
+<li>Customer reports issue (via support ticket → Jira)</li>
+<li>NJQRT ticket created (auto-assigned or manually triaged)</li>
+<li>You review:<br />
+   - <strong>Summary:</strong> What's the symptom?<br />
+   - <strong>Description:</strong> Steps to reproduce, affected customers<br />
+   - <strong>Acceptance criteria:</strong> What does "fixed" look like?</li>
+</ol>
+<h3 id="phase-2-investigation-30-60-minutes"><strong>Phase 2: Investigation (30-60 minutes)</strong></h3>
+<ol>
+<li>
+<p><strong>Reproduce locally:</strong><br />
+   - Dev environment: http://dev.client.com<br />
+   - Staging: http://stage.client.com<br />
+   - If needed, production (read-only queries only)</p>
+</li>
+<li>
+<p><strong>Multi-source log collection:</strong><br />
+   - <strong>Datadog:</strong> API traces, error stack traces, slow queries<br />
+   - <strong>Splunk:</strong> Audit logs, authentication events<br />
+   - <strong>Pendo:</strong> User activity (which buttons clicked, which pages viewed)<br />
+   - <strong>SendGrid:</strong> Email delivery status (sent/delivered/bounced/opened)<br />
+   - <strong>MySQL audits:</strong> Database changes (fsiAccountAudits, fsionlineaccountaudit)</p>
+</li>
+<li>
+<p><strong>Root cause identification:</strong><br />
+   - Code analysis (PHP, .NET, Python — via Claude AI if external repo)<br />
+   - Database queries (run SELECT to verify data state)<br />
+   - Timeline reconstruction (correlate logs across 5 systems)</p>
+</li>
+</ol>
+<h3 id="phase-3-fix-1-4-hours"><strong>Phase 3: Fix (1-4 hours)</strong></h3>
+<ol>
+<li>
+<p><strong>Code fix:</strong><br />
+   - Create branch: <code>feature/NJQRT-xxxxx</code><br />
+   - Write fix (PHP, SQL, .NET via Jira case)<br />
+   - Write tests (Codeception for PHP, XUnit for .NET)<br />
+   - Create PR, request code review</p>
+</li>
+<li>
+<p><strong>DML/DDL fix</strong> (if data corruption):<br />
+   - Write forward SQL script (UPDATE/INSERT/DELETE)<br />
+   - Write rollback script (ROLLBACK.txt)<br />
+   - Create US-DML or EU-DML Jira case<br />
+   - Review checklist (USE statement, WHERE clause, affected rows, audit logging)<br />
+   - DBA approval → Apply to production</p>
+</li>
+</ol>
+<h3 id="phase-4-validation-15-30-minutes"><strong>Phase 4: Validation (15-30 minutes)</strong></h3>
+<ol>
+<li>Test in staging (manual + automated tests)</li>
+<li>QA sign-off (QA subtask in Jira)</li>
+<li>Deploy to production (via CI/CD pipeline)</li>
+<li>Monitor Datadog (24-48 hours post-deploy)</li>
+</ol>
+<h3 id="phase-5-documentation-30-minutes"><strong>Phase 5: Documentation (30 minutes)</strong></h3>
+<ol>
+<li>Update NJQRT parent ticket (5 fields):<br />
+   - <strong>Issue:</strong> What was the problem?<br />
+   - <strong>Issue Impact Analysis:</strong> Scope, affected customers<br />
+   - <strong>Root Cause:</strong> Why did it happen?<br />
+   - <strong>Solution:</strong> What was changed?<br />
+   - <strong>Solution Impact:</strong> Risk, verification steps</li>
+<li>Post to Development subtask (technical details, code review comments)</li>
+<li>Close ticket (transition to Done/Rolled)</li>
+</ol>
+<hr />
+<h2 id="your-impact-metrics">📈 <strong>Your Impact (Metrics)</strong></h2>
+<h3 id="volume"><strong>Volume:</strong></h3>
+<ul>
+<li><strong>500+ NJQRT tickets</strong> triaged/resolved (2.5 years)</li>
+<li><strong>100+ code reviews</strong> completed</li>
+<li><strong>50+ DML/DDL reviews</strong> completed</li>
+<li><strong>50+ security investigations</strong> (malicious actor incidents)</li>
+</ul>
+<h3 id="quality"><strong>Quality:</strong></h3>
+<ul>
+<li><strong>99.9% uptime</strong> maintained (SLA target)</li>
+<li><strong>100% success rate</strong> on 200+ database changes (zero rollbacks)</li>
+<li><strong>15 critical security issues</strong> caught in code review (pre-production)</li>
+<li><strong>20+ latent bugs</strong> found via Datadog monitoring (post-PHP upgrades)</li>
+</ul>
+<h3 id="speed"><strong>Speed:</strong></h3>
+<ul>
+<li><strong>12-min average MTTR</strong> (Mean Time to Resolution) for P1 incidents (target: &lt;15 min)</li>
+<li><strong>40% faster incident resolution</strong> (with AI workflows vs manual)</li>
+<li><strong>35% faster cross-team MTTF</strong> (Mean Time to Fix) with high-quality Jira cases</li>
+<li><strong>60% faster MTTR</strong> (Incident Tracker with automated timeline reconstruction)</li>
+</ul>
+<h3 id="cost-savings"><strong>Cost Savings:</strong></h3>
+<ul>
+<li><strong>80% database load reduction</strong> (Redis caching optimization)</li>
+<li><strong>80% dispute reduction</strong> (idempotency pattern preventing duplicate charges)</li>
+<li><strong>40% sprint velocity improvement</strong> (better Jira ticket breakdown)</li>
+<li><strong>25% AWS cost reduction</strong> (rightsizing, Reserved Instances)</li>
+</ul>
+<hr />
+<h2 id="what-you-learned-technical-skills">🎓 <strong>What You Learned (Technical Skills)</strong></h2>
+<h3 id="investigation-monitoring"><strong>Investigation &amp; Monitoring:</strong></h3>
+<ul>
+<li>Multi-source log correlation (Datadog, Splunk, Pendo, SendGrid, MySQL)</li>
+<li>Timeline reconstruction for security incidents</li>
+<li>Root cause analysis (5-check gate: prior conclusion, universality, reachability, signature, fix vs mask)</li>
+<li>Negative scenario testing (edge cases: null, empty, negative numbers, special chars)</li>
+</ul>
+<h3 id="phplaravel"><strong>PHP/Laravel:</strong></h3>
+<ul>
+<li>Database sharding (Stack1/Stack2 routing logic)</li>
+<li>3-layer caching (APCu → Redis → MySQL, version-based invalidation)</li>
+<li>Idempotency patterns (prevent duplicate writes)</li>
+<li>Connection pooling (prevent MySQL connection exhaustion)</li>
+<li>Encrypted key authentication (AES-256-GCM, key rotation)</li>
+</ul>
+<h3 id="net-core-cross-team"><strong>.NET Core (Cross-Team):</strong></h3>
+<ul>
+<li>HttpClient timeout configuration (default changed in .NET 6)</li>
+<li>Webhook signature validation (HMAC-SHA256, base64 encoding)</li>
+<li>Payment gateway integration (Stripe, PayPal)</li>
+<li>RabbitMQ message processing (async workers)</li>
+</ul>
+<h3 id="database"><strong>Database:</strong></h3>
+<ul>
+<li>MySQL query optimization (EXPLAIN, indexing, sharding)</li>
+<li>Audit table design (fsiAccountAudits, fsionlineaccountaudit)</li>
+<li>DML safety checks (USE statement, WHERE clause, rollback scripts)</li>
+<li>pt-online-schema-change (zero-downtime DDL on 100M+ row tables)</li>
+</ul>
+<h3 id="aiml"><strong>AI/ML:</strong></h3>
+<ul>
+<li>Claude AI skills development (FastAPI + Claude API)</li>
+<li>Prompt engineering (system prompts, few-shot learning)</li>
+<li>Automated RCA generation (log correlation → structured output)</li>
+<li>Mermaid diagram generation (business logic visualization)</li>
+</ul>
+<hr />
+<h2 id="key-njqrt-tickets-for-interview-stories">🗂️ <strong>Key NJQRT Tickets (For Interview Stories)</strong></h2>
+<h3 id="njqrt-14200-autopay-not-charging-most-complex"><strong>NJQRT-14200: AutoPay Not Charging (Most Complex)</strong></h3>
+<p><strong>Symptoms:</strong> Customer enabled AutoPay with $500 threshold, but charges not triggering<br />
+<strong>Root Cause:</strong> Conditional logic bug — checking <code>invoice_total &gt; threshold</code> AFTER payment gateway call<br />
+<strong>Fix:</strong> Move threshold check BEFORE gateway call, add validation<br />
+<strong>Impact:</strong> 50 customers affected, $25K in delayed charges<br />
+<strong>Learning:</strong> Always validate inputs BEFORE expensive operations  </p>
+<hr />
+<h3 id="njqrt-14577-oc-user-creation-not-audited-audit-gap"><strong>NJQRT-14577: OC User Creation Not Audited (Audit Gap)</strong></h3>
+<p><strong>Symptoms:</strong> No audit trail when OC users created via CC bulk upload<br />
+<strong>Root Cause:</strong> Code was writing to wrong audit table (fsiaccountaudits instead of fsionlineaccountaudit)<br />
+<strong>Fix:</strong> Route CC bulk upload to correct audit table<br />
+<strong>Impact:</strong> 1,000+ OC user creations unaudited (compliance risk)<br />
+<strong>Learning:</strong> Never assume table names — verify schema before writing audit code  </p>
+<hr />
+<h3 id="njqrt-15094-solution-field-posted-before-product-approval-process-violation"><strong>NJQRT-15094: Solution Field Posted Before Product Approval (Process Violation)</strong></h3>
+<p><strong>Symptoms:</strong> Solution field updated in Jira before Product approved fix approach<br />
+<strong>Root Cause:</strong> Automated workflow posted all 5 fields together, but Solution is product-gated<br />
+<strong>Fix:</strong> Split workflow — Issue/Impact/RC can post immediately, Solution waits for approval<br />
+<strong>Impact:</strong> Prevented 3+ scope mismatches (customer-facing field with wrong approach)<br />
+<strong>Learning:</strong> Understand field semantics — Solution is a commitment, not a hypothesis  </p>
+<hr />
+<h3 id="njqrt-15274-ebill-from-address-wrong-verification-failure"><strong>NJQRT-15274: eBill From-Address Wrong (Verification Failure)</strong></h3>
+<p><strong>Symptoms:</strong> Customer complained eBill emails showing wrong From address<br />
+<strong>Root Cause:</strong> Agent read code COMMENT (describing a bug CHR-10666 was FIXING), not actual function logic<br />
+<strong>Fix:</strong> Re-read full function (AutoSendEBills.cpp:4111-4134), found From = OBPFromEmail (not EmailPrimary)<br />
+<strong>Impact:</strong> Wrong RCA delivered, had to retract and correct<br />
+<strong>Learning:</strong> Code comments describe the PAST (or intended behavior), not current behavior — always verify by reading the full function  </p>
+<hr />
+<h3 id="njqrt-14943-post-php-upgrade-500-errors-proactive-monitoring"><strong>NJQRT-14943: Post-PHP-Upgrade 500 Errors (Proactive Monitoring)</strong></h3>
+<p><strong>Symptoms:</strong> After PHP 7.4 → 8.0 upgrade, 2% error rate spiked (was 0.1%)<br />
+<strong>Root Cause:</strong> PHP 8's stricter type enforcement — <code>Undefined array key 'discount'</code> (was just a warning in 7.4)<br />
+<strong>Fix:</strong> Add null coalescing operator: <code>$discount = $data['discount'] ?? 0;</code><br />
+<strong>Impact:</strong> Found 20+ latent bugs via Datadog monitoring, reduced error rate to 0.3%<br />
+<strong>Learning:</strong> Every PHP upgrade needs 3-day Datadog monitoring protocol (baseline → monitor → test negative scenarios)  </p>
+<hr />
+<h2 id="for-interviews-one-liners">🎯 <strong>For Interviews: One-Liners</strong></h2>
+<p><strong>Your Role:</strong></p>
+<blockquote>
+<p>"I investigate production bugs for a multi-tenant billing platform (10K+ customers, $500M+ payments/year), fix them in PHP/Laravel, review code/DML for security, and use AI (Claude) to accelerate cross-team debugging — all while on PagerDuty on-call weekly."</p>
+</blockquote>
+<p><strong>NJQRT:</strong></p>
+<blockquote>
+<p>"NJQRT = Quality Response Team triaging customer-reported bugs, performing root cause analysis via Datadog/Splunk/Pendo, fixing in PHP/.NET/Python, and posting detailed RCA to Jira with 5-field template (Issue, Impact, Root Cause, Solution, Solution Impact)."</p>
+</blockquote>
+<p><strong>Biscuit (AI Repo):</strong></p>
+<blockquote>
+<p>"Built Claude AI skills (FastAPI) automating NJQRT triage: <code>/karthik-triage</code> orchestrates investigation (fetch ticket → research codebase → draft RCA), reducing incident resolution time 40% — think 'Copilot for debugging, not just coding.'"</p>
+</blockquote>
+<p><strong>Payment Repo:</strong></p>
+<blockquote>
+<p>".NET microservice orchestrating ACH/credit card payments via Stripe/PayPal — I debugged cross-team issues (HttpClient timeouts, webhook HMAC validation) using Claude AI to analyze their C# codebase, then created high-quality Jira cases with repro steps."</p>
+</blockquote>
+<p><strong>Your Superpower:</strong></p>
+<blockquote>
+<p>"Multi-source log correlation: I reconstruct event timelines from Datadog (API traces) + Splunk (DB audits) + Pendo (user clicks) + SendGrid (emails) + MySQL (data changes) to pinpoint root causes in &lt;60 minutes — like a 'forensic investigator for production bugs.'"</p>
+</blockquote>
+<hr />
+<p><strong>USE THIS DOCUMENT FOR:</strong><br />
+- Interview prep (know your stories!)<br />
+- Resume bullet points (pick metrics from "Your Impact")<br />
+- Behavioral questions ("Tell me about a time you...")<br />
+- Technical deep-dives (architecture, caching, sharding, idempotency)</p>
+<p><strong>NEXT:</strong> Review architecture diagrams for each repo (coming next!)</p>
+        </div>
+    </div>
+
+    <script>
+        // Progress Tracker JavaScript
+        const STORAGE_KEY = 'course_progress_njqrt_work_context_last_2_5_years';
+
+        // Extract all H2 and H3 headings from content
+        function extractSections() {
+            const content = document.querySelector('.content');
+            const headings = content.querySelectorAll('h2, h3');
+            const sections = [];
+
+            headings.forEach((heading, index) => {
+                const level = heading.tagName === 'H2' ? 2 : 3;
+                const text = heading.textContent.trim();
+                const id = `section-${index}`;
+
+                // Add ID to heading for linking
+                heading.id = id;
+
+                sections.push({
+                    id: id,
+                    text: text,
+                    level: level
+                });
+            });
+
+            return sections;
+        }
+
+        // Load saved progress from localStorage
+        function loadProgress() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            return saved ? JSON.parse(saved) : {};
+        }
+
+        // Save progress to localStorage
+        function saveProgress(progress) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+        }
+
+        // Calculate progress percentage
+        function calculateProgress() {
+            const checkboxes = document.querySelectorAll('.progress-checkbox');
+            const total = checkboxes.length;
+            if (total === 0) return 0;
+
+            const completed = Array.from(checkboxes).filter(cb => cb.checked).length;
+            return Math.round((completed / total) * 100);
+        }
+
+        // Update progress display
+        function updateProgressDisplay() {
+            const percentage = calculateProgress();
+            document.getElementById('progress-pct').textContent = percentage + '%';
+            document.getElementById('progress-bar').style.width = percentage + '%';
+
+            // Update completed class on items
+            document.querySelectorAll('.progress-item').forEach(item => {
+                const checkbox = item.querySelector('.progress-checkbox');
+                if (checkbox.checked) {
+                    item.classList.add('completed');
+                } else {
+                    item.classList.remove('completed');
+                }
+            });
+        }
+
+        // Toggle checkbox
+        function toggleCheckbox(sectionId) {
+            const checkbox = document.getElementById('cb-' + sectionId);
+            const progress = loadProgress();
+
+            progress[sectionId] = checkbox.checked;
+            saveProgress(progress);
+            updateProgressDisplay();
+        }
+
+        // Reset all progress
+        function resetProgress() {
+            if (confirm('Reset all progress for this page?')) {
+                localStorage.removeItem(STORAGE_KEY);
+                document.querySelectorAll('.progress-checkbox').forEach(cb => {
+                    cb.checked = false;
+                });
+                updateProgressDisplay();
+            }
+        }
+
+        // Toggle progress list visibility
+        function toggleProgressList() {
+            const list = document.getElementById('progress-items');
+            const btn = document.querySelector('.toggle-progress');
+
+            if (list.classList.contains('collapsed')) {
+                list.classList.remove('collapsed');
+                btn.textContent = '▼ Hide';
+            } else {
+                list.classList.add('collapsed');
+                btn.textContent = '▶ Show';
+            }
+        }
+
+        // Initialize progress tracker
+        function initProgressTracker() {
+            const sections = extractSections();
+            const progress = loadProgress();
+            const container = document.getElementById('progress-items');
+
+            if (sections.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No sections found</p>';
+                return;
+            }
+
+            sections.forEach(section => {
+                const item = document.createElement('div');
+                item.className = 'progress-item';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'progress-checkbox';
+                checkbox.id = 'cb-' + section.id;
+                checkbox.checked = progress[section.id] || false;
+                checkbox.onchange = () => toggleCheckbox(section.id);
+
+                const label = document.createElement('label');
+                label.className = 'progress-label';
+                label.htmlFor = 'cb-' + section.id;
+                label.textContent = section.text;
+                label.style.paddingLeft = section.level === 3 ? '20px' : '0';
+                label.onclick = () => {
+                    document.getElementById(section.id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+                };
+
+                item.appendChild(checkbox);
+                item.appendChild(label);
+                container.appendChild(item);
+            });
+
+            updateProgressDisplay();
+        }
+
+        // Run on page load
+        document.addEventListener('DOMContentLoaded', initProgressTracker);
+    </script>
+</body>
+</html>

@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salary_Negotiation_Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 60px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .metadata {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 16px 24px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #666;
+            border-left: 4px solid #667eea;
+        }
+
+        /* PROGRESS TRACKER STYLES */
+        .progress-tracker {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .progress-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-stats {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .progress-percentage {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #764ba2;
+        }
+
+        .progress-bar-container {
+            height: 12px;
+            background: #e9ecef;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+            border-radius: 20px;
+        }
+
+        .reset-btn {
+            padding: 8px 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+
+        .reset-btn:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+        }
+
+        .progress-items {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .progress-items::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .progress-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .progress-item:hover {
+            background: #f8f9fa;
+            transform: translateX(5px);
+        }
+
+        .progress-item.completed {
+            opacity: 0.7;
+        }
+
+        .progress-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .progress-label {
+            cursor: pointer;
+            font-size: 0.95em;
+            line-height: 1.5;
+            color: #495057;
+            flex-grow: 1;
+        }
+
+        .progress-item.completed .progress-label {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .toggle-progress {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .toggle-progress:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .progress-items.collapsed {
+            display: none;
+        }
+
+        /* CONTENT STYLES */
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 4px solid #667eea;
+            font-weight: 700;
+        }
+
+        h2 {
+            color: #764ba2;
+            font-size: 2em;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        h3 {
+            color: #495057;
+            font-size: 1.5em;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        h4 {
+            color: #666;
+            font-size: 1.25em;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        ul, ol {
+            margin: 20px 0;
+            padding-left: 40px;
+        }
+
+        li {
+            margin-bottom: 12px;
+            line-height: 1.7;
+        }
+
+        code {
+            background: #f4f5f7;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #c7254e;
+            border: 1px solid #e1e4e8;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 24px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 25px 0;
+            border: 1px solid #444;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            border: none;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        blockquote {
+            border-left: 5px solid #667eea;
+            padding: 15px 25px;
+            margin: 25px 0;
+            background: #f8f9fa;
+            border-radius: 0 8px 8px 0;
+            color: #495057;
+            font-style: italic;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 30px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 14px 18px;
+            text-align: left;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tr:hover {
+            background: #e9ecef;
+            transition: background 0.2s;
+        }
+
+        a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px solid transparent;
+            transition: border-bottom 0.2s;
+        }
+
+        a:hover {
+            border-bottom: 1px solid #667eea;
+        }
+
+        hr {
+            border: none;
+            border-top: 2px solid #e9ecef;
+            margin: 40px 0;
+        }
+
+        strong {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        em {
+            color: #495057;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 25px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.6em;
+            }
+
+            .progress-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .progress-stats {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../navigation.html" class="back-link">&larr; Back to Navigation</a>
+
+        <div class="metadata">
+            <strong>Source:</strong> dev/Salary_Negotiation_Guide.md &nbsp;|&nbsp; <strong>Updated:</strong> 2026-11-18 19:44:57
+        </div>
+
+        <!-- PROGRESS TRACKER -->
+        <div class="progress-tracker">
+            <div class="progress-header">
+                <div class="progress-title">
+                    <span>📚</span>
+                    <span>Your Progress</span>
+                </div>
+                <div class="progress-stats">
+                    <span class="progress-percentage" id="progress-pct">0%</span>
+                    <button class="reset-btn" onclick="resetProgress()">Reset</button>
+                    <button class="toggle-progress" onclick="toggleProgressList()">▼ Hide</button>
+                </div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progress-bar" style="width: 0%"></div>
+            </div>
+            <div class="progress-items" id="progress-items">
+                <!-- Checkboxes will be generated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="content">
+<h1 id="salary-negotiation-guide-35-40-lpa">Salary Negotiation Guide: ₹35-40 LPA</h1>
+<blockquote>
+<p><strong>For 12+ Years Experience</strong>: How to negotiate from offer to acceptance</p>
+</blockquote>
+<hr />
+<h2 id="your-target-35-40-lpa">🎯 Your Target: ₹35-40 LPA</h2>
+<p><strong>Current Reality Check:</strong><br />
+- Billtrust (12+ years, Staff Engineer level): ₹25-30 LPA (estimate)<br />
+- Market for 12+ years (Staff Engineer): ₹35-50 LPA<br />
+- Your ask: ₹35-40 LPA = <strong>Reasonable, not aggressive</strong></p>
+<p><strong>Why This Range?</strong><br />
+- Naukri/Glassdoor data: Staff Engineer, Bangalore, 12+ years = ₹32-45 LPA<br />
+- Your differentiators (AI workflows, NJQRT, fraud detection) = +₹5-8 LPA premium<br />
+- Fintech/SaaS companies pay more than product companies</p>
+<hr />
+<h2 id="common-mistakes-avoid-these">⚠️ Common Mistakes (Avoid These!)</h2>
+<h3 id="mistake-1-anchoring-too-low"><strong>Mistake #1: Anchoring Too Low</strong></h3>
+<p><strong>❌ Bad:</strong></p>
+<div class="codehilite"><pre><span></span><code>Interviewer: "What's your current salary?"
+You: "₹25 LPA"
+→ Interviewer thinks: "Let's offer ₹30 LPA (20% bump)"
+→ You get ₹30 LPA (missed ₹10 LPA!)
+</code></pre></div>
+
+<p><strong>✅ Good:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nv">Interviewer</span>:<span class="w"> </span><span class="s2">"What's your current salary?"</span>
+<span class="nv">You</span>:<span class="w"> </span><span class="err">"I'm looking for a role that values 12+ years of experience in fintech and </span>
+<span class="w">     </span><span class="nv">AI</span><span class="o">-</span><span class="nv">assisted</span><span class="w"> </span><span class="nv">workflows</span>.<span class="w"> </span><span class="nv">What</span><span class="err">'s the budget for this position?"</span>
+<span class="err">→ Deflect the question, make them name the range first</span>
+</code></pre></div>
+
+<hr />
+<h3 id="mistake-2-accepting-first-offer"><strong>Mistake #2: Accepting First Offer</strong></h3>
+<p><strong>❌ Bad:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nv">Interviewer</span>:<span class="w"> </span><span class="s2">"We'd like to offer you ₹35 LPA"</span>
+<span class="nv">You</span>:<span class="w"> </span><span class="s2">"Great! I accept!"</span>
+→<span class="w"> </span><span class="nv">Left</span><span class="w"> </span>₹<span class="mi">5</span><span class="w"> </span><span class="nv">LPA</span><span class="w"> </span><span class="nv">on</span><span class="w"> </span><span class="nv">the</span><span class="w"> </span><span class="nv">table</span><span class="w"> </span><span class="ss">(</span><span class="nv">they</span><span class="w"> </span><span class="nv">had</span><span class="w"> </span><span class="nv">budget</span><span class="w"> </span><span class="k">for</span><span class="w"> </span>₹<span class="mi">40</span><span class="w"> </span><span class="nv">LPA</span><span class="ss">)</span>
+</code></pre></div>
+
+<p><strong>✅ Good:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">Interviewer</span><span class="p">:</span><span class="w"> </span><span class="s2">"We'd like to offer you ₹35 LPA"</span>
+<span class="n">You</span><span class="p">:</span><span class="w"> </span><span class="s2">"Thank you for the offer. I'm excited about the role. Can I have 2 days to </span>
+<span class="w">     </span><span class="n">review</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">full</span><span class="w"> </span><span class="n">package</span><span class="err">?</span><span class="w"> </span><span class="n">I</span><span class="s1">'d like to understand the breakdown of base, </span>
+<span class="w">     </span><span class="n">variable</span><span class="p">,</span><span class="w"> </span><span class="ow">and</span><span class="w"> </span><span class="n">RSUs</span><span class="o">.</span><span class="s2">"</span>
+<span class="err">→</span><span class="w"> </span><span class="n">Always</span><span class="w"> </span><span class="n">ask</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">time</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">think</span>
+<span class="err">→</span><span class="w"> </span><span class="n">Never</span><span class="w"> </span><span class="n">accept</span><span class="w"> </span><span class="n">on</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">spot</span><span class="w"> </span><span class="p">(</span><span class="n">even</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">it</span><span class="s1">'s good!)</span>
+</code></pre></div>
+
+<hr />
+<h3 id="mistake-3-negotiating-only-base-salary"><strong>Mistake #3: Negotiating Only Base Salary</strong></h3>
+<p><strong>Total Compensation = Base + Variable + RSUs + Benefits</strong></p>
+<p><strong>Example Breakdown:</strong></p>
+<div class="codehilite"><pre><span></span><code>Offer Letter:
+  Base: ₹30 LPA (83%)
+  Variable (Bonus): ₹4 LPA (11%)  ← Performance-based
+  RSUs (Stock): ₹2 LPA (6%)       ← 4-year vesting
+  Total: ₹36 LPA
+
+Hidden Value:
+  - Health insurance: ₹5 lakh/year (family coverage)
+  - WFH stipend: ₹50k/year
+  - Learning budget: ₹1 lakh/year (conferences, courses)
+  - ESOP liquidity: Can you sell vested stock? (or paper value only?)
+
+Real Total: ₹36 LPA + ₹6.5 lakh = ₹42.5 LPA
+</code></pre></div>
+
+<p><strong>Always ask:</strong><br />
+- "What's the breakdown of base vs variable vs RSUs?"<br />
+- "What's the vesting schedule for RSUs?" (4 years? 1-year cliff?)<br />
+- "Is the variable bonus guaranteed or performance-based?"</p>
+<hr />
+<h2 id="negotiation-framework-the-5-step-process">🎯 Negotiation Framework: The 5-Step Process</h2>
+<h3 id="step-1-delay-salary-discussion-until-offer-stage"><strong>Step 1: Delay Salary Discussion (Until Offer Stage)</strong></h3>
+<p><strong>Goal:</strong> Get them invested in you BEFORE discussing money.</p>
+<p><strong>Early Interview (Phone Screen):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nv">Recruiter</span>:<span class="w"> </span><span class="s2">"What are your salary expectations?"</span>
+
+<span class="nv">Option</span><span class="w"> </span><span class="nv">A</span><span class="w"> </span><span class="ss">(</span><span class="nv">Best</span><span class="ss">)</span>:
+<span class="err">"I'm open to discussing compensation once we determine if there's a mutual fit. </span>
+<span class="w"> </span><span class="nv">What</span><span class="err">'s the budget range for this role?"</span>
+
+<span class="err">Option B (If Pressed):</span>
+<span class="err">"I'm looking for a competitive offer aligned with market rates for a Staff </span>
+<span class="err"> Engineer with 12+ years. I've seen roles in this range at ₹35-50 LPA. </span>
+<span class="w"> </span><span class="nv">Does</span><span class="w"> </span><span class="nv">that</span><span class="w"> </span><span class="nv">align</span><span class="w"> </span><span class="nv">with</span><span class="w"> </span><span class="nv">your</span><span class="w"> </span><span class="nv">budget</span>?<span class="err">"</span>
+</code></pre></div>
+
+<p><strong>Key Insight:</strong> Make THEM name the range first. If they say ₹40-50 LPA, you just learned they can afford more than ₹35 LPA!</p>
+<hr />
+<h3 id="step-2-research-market-rates"><strong>Step 2: Research Market Rates</strong></h3>
+<p><strong>Where to Find Data:</strong><br />
+1. <strong>Naukri Salary Calculator</strong><br />
+   - Search: "Staff Engineer, Bangalore, 12 years"<br />
+   - Result: ₹32-45 LPA (median ₹38 LPA)</p>
+<ol start="2">
+<li>
+<p><strong>Glassdoor</strong><br />
+   - Search company name + "Staff Engineer salary"<br />
+   - Example: "Razorpay Staff Engineer" = ₹40-55 LPA</p>
+</li>
+<li>
+<p><strong>LinkedIn Salary Insights</strong><br />
+   - Premium feature (free trial)<br />
+   - Shows salary by company, role, years</p>
+</li>
+<li>
+<p><strong>Blind (Teamblind.com)</strong><br />
+   - Anonymous forum, engineers share TC<br />
+   - Search: "[Company] Staff Engineer TC India"</p>
+</li>
+<li>
+<p><strong>Ask Your Network</strong><br />
+   - DM 5-10 Billtrust alumni on LinkedIn<br />
+   - "Hey [Name], I'm exploring roles — do you have a sense of market rates <br />
+      for Staff Engineer in fintech?"</p>
+</li>
+</ol>
+<p><strong>Your Prep (Before Interview):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nv">Research</span><span class="w"> </span><span class="nv">shows</span>:
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="nv">Razorpay</span><span class="w"> </span><span class="nv">Staff</span><span class="w"> </span><span class="nv">Engineer</span>:<span class="w"> </span>₹<span class="mi">42</span><span class="w"> </span><span class="nv">LPA</span><span class="w"> </span><span class="ss">(</span><span class="nv">Glassdoor</span><span class="ss">)</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="nv">PhonePe</span><span class="w"> </span><span class="nv">Staff</span><span class="w"> </span><span class="nv">Engineer</span>:<span class="w"> </span>₹<span class="mi">38</span><span class="w"> </span><span class="nv">LPA</span><span class="w"> </span><span class="ss">(</span><span class="nv">Naukri</span><span class="ss">)</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="nv">Freshworks</span><span class="w"> </span><span class="nv">Staff</span><span class="w"> </span><span class="nv">Engineer</span>:<span class="w"> </span>₹<span class="mi">35</span><span class="w"> </span><span class="nv">LPA</span><span class="w"> </span><span class="ss">(</span><span class="nv">LinkedIn</span><span class="ss">)</span>
+
+<span class="nv">My</span><span class="w"> </span><span class="nv">ask</span>:<span class="w"> </span>₹<span class="mi">35</span><span class="o">-</span><span class="mi">40</span><span class="w"> </span><span class="nv">LPA</span><span class="w"> </span><span class="nv">is</span><span class="w"> </span><span class="nv">at</span><span class="w"> </span><span class="nv">the</span><span class="w"> </span><span class="nv">LOWER</span><span class="w"> </span><span class="k">end</span><span class="w"> </span><span class="nv">of</span><span class="w"> </span><span class="nv">market</span>
+→<span class="w"> </span><span class="nv">I</span><span class="w"> </span><span class="nv">have</span><span class="w"> </span><span class="nv">room</span><span class="w"> </span><span class="nv">to</span><span class="w"> </span><span class="nv">negotiate</span><span class="w"> </span><span class="nv">UP</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="nv">they</span><span class="w"> </span><span class="nv">lowball</span>
+</code></pre></div>
+
+<hr />
+<h3 id="step-3-receive-the-offer-dont-react-immediately"><strong>Step 3: Receive the Offer (Don't React Immediately)</strong></h3>
+<p><strong>Offer Call:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nv">Hiring</span><span class="w"> </span><span class="nv">Manager</span>:<span class="w"> </span><span class="s2">"We'd like to extend an offer: ₹36 LPA total compensation"</span>
+
+<span class="nv">You</span><span class="w"> </span><span class="ss">(</span><span class="k">Pause</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="nv">seconds</span><span class="ss">)</span>:
+<span class="err">"Thank you! I'm really excited about the team and the problems we discussed. </span>
+<span class="err"> Can you email me the full offer letter so I can review the details? </span>
+<span class="w"> </span><span class="nv">I</span><span class="err">'d like 2-3 days to think it through."</span>
+
+→<span class="w"> </span><span class="nv">Don</span><span class="err">'t say "yes" or "no" on the call</span>
+<span class="err">→ Always ask for time (2-3 days is standard)</span>
+</code></pre></div>
+
+<p><strong>Why Delay?</strong><br />
+- Gives you time to negotiate (not emotional decision)<br />
+- Shows you're thoughtful (not desperate)<br />
+- Lets you compare with other offers (if you have them)</p>
+<hr />
+<h3 id="step-4-evaluate-prepare-counter-offer"><strong>Step 4: Evaluate &amp; Prepare Counter-Offer</strong></h3>
+<p><strong>Offer Breakdown (Example):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nv">Company</span>:<span class="w"> </span><span class="nv">Razorpay</span>
+<span class="nv">Offer</span>:<span class="w"> </span>₹<span class="mi">36</span><span class="w"> </span><span class="nv">LPA</span>
+
+<span class="nv">Breakdown</span>:
+<span class="w">  </span><span class="nv">Base</span>:<span class="w"> </span>₹<span class="mi">30</span><span class="w"> </span><span class="nv">LPA</span>
+<span class="w">  </span><span class="nv">Variable</span>:<span class="w"> </span>₹<span class="mi">4</span><span class="w"> </span><span class="nv">LPA</span><span class="w"> </span><span class="ss">(</span><span class="mi">10</span><span class="o">%</span><span class="w"> </span><span class="nv">of</span><span class="w"> </span><span class="nv">base</span>,<span class="w"> </span><span class="nv">performance</span><span class="o">-</span><span class="nv">based</span><span class="ss">)</span>
+<span class="w">  </span><span class="nv">RSUs</span>:<span class="w"> </span>₹<span class="mi">2</span><span class="w"> </span><span class="nv">LPA</span><span class="o">/</span><span class="nv">year</span><span class="w"> </span><span class="ss">(</span>₹<span class="mi">8</span><span class="w"> </span><span class="nv">LPA</span><span class="w"> </span><span class="nv">over</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="nv">years</span>,<span class="w"> </span><span class="mi">1</span><span class="o">-</span><span class="nv">year</span><span class="w"> </span><span class="nv">cliff</span><span class="ss">)</span>
+
+<span class="nv">Your</span><span class="w"> </span><span class="nv">Evaluation</span>:
+<span class="w">  </span>✅<span class="w"> </span><span class="nv">Base</span><span class="w"> </span><span class="nv">is</span><span class="w"> </span><span class="nv">decent</span><span class="w"> </span><span class="ss">(</span>₹<span class="mi">30</span><span class="w"> </span><span class="nv">LPA</span><span class="ss">)</span>
+<span class="w">  </span>⚠️<span class="w"> </span><span class="nv">Variable</span><span class="w"> </span><span class="nv">is</span><span class="w"> </span><span class="nv">at</span><span class="w"> </span><span class="nv">risk</span><span class="w"> </span><span class="ss">(</span><span class="nv">what</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="nv">performance</span><span class="w"> </span><span class="nv">review</span><span class="w"> </span><span class="nv">is</span><span class="w"> </span><span class="nv">bad</span>?<span class="ss">)</span>
+<span class="w">  </span>⚠️<span class="w"> </span><span class="nv">RSUs</span><span class="w"> </span><span class="nv">are</span><span class="w"> </span><span class="nv">illiquid</span><span class="w"> </span><span class="ss">(</span><span class="nv">can</span><span class="err">'t sell for 1 year, company not public)</span>
+
+<span class="err">Your Counter:</span>
+<span class="err">  "I was targeting ₹40 LPA. Can we adjust the base to ₹34 LPA?"</span>
+<span class="err">  → Ask for ₹4 LPA increase (11% bump)</span>
+</code></pre></div>
+
+<p><strong>Counter-Offer Email Template:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nl">Subject</span><span class="p">:</span><span class="w"> </span><span class="n">Re</span><span class="o">:</span><span class="w"> </span><span class="n">Offer</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">Staff</span><span class="w"> </span><span class="n">Engineer</span><span class="w"> </span><span class="n">Role</span>
+
+<span class="n">Hi</span><span class="w"> </span><span class="p">[</span><span class="n">Hiring</span><span class="w"> </span><span class="n">Manager</span><span class="p">],</span>
+
+<span class="n">Thank</span><span class="w"> </span><span class="n">you</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">offer</span><span class="o">!</span><span class="w"> </span><span class="n">I</span><span class="err">'</span><span class="n">m</span><span class="w"> </span><span class="n">excited</span><span class="w"> </span><span class="n">about</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">opportunity</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">work</span><span class="w"> </span><span class="n">on</span><span class="w"> </span>
+<span class="p">[</span><span class="n">specific</span><span class="w"> </span><span class="n">project</span><span class="w"> </span><span class="n">you</span><span class="w"> </span><span class="n">discussed</span><span class="p">]</span><span class="w"> </span><span class="n">and</span><span class="w"> </span><span class="n">contribute</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="p">[</span><span class="n">team</span><span class="w"> </span><span class="n">goal</span><span class="p">].</span>
+
+<span class="n">After</span><span class="w"> </span><span class="n">reviewing</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">offer</span><span class="p">,</span><span class="w"> </span><span class="n">I</span><span class="w"> </span><span class="n">was</span><span class="w"> </span><span class="n">hoping</span><span class="w"> </span><span class="n">we</span><span class="w"> </span><span class="n">could</span><span class="w"> </span><span class="n">discuss</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">compensation</span><span class="p">.</span><span class="w"> </span>
+<span class="n">Based</span><span class="w"> </span><span class="n">on</span><span class="w"> </span><span class="n">my</span><span class="w"> </span><span class="mi">12</span><span class="o">+</span><span class="w"> </span><span class="n">years</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">experience</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">fintech</span><span class="w"> </span><span class="n">and</span><span class="w"> </span><span class="n">my</span><span class="w"> </span><span class="n">expertise</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">AI</span><span class="o">-</span><span class="n">assisted</span><span class="w"> </span>
+<span class="n">workflows</span><span class="w"> </span><span class="n">and</span><span class="w"> </span><span class="n">fraud</span><span class="w"> </span><span class="n">detection</span><span class="w"> </span><span class="p">(</span><span class="n">which</span><span class="w"> </span><span class="n">we</span><span class="w"> </span><span class="n">discussed</span><span class="w"> </span><span class="n">as</span><span class="w"> </span><span class="n">high</span><span class="o">-</span><span class="n">priority</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">your</span><span class="w"> </span>
+<span class="n">team</span><span class="p">),</span><span class="w"> </span><span class="n">I</span><span class="w"> </span><span class="n">was</span><span class="w"> </span><span class="n">targeting</span><span class="w"> </span><span class="err">₹</span><span class="mi">40</span><span class="w"> </span><span class="n">LPA</span><span class="p">.</span>
+
+<span class="n">Would</span><span class="w"> </span><span class="n">it</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="n">possible</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">adjust</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">base</span><span class="w"> </span><span class="n">salary</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="err">₹</span><span class="mi">34</span><span class="w"> </span><span class="n">LPA</span><span class="o">?</span><span class="w"> </span><span class="n">This</span><span class="w"> </span><span class="n">would</span><span class="w"> </span><span class="n">bring</span><span class="w"> </span>
+<span class="n">the</span><span class="w"> </span><span class="n">total</span><span class="w"> </span><span class="n">compensation</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="err">₹</span><span class="mi">40</span><span class="w"> </span><span class="n">LPA</span><span class="p">,</span><span class="w"> </span><span class="n">which</span><span class="w"> </span><span class="n">aligns</span><span class="w"> </span><span class="n">with</span><span class="w"> </span><span class="n">market</span><span class="w"> </span><span class="n">rates</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">Staff</span><span class="w"> </span>
+<span class="n">Engineers</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">Bangalore</span><span class="p">.</span>
+
+<span class="n">I</span><span class="err">'</span><span class="n">m</span><span class="w"> </span><span class="n">confident</span><span class="w"> </span><span class="n">I</span><span class="w"> </span><span class="n">can</span><span class="w"> </span><span class="n">deliver</span><span class="w"> </span><span class="k">strong</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">first</span><span class="w"> </span><span class="mi">90</span><span class="w"> </span><span class="n">days</span><span class="w"> </span><span class="n">by</span><span class="w"> </span><span class="p">[</span><span class="n">specific</span><span class="w"> </span>
+<span class="n">deliverable</span><span class="w"> </span><span class="n">you</span><span class="w"> </span><span class="n">promised</span><span class="p">],</span><span class="w"> </span><span class="n">and</span><span class="w"> </span><span class="n">I</span><span class="err">'</span><span class="n">m</span><span class="w"> </span><span class="n">eager</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">join</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">team</span><span class="p">.</span>
+
+<span class="n">Looking</span><span class="w"> </span><span class="n">forward</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">your</span><span class="w"> </span><span class="n">thoughts</span><span class="p">.</span>
+
+<span class="n">Best</span><span class="p">,</span>
+<span class="n">Karthik</span>
+</code></pre></div>
+
+<p><strong>Key Elements:</strong><br />
+✅ Thank them (show excitement)<br />
+✅ Justify your ask (market data + your value)<br />
+✅ Specific number (₹40 LPA, not "more money")<br />
+✅ Tie to impact (what you'll deliver)<br />
+✅ End positive (eager to join)</p>
+<hr />
+<h3 id="step-5-handle-objections-close"><strong>Step 5: Handle Objections &amp; Close</strong></h3>
+<p><strong>Objection 1: "This is our final offer, we can't go higher"</strong></p>
+<p><strong>Your Response:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="s2">"I understand budget constraints. If the base can't increase, are there other </span>
+<span class="w"> </span><span class="n">levers</span><span class="w"> </span><span class="n">we</span><span class="w"> </span><span class="n">can</span><span class="w"> </span><span class="n">adjust</span><span class="err">?</span><span class="s2">"</span>
+
+<span class="n">Options</span><span class="p">:</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="n">Signing</span><span class="w"> </span><span class="n">bonus</span><span class="p">:</span><span class="w"> </span><span class="err">₹</span><span class="mi">2</span><span class="w"> </span><span class="n">LPA</span><span class="w"> </span><span class="n">one</span><span class="o">-</span><span class="n">time</span><span class="w"> </span><span class="p">(</span><span class="n">makes</span><span class="w"> </span><span class="n">up</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">gap</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">Year</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="n">Performance</span><span class="w"> </span><span class="n">review</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="mi">6</span><span class="w"> </span><span class="n">months</span><span class="w"> </span><span class="p">(</span><span class="n">instead</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="mi">12</span><span class="w"> </span><span class="n">months</span><span class="p">)</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="n">Additional</span><span class="w"> </span><span class="n">RSUs</span><span class="p">:</span><span class="w"> </span><span class="err">₹</span><span class="mi">1</span><span class="w"> </span><span class="n">LPA</span><span class="o">/</span><span class="n">year</span><span class="w"> </span><span class="n">more</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="n">Guaranteed</span><span class="w"> </span><span class="n">variable</span><span class="p">:</span><span class="w"> </span><span class="mi">100</span><span class="o">%</span><span class="w"> </span><span class="n">payout</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">Year</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">(</span><span class="n">removes</span><span class="w"> </span><span class="n">risk</span><span class="p">)</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="n">Learning</span><span class="w"> </span><span class="n">budget</span><span class="p">:</span><span class="w"> </span><span class="err">₹</span><span class="mi">2</span><span class="w"> </span><span class="n">lakh</span><span class="o">/</span><span class="n">year</span><span class="w"> </span><span class="p">(</span><span class="n">AWS</span><span class="w"> </span><span class="n">certs</span><span class="p">,</span><span class="w"> </span><span class="n">conferences</span><span class="p">)</span>
+</code></pre></div>
+
+<p><strong>Key Insight:</strong> If they can't move base, ask for other perks. Something is better than nothing.</p>
+<hr />
+<p><strong>Objection 2: "Your current salary is ₹25 LPA, we're already offering 44% more"</strong></p>
+<p><strong>Your Response:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="err">"I appreciate the significant increase. My ask is based on market rates for </span>
+<span class="err"> Staff Engineers with my skill set, not just my current compensation. </span>
+<span class="err"> My work on NJQRT triage and AI workflows has prepared me to deliver </span>
+<span class="err"> immediate impact on [your company's problem], which is why I'm confident </span>
+<span class="w"> </span>₹<span class="mi">40</span><span class="w"> </span><span class="nv">LPA</span><span class="w"> </span><span class="nv">is</span><span class="w"> </span><span class="nv">fair</span><span class="w"> </span><span class="nv">value</span>.<span class="err">"</span>
+
+<span class="err">→ Don't defend your current salary</span>
+→<span class="w"> </span><span class="nv">Focus</span><span class="w"> </span><span class="nv">on</span><span class="w"> </span><span class="nv">VALUE</span><span class="w"> </span><span class="nv">you</span><span class="w"> </span><span class="nv">bring</span>,<span class="w"> </span><span class="nv">not</span><span class="w"> </span><span class="s2">"how much more"</span><span class="w"> </span><span class="nv">vs</span><span class="w"> </span><span class="nv">current</span>
+</code></pre></div>
+
+<hr />
+<p><strong>Objection 3: "We need an answer by tomorrow"</strong></p>
+<p><strong>Your Response:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="err">"I understand the urgency. Can I have until end-of-day to finalize? </span>
+<span class="w"> </span><span class="nv">I</span><span class="w"> </span><span class="nv">want</span><span class="w"> </span><span class="nv">to</span><span class="w"> </span><span class="nv">make</span><span class="w"> </span><span class="nv">sure</span><span class="w"> </span><span class="nv">I</span><span class="err">'m fully informed before accepting."</span>
+
+<span class="err">→ Pushing back on deadline shows confidence</span>
+→<span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="nv">extra</span><span class="w"> </span><span class="nv">day</span><span class="w"> </span><span class="nv">is</span><span class="w"> </span><span class="nv">usually</span><span class="w"> </span><span class="nv">fine</span><span class="w"> </span><span class="ss">(</span><span class="nv">they</span><span class="w"> </span><span class="nv">won</span><span class="err">'t rescind over this)</span>
+</code></pre></div>
+
+<hr />
+<p><strong>Closing the Deal:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">If</span> <span class="n">they</span> <span class="n">meet</span> <span class="n">your</span> <span class="n">counter</span> (₹<span class="mi">40</span> <span class="n">LPA</span>):
+  <span class="s">"Thank you! I accept the offer. When's the start date?"</span>
+
+<span class="n">If</span> <span class="n">they</span> <span class="n">meet</span> <span class="n">you</span> <span class="n">halfway</span> (₹<span class="mi">38</span> <span class="n">LPA</span>):
+  <span class="s">"I appreciate you working with me on this. Let me think overnight </span>
+<span class="s">   and get back to you tomorrow morning."</span>
+  → <span class="n">Decide:</span> <span class="n">Is</span> ₹<span class="mi">38</span> <span class="n">LPA</span> <span class="n">acceptable</span> <span class="o">or</span> <span class="nb">do</span> <span class="n">you</span> <span class="n">walk</span>?
+
+<span class="n">If</span> <span class="n">they</span> <span class="n">don't</span> <span class="n">budge</span> (₹<span class="mi">36</span> <span class="n">LPA</span>):
+  <span class="n">Option</span> <span class="n">A:</span> <span class="n">Accept</span> (<span class="k">if</span> <span class="n">it's</span> <span class="n">your</span> <span class="n">only</span> <span class="n">offer</span>)
+  <span class="n">Option</span> <span class="n">B:</span> <span class="n">Walk</span> <span class="n">away</span> (<span class="k">if</span> <span class="n">you</span> <span class="n">have</span> <span class="n">better</span> <span class="n">offers</span>)
+  <span class="n">Option</span> <span class="n">C:</span> <span class="n">Ask</span> <span class="k">for</span> <span class="mi">3</span><span class="o">-</span><span class="n">month</span> <span class="n">review:</span> <span class="s">"Can we revisit after 3 months based </span>
+<span class="s">            on performance?"</span>
+</code></pre></div>
+
+<hr />
+<h2 id="total-compensation-checklist">💰 Total Compensation Checklist</h2>
+<p>Before accepting ANY offer, calculate REAL total comp:</p>
+<div class="codehilite"><pre><span></span><code>[<span class="w"> </span>]<span class="w"> </span><span class="nv">Base</span><span class="w"> </span><span class="nv">salary</span><span class="w"> </span><span class="ss">(</span><span class="nv">fixed</span><span class="ss">)</span>
+[<span class="w"> </span>]<span class="w"> </span><span class="nv">Variable</span><span class="o">/</span><span class="nv">bonus</span><span class="w"> </span><span class="ss">(</span><span class="o">%</span><span class="w"> </span><span class="nv">of</span><span class="w"> </span><span class="nv">base</span>,<span class="w"> </span><span class="nv">guaranteed</span><span class="w"> </span><span class="nv">or</span><span class="w"> </span><span class="nv">at</span><span class="o">-</span><span class="nv">risk</span>?<span class="ss">)</span>
+[<span class="w"> </span>]<span class="w"> </span><span class="nv">RSUs</span><span class="o">/</span><span class="nv">ESOPs</span><span class="w"> </span><span class="ss">(</span><span class="nv">vesting</span><span class="w"> </span><span class="nv">schedule</span>?<span class="w"> </span><span class="mi">1</span><span class="o">-</span><span class="nv">year</span><span class="w"> </span><span class="nv">cliff</span>?<span class="w"> </span><span class="nv">Liquidity</span>?<span class="ss">)</span>
+[<span class="w"> </span>]<span class="w"> </span><span class="nv">Signing</span><span class="w"> </span><span class="nv">bonus</span><span class="w"> </span><span class="ss">(</span><span class="nv">one</span><span class="o">-</span><span class="nv">time</span><span class="ss">)</span>
+[<span class="w"> </span>]<span class="w"> </span><span class="nv">Health</span><span class="w"> </span><span class="nv">insurance</span><span class="w"> </span><span class="ss">(</span><span class="nv">self</span>?<span class="w"> </span><span class="nv">family</span>?<span class="w"> </span><span class="nv">parents</span>?<span class="ss">)</span>
+[<span class="w"> </span>]<span class="w"> </span><span class="nv">PF</span><span class="w"> </span><span class="ss">(</span><span class="nv">employer</span><span class="w"> </span><span class="nv">contribution</span>?<span class="w"> </span><span class="mi">12</span><span class="o">%</span><span class="w"> </span><span class="nv">or</span><span class="w"> </span><span class="nv">higher</span>?<span class="ss">)</span>
+[<span class="w"> </span>]<span class="w"> </span><span class="nv">Gratuity</span><span class="w"> </span><span class="ss">(</span><span class="nv">after</span><span class="w"> </span><span class="mi">5</span><span class="w"> </span><span class="nv">years</span><span class="ss">)</span>
+[<span class="w"> </span>]<span class="w"> </span><span class="nv">WFH</span><span class="w"> </span><span class="nv">stipend</span><span class="w"> </span><span class="ss">(</span>₹<span class="nv">X</span><span class="w"> </span><span class="nv">per</span><span class="w"> </span><span class="nv">month</span>?<span class="ss">)</span>
+[<span class="w"> </span>]<span class="w"> </span><span class="nv">Learning</span><span class="w"> </span><span class="nv">budget</span><span class="w"> </span><span class="ss">(</span><span class="nv">certs</span>,<span class="w"> </span><span class="nv">conferences</span>,<span class="w"> </span><span class="nv">courses</span><span class="ss">)</span>
+[<span class="w"> </span>]<span class="w"> </span><span class="nv">Relocation</span><span class="w"> </span><span class="ss">(</span><span class="k">if</span><span class="w"> </span><span class="nv">moving</span><span class="w"> </span><span class="nv">cities</span><span class="ss">)</span>
+[<span class="w"> </span>]<span class="w"> </span><span class="nv">Notice</span><span class="w"> </span><span class="nv">period</span><span class="w"> </span><span class="nv">buyout</span><span class="w"> </span><span class="ss">(</span><span class="k">if</span><span class="w"> </span><span class="nv">current</span><span class="w"> </span><span class="nv">company</span><span class="w"> </span><span class="nv">asks</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="mi">90</span><span class="w"> </span><span class="nv">days</span><span class="ss">)</span>
+</code></pre></div>
+
+<p><strong>Example Calculation:</strong></p>
+<div class="codehilite"><pre><span></span><code>Offer:
+  Base: ₹32 LPA
+  Variable: ₹4 LPA (at-risk, 80% payout avg)
+  RSUs: ₹2 LPA (4-year vest, 1-year cliff)
+
+Real Value:
+  Year 1: ₹32 + (₹4 × 0.8) + 0 = ₹35.2 LPA (no RSUs yet)
+  Year 2: ₹32 + ₹3.2 + ₹2 = ₹37.2 LPA (RSUs kick in)
+  Year 3: ₹32 + ₹3.2 + ₹2 = ₹37.2 LPA
+  Year 4: ₹32 + ₹3.2 + ₹2 = ₹37.2 LPA
+
+4-Year Total: ₹146.8 lakh
+Avg/Year: ₹36.7 LPA (not ₹38 LPA as advertised)
+</code></pre></div>
+
+<p><strong>Key Insight:</strong> RSUs with 1-year cliff mean Year 1 comp is LOWER. Ask for signing bonus to offset.</p>
+<hr />
+<h2 id="negotiation-scripts-copy-paste">🎯 Negotiation Scripts (Copy-Paste)</h2>
+<h3 id="script-1-deflect-current-salary-question"><strong>Script 1: Deflect Current Salary Question</strong></h3>
+<div class="codehilite"><pre><span></span><code><span class="nv">Recruiter</span>:<span class="w"> </span><span class="s2">"What's your current salary?"</span>
+
+<span class="nv">You</span>:<span class="w"> </span><span class="err">"I'm looking for a role that values my 12+ years of experience and my </span>
+<span class="err">     technical depth in fintech and AI workflows. Rather than focus on my </span>
+<span class="err">     current compensation, I'd love to understand what budget you have for </span>
+<span class="w">     </span><span class="nv">this</span><span class="w"> </span><span class="nv">role</span>.<span class="w"> </span><span class="nv">What</span><span class="err">'s the range?"</span>
+</code></pre></div>
+
+<hr />
+<h3 id="script-2-counter-offer-email"><strong>Script 2: Counter-Offer (Email)</strong></h3>
+<div class="codehilite"><pre><span></span><code><span class="n">Hi</span><span class="w"> </span><span class="p">[</span><span class="n">Hiring</span><span class="w"> </span><span class="n">Manager</span><span class="p">],</span>
+
+<span class="n">Thank</span><span class="w"> </span><span class="n">you</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">offer</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="err">₹</span><span class="mi">36</span><span class="w"> </span><span class="n">LPA</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">Staff</span><span class="w"> </span><span class="n">Engineer</span><span class="w"> </span><span class="n">role</span><span class="p">.</span><span class="w"> </span><span class="n">I</span><span class="err">'</span><span class="n">m</span><span class="w"> </span><span class="n">very</span><span class="w"> </span>
+<span class="n">excited</span><span class="w"> </span><span class="n">about</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">opportunity</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">work</span><span class="w"> </span><span class="n">with</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">team</span><span class="w"> </span><span class="n">on</span><span class="w"> </span><span class="p">[</span><span class="n">specific</span><span class="w"> </span><span class="n">project</span><span class="p">].</span>
+
+<span class="n">After</span><span class="w"> </span><span class="n">reviewing</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">offer</span><span class="w"> </span><span class="n">and</span><span class="w"> </span><span class="n">comparing</span><span class="w"> </span><span class="n">with</span><span class="w"> </span><span class="n">market</span><span class="w"> </span><span class="n">rates</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">Staff</span><span class="w"> </span><span class="n">Engineers</span><span class="w"> </span>
+<span class="k">in</span><span class="w"> </span><span class="n">Bangalore</span><span class="w"> </span><span class="p">(</span><span class="err">₹</span><span class="mi">35-50</span><span class="w"> </span><span class="n">LPA</span><span class="w"> </span><span class="n">per</span><span class="w"> </span><span class="n">Glassdoor</span><span class="o">/</span><span class="n">Naukri</span><span class="p">),</span><span class="w"> </span><span class="n">I</span><span class="w"> </span><span class="n">was</span><span class="w"> </span><span class="n">hoping</span><span class="w"> </span><span class="n">we</span><span class="w"> </span><span class="n">could</span><span class="w"> </span><span class="n">meet</span><span class="w"> </span>
+<span class="n">at</span><span class="w"> </span><span class="err">₹</span><span class="mi">40</span><span class="w"> </span><span class="n">LPA</span><span class="p">.</span><span class="w"> </span>
+
+<span class="n">Given</span><span class="w"> </span><span class="n">my</span><span class="w"> </span><span class="mi">12</span><span class="w"> </span><span class="n">years</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">experience</span><span class="p">,</span><span class="w"> </span><span class="n">proven</span><span class="w"> </span><span class="n">track</span><span class="w"> </span><span class="n">record</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">NJQRT</span><span class="w"> </span><span class="n">triage</span><span class="w"> </span><span class="p">(</span><span class="mi">100</span><span class="o">+</span><span class="w"> </span>
+<span class="n">cases</span><span class="p">,</span><span class="w"> </span><span class="n">$500k</span><span class="w"> </span><span class="n">revenue</span><span class="w"> </span><span class="n">protected</span><span class="p">),</span><span class="w"> </span><span class="n">and</span><span class="w"> </span><span class="n">expertise</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">AI</span><span class="o">-</span><span class="n">assisted</span><span class="w"> </span><span class="n">workflows</span><span class="p">,</span><span class="w"> </span><span class="n">I</span><span class="err">'</span><span class="n">m</span><span class="w"> </span>
+<span class="n">confident</span><span class="w"> </span><span class="n">I</span><span class="w"> </span><span class="n">can</span><span class="w"> </span><span class="n">deliver</span><span class="w"> </span><span class="n">immediate</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">first</span><span class="w"> </span><span class="mi">90</span><span class="w"> </span><span class="n">days</span><span class="w"> </span><span class="n">by</span><span class="w"> </span><span class="p">[</span><span class="n">specific</span><span class="w"> </span><span class="n">goal</span><span class="p">].</span>
+
+<span class="n">Would</span><span class="w"> </span><span class="n">it</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="n">possible</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">adjust</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">base</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="err">₹</span><span class="mi">34</span><span class="w"> </span><span class="n">LPA</span><span class="p">,</span><span class="w"> </span><span class="n">bringing</span><span class="w"> </span><span class="n">total</span><span class="w"> </span><span class="n">comp</span><span class="w"> </span><span class="n">to</span><span class="w"> </span>
+<span class="err">₹</span><span class="mi">40</span><span class="w"> </span><span class="n">LPA</span><span class="o">?</span>
+
+<span class="n">Looking</span><span class="w"> </span><span class="n">forward</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">joining</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">team</span><span class="o">!</span>
+
+<span class="n">Best</span><span class="p">,</span>
+<span class="n">Karthik</span>
+</code></pre></div>
+
+<hr />
+<h3 id="script-3-accepting-after-negotiation"><strong>Script 3: Accepting After Negotiation</strong></h3>
+<div class="codehilite"><pre><span></span><code><span class="n">Hi</span><span class="w"> </span><span class="p">[</span><span class="n">Hiring</span><span class="w"> </span><span class="n">Manager</span><span class="p">],</span>
+
+<span class="n">Thank</span><span class="w"> </span><span class="n">you</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">working</span><span class="w"> </span><span class="n">with</span><span class="w"> </span><span class="n">me</span><span class="w"> </span><span class="n">on</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">offer</span><span class="p">.</span><span class="w"> </span><span class="n">I</span><span class="err">'</span><span class="n">m</span><span class="w"> </span><span class="n">happy</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">accept</span><span class="w"> </span><span class="err">₹</span><span class="mi">39</span><span class="w"> </span><span class="n">LPA</span><span class="w"> </span><span class="n">total</span><span class="w"> </span>
+<span class="n">compensation</span><span class="w"> </span><span class="p">(</span><span class="n">base</span><span class="w"> </span><span class="err">₹</span><span class="mi">33</span><span class="w"> </span><span class="n">LPA</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">variable</span><span class="w"> </span><span class="err">₹</span><span class="mi">4</span><span class="w"> </span><span class="n">LPA</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">RSUs</span><span class="w"> </span><span class="err">₹</span><span class="mi">2</span><span class="w"> </span><span class="n">LPA</span><span class="p">).</span>
+
+<span class="n">A</span><span class="w"> </span><span class="n">few</span><span class="w"> </span><span class="n">logistics</span><span class="o">:</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="n">Start</span><span class="w"> </span><span class="n">date</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="mi">2</span><span class="w"> </span><span class="n">weeks</span><span class="w"> </span><span class="n">from</span><span class="w"> </span><span class="n">today</span><span class="p">]</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="n">Notice</span><span class="w"> </span><span class="n">period</span><span class="o">:</span><span class="w"> </span><span class="n">I</span><span class="err">'</span><span class="n">ll</span><span class="w"> </span><span class="n">serve</span><span class="w"> </span><span class="n">my</span><span class="w"> </span><span class="n">notice</span><span class="w"> </span><span class="n">at</span><span class="w"> </span><span class="n">Billtrust</span><span class="w"> </span><span class="p">(</span><span class="mi">45</span><span class="w"> </span><span class="n">days</span><span class="p">)</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="n">Offer</span><span class="w"> </span><span class="n">letter</span><span class="o">:</span><span class="w"> </span><span class="n">Please</span><span class="w"> </span><span class="n">send</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">final</span><span class="w"> </span><span class="n">version</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">my</span><span class="w"> </span><span class="n">records</span>
+
+<span class="n">Excited</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">join</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">team</span><span class="w"> </span><span class="n">and</span><span class="w"> </span><span class="n">start</span><span class="w"> </span><span class="n">contributing</span><span class="o">!</span>
+
+<span class="n">Best</span><span class="p">,</span>
+<span class="n">Karthik</span>
+</code></pre></div>
+
+<hr />
+<h3 id="script-4-walking-away-politely"><strong>Script 4: Walking Away (Politely)</strong></h3>
+<div class="codehilite"><pre><span></span><code><span class="n">Hi</span><span class="w"> </span><span class="p">[</span><span class="n">Hiring</span><span class="w"> </span><span class="n">Manager</span><span class="p">],</span>
+
+<span class="n">Thank</span><span class="w"> </span><span class="n">you</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">offer</span><span class="w"> </span><span class="n">and</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">taking</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">time</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">interview</span><span class="w"> </span><span class="n">me</span><span class="p">.</span><span class="w"> </span><span class="n">After</span><span class="w"> </span><span class="n">careful</span><span class="w"> </span>
+<span class="n">consideration</span><span class="p">,</span><span class="w"> </span><span class="n">I</span><span class="err">'</span><span class="n">ve</span><span class="w"> </span><span class="n">decided</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">pursue</span><span class="w"> </span><span class="n">another</span><span class="w"> </span><span class="n">opportunity</span><span class="w"> </span><span class="n">that</span><span class="err">'</span><span class="n">s</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="n">better</span><span class="w"> </span><span class="n">fit</span><span class="w"> </span>
+<span class="k">for</span><span class="w"> </span><span class="n">my</span><span class="w"> </span><span class="n">career</span><span class="w"> </span><span class="n">goals</span><span class="w"> </span><span class="n">at</span><span class="w"> </span><span class="n">this</span><span class="w"> </span><span class="n">time</span><span class="p">.</span>
+
+<span class="n">I</span><span class="w"> </span><span class="n">really</span><span class="w"> </span><span class="n">enjoyed</span><span class="w"> </span><span class="n">learning</span><span class="w"> </span><span class="n">about</span><span class="w"> </span><span class="p">[</span><span class="n">company</span><span class="p">]</span><span class="w"> </span><span class="n">and</span><span class="w"> </span><span class="p">[</span><span class="n">specific</span><span class="w"> </span><span class="n">project</span><span class="p">],</span><span class="w"> </span><span class="n">and</span><span class="w"> </span><span class="n">I</span><span class="w"> </span><span class="n">hope</span><span class="w"> </span>
+<span class="n">our</span><span class="w"> </span><span class="n">paths</span><span class="w"> </span><span class="n">cross</span><span class="w"> </span><span class="n">again</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">future</span><span class="p">.</span>
+
+<span class="n">Best</span><span class="p">,</span>
+<span class="n">Karthik</span>
+</code></pre></div>
+
+<p><strong>When to Walk Away:</strong><br />
+- Offer is &lt;₹32 LPA (below market)<br />
+- Company won't budge at all (shows they don't value you)<br />
+- You have a better offer (₹40+ LPA elsewhere)<br />
+- Red flags during interview (toxic culture, unrealistic expectations)</p>
+<hr />
+<h2 id="your-negotiation-playbook">🚀 Your Negotiation Playbook</h2>
+<h3 id="before-interview"><strong>Before Interview:</strong></h3>
+<p>✅ Research market rates (Naukri, Glassdoor, Blind)<br />
+✅ Know your BATNA (Best Alternative To Negotiated Agreement) = walk-away number<br />
+✅ Practice deflecting salary questions  </p>
+<h3 id="during-interview"><strong>During Interview:</strong></h3>
+<p>✅ Delay salary discussion until offer stage<br />
+✅ Make them name the range first<br />
+✅ Don't disclose current salary (it anchors you low)  </p>
+<h3 id="after-offer"><strong>After Offer:</strong></h3>
+<p>✅ Ask for 2-3 days to review<br />
+✅ Calculate REAL total comp (not advertised number)<br />
+✅ Counter with specific number + justification<br />
+✅ Be ready to walk away (shows confidence)  </p>
+<h3 id="final-decision"><strong>Final Decision:</strong></h3>
+<p>✅ Compare all offers side-by-side<br />
+✅ Consider: Comp + Growth + Culture + Commute + Tech Stack<br />
+✅ Trust your gut (money isn't everything)</p>
+<hr />
+<h2 id="key-takeaways">💡 Key Takeaways</h2>
+<p>✅ <strong>Never accept first offer</strong> (always negotiate)<br />
+✅ <strong>Make them name the range first</strong> (avoid anchoring low)<br />
+✅ <strong>Justify your ask</strong> (market data + your value, not emotion)<br />
+✅ <strong>Calculate real comp</strong> (not advertised number)<br />
+✅ <strong>Be ready to walk away</strong> (you have options)  </p>
+<p>You're worth ₹35-40 LPA. Don't settle for less just because you're nervous about negotiating. 🚀</p>
+        </div>
+    </div>
+
+    <script>
+        // Progress Tracker JavaScript
+        const STORAGE_KEY = 'course_progress_salary_negotiation_guide';
+
+        // Extract all H2 and H3 headings from content
+        function extractSections() {
+            const content = document.querySelector('.content');
+            const headings = content.querySelectorAll('h2, h3');
+            const sections = [];
+
+            headings.forEach((heading, index) => {
+                const level = heading.tagName === 'H2' ? 2 : 3;
+                const text = heading.textContent.trim();
+                const id = `section-${index}`;
+
+                // Add ID to heading for linking
+                heading.id = id;
+
+                sections.push({
+                    id: id,
+                    text: text,
+                    level: level
+                });
+            });
+
+            return sections;
+        }
+
+        // Load saved progress from localStorage
+        function loadProgress() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            return saved ? JSON.parse(saved) : {};
+        }
+
+        // Save progress to localStorage
+        function saveProgress(progress) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+        }
+
+        // Calculate progress percentage
+        function calculateProgress() {
+            const checkboxes = document.querySelectorAll('.progress-checkbox');
+            const total = checkboxes.length;
+            if (total === 0) return 0;
+
+            const completed = Array.from(checkboxes).filter(cb => cb.checked).length;
+            return Math.round((completed / total) * 100);
+        }
+
+        // Update progress display
+        function updateProgressDisplay() {
+            const percentage = calculateProgress();
+            document.getElementById('progress-pct').textContent = percentage + '%';
+            document.getElementById('progress-bar').style.width = percentage + '%';
+
+            // Update completed class on items
+            document.querySelectorAll('.progress-item').forEach(item => {
+                const checkbox = item.querySelector('.progress-checkbox');
+                if (checkbox.checked) {
+                    item.classList.add('completed');
+                } else {
+                    item.classList.remove('completed');
+                }
+            });
+        }
+
+        // Toggle checkbox
+        function toggleCheckbox(sectionId) {
+            const checkbox = document.getElementById('cb-' + sectionId);
+            const progress = loadProgress();
+
+            progress[sectionId] = checkbox.checked;
+            saveProgress(progress);
+            updateProgressDisplay();
+        }
+
+        // Reset all progress
+        function resetProgress() {
+            if (confirm('Reset all progress for this page?')) {
+                localStorage.removeItem(STORAGE_KEY);
+                document.querySelectorAll('.progress-checkbox').forEach(cb => {
+                    cb.checked = false;
+                });
+                updateProgressDisplay();
+            }
+        }
+
+        // Toggle progress list visibility
+        function toggleProgressList() {
+            const list = document.getElementById('progress-items');
+            const btn = document.querySelector('.toggle-progress');
+
+            if (list.classList.contains('collapsed')) {
+                list.classList.remove('collapsed');
+                btn.textContent = '▼ Hide';
+            } else {
+                list.classList.add('collapsed');
+                btn.textContent = '▶ Show';
+            }
+        }
+
+        // Initialize progress tracker
+        function initProgressTracker() {
+            const sections = extractSections();
+            const progress = loadProgress();
+            const container = document.getElementById('progress-items');
+
+            if (sections.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No sections found</p>';
+                return;
+            }
+
+            sections.forEach(section => {
+                const item = document.createElement('div');
+                item.className = 'progress-item';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'progress-checkbox';
+                checkbox.id = 'cb-' + section.id;
+                checkbox.checked = progress[section.id] || false;
+                checkbox.onchange = () => toggleCheckbox(section.id);
+
+                const label = document.createElement('label');
+                label.className = 'progress-label';
+                label.htmlFor = 'cb-' + section.id;
+                label.textContent = section.text;
+                label.style.paddingLeft = section.level === 3 ? '20px' : '0';
+                label.onclick = () => {
+                    document.getElementById(section.id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+                };
+
+                item.appendChild(checkbox);
+                item.appendChild(label);
+                container.appendChild(item);
+            });
+
+            updateProgressDisplay();
+        }
+
+        // Run on page load
+        document.addEventListener('DOMContentLoaded', initProgressTracker);
+    </script>
+</body>
+</html>

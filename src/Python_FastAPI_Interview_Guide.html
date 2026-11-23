@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python_FastAPI_Interview_Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 60px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .metadata {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 16px 24px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #666;
+            border-left: 4px solid #667eea;
+        }
+
+        /* PROGRESS TRACKER STYLES */
+        .progress-tracker {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .progress-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-stats {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .progress-percentage {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #764ba2;
+        }
+
+        .progress-bar-container {
+            height: 12px;
+            background: #e9ecef;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+            border-radius: 20px;
+        }
+
+        .reset-btn {
+            padding: 8px 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+
+        .reset-btn:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+        }
+
+        .progress-items {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .progress-items::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .progress-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .progress-item:hover {
+            background: #f8f9fa;
+            transform: translateX(5px);
+        }
+
+        .progress-item.completed {
+            opacity: 0.7;
+        }
+
+        .progress-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .progress-label {
+            cursor: pointer;
+            font-size: 0.95em;
+            line-height: 1.5;
+            color: #495057;
+            flex-grow: 1;
+        }
+
+        .progress-item.completed .progress-label {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .toggle-progress {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .toggle-progress:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .progress-items.collapsed {
+            display: none;
+        }
+
+        /* CONTENT STYLES */
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 4px solid #667eea;
+            font-weight: 700;
+        }
+
+        h2 {
+            color: #764ba2;
+            font-size: 2em;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        h3 {
+            color: #495057;
+            font-size: 1.5em;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        h4 {
+            color: #666;
+            font-size: 1.25em;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        ul, ol {
+            margin: 20px 0;
+            padding-left: 40px;
+        }
+
+        li {
+            margin-bottom: 12px;
+            line-height: 1.7;
+        }
+
+        code {
+            background: #f4f5f7;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #c7254e;
+            border: 1px solid #e1e4e8;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 24px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 25px 0;
+            border: 1px solid #444;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            border: none;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        blockquote {
+            border-left: 5px solid #667eea;
+            padding: 15px 25px;
+            margin: 25px 0;
+            background: #f8f9fa;
+            border-radius: 0 8px 8px 0;
+            color: #495057;
+            font-style: italic;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 30px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 14px 18px;
+            text-align: left;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tr:hover {
+            background: #e9ecef;
+            transition: background 0.2s;
+        }
+
+        a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px solid transparent;
+            transition: border-bottom 0.2s;
+        }
+
+        a:hover {
+            border-bottom: 1px solid #667eea;
+        }
+
+        hr {
+            border: none;
+            border-top: 2px solid #e9ecef;
+            margin: 40px 0;
+        }
+
+        strong {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        em {
+            color: #495057;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 25px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.6em;
+            }
+
+            .progress-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .progress-stats {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../navigation.html" class="back-link">&larr; Back to Navigation</a>
+
+        <div class="metadata">
+            <strong>Source:</strong> dev/Python_FastAPI_Interview_Guide.md &nbsp;|&nbsp; <strong>Updated:</strong> 2026-11-18 19:44:56
+        </div>
+
+        <!-- PROGRESS TRACKER -->
+        <div class="progress-tracker">
+            <div class="progress-header">
+                <div class="progress-title">
+                    <span>📚</span>
+                    <span>Your Progress</span>
+                </div>
+                <div class="progress-stats">
+                    <span class="progress-percentage" id="progress-pct">0%</span>
+                    <button class="reset-btn" onclick="resetProgress()">Reset</button>
+                    <button class="toggle-progress" onclick="toggleProgressList()">▼ Hide</button>
+                </div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progress-bar" style="width: 0%"></div>
+            </div>
+            <div class="progress-items" id="progress-items">
+                <!-- Checkboxes will be generated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="content">
+<h1 id="python-fastapi-interview-guide">Python &amp; FastAPI Interview Guide</h1>
+<p><strong>For Full-Stack AI-First Developer Interviews</strong></p>
+<p>Your competitive advantage: <strong>Backend + AI/ML expertise</strong> (Python for microservices, FastAPI for high-performance APIs, AI model serving)</p>
+<hr />
+<h2 id="table-of-contents">Table of Contents</h2>
+<ol>
+<li><a href="#why-python--fastapi">Why Python + FastAPI for Modern Development</a></li>
+<li><a href="#fastapi-fundamentals">FastAPI Fundamentals</a></li>
+<li><a href="#python-best-practices">Python Best Practices</a></li>
+<li><a href="#asyncawait-patterns">Async/Await Patterns</a></li>
+<li><a href="#pydantic-models--validation">Pydantic Models &amp; Validation</a></li>
+<li><a href="#api-development-patterns">API Development Patterns</a></li>
+<li><a href="#aiml-model-serving">AI/ML Model Serving</a></li>
+<li><a href="#testing--documentation">Testing &amp; Documentation</a></li>
+<li><a href="#interview-questions--answers">Interview Questions &amp; Answers</a></li>
+</ol>
+<hr />
+<h2 id="why-python-fastapi">Why Python + FastAPI?</h2>
+<h3 id="the-modern-stack">The Modern Stack</h3>
+<div class="codehilite"><pre><span></span><code>Traditional PHP Stack:
+├── Laravel (web framework)
+├── MySQL (database)
+└── Redis (cache)
+
+AI-First Full-Stack:
+├── FastAPI (Python - high-performance APIs)
+├── React (frontend)
+├── PostgreSQL/MongoDB (database)
+├── Redis (cache)
+└── ML Models (scikit-learn, TensorFlow, PyTorch)
+</code></pre></div>
+
+<h3 id="why-fastapi">Why FastAPI?</h3>
+<p><strong>Performance:</strong><br />
+- 2-3x faster than Flask/Django<br />
+- On par with Node.js and Go<br />
+- Built on Starlette (async) and Pydantic (validation)</p>
+<p><strong>Developer Experience:</strong><br />
+- Auto-generated OpenAPI docs (Swagger UI)<br />
+- Type hints everywhere (editor autocomplete)<br />
+- Async/await native support<br />
+- Less boilerplate than Django</p>
+<p><strong>AI/ML Ready:</strong><br />
+- Perfect for serving ML models<br />
+- Async for heavy compute operations<br />
+- Easy integration with numpy, pandas, scikit-learn</p>
+<hr />
+<h2 id="fastapi-fundamentals">FastAPI Fundamentals</h2>
+<h3 id="hello-world">Hello World</h3>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">FastAPI</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">()</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">root</span><span class="p">():</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"message"</span><span class="p">:</span> <span class="s2">"Hello World"</span><span class="p">}</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/health"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">health</span><span class="p">():</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"status"</span><span class="p">:</span> <span class="s2">"healthy"</span><span class="p">}</span>
+</code></pre></div>
+
+<p>Run: <code>uvicorn main:app --reload</code></p>
+<h3 id="path-parameters-query-strings">Path Parameters &amp; Query Strings</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Path parameter</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/users/</span><span class="si">{user_id}</span><span class="s2">"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"user_id"</span><span class="p">:</span> <span class="n">user_id</span><span class="p">}</span>
+
+<span class="c1"># Query parameters</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/items"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">list_items</span><span class="p">(</span><span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"skip"</span><span class="p">:</span> <span class="n">skip</span><span class="p">,</span> <span class="s2">"limit"</span><span class="p">:</span> <span class="n">limit</span><span class="p">}</span>
+
+<span class="c1"># Both together</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/users/</span><span class="si">{user_id}</span><span class="s2">/orders"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_user_orders</span><span class="p">(</span>
+    <span class="n">user_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">status</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"all"</span><span class="p">,</span>
+    <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="p">):</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">"user_id"</span><span class="p">:</span> <span class="n">user_id</span><span class="p">,</span>
+        <span class="s2">"status"</span><span class="p">:</span> <span class="n">status</span><span class="p">,</span>
+        <span class="s2">"limit"</span><span class="p">:</span> <span class="n">limit</span>
+    <span class="p">}</span>
+</code></pre></div>
+
+<hr />
+<h2 id="pydantic-models-validation">Pydantic Models &amp; Validation</h2>
+<h3 id="requestresponse-models">Request/Response Models</h3>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">EmailStr</span><span class="p">,</span> <span class="n">Field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">UserCreate</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">email</span><span class="p">:</span> <span class="n">EmailStr</span>
+    <span class="n">password</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">min_length</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+    <span class="n">full_name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">age</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">ge</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">le</span><span class="o">=</span><span class="mi">150</span><span class="p">)</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">UserResponse</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">email</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">full_name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">created_at</span><span class="p">:</span> <span class="n">datetime</span>
+
+    <span class="k">class</span><span class="w"> </span><span class="nc">Config</span><span class="p">:</span>
+        <span class="n">from_attributes</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># ORM mode</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">UserUpdate</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">full_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">age</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="c1"># Use in endpoints</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">"/users"</span><span class="p">,</span> <span class="n">response_model</span><span class="o">=</span><span class="n">UserResponse</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">create_user</span><span class="p">(</span><span class="n">user</span><span class="p">:</span> <span class="n">UserCreate</span><span class="p">):</span>
+    <span class="c1"># Validation happens automatically</span>
+    <span class="c1"># user.email is guaranteed to be valid email</span>
+    <span class="c1"># user.password is guaranteed &gt;= 8 chars</span>
+    <span class="n">db_user</span> <span class="o">=</span> <span class="n">save_to_db</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">db_user</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s2">"/users/</span><span class="si">{user_id}</span><span class="s2">"</span><span class="p">,</span> <span class="n">response_model</span><span class="o">=</span><span class="n">UserResponse</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">update_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">user</span><span class="p">:</span> <span class="n">UserUpdate</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">update_in_db</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">user</span><span class="p">)</span>
+</code></pre></div>
+
+<p><strong>Benefits:</strong><br />
+- Automatic validation (400 error if invalid)<br />
+- Type hints (IDE autocomplete)<br />
+- Auto-generated API docs<br />
+- Data serialization/deserialization</p>
+<hr />
+<h2 id="asyncawait-patterns">Async/Await Patterns</h2>
+<h3 id="when-to-use-async">When to Use Async</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># ✅ GOOD: Use async for I/O operations</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/users/</span><span class="si">{user_id}</span><span class="s2">"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="c1"># Database query (I/O-bound)</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="k">await</span> <span class="n">db</span><span class="o">.</span><span class="n">fetch_one</span><span class="p">(</span>
+        <span class="s2">"SELECT * FROM users WHERE id = $1"</span><span class="p">,</span> <span class="n">user_id</span>
+    <span class="p">)</span>
+
+    <span class="c1"># HTTP call to external API (I/O-bound)</span>
+    <span class="n">profile</span> <span class="o">=</span> <span class="k">await</span> <span class="n">httpx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">"https://api.example.com/profiles/</span><span class="si">{</span><span class="n">user_id</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"user"</span><span class="p">:</span> <span class="n">user</span><span class="p">,</span> <span class="s2">"profile"</span><span class="p">:</span> <span class="n">profile</span><span class="o">.</span><span class="n">json</span><span class="p">()}</span>
+
+<span class="c1"># ❌ BAD: Don't use async for CPU-intensive work</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">"/ml/predict"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">InputData</span><span class="p">):</span>
+    <span class="c1"># This blocks the event loop!</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">features</span><span class="p">)</span>  <span class="c1"># CPU-intensive</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"prediction"</span><span class="p">:</span> <span class="n">result</span><span class="p">}</span>
+
+<span class="c1"># ✅ GOOD: Use background tasks or thread pool</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">BackgroundTasks</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">concurrent.futures</span><span class="w"> </span><span class="kn">import</span> <span class="n">ThreadPoolExecutor</span>
+
+<span class="n">executor</span> <span class="o">=</span> <span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">"/ml/predict"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">InputData</span><span class="p">):</span>
+    <span class="n">loop</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span>
+    <span class="c1"># Run CPU-intensive work in thread pool</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">loop</span><span class="o">.</span><span class="n">run_in_executor</span><span class="p">(</span>
+        <span class="n">executor</span><span class="p">,</span> 
+        <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">,</span> 
+        <span class="n">data</span><span class="o">.</span><span class="n">features</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"prediction"</span><span class="p">:</span> <span class="n">result</span><span class="p">}</span>
+</code></pre></div>
+
+<h3 id="concurrent-requests">Concurrent Requests</h3>
+<div class="codehilite"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">httpx</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/dashboard"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_dashboard</span><span class="p">(</span><span class="n">user_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="c1"># Run 3 API calls concurrently</span>
+    <span class="k">async</span> <span class="k">with</span> <span class="n">httpx</span><span class="o">.</span><span class="n">AsyncClient</span><span class="p">()</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
+        <span class="n">user_task</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">"/api/users/</span><span class="si">{</span><span class="n">user_id</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="n">orders_task</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">"/api/orders?user_id=</span><span class="si">{</span><span class="n">user_id</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="n">stats_task</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">"/api/stats/</span><span class="si">{</span><span class="n">user_id</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+        <span class="c1"># Wait for all to complete</span>
+        <span class="n">user</span><span class="p">,</span> <span class="n">orders</span><span class="p">,</span> <span class="n">stats</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span>
+            <span class="n">user_task</span><span class="p">,</span> <span class="n">orders_task</span><span class="p">,</span> <span class="n">stats_task</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">"user"</span><span class="p">:</span> <span class="n">user</span><span class="o">.</span><span class="n">json</span><span class="p">(),</span>
+        <span class="s2">"orders"</span><span class="p">:</span> <span class="n">orders</span><span class="o">.</span><span class="n">json</span><span class="p">(),</span>
+        <span class="s2">"stats"</span><span class="p">:</span> <span class="n">stats</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+    <span class="p">}</span>
+</code></pre></div>
+
+<hr />
+<h2 id="dependency-injection">Dependency Injection</h2>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">Depends</span><span class="p">,</span> <span class="n">HTTPException</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.orm</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span>
+
+<span class="c1"># Database session dependency</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_db</span><span class="p">():</span>
+    <span class="n">db</span> <span class="o">=</span> <span class="n">SessionLocal</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="n">db</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<span class="c1"># Current user dependency</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_current_user</span><span class="p">(</span>
+    <span class="n">token</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">oauth2_scheme</span><span class="p">),</span>
+    <span class="n">db</span><span class="p">:</span> <span class="n">Session</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_db</span><span class="p">)</span>
+<span class="p">):</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">decode_token</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">db</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">user</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">401</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="s2">"Invalid token"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">user</span>
+
+<span class="c1"># Use in endpoints</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/me"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">read_users_me</span><span class="p">(</span><span class="n">current_user</span><span class="p">:</span> <span class="n">User</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_current_user</span><span class="p">)):</span>
+    <span class="k">return</span> <span class="n">current_user</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/orders"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_orders</span><span class="p">(</span>
+    <span class="n">db</span><span class="p">:</span> <span class="n">Session</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_db</span><span class="p">),</span>
+    <span class="n">current_user</span><span class="p">:</span> <span class="n">User</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_current_user</span><span class="p">)</span>
+<span class="p">):</span>
+    <span class="n">orders</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Order</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Order</span><span class="o">.</span><span class="n">user_id</span> <span class="o">==</span> <span class="n">current_user</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">orders</span>
+</code></pre></div>
+
+<hr />
+<h2 id="api-development-patterns">API Development Patterns</h2>
+<h3 id="crud-operations">CRUD Operations</h3>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">"/items"</span><span class="p">,</span> <span class="n">response_model</span><span class="o">=</span><span class="n">ItemResponse</span><span class="p">,</span> <span class="n">status_code</span><span class="o">=</span><span class="mi">201</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">create_item</span><span class="p">(</span>
+    <span class="n">item</span><span class="p">:</span> <span class="n">ItemCreate</span><span class="p">,</span>
+    <span class="n">db</span><span class="p">:</span> <span class="n">Session</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_db</span><span class="p">),</span>
+    <span class="n">current_user</span><span class="p">:</span> <span class="n">User</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_current_user</span><span class="p">)</span>
+<span class="p">):</span>
+    <span class="n">db_item</span> <span class="o">=</span> <span class="n">Item</span><span class="p">(</span><span class="o">**</span><span class="n">item</span><span class="o">.</span><span class="n">dict</span><span class="p">(),</span> <span class="n">owner_id</span><span class="o">=</span><span class="n">current_user</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">db_item</span><span class="p">)</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">refresh</span><span class="p">(</span><span class="n">db_item</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">db_item</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/items"</span><span class="p">,</span> <span class="n">response_model</span><span class="o">=</span><span class="n">List</span><span class="p">[</span><span class="n">ItemResponse</span><span class="p">])</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">list_items</span><span class="p">(</span>
+    <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="n">db</span><span class="p">:</span> <span class="n">Session</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_db</span><span class="p">)</span>
+<span class="p">):</span>
+    <span class="n">items</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Item</span><span class="p">)</span><span class="o">.</span><span class="n">offset</span><span class="p">(</span><span class="n">skip</span><span class="p">)</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="n">limit</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">items</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/items/</span><span class="si">{item_id}</span><span class="s2">"</span><span class="p">,</span> <span class="n">response_model</span><span class="o">=</span><span class="n">ItemResponse</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_item</span><span class="p">(</span><span class="n">item_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">db</span><span class="p">:</span> <span class="n">Session</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_db</span><span class="p">)):</span>
+    <span class="n">item</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Item</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Item</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">item_id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">item</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">404</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="s2">"Item not found"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">item</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s2">"/items/</span><span class="si">{item_id}</span><span class="s2">"</span><span class="p">,</span> <span class="n">response_model</span><span class="o">=</span><span class="n">ItemResponse</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">update_item</span><span class="p">(</span>
+    <span class="n">item_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">item</span><span class="p">:</span> <span class="n">ItemUpdate</span><span class="p">,</span>
+    <span class="n">db</span><span class="p">:</span> <span class="n">Session</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_db</span><span class="p">)</span>
+<span class="p">):</span>
+    <span class="n">db_item</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Item</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Item</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">item_id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">db_item</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">404</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="s2">"Item not found"</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">exclude_unset</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="n">db_item</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">refresh</span><span class="p">(</span><span class="n">db_item</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">db_item</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">"/items/</span><span class="si">{item_id}</span><span class="s2">"</span><span class="p">,</span> <span class="n">status_code</span><span class="o">=</span><span class="mi">204</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">delete_item</span><span class="p">(</span><span class="n">item_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">db</span><span class="p">:</span> <span class="n">Session</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_db</span><span class="p">)):</span>
+    <span class="n">db_item</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Item</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">Item</span><span class="o">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">item_id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">db_item</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">404</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="s2">"Item not found"</span><span class="p">)</span>
+
+    <span class="n">db</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">db_item</span><span class="p">)</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+    <span class="k">return</span> <span class="kc">None</span>
+</code></pre></div>
+
+<hr />
+<h2 id="aiml-model-serving">AI/ML Model Serving</h2>
+<h3 id="serving-a-trained-model">Serving a Trained Model</h3>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">FastAPI</span><span class="p">,</span> <span class="n">File</span><span class="p">,</span> <span class="n">UploadFile</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pickle</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">()</span>
+
+<span class="c1"># Load model at startup</span>
+<span class="n">model</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">on_event</span><span class="p">(</span><span class="s2">"startup"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">load_model</span><span class="p">():</span>
+    <span class="k">global</span> <span class="n">model</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"model.pkl"</span><span class="p">,</span> <span class="s2">"rb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">PredictionInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">features</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">PredictionOutput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">prediction</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">confidence</span><span class="p">:</span> <span class="nb">float</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">"/predict"</span><span class="p">,</span> <span class="n">response_model</span><span class="o">=</span><span class="n">PredictionOutput</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span><span class="n">input_data</span><span class="p">:</span> <span class="n">PredictionInput</span><span class="p">):</span>
+    <span class="c1"># Convert to numpy array</span>
+    <span class="n">features</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">input_data</span><span class="o">.</span><span class="n">features</span><span class="p">])</span>
+
+    <span class="c1"># Get prediction</span>
+    <span class="n">prediction</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">features</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">confidence</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">features</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">"prediction"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">prediction</span><span class="p">),</span>
+        <span class="s2">"confidence"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">confidence</span><span class="p">)</span>
+    <span class="p">}</span>
+
+<span class="c1"># Batch predictions</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BatchPredictionInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">batch</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">"/predict/batch"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">batch_predict</span><span class="p">(</span><span class="n">input_data</span><span class="p">:</span> <span class="n">BatchPredictionInput</span><span class="p">):</span>
+    <span class="n">features</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">input_data</span><span class="o">.</span><span class="n">batch</span><span class="p">)</span>
+    <span class="n">predictions</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">features</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">"predictions"</span><span class="p">:</span> <span class="n">predictions</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+        <span class="s2">"count"</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
+    <span class="p">}</span>
+
+<span class="c1"># Image classification</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">"/classify/image"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">classify_image</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="n">UploadFile</span> <span class="o">=</span> <span class="n">File</span><span class="p">(</span><span class="o">...</span><span class="p">)):</span>
+    <span class="c1"># Read image</span>
+    <span class="n">contents</span> <span class="o">=</span> <span class="k">await</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+    <span class="c1"># Preprocess</span>
+    <span class="n">image</span> <span class="o">=</span> <span class="n">preprocess_image</span><span class="p">(</span><span class="n">contents</span><span class="p">)</span>
+
+    <span class="c1"># Predict</span>
+    <span class="n">prediction</span> <span class="o">=</span> <span class="n">image_model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+    <span class="n">class_name</span> <span class="o">=</span> <span class="n">decode_prediction</span><span class="p">(</span><span class="n">prediction</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">"class"</span><span class="p">:</span> <span class="n">class_name</span><span class="p">,</span>
+        <span class="s2">"confidence"</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">prediction</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+    <span class="p">}</span>
+</code></pre></div>
+
+<h3 id="real-world-ai-api-example">Real-World AI API Example</h3>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">transformers</span><span class="w"> </span><span class="kn">import</span> <span class="n">pipeline</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">FastAPI</span><span class="p">,</span> <span class="n">BackgroundTasks</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">concurrent.futures</span><span class="w"> </span><span class="kn">import</span> <span class="n">ThreadPoolExecutor</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">()</span>
+
+<span class="c1"># Load model at startup</span>
+<span class="n">sentiment_analyzer</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">executor</span> <span class="o">=</span> <span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">on_event</span><span class="p">(</span><span class="s2">"startup"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">startup</span><span class="p">():</span>
+    <span class="k">global</span> <span class="n">sentiment_analyzer</span>
+    <span class="n">sentiment_analyzer</span> <span class="o">=</span> <span class="n">pipeline</span><span class="p">(</span><span class="s2">"sentiment-analysis"</span><span class="p">)</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">TextInput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">text</span><span class="p">:</span> <span class="nb">str</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">SentimentOutput</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">label</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">score</span><span class="p">:</span> <span class="nb">float</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">"/analyze/sentiment"</span><span class="p">,</span> <span class="n">response_model</span><span class="o">=</span><span class="n">SentimentOutput</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">analyze_sentiment</span><span class="p">(</span><span class="n">input_data</span><span class="p">:</span> <span class="n">TextInput</span><span class="p">):</span>
+    <span class="n">loop</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span>
+
+    <span class="c1"># Run in thread pool (CPU-intensive)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">loop</span><span class="o">.</span><span class="n">run_in_executor</span><span class="p">(</span>
+        <span class="n">executor</span><span class="p">,</span>
+        <span class="n">sentiment_analyzer</span><span class="p">,</span>
+        <span class="n">input_data</span><span class="o">.</span><span class="n">text</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<span class="c1"># Multi-model inference</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">"/analyze/full"</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">full_analysis</span><span class="p">(</span><span class="n">input_data</span><span class="p">:</span> <span class="n">TextInput</span><span class="p">):</span>
+    <span class="n">loop</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">get_event_loop</span><span class="p">()</span>
+
+    <span class="c1"># Run multiple models concurrently</span>
+    <span class="n">sentiment_task</span> <span class="o">=</span> <span class="n">loop</span><span class="o">.</span><span class="n">run_in_executor</span><span class="p">(</span>
+        <span class="n">executor</span><span class="p">,</span> <span class="n">sentiment_analyzer</span><span class="p">,</span> <span class="n">input_data</span><span class="o">.</span><span class="n">text</span>
+    <span class="p">)</span>
+    <span class="n">toxicity_task</span> <span class="o">=</span> <span class="n">loop</span><span class="o">.</span><span class="n">run_in_executor</span><span class="p">(</span>
+        <span class="n">executor</span><span class="p">,</span> <span class="n">toxicity_analyzer</span><span class="p">,</span> <span class="n">input_data</span><span class="o">.</span><span class="n">text</span>
+    <span class="p">)</span>
+
+    <span class="n">sentiment</span><span class="p">,</span> <span class="n">toxicity</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span>
+        <span class="n">sentiment_task</span><span class="p">,</span> <span class="n">toxicity_task</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">"sentiment"</span><span class="p">:</span> <span class="n">sentiment</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="s2">"toxicity"</span><span class="p">:</span> <span class="n">toxicity</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="p">}</span>
+</code></pre></div>
+
+<hr />
+<h2 id="python-best-practices">Python Best Practices</h2>
+<h3 id="type-hints">Type Hints</h3>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">process_users</span><span class="p">(</span>
+    <span class="n">users</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span>
+    <span class="n">active_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">u</span><span class="p">[</span><span class="s2">"name"</span><span class="p">]</span> <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">users</span> <span class="k">if</span> <span class="n">u</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"active"</span><span class="p">,</span> <span class="kc">False</span><span class="p">)]</span>
+
+<span class="c1"># Generic types</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Generic</span>
+
+<span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">'T'</span><span class="p">)</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Repository</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">T</span><span class="p">]):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
+        <span class="o">...</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
+        <span class="o">...</span>
+</code></pre></div>
+
+<h3 id="list-comprehensions">List Comprehensions</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Instead of loops, use comprehensions</span>
+<span class="n">numbers</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span>
+
+<span class="c1"># Filter</span>
+<span class="n">evens</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">numbers</span> <span class="k">if</span> <span class="n">n</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span>
+
+<span class="c1"># Transform</span>
+<span class="n">squared</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span> <span class="o">**</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">numbers</span><span class="p">]</span>
+
+<span class="c1"># Dict comprehension</span>
+<span class="n">user_map</span> <span class="o">=</span> <span class="p">{</span><span class="n">u</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]:</span> <span class="n">u</span><span class="p">[</span><span class="s2">"name"</span><span class="p">]</span> <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">users</span><span class="p">}</span>
+
+<span class="c1"># Set comprehension</span>
+<span class="n">unique_tags</span> <span class="o">=</span> <span class="p">{</span><span class="n">tag</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span> <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">tags</span><span class="p">}</span>
+</code></pre></div>
+
+<h3 id="context-managers">Context Managers</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Database connection</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">contextlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">contextmanager</span>
+
+<span class="nd">@contextmanager</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_db_connection</span><span class="p">():</span>
+    <span class="n">conn</span> <span class="o">=</span> <span class="n">create_connection</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="n">conn</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<span class="c1"># Usage</span>
+<span class="k">with</span> <span class="n">get_db_connection</span><span class="p">()</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">"SELECT * FROM users"</span><span class="p">)</span>
+</code></pre></div>
+
+<hr />
+<h2 id="testing-fastapi">Testing FastAPI</h2>
+<h3 id="unit-tests">Unit Tests</h3>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi.testclient</span><span class="w"> </span><span class="kn">import</span> <span class="n">TestClient</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">main</span><span class="w"> </span><span class="kn">import</span> <span class="n">app</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">TestClient</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_read_main</span><span class="p">():</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/"</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span>
+    <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span> <span class="o">==</span> <span class="p">{</span><span class="s2">"message"</span><span class="p">:</span> <span class="s2">"Hello World"</span><span class="p">}</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_create_user</span><span class="p">():</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+        <span class="s2">"/users"</span><span class="p">,</span>
+        <span class="n">json</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"test@example.com"</span><span class="p">,</span>
+            <span class="s2">"password"</span><span class="p">:</span> <span class="s2">"password123"</span><span class="p">,</span>
+            <span class="s2">"full_name"</span><span class="p">:</span> <span class="s2">"Test User"</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">201</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">data</span><span class="p">[</span><span class="s2">"email"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"test@example.com"</span>
+    <span class="k">assert</span> <span class="s2">"id"</span> <span class="ow">in</span> <span class="n">data</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_invalid_email</span><span class="p">():</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+        <span class="s2">"/users"</span><span class="p">,</span>
+        <span class="n">json</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">"email"</span><span class="p">:</span> <span class="s2">"invalid-email"</span><span class="p">,</span>
+            <span class="s2">"password"</span><span class="p">:</span> <span class="s2">"password123"</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">422</span>  <span class="c1"># Validation error</span>
+</code></pre></div>
+
+<h3 id="async-tests">Async Tests</h3>
+<div class="codehilite"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">httpx</span><span class="w"> </span><span class="kn">import</span> <span class="n">AsyncClient</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">main</span><span class="w"> </span><span class="kn">import</span> <span class="n">app</span>
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">mark</span><span class="o">.</span><span class="n">asyncio</span>
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">test_async_endpoint</span><span class="p">():</span>
+    <span class="k">async</span> <span class="k">with</span> <span class="n">AsyncClient</span><span class="p">(</span><span class="n">app</span><span class="o">=</span><span class="n">app</span><span class="p">,</span> <span class="n">base_url</span><span class="o">=</span><span class="s2">"http://test"</span><span class="p">)</span> <span class="k">as</span> <span class="n">ac</span><span class="p">:</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="n">ac</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/users/1"</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span>
+</code></pre></div>
+
+<hr />
+<h2 id="interview-questions-answers">Interview Questions &amp; Answers</h2>
+<h3 id="q1-why-fastapi-over-flask-or-django">Q1: "Why FastAPI over Flask or Django?"</h3>
+<p><strong>Your Answer:</strong></p>
+<blockquote>
+<p><em>"FastAPI combines the best of both worlds:</em></p>
+<p><strong>vs Flask:</strong><br />
+<em>- <strong>Performance:</strong> 2-3x faster (async/await native)</em><br />
+<em>- <strong>Type safety:</strong> Pydantic validation vs manual validation</em><br />
+<em>- <strong>Auto docs:</strong> OpenAPI/Swagger built-in</em><br />
+<em>- <strong>Modern:</strong> Async-first, not bolted on</em></p>
+<p><strong>vs Django:</strong><br />
+<em>- <strong>Lightweight:</strong> No ORM/admin if you don't need it</em><br />
+<em>- <strong>Performance:</strong> Async for high concurrency</em><br />
+<em>- <strong>API-first:</strong> Built for APIs, not full-stack MVC</em><br />
+<em>- <strong>Less boilerplate:</strong> Decorator-based like Flask</em></p>
+<p><strong>When I'd Use Each:</strong><br />
+<em>- <strong>FastAPI:</strong> Microservices, ML model serving, high-performance APIs</em><br />
+<em>- <strong>Flask:</strong> Simple apps, when team knows it well</em><br />
+<em>- <strong>Django:</strong> Full-stack admin portals, built-in auth/admin needed</em></p>
+<p><strong>Real Example:</strong><br />
+<em>I used FastAPI to build an AI prediction API serving 1000+ req/sec. The async nature let us handle concurrent model inference without blocking. Auto-generated OpenAPI docs made frontend integration seamless."</em></p>
+</blockquote>
+<hr />
+<h3 id="q2-how-do-you-serve-ml-models-in-production">Q2: "How do you serve ML models in production?"</h3>
+<p><strong>Your Answer:</strong></p>
+<blockquote>
+<p><em>"Here's my production ML serving pattern:</em></p>
+<p><strong>Architecture:</strong><br />
+<code>Load Balancer
+  ↓
+FastAPI (3+ instances)
+  ↓
+ML Model (loaded in memory)
+  ↓
+Redis (prediction cache)</code></p>
+<p><strong>Key Patterns:</strong></p>
+<p><strong>1. Load Model at Startup (Not Per Request)</strong><br />
+```python<br />
+model = None</p>
+<p>@app.on_event("startup")<br />
+async def load_model():<br />
+    global model<br />
+    model = joblib.load("model.pkl")<br />
+```</p>
+<p><strong>2. Thread Pool for CPU Work</strong><br />
+```python<br />
+executor = ThreadPoolExecutor(max_workers=4)</p>
+<p>@app.post("/predict")<br />
+async def predict(data: Input):<br />
+    loop = asyncio.get_event_loop()<br />
+    result = await loop.run_in_executor(<br />
+        executor, model.predict, data.features<br />
+    )<br />
+    return {"prediction": result}<br />
+```</p>
+<p><strong>3. Caching for Repeated Inputs</strong><br />
+<code>python
+cache_key = hash(tuple(features))
+cached = redis.get(cache_key)
+if cached:
+    return cached</code></p>
+<p><strong>4. Batch Inference for Efficiency</strong><br />
+```python</p>
+<h1 id="queue-requests-predict-in-batches-of-32">Queue requests, predict in batches of 32</h1>
+<p>batch = await queue.get_batch(size=32, timeout=0.1)<br />
+predictions = model.predict(batch)<br />
+```</p>
+<p><strong>5. Health Checks</strong><br />
+```python<br />
+@app.get("/health")<br />
+async def health():<br />
+    # Check model loaded<br />
+    if model is None:<br />
+        raise HTTPException(503, "Model not loaded")</p>
+<div class="codehilite"><pre><span></span><code><span class="gh">#</span> Quick prediction test
+test_input = np.zeros((1, 10))
+model.predict(test_input)
+
+return {"status": "healthy"}
+</code></pre></div>
+
+<p>```</p>
+<p><strong>Monitoring:</strong><br />
+<em>- Prediction latency (P50, P95, P99)</em><br />
+<em>- Model version deployed</em><br />
+<em>- Prediction distribution (drift detection)</em><br />
+<em>- Error rate by error type</em>"*</p>
+</blockquote>
+<hr />
+<h3 id="q3-explain-asyncawait-and-when-youd-use-it">Q3: "Explain async/await and when you'd use it."</h3>
+<p><strong>Your Answer:</strong></p>
+<blockquote>
+<p><em>"Async/await is for I/O-bound concurrency, not parallelism.</em></p>
+<p><strong>How It Works:</strong><br />
+<em>- Single thread, event loop</em><br />
+<em>- While waiting for I/O (DB, API), handle other requests</em><br />
+<em>- NOT for CPU-intensive work (use threads/processes)</em></p>
+<p><strong>Use Cases:</strong></p>
+<p><strong>✅ GOOD for Async:</strong><br />
+<em>- Database queries</em><br />
+<em>- External API calls</em><br />
+<em>- File I/O</em><br />
+<em>- Network operations</em></p>
+<p>```python</p>
+<h1 id="3-api-calls-in-parallel-1-sec-total">3 API calls in parallel (1 sec total)</h1>
+<p>results = await asyncio.gather(<br />
+    api1(), api2(), api3()<br />
+)<br />
+```</p>
+<p><strong>❌ BAD for Async:</strong><br />
+<em>- ML model inference (CPU-bound)</em><br />
+<em>- Image processing</em><br />
+<em>- Data crunching</em></p>
+<p>```python</p>
+<h1 id="this-blocks-the-event-loop">This BLOCKS the event loop!</h1>
+<p>result = model.predict(data)  # 500ms CPU time</p>
+<h1 id="do-this-instead">Do this instead:</h1>
+<p>result = await loop.run_in_executor(executor, model.predict, data)<br />
+```</p>
+<p><strong>Real Example:</strong><br />
+<em>Invoice API needs data from 3 microservices. Synchronous: 300ms (100ms each, sequential). Async: 100ms (all parallel). That's 3x faster!"</em></p>
+</blockquote>
+<hr />
+<h2 id="summary-your-pythonfastapi-expertise">Summary: Your Python/FastAPI Expertise</h2>
+<p><strong>When Asked About Python/FastAPI:</strong></p>
+<blockquote>
+<p><em>"I use Python/FastAPI for modern microservices and AI/ML model serving. FastAPI gives us 2-3x better performance than Flask through async/await, automatic validation via Pydantic, and built-in OpenAPI docs.</em></p>
+<p><em>For ML serving, I load models at startup, run inference in thread pools to avoid blocking the event loop, and cache predictions in Redis. This architecture handles 1000+ req/sec with P95 latency under 200ms.</em></p>
+<p><em>The combination of type hints, automatic validation, and async support makes it perfect for building reliable, high-performance APIs that serve both traditional web requests and AI model predictions."</em></p>
+</blockquote>
+<hr />
+<p><strong>Python/FastAPI expertise complete!</strong> 🐍⚡</p>
+        </div>
+    </div>
+
+    <script>
+        // Progress Tracker JavaScript
+        const STORAGE_KEY = 'course_progress_python_fastapi_interview_guide';
+
+        // Extract all H2 and H3 headings from content
+        function extractSections() {
+            const content = document.querySelector('.content');
+            const headings = content.querySelectorAll('h2, h3');
+            const sections = [];
+
+            headings.forEach((heading, index) => {
+                const level = heading.tagName === 'H2' ? 2 : 3;
+                const text = heading.textContent.trim();
+                const id = `section-${index}`;
+
+                // Add ID to heading for linking
+                heading.id = id;
+
+                sections.push({
+                    id: id,
+                    text: text,
+                    level: level
+                });
+            });
+
+            return sections;
+        }
+
+        // Load saved progress from localStorage
+        function loadProgress() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            return saved ? JSON.parse(saved) : {};
+        }
+
+        // Save progress to localStorage
+        function saveProgress(progress) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+        }
+
+        // Calculate progress percentage
+        function calculateProgress() {
+            const checkboxes = document.querySelectorAll('.progress-checkbox');
+            const total = checkboxes.length;
+            if (total === 0) return 0;
+
+            const completed = Array.from(checkboxes).filter(cb => cb.checked).length;
+            return Math.round((completed / total) * 100);
+        }
+
+        // Update progress display
+        function updateProgressDisplay() {
+            const percentage = calculateProgress();
+            document.getElementById('progress-pct').textContent = percentage + '%';
+            document.getElementById('progress-bar').style.width = percentage + '%';
+
+            // Update completed class on items
+            document.querySelectorAll('.progress-item').forEach(item => {
+                const checkbox = item.querySelector('.progress-checkbox');
+                if (checkbox.checked) {
+                    item.classList.add('completed');
+                } else {
+                    item.classList.remove('completed');
+                }
+            });
+        }
+
+        // Toggle checkbox
+        function toggleCheckbox(sectionId) {
+            const checkbox = document.getElementById('cb-' + sectionId);
+            const progress = loadProgress();
+
+            progress[sectionId] = checkbox.checked;
+            saveProgress(progress);
+            updateProgressDisplay();
+        }
+
+        // Reset all progress
+        function resetProgress() {
+            if (confirm('Reset all progress for this page?')) {
+                localStorage.removeItem(STORAGE_KEY);
+                document.querySelectorAll('.progress-checkbox').forEach(cb => {
+                    cb.checked = false;
+                });
+                updateProgressDisplay();
+            }
+        }
+
+        // Toggle progress list visibility
+        function toggleProgressList() {
+            const list = document.getElementById('progress-items');
+            const btn = document.querySelector('.toggle-progress');
+
+            if (list.classList.contains('collapsed')) {
+                list.classList.remove('collapsed');
+                btn.textContent = '▼ Hide';
+            } else {
+                list.classList.add('collapsed');
+                btn.textContent = '▶ Show';
+            }
+        }
+
+        // Initialize progress tracker
+        function initProgressTracker() {
+            const sections = extractSections();
+            const progress = loadProgress();
+            const container = document.getElementById('progress-items');
+
+            if (sections.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No sections found</p>';
+                return;
+            }
+
+            sections.forEach(section => {
+                const item = document.createElement('div');
+                item.className = 'progress-item';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'progress-checkbox';
+                checkbox.id = 'cb-' + section.id;
+                checkbox.checked = progress[section.id] || false;
+                checkbox.onchange = () => toggleCheckbox(section.id);
+
+                const label = document.createElement('label');
+                label.className = 'progress-label';
+                label.htmlFor = 'cb-' + section.id;
+                label.textContent = section.text;
+                label.style.paddingLeft = section.level === 3 ? '20px' : '0';
+                label.onclick = () => {
+                    document.getElementById(section.id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+                };
+
+                item.appendChild(checkbox);
+                item.appendChild(label);
+                container.appendChild(item);
+            });
+
+            updateProgressDisplay();
+        }
+
+        // Run on page load
+        document.addEventListener('DOMContentLoaded', initProgressTracker);
+    </script>
+</body>
+</html>

@@ -1,0 +1,2673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Technical_Interview_QA_Resume_Projects_Part2</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 60px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .metadata {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 16px 24px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #666;
+            border-left: 4px solid #667eea;
+        }
+
+        /* PROGRESS TRACKER STYLES */
+        .progress-tracker {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .progress-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-stats {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .progress-percentage {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #764ba2;
+        }
+
+        .progress-bar-container {
+            height: 12px;
+            background: #e9ecef;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+            border-radius: 20px;
+        }
+
+        .reset-btn {
+            padding: 8px 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+
+        .reset-btn:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+        }
+
+        .progress-items {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .progress-items::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .progress-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .progress-item:hover {
+            background: #f8f9fa;
+            transform: translateX(5px);
+        }
+
+        .progress-item.completed {
+            opacity: 0.7;
+        }
+
+        .progress-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .progress-label {
+            cursor: pointer;
+            font-size: 0.95em;
+            line-height: 1.5;
+            color: #495057;
+            flex-grow: 1;
+        }
+
+        .progress-item.completed .progress-label {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .toggle-progress {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .toggle-progress:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .progress-items.collapsed {
+            display: none;
+        }
+
+        /* CONTENT STYLES */
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 4px solid #667eea;
+            font-weight: 700;
+        }
+
+        h2 {
+            color: #764ba2;
+            font-size: 2em;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        h3 {
+            color: #495057;
+            font-size: 1.5em;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        h4 {
+            color: #666;
+            font-size: 1.25em;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        ul, ol {
+            margin: 20px 0;
+            padding-left: 40px;
+        }
+
+        li {
+            margin-bottom: 12px;
+            line-height: 1.7;
+        }
+
+        code {
+            background: #f4f5f7;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #c7254e;
+            border: 1px solid #e1e4e8;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 24px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 25px 0;
+            border: 1px solid #444;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            border: none;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        blockquote {
+            border-left: 5px solid #667eea;
+            padding: 15px 25px;
+            margin: 25px 0;
+            background: #f8f9fa;
+            border-radius: 0 8px 8px 0;
+            color: #495057;
+            font-style: italic;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 30px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 14px 18px;
+            text-align: left;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tr:hover {
+            background: #e9ecef;
+            transition: background 0.2s;
+        }
+
+        a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px solid transparent;
+            transition: border-bottom 0.2s;
+        }
+
+        a:hover {
+            border-bottom: 1px solid #667eea;
+        }
+
+        hr {
+            border: none;
+            border-top: 2px solid #e9ecef;
+            margin: 40px 0;
+        }
+
+        strong {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        em {
+            color: #495057;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 25px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.6em;
+            }
+
+            .progress-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .progress-stats {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../navigation.html" class="back-link">&larr; Back to Navigation</a>
+
+        <div class="metadata">
+            <strong>Source:</strong> dev/Technical_Interview_QA_Resume_Projects_Part2.md &nbsp;|&nbsp; <strong>Updated:</strong> 2026-11-18 19:44:59
+        </div>
+
+        <!-- PROGRESS TRACKER -->
+        <div class="progress-tracker">
+            <div class="progress-header">
+                <div class="progress-title">
+                    <span>📚</span>
+                    <span>Your Progress</span>
+                </div>
+                <div class="progress-stats">
+                    <span class="progress-percentage" id="progress-pct">0%</span>
+                    <button class="reset-btn" onclick="resetProgress()">Reset</button>
+                    <button class="toggle-progress" onclick="toggleProgressList()">▼ Hide</button>
+                </div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progress-bar" style="width: 0%"></div>
+            </div>
+            <div class="progress-items" id="progress-items">
+                <!-- Checkboxes will be generated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="content">
+<h1 id="technical-interview-qa-part-2-continued">Technical Interview Q&amp;A - Part 2 (Continued)</h1>
+<p><strong>Advanced Topics: Database, Leadership, Debugging, Scenarios</strong></p>
+<hr />
+<h2 id="12-database-design-optimization">12. Database Design &amp; Optimization</h2>
+<h3 id="q121-you-have-a-table-with-100m-rows-query-performance-is-degrading-how-do-you-optimize">Q12.1: You have a table with 100M+ rows. Query performance is degrading. How do you optimize?</h3>
+<p><strong>Answer:</strong></p>
+<p><strong>Scenario:</strong> <code>fsi_invoices</code> table has 100M rows, queries taking 10+ seconds.</p>
+<p><strong>Step-by-Step Optimization:</strong></p>
+<p><strong>1. Identify Problematic Queries:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Enable slow query log</span>
+<span class="k">SET</span><span class="w"> </span><span class="k">GLOBAL</span><span class="w"> </span><span class="n">slow_query_log</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="k">SET</span><span class="w"> </span><span class="k">GLOBAL</span><span class="w"> </span><span class="n">long_query_time</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="c1">-- Log queries &gt;1 second</span>
+
+<span class="c1">-- Check slow queries</span>
+<span class="k">SELECT</span><span class="w"> </span>
+<span class="w">    </span><span class="n">query_time</span><span class="p">,</span>
+<span class="w">    </span><span class="n">sql_text</span><span class="p">,</span>
+<span class="w">    </span><span class="n">rows_examined</span><span class="p">,</span>
+<span class="w">    </span><span class="n">rows_sent</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">mysql</span><span class="p">.</span><span class="n">slow_log</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">query_time</span><span class="w"> </span><span class="k">DESC</span>
+<span class="k">LIMIT</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span>
+
+<span class="c1">-- Top offender:</span>
+<span class="c1">-- Query time: 12.5s</span>
+<span class="c1">-- SELECT * FROM fsi_invoices WHERE customer_id = 12345 AND status = 'unpaid'</span>
+<span class="c1">-- Rows examined: 100,000,000 (full table scan!)</span>
+</code></pre></div>
+
+<p><strong>2. Add Appropriate Indexes:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Current indexes:</span>
+<span class="k">SHOW</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">fsi_invoices</span><span class="p">;</span>
+<span class="c1">-- Only: PRIMARY KEY (invoice_id)</span>
+
+<span class="c1">-- Add composite index</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_customer_status</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">fsi_invoices</span><span class="p">(</span><span class="n">customer_id</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">);</span>
+
+<span class="c1">-- Why composite? Query filters by BOTH columns</span>
+<span class="c1">-- Query now: 12.5s → 0.08s (156x faster)</span>
+</code></pre></div>
+
+<p><strong>3. Partition the Table (by date):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Partition by invoice year (most queries filter by recent dates)</span>
+<span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">fsi_invoices</span>
+<span class="n">PARTITION</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">RANGE</span><span class="w"> </span><span class="p">(</span><span class="k">YEAR</span><span class="p">(</span><span class="n">invoice_date</span><span class="p">))</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="n">PARTITION</span><span class="w"> </span><span class="n">p2020</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="k">LESS</span><span class="w"> </span><span class="k">THAN</span><span class="w"> </span><span class="p">(</span><span class="mi">2021</span><span class="p">),</span>
+<span class="w">    </span><span class="n">PARTITION</span><span class="w"> </span><span class="n">p2021</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="k">LESS</span><span class="w"> </span><span class="k">THAN</span><span class="w"> </span><span class="p">(</span><span class="mi">2022</span><span class="p">),</span>
+<span class="w">    </span><span class="n">PARTITION</span><span class="w"> </span><span class="n">p2022</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="k">LESS</span><span class="w"> </span><span class="k">THAN</span><span class="w"> </span><span class="p">(</span><span class="mi">2023</span><span class="p">),</span>
+<span class="w">    </span><span class="n">PARTITION</span><span class="w"> </span><span class="n">p2023</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="k">LESS</span><span class="w"> </span><span class="k">THAN</span><span class="w"> </span><span class="p">(</span><span class="mi">2024</span><span class="p">),</span>
+<span class="w">    </span><span class="n">PARTITION</span><span class="w"> </span><span class="n">p2024</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="k">LESS</span><span class="w"> </span><span class="k">THAN</span><span class="w"> </span><span class="p">(</span><span class="mi">2025</span><span class="p">),</span>
+<span class="w">    </span><span class="n">PARTITION</span><span class="w"> </span><span class="n">p2025</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="k">LESS</span><span class="w"> </span><span class="k">THAN</span><span class="w"> </span><span class="p">(</span><span class="mi">2026</span><span class="p">),</span>
+<span class="w">    </span><span class="n">PARTITION</span><span class="w"> </span><span class="n">p2026</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="k">LESS</span><span class="w"> </span><span class="k">THAN</span><span class="w"> </span><span class="p">(</span><span class="mi">2027</span><span class="p">),</span>
+<span class="w">    </span><span class="n">PARTITION</span><span class="w"> </span><span class="n">pFuture</span><span class="w"> </span><span class="k">VALUES</span><span class="w"> </span><span class="k">LESS</span><span class="w"> </span><span class="k">THAN</span><span class="w"> </span><span class="k">MAXVALUE</span>
+<span class="p">);</span>
+
+<span class="c1">-- Now when querying recent data:</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">fsi_invoices</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">invoice_date</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="s1">'2026-01-01'</span><span class="p">;</span><span class="w"> </span><span class="c1">-- Only scans p2026 partition (not all 100M rows)</span>
+
+<span class="c1">-- Query: 0.08s → 0.02s (4x faster on partitioned queries)</span>
+</code></pre></div>
+
+<p><strong>4. Archive Old Data:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Move invoices &gt;3 years old to archive table</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">fsi_invoices_archive</span><span class="w"> </span><span class="k">LIKE</span><span class="w"> </span><span class="n">fsi_invoices</span><span class="p">;</span>
+
+<span class="c1">-- Move old data</span>
+<span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">fsi_invoices_archive</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">fsi_invoices</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">invoice_date</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">DATE_SUB</span><span class="p">(</span><span class="n">NOW</span><span class="p">(),</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="k">YEAR</span><span class="p">);</span>
+
+<span class="c1">-- Delete from main table</span>
+<span class="k">DELETE</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">fsi_invoices</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">invoice_date</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">DATE_SUB</span><span class="p">(</span><span class="n">NOW</span><span class="p">(),</span><span class="w"> </span><span class="nb">INTERVAL</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="k">YEAR</span><span class="p">);</span>
+
+<span class="c1">-- Result: Main table now 30M rows (vs 100M)</span>
+<span class="c1">-- Queries: 0.02s → 0.006s (3x faster)</span>
+</code></pre></div>
+
+<p><strong>5. Optimize Table Schema:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Current schema (wasteful):</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">fsi_invoices</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="n">invoice_id</span><span class="w"> </span><span class="nb">INT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">customer_id</span><span class="w"> </span><span class="nb">INT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">invoice_number</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">255</span><span class="p">),</span><span class="w">  </span><span class="c1">-- Only needs 20 chars</span>
+<span class="w">    </span><span class="n">description</span><span class="w"> </span><span class="nb">TEXT</span><span class="p">,</span><span class="w">             </span><span class="c1">-- Rarely queried, bloats row</span>
+<span class="w">    </span><span class="n">amount</span><span class="w"> </span><span class="nb">DECIMAL</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span>
+<span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">50</span><span class="p">),</span><span class="w">           </span><span class="c1">-- Only 5 possible values</span>
+<span class="w">    </span><span class="n">invoice_date</span><span class="w"> </span><span class="nb">DATE</span><span class="p">,</span>
+<span class="w">    </span><span class="n">created_at</span><span class="w"> </span><span class="k">TIMESTAMP</span>
+<span class="p">);</span>
+
+<span class="c1">-- Optimized schema:</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">fsi_invoices_optimized</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="n">invoice_id</span><span class="w"> </span><span class="nb">INT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">customer_id</span><span class="w"> </span><span class="nb">INT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">invoice_number</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">20</span><span class="p">),</span><span class="w">         </span><span class="c1">-- Reduced from 255</span>
+<span class="w">    </span><span class="n">amount</span><span class="w"> </span><span class="nb">DECIMAL</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span><span class="w">               </span><span class="c1">-- Reduced precision (was 15,2)</span>
+<span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="n">TINYINT</span><span class="p">,</span><span class="w">                     </span><span class="c1">-- ENUM → TINYINT (1 byte vs 50 bytes)</span>
+<span class="w">    </span><span class="n">invoice_date</span><span class="w"> </span><span class="nb">DATE</span><span class="p">,</span>
+<span class="w">    </span><span class="n">created_at</span><span class="w"> </span><span class="k">TIMESTAMP</span><span class="p">,</span>
+<span class="w">    </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_customer_status</span><span class="w"> </span><span class="p">(</span><span class="n">customer_id</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">),</span>
+<span class="w">    </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_date</span><span class="w"> </span><span class="p">(</span><span class="n">invoice_date</span><span class="p">)</span>
+<span class="p">);</span>
+
+<span class="c1">-- Move description to separate table (queried rarely)</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">fsi_invoice_details</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="n">invoice_id</span><span class="w"> </span><span class="nb">INT</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span>
+<span class="w">    </span><span class="n">description</span><span class="w"> </span><span class="nb">TEXT</span>
+<span class="p">);</span>
+
+<span class="c1">-- Row size: 300 bytes → 50 bytes</span>
+<span class="c1">-- Table size: 30GB → 1.5GB (20x smaller)</span>
+<span class="c1">-- Cache efficiency: 20x more rows fit in InnoDB buffer pool</span>
+</code></pre></div>
+
+<p><strong>6. Use Covering Indexes:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Query:</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="n">invoice_id</span><span class="p">,</span><span class="w"> </span><span class="n">amount</span><span class="p">,</span><span class="w"> </span><span class="n">status</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">fsi_invoices</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">customer_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">12345</span><span class="p">;</span>
+
+<span class="c1">-- Create covering index (includes all queried columns)</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_customer_covering</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">fsi_invoices</span><span class="p">(</span><span class="n">customer_id</span><span class="p">,</span><span class="w"> </span><span class="n">invoice_id</span><span class="p">,</span><span class="w"> </span><span class="n">amount</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">);</span>
+
+<span class="c1">-- MySQL can answer query WITHOUT accessing table (index-only scan)</span>
+<span class="c1">-- Query: 0.006s → 0.001s (6x faster)</span>
+</code></pre></div>
+
+<p><strong>7. Optimize JOIN Queries:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Slow query (N+1 problem):</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="n">i</span><span class="p">.</span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="k">c</span><span class="p">.</span><span class="n">customer_name</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">fsi_invoices</span><span class="w"> </span><span class="n">i</span>
+<span class="k">LEFT</span><span class="w"> </span><span class="k">JOIN</span><span class="w"> </span><span class="n">fsi_customers</span><span class="w"> </span><span class="k">c</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">i</span><span class="p">.</span><span class="n">customer_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">c</span><span class="p">.</span><span class="n">customer_id</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">i</span><span class="p">.</span><span class="n">invoice_date</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="s1">'2026-01-01'</span><span class="p">;</span>
+
+<span class="c1">-- Index on JOIN column</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_customer_id</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">fsi_customers</span><span class="p">(</span><span class="n">customer_id</span><span class="p">);</span>
+
+<span class="c1">-- Query: 2.5s → 0.3s (8x faster)</span>
+</code></pre></div>
+
+<p><strong>8. Use Query Caching (Redis):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">function getUnpaidInvoices($customerId) {</span>
+<span class="x">    $cacheKey = "invoices:unpaid:{$customerId}";</span>
+
+<span class="x">    return Cache::remember($cacheKey, 300, function() use ($customerId) {</span>
+<span class="x">        return DB::table('fsi_invoices')</span>
+<span class="x">            -&gt;where('customer_id', $customerId)</span>
+<span class="x">            -&gt;where('status', 1) // 'unpaid' → TINYINT</span>
+<span class="x">            -&gt;get();</span>
+<span class="x">    });</span>
+<span class="x">}</span>
+
+<span class="x">// First call: 0.006s (DB)</span>
+<span class="x">// Subsequent calls: 0.001s (Redis cache)</span>
+</code></pre></div>
+
+<p><strong>9. Analyze &amp; Optimize Queries:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Use EXPLAIN to understand query plan</span>
+<span class="k">EXPLAIN</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">fsi_invoices</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">customer_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">12345</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+
+<span class="o">+</span><span class="c1">----+-------+------------+------+---------------------+</span>
+<span class="o">|</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="k">type</span><span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="k">key</span><span class="w">        </span><span class="o">|</span><span class="w"> </span><span class="k">rows</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">Extra</span><span class="w">               </span><span class="o">|</span>
+<span class="o">+</span><span class="c1">----+-------+------------+------+---------------------+</span>
+<span class="o">|</span><span class="w">  </span><span class="mi">1</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">range</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">idx_cust_st</span><span class="o">|</span><span class="w"> </span><span class="mi">50</span><span class="w">   </span><span class="o">|</span><span class="w"> </span><span class="k">Using</span><span class="w"> </span><span class="k">index</span><span class="w">         </span><span class="o">|</span>
+<span class="o">+</span><span class="c1">----+-------+------------+------+---------------------+</span>
+
+<span class="c1">-- Using index ← Good! (index-only scan)</span>
+<span class="c1">-- rows: 50 ← Only scans 50 rows (not 30M)</span>
+</code></pre></div>
+
+<p><strong>10. Database Server Tuning:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># my.cnf (MySQL config)</span>
+<span class="k">[mysqld]</span>
+<span class="na">innodb_buffer_pool_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">16G</span><span class="w">      </span><span class="c1"># Cache 16GB in memory (default: 128MB)</span>
+<span class="na">innodb_log_file_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">2G</span><span class="w">          </span><span class="c1"># Larger log = better write performance</span>
+<span class="na">max_connections</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">500</span><span class="w">              </span><span class="c1"># Support more concurrent connections</span>
+<span class="na">query_cache_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">256M</span><span class="w">            </span><span class="c1"># Cache frequent queries</span>
+<span class="na">tmp_table_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">256M</span><span class="w">              </span><span class="c1"># Larger temp tables</span>
+<span class="na">max_heap_table_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">256M</span>
+
+<span class="c1"># Restart MySQL to apply</span>
+<span class="na">sudo service mysql restart</span>
+</code></pre></div>
+
+<p><strong>Results Summary:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Optimization</th>
+<th>Before</th>
+<th>After</th>
+<th>Improvement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Add indexes</td>
+<td>12.5s</td>
+<td>0.08s</td>
+<td>156x</td>
+</tr>
+<tr>
+<td>Partition table</td>
+<td>0.08s</td>
+<td>0.02s</td>
+<td>4x</td>
+</tr>
+<tr>
+<td>Archive old data</td>
+<td>0.02s</td>
+<td>0.006s</td>
+<td>3x</td>
+</tr>
+<tr>
+<td>Optimize schema</td>
+<td>30GB</td>
+<td>1.5GB</td>
+<td>20x smaller</td>
+</tr>
+<tr>
+<td>Covering index</td>
+<td>0.006s</td>
+<td>0.001s</td>
+<td>6x</td>
+</tr>
+<tr>
+<td>Redis caching</td>
+<td>0.001s</td>
+<td>&lt;0.001s</td>
+<td>Cache hit</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Final Result: 12.5s → &lt;0.001s (12,500x faster!)</strong></p>
+<hr />
+<h3 id="q122-explain-the-trade-offs-between-mysql-postgresql-and-mongodb-for-your-use-case">Q12.2: Explain the trade-offs between MySQL, PostgreSQL, and MongoDB for your use case.</h3>
+<p><strong>Answer:</strong></p>
+<p><strong>Our Use Case: Multi-tenant invoicing/payments platform</strong><br />
+- Structured financial data (invoices, payments)<br />
+- ACID transactions required (money involved!)<br />
+- Complex queries (JOINs, aggregations)<br />
+- 1000+ customers, 100M+ rows<br />
+- Read-heavy (95% reads, 5% writes)</p>
+<p><strong>Comparison:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>MySQL</th>
+<th>PostgreSQL</th>
+<th>MongoDB</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ACID Compliance</strong></td>
+<td>✅ Full</td>
+<td>✅ Full</td>
+<td>⚠️ Limited (single document)</td>
+</tr>
+<tr>
+<td><strong>Transactions</strong></td>
+<td>✅ Row-level</td>
+<td>✅ Row-level</td>
+<td>❌ No multi-document transactions (pre-4.0)</td>
+</tr>
+<tr>
+<td><strong>JOINs</strong></td>
+<td>✅ Excellent</td>
+<td>✅ Excellent</td>
+<td>❌ No JOINs (must do in app)</td>
+</tr>
+<tr>
+<td><strong>Schema</strong></td>
+<td>✅ Strict</td>
+<td>✅ Strict</td>
+<td>⚠️ Schema-less (blessing/curse)</td>
+</tr>
+<tr>
+<td><strong>Indexing</strong></td>
+<td>✅ B-tree, Full-text</td>
+<td>✅ B-tree, GiST, GIN, Full-text</td>
+<td>✅ B-tree, Full-text, Geospatial</td>
+</tr>
+<tr>
+<td><strong>Replication</strong></td>
+<td>✅ Master-slave</td>
+<td>✅ Streaming, logical</td>
+<td>✅ Replica sets</td>
+</tr>
+<tr>
+<td><strong>Horizontal Scaling</strong></td>
+<td>⚠️ Manual sharding</td>
+<td>⚠️ Partitioning, Citus</td>
+<td>✅ Native sharding</td>
+</tr>
+<tr>
+<td><strong>Performance (reads)</strong></td>
+<td>✅ Excellent</td>
+<td>✅ Excellent</td>
+<td>✅ Excellent</td>
+</tr>
+<tr>
+<td><strong>Performance (writes)</strong></td>
+<td>✅ Good</td>
+<td>✅ Good</td>
+<td>✅ Excellent</td>
+</tr>
+<tr>
+<td><strong>Team Expertise</strong></td>
+<td>✅ High (12 years)</td>
+<td>⚠️ Medium</td>
+<td>⚠️ Low</td>
+</tr>
+<tr>
+<td><strong>Ecosystem</strong></td>
+<td>✅ Mature (Laravel, PHP)</td>
+<td>✅ Mature (Django, Rails)</td>
+<td>✅ Good (Node.js)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Decision: MySQL (InnoDB)</strong></p>
+<p><strong>Why MySQL:</strong></p>
+<p><strong>1. ACID Transactions (Critical for Payments):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Example: Process payment + update invoice atomically</span>
+<span class="k">START</span><span class="w"> </span><span class="k">TRANSACTION</span><span class="p">;</span>
+
+<span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">fsi_payments</span><span class="w"> </span><span class="p">(</span><span class="n">invoice_id</span><span class="p">,</span><span class="w"> </span><span class="n">amount</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">)</span>
+<span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="mi">12345</span><span class="p">,</span><span class="w"> </span><span class="mi">500</span><span class="p">.</span><span class="mi">00</span><span class="p">,</span><span class="w"> </span><span class="s1">'completed'</span><span class="p">);</span>
+
+<span class="k">UPDATE</span><span class="w"> </span><span class="n">fsi_invoices</span>
+<span class="k">SET</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'paid'</span><span class="p">,</span><span class="w"> </span><span class="n">paid_amount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">500</span><span class="p">.</span><span class="mi">00</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">invoice_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">12345</span><span class="p">;</span>
+
+<span class="k">COMMIT</span><span class="p">;</span><span class="w"> </span><span class="c1">-- Both succeed or both fail (no partial state)</span>
+</code></pre></div>
+
+<ul>
+<li>MySQL InnoDB: Full ACID guarantees</li>
+<li>MongoDB: Would require application-level transaction handling (error-prone)</li>
+</ul>
+<p><strong>2. Complex Queries (JOINs are essential):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Get unpaid invoices with customer details and payment history</span>
+<span class="k">SELECT</span><span class="w"> </span>
+<span class="w">    </span><span class="n">i</span><span class="p">.</span><span class="n">invoice_id</span><span class="p">,</span>
+<span class="w">    </span><span class="n">i</span><span class="p">.</span><span class="n">amount</span><span class="p">,</span>
+<span class="w">    </span><span class="k">c</span><span class="p">.</span><span class="n">customer_name</span><span class="p">,</span>
+<span class="w">    </span><span class="k">c</span><span class="p">.</span><span class="n">email</span><span class="p">,</span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">payment_id</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">payment_count</span><span class="p">,</span>
+<span class="w">    </span><span class="k">SUM</span><span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">amount</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">total_paid</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">fsi_invoices</span><span class="w"> </span><span class="n">i</span>
+<span class="k">JOIN</span><span class="w"> </span><span class="n">fsi_customers</span><span class="w"> </span><span class="k">c</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">i</span><span class="p">.</span><span class="n">customer_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">c</span><span class="p">.</span><span class="n">customer_id</span>
+<span class="k">LEFT</span><span class="w"> </span><span class="k">JOIN</span><span class="w"> </span><span class="n">fsi_payments</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">i</span><span class="p">.</span><span class="n">invoice_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="n">invoice_id</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">i</span><span class="p">.</span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'unpaid'</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">i</span><span class="p">.</span><span class="n">invoice_id</span><span class="p">;</span>
+</code></pre></div>
+
+<ul>
+<li>MySQL: Native JOINs, easy</li>
+<li>MongoDB: Would require multiple queries + application-level merging (slow)</li>
+</ul>
+<p><strong>3. Mature PHP/Laravel Ecosystem:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Laravel Eloquent (ORM) is built for MySQL</span>
+<span class="x">Invoice::with('customer', 'payments') // Eager loading</span>
+<span class="x">    -&gt;where('status', 'unpaid')</span>
+<span class="x">    -&gt;get();</span>
+
+<span class="x">// Same query in MongoDB requires different ORM (Doctrine ODM)</span>
+<span class="x">// Less mature, fewer docs, our team lacks expertise</span>
+</code></pre></div>
+
+<p><strong>4. Financial Data is Structured:</strong></p>
+<div class="codehilite"><pre><span></span><code>Invoices:
+<span class="k">-</span> invoice_id (always INT)
+<span class="k">-</span> amount (always DECIMAL)
+<span class="k">-</span> status (always ENUM)
+<span class="k">-</span> invoice_date (always DATE)
+
+→ Schema doesn't change often
+→ MySQL's strict schema is a BENEFIT (prevents bugs)
+</code></pre></div>
+
+<ul>
+<li>MongoDB's schema-less nature doesn't help us (financial data is rigid)</li>
+</ul>
+<p><strong>When We WOULD Choose PostgreSQL:</strong></p>
+<p><strong>Scenarios where PostgreSQL wins:</strong><br />
+1. <strong>JSON/JSONB storage:</strong> Need to store flexible metadata<br />
+<code>sql
+   -- PostgreSQL JSONB (fast queries on JSON)
+   SELECT * FROM invoices WHERE metadata-&gt;&gt;'custom_field' = 'value';</code><br />
+2. <strong>Advanced indexing:</strong> GIN indexes for full-text search<br />
+3. <strong>Window functions:</strong> Complex analytics queries<br />
+4. <strong>Better compliance:</strong> HIPAA/SOC 2 (PostgreSQL has row-level security)</p>
+<p><strong>Example where PostgreSQL would be better:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Store custom fields per customer (each customer has different fields)</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">invoices</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="n">invoice_id</span><span class="w"> </span><span class="nb">INT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">customer_id</span><span class="w"> </span><span class="nb">INT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">amount</span><span class="w"> </span><span class="nb">DECIMAL</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span>
+<span class="w">    </span><span class="n">custom_fields</span><span class="w"> </span><span class="n">JSONB</span><span class="w"> </span><span class="c1">-- ← PostgreSQL-specific</span>
+<span class="p">);</span>
+
+<span class="c1">-- Query custom fields efficiently</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">invoices</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">custom_fields</span><span class="o">-&gt;&gt;</span><span class="s1">'department'</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'Sales'</span><span class="p">;</span>
+</code></pre></div>
+
+<p><strong>When We WOULD Choose MongoDB:</strong></p>
+<p><strong>Scenarios where MongoDB wins:</strong><br />
+1. <strong>Unstructured data:</strong> Logs, events, user activity<br />
+2. <strong>Horizontal scaling:</strong> Need to shard across 100+ servers<br />
+3. <strong>Rapid prototyping:</strong> Schema changes frequently<br />
+4. <strong>Document-oriented:</strong> Data naturally hierarchical (e.g., blog posts + comments)</p>
+<p><strong>Example where MongoDB would be better:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">// Storing user activity logs (schema varies)</span>
+<span class="nx">db</span><span class="p">.</span><span class="nx">activity_logs</span><span class="p">.</span><span class="nx">insert</span><span class="p">({</span>
+<span class="w">    </span><span class="nx">user_id</span><span class="o">:</span><span class="w"> </span><span class="mf">12345</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">event</span><span class="o">:</span><span class="w"> </span><span class="s1">'login'</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">metadata</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">ip</span><span class="o">:</span><span class="w"> </span><span class="s1">'192.168.1.1'</span><span class="p">,</span>
+<span class="w">        </span><span class="nx">device</span><span class="o">:</span><span class="w"> </span><span class="s1">'iPhone'</span><span class="p">,</span>
+<span class="w">        </span><span class="c1">// Different events have different metadata (no fixed schema)</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nx">timestamp</span><span class="o">:</span><span class="w"> </span><span class="nx">ISODate</span><span class="p">()</span>
+<span class="p">});</span>
+
+<span class="c1">// Easy to add new event types without schema migration</span>
+</code></pre></div>
+
+<p><strong>Our Decision Matrix:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Requirement</th>
+<th>MySQL</th>
+<th>PostgreSQL</th>
+<th>MongoDB</th>
+<th>Winner</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ACID transactions</td>
+<td>✅</td>
+<td>✅</td>
+<td>❌</td>
+<td>MySQL/PostgreSQL</td>
+</tr>
+<tr>
+<td>JOINs</td>
+<td>✅</td>
+<td>✅</td>
+<td>❌</td>
+<td>MySQL/PostgreSQL</td>
+</tr>
+<tr>
+<td>Team expertise</td>
+<td>✅</td>
+<td>⚠️</td>
+<td>❌</td>
+<td><strong>MySQL</strong></td>
+</tr>
+<tr>
+<td>Read performance</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>Tie</td>
+</tr>
+<tr>
+<td>Write performance</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>Tie</td>
+</tr>
+<tr>
+<td>Horizontal scaling</td>
+<td>⚠️</td>
+<td>⚠️</td>
+<td>✅</td>
+<td>MongoDB</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Final Choice: MySQL InnoDB</strong><br />
+- Best fit for structured financial data<br />
+- Team has 12 years MySQL expertise<br />
+- Mature PHP/Laravel ecosystem<br />
+- ACID guarantees (non-negotiable for payments)<br />
+- Proven at scale (100M+ rows)</p>
+<p><strong>Trade-off accepted:</strong> Manual sharding (Stack1/Stack2) instead of native sharding<br />
+- Worth it for ACID + team expertise</p>
+<hr />
+<h2 id="13-leadership-decision-making">13. Leadership &amp; Decision Making</h2>
+<h3 id="q131-you-mentored-3-junior-developers-what-was-your-approach-give-an-example-of-a-challenging-situation">Q13.1: You mentored 3 junior developers. What was your approach? Give an example of a challenging situation.</h3>
+<p><strong>Answer:</strong></p>
+<p><strong>My Mentoring Philosophy:</strong></p>
+<p><strong>1. Pair Programming (hands-on learning):</strong><br />
+- Junior dev shares screen<br />
+- I guide, they type (don't take over keyboard!)<br />
+- Ask questions instead of giving answers<br />
+  - ❌ "Change this to <code>WHERE customer_id = ?</code>"<br />
+  - ✅ "What could go wrong if we use string concatenation here?"</p>
+<p><strong>2. Code Review as Teaching:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Junior's code:</span>
+<span class="x">function getInvoices($customerId) {</span>
+<span class="x">    return DB::select("SELECT * FROM invoices WHERE customer_id = " . $customerId);</span>
+<span class="x">}</span>
+
+<span class="x">// My review comment:</span>
+<span class="x">/*</span>
+<span class="x">Good start! Two improvements:</span>
+
+<span class="x">1. SQL Injection Risk:</span>
+<span class="x">   Current: "WHERE customer_id = " . $customerId</span>
+<span class="x">   What if $customerId = "1 OR 1=1"? (returns ALL invoices!)</span>
+
+<span class="x">   Fix: Use parameterized query:</span>
+<span class="x">   DB::select("SELECT * FROM invoices WHERE customer_id = ?", [$customerId]);</span>
+
+<span class="x">2. Performance:</span>
+<span class="x">   SELECT * fetches ALL columns (even ones we don't need)</span>
+<span class="x">   Better: SELECT invoice_id, amount, status (only what we need)</span>
+
+<span class="x">Resources:</span>
+<span class="x">- OWASP SQL Injection: https://...</span>
+<span class="x">- Laravel Query Builder docs: https://...</span>
+
+<span class="x">Questions?</span>
+<span class="x">*/</span>
+</code></pre></div>
+
+<p><strong>3. Weekly 1-on-1s:</strong><br />
+- 30 minutes every Friday<br />
+- Discuss: What went well, what was hard, what to learn next<br />
+- Track progress on skills matrix:</p>
+<table>
+<thead>
+<tr>
+<th>Skill</th>
+<th>Jan</th>
+<th>Feb</th>
+<th>Mar</th>
+<th>Target</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PHP basics</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Laravel</td>
+<td>⚠️</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>SQL optimization</td>
+<td>❌</td>
+<td>⚠️</td>
+<td>✅</td>
+<td>Jun</td>
+</tr>
+<tr>
+<td>Redis caching</td>
+<td>❌</td>
+<td>❌</td>
+<td>⚠️</td>
+<td>Jun</td>
+</tr>
+</tbody>
+</table>
+<p><strong>4. Gradually Increase Complexity:</strong><br />
+- <strong>Month 1-2:</strong> Bug fixes (small, low-risk)<br />
+- <strong>Month 3-4:</strong> Features (with detailed spec)<br />
+- <strong>Month 5-6:</strong> Features (they write spec)<br />
+- <strong>Month 7+:</strong> Mentor other juniors</p>
+<p><strong>Challenging Situation Example:</strong></p>
+<p><strong>Problem:</strong> Junior dev (let's call him "Dev A") was taking 3x longer than estimated on tasks.</p>
+<p><strong>Initial Response (wrong):</strong><br />
+- Assumed: "He's slow, needs more pressure"<br />
+- Tried: Set tighter deadlines<br />
+- Result: Quality dropped, more bugs, Dev A stressed</p>
+<p><strong>Root Cause Analysis:</strong><br />
+- Had 1-on-1: "What's blocking you?"<br />
+- Dev A: "I spend 80% of time figuring out how the code works (undocumented legacy code), 20% actually coding"<br />
+- Insight: Not a skills problem, an <strong>onboarding problem</strong></p>
+<p><strong>Solution (3-part):</strong></p>
+<p><strong>Part 1: Immediate (help Dev A):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nx">Week</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span>
+<span class="o">-</span><span class="w"> </span><span class="nx">Pair</span><span class="w"> </span><span class="nx">programming</span><span class="p">:</span><span class="w"> </span><span class="nx">I</span><span class="w"> </span><span class="nx">walk</span><span class="w"> </span><span class="nx">through</span><span class="w"> </span><span class="nx">codebase</span><span class="w"> </span><span class="nx">architecture</span><span class="w"> </span><span class="p">(</span><span class="mi">2</span><span class="w"> </span><span class="nx">hours</span><span class="p">)</span>
+<span class="o">-</span><span class="w"> </span><span class="nx">Create</span><span class="w"> </span><span class="nx">Mermaid</span><span class="w"> </span><span class="nx">diagram</span><span class="w"> </span><span class="nx">of</span><span class="w"> </span><span class="nx">key</span><span class="w"> </span><span class="nx">flows</span>
+<span class="o">-</span><span class="w"> </span><span class="nx">Document</span><span class="w"> </span><span class="nx">most</span><span class="o">-</span><span class="nx">touched</span><span class="w"> </span><span class="nx">files</span>
+
+<span class="nx">Week</span><span class="w"> </span><span class="mi">2</span><span class="p">:</span>
+<span class="o">-</span><span class="w"> </span><span class="nx">Dev</span><span class="w"> </span><span class="nx">A</span><span class="w"> </span><span class="nx">shadows</span><span class="w"> </span><span class="nx">me</span><span class="w"> </span><span class="nx">on</span><span class="w"> </span><span class="nx">a</span><span class="w"> </span><span class="nx">feature</span><span class="w"> </span><span class="p">(</span><span class="nx">observes</span><span class="w"> </span><span class="nx">my</span><span class="w"> </span><span class="nx">workflow</span><span class="p">)</span>
+<span class="o">-</span><span class="w"> </span><span class="nx">I</span><span class="w"> </span><span class="nx">explain</span><span class="p">:</span><span class="w"> </span><span class="s">"Here's how I find where code lives"</span><span class="w"> </span><span class="p">(</span><span class="nx">grep</span><span class="p">,</span><span class="w"> </span><span class="nx">IDE</span><span class="w"> </span><span class="nx">navigation</span><span class="p">)</span>
+
+<span class="nx">Week</span><span class="w"> </span><span class="mi">3</span><span class="p">:</span>
+<span class="o">-</span><span class="w"> </span><span class="nx">Dev</span><span class="w"> </span><span class="nx">A</span><span class="w"> </span><span class="nx">implements</span><span class="w"> </span><span class="nx">feature</span><span class="p">,</span><span class="w"> </span><span class="nx">I</span><span class="err">'</span><span class="nx">m</span><span class="w"> </span><span class="nx">on</span><span class="w"> </span><span class="nx">Slack</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="nx">questions</span><span class="w"> </span><span class="p">(</span><span class="nx">but</span><span class="w"> </span><span class="nx">don</span><span class="err">'</span><span class="nx">t</span><span class="w"> </span><span class="nx">take</span><span class="w"> </span><span class="nx">over</span><span class="p">)</span>
+</code></pre></div>
+
+<p><strong>Part 2: Long-term (improve onboarding for future juniors):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nv">Created</span><span class="w"> </span><span class="s2">"New Developer Onboarding"</span><span class="w"> </span><span class="nv">doc</span>:
+<span class="mi">1</span>.<span class="w"> </span><span class="nv">Architecture</span><span class="w"> </span><span class="nv">overview</span><span class="w"> </span><span class="ss">(</span><span class="nv">diagrams</span><span class="ss">)</span>
+<span class="mi">2</span>.<span class="w"> </span><span class="nv">How</span><span class="w"> </span><span class="nv">to</span><span class="w"> </span><span class="nv">run</span><span class="w"> </span><span class="nv">locally</span><span class="w"> </span><span class="ss">(</span><span class="nv">Docker</span><span class="w"> </span><span class="nv">setup</span><span class="ss">)</span>
+<span class="mi">3</span>.<span class="w"> </span><span class="nv">Common</span><span class="w"> </span><span class="nv">tasks</span><span class="w"> </span><span class="ss">(</span><span class="s2">"How to add a new API endpoint"</span><span class="ss">)</span>
+<span class="mi">4</span>.<span class="w"> </span><span class="nv">Where</span><span class="w"> </span><span class="nv">things</span><span class="w"> </span><span class="nv">live</span><span class="w"> </span><span class="ss">(</span><span class="s2">"Payments code is in app/Services/Payment/"</span><span class="ss">)</span>
+<span class="mi">5</span>.<span class="w"> </span><span class="nv">Who</span><span class="w"> </span><span class="nv">to</span><span class="w"> </span><span class="nv">ask</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="nv">what</span><span class="w"> </span><span class="ss">(</span><span class="s2">"DB questions → Karthik, Frontend → Sarah"</span><span class="ss">)</span>
+</code></pre></div>
+
+<p><strong>Part 3: Process Improvement (prevent this for future hires):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nl">Before:</span>
+<span class="o">-</span><span class="w"> </span><span class="n">Junior</span><span class="w"> </span><span class="n">gets</span><span class="w"> </span><span class="n">assigned</span><span class="w"> </span><span class="n">ticket</span><span class="p">,</span><span class="w"> </span><span class="n">figures</span><span class="w"> </span><span class="n">it</span><span class="w"> </span><span class="n">out</span><span class="w"> </span><span class="n">alone</span>
+
+<span class="nl">After:</span>
+<span class="o">-</span><span class="w"> </span><span class="n">First</span><span class="w"> </span><span class="mh">3</span><span class="w"> </span><span class="nl">tickets:</span><span class="w"> </span><span class="n">Pair</span><span class="w"> </span><span class="n">programming</span><span class="w"> </span><span class="n">with</span><span class="w"> </span><span class="n">senior</span>
+<span class="o">-</span><span class="w"> </span><span class="n">Next</span><span class="w"> </span><span class="mh">5</span><span class="w"> </span><span class="nl">tickets:</span><span class="w"> </span><span class="n">Senior</span><span class="w"> </span><span class="n">available</span><span class="w"> </span><span class="n">on</span><span class="w"> </span><span class="n">Slack</span>
+<span class="o">-</span><span class="w"> </span><span class="n">After</span><span class="w"> </span><span class="nl">that:</span><span class="w"> </span><span class="n">Independent</span><span class="w"> </span><span class="p">(</span><span class="n">but</span><span class="w"> </span><span class="n">code</span><span class="w"> </span><span class="n">review</span><span class="w"> </span><span class="n">before</span><span class="w"> </span><span class="n">merge</span><span class="p">)</span>
+</code></pre></div>
+
+<p><strong>Results:</strong></p>
+<p><strong>Dev A's velocity:</strong><br />
+- Month 1 (before): 0.3x expected (3x slower)<br />
+- Month 2 (after onboarding): 0.7x expected<br />
+- Month 4: 1.0x expected (at par!)<br />
+- Month 6: 1.2x expected (faster than average!)</p>
+<p><strong>Dev A's growth:</strong><br />
+- Promoted to mid-level engineer after 10 months<br />
+- Now mentors other juniors (using same approach I taught)</p>
+<p><strong>What I Learned:</strong></p>
+<p><strong>1. Slow ≠ Unskilled:</strong><br />
+- Junior taking long? Ask "What's blocking you?" (not "Why so slow?")<br />
+- Often it's missing context, not missing skills</p>
+<p><strong>2. Invest in Onboarding:</strong><br />
+- 2 hours upfront (architecture walkthrough) saves 50 hours later (fumbling around)</p>
+<p><strong>3. Code Review is a Conversation:</strong><br />
+- Not just "Change this"<br />
+- Explain WHY, link resources, invite questions</p>
+<p><strong>4. Celebrate Progress:</strong><br />
+- Weekly 1-on-1: "Last week you struggled with X, this week you nailed it! 🎉"<br />
+- Positive reinforcement → Faster learning</p>
+<p><strong>Other Mentoring Examples:</strong></p>
+<p><strong>Example 2: Junior wrote inefficient query</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Junior's code (N+1 problem):</span>
+<span class="x">$invoices = Invoice::all();</span>
+<span class="x">foreach ($invoices as $invoice) {</span>
+<span class="x">    echo $invoice-&gt;customer-&gt;name; // 1000 extra queries!</span>
+<span class="x">}</span>
+
+<span class="x">// My approach:</span>
+<span class="x">1. Don't just say "use eager loading"</span>
+<span class="x">2. Show the SQL log (1001 queries!)</span>
+<span class="x">3. Ask: "Why is this slow?"</span>
+<span class="x">4. Guide to: Invoice::with('customer')-&gt;all()</span>
+<span class="x">5. Show SQL log again (2 queries!)</span>
+<span class="x">6. "See the difference? This is called eager loading."</span>
+</code></pre></div>
+
+<p><strong>Example 3: Junior afraid to ask questions</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nv">Noticed</span>:<span class="w"> </span><span class="nv">Dev</span><span class="w"> </span><span class="nv">B</span><span class="w"> </span><span class="nv">never</span><span class="w"> </span><span class="nv">asked</span><span class="w"> </span><span class="nv">questions</span><span class="w"> </span><span class="nv">in</span><span class="w"> </span><span class="nv">team</span><span class="w"> </span><span class="nv">meetings</span>
+
+<span class="nv">My</span><span class="w"> </span><span class="nv">approach</span>:
+<span class="mi">1</span>.<span class="w"> </span><span class="nv">Private</span><span class="w"> </span><span class="nv">Slack</span>:<span class="w"> </span><span class="s2">"I noticed you're quiet in meetings. Everything OK?"</span>
+<span class="mi">2</span>.<span class="w"> </span><span class="nv">Dev</span><span class="w"> </span><span class="nv">B</span>:<span class="w"> </span><span class="s2">"I don't want to look stupid asking basic questions"</span>
+<span class="mi">3</span>.<span class="w"> </span><span class="nv">Normalize</span><span class="w"> </span><span class="nv">it</span>:<span class="w"> </span><span class="s2">"I ask 'stupid' questions all the time! That's how we learn."</span>
+<span class="mi">4</span>.<span class="w"> </span><span class="k">Next</span><span class="w"> </span><span class="nv">meeting</span>:<span class="w"> </span><span class="nv">I</span><span class="w"> </span><span class="nv">deliberately</span><span class="w"> </span><span class="nv">asked</span><span class="w"> </span><span class="nv">a</span><span class="w"> </span><span class="s2">"basic"</span><span class="w"> </span><span class="nv">question</span><span class="w"> </span><span class="ss">(</span><span class="nv">to</span><span class="w"> </span><span class="nv">model</span><span class="w"> </span><span class="nv">behavior</span><span class="ss">)</span>
+<span class="mi">5</span>.<span class="w"> </span><span class="nv">Dev</span><span class="w"> </span><span class="nv">B</span><span class="w"> </span><span class="nv">started</span><span class="w"> </span><span class="nv">asking</span><span class="w"> </span><span class="nv">questions</span><span class="w"> </span><span class="nv">after</span><span class="w"> </span><span class="nv">seeing</span><span class="w"> </span><span class="nv">me</span><span class="w"> </span><span class="k">do</span><span class="w"> </span><span class="nv">it</span>
+</code></pre></div>
+
+<p><strong>Mentoring Success Metrics:</strong><br />
+- 3 juniors mentored<br />
+- 2 promoted to mid-level (10-12 months)<br />
+- 1 now leads features independently<br />
+- All 3 still on the team (zero attrition)</p>
+<hr />
+<h3 id="q132-you-disagreed-with-a-technical-decision-from-your-manager-how-did-you-handle-it">Q13.2: You disagreed with a technical decision from your manager. How did you handle it?</h3>
+<p><strong>Answer:</strong></p>
+<p><strong>Situation:</strong></p>
+<p><strong>Manager's Decision:</strong> "Let's migrate from MySQL to MongoDB for the invoicing system to handle scale better."</p>
+<p><strong>My Position:</strong> Disagreed (MySQL is working, migration is risky and expensive)</p>
+<p><strong>How I Handled It:</strong></p>
+<p><strong>Step 1: Understand the "Why" (don't argue immediately)</strong></p>
+<div class="codehilite"><pre><span></span><code>Me: "Help me understand the motivation. What specific scaling problem are we solving?"
+
+Manager: "We're at 100M rows, reads are slowing down, and I read MongoDB scales horizontally better."
+
+Me: "Got it. So the goal is: faster reads + easier horizontal scaling?"
+
+Manager: "Exactly."
+</code></pre></div>
+
+<p><strong>Step 2: Gather Data (make it objective, not opinion)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nv">Over</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="nv">days</span>,<span class="w"> </span><span class="nv">I</span><span class="w"> </span><span class="nv">collected</span>:
+
+<span class="mi">1</span>.<span class="w"> </span><span class="nv">Current</span><span class="w"> </span><span class="nv">performance</span><span class="w"> </span><span class="nv">metrics</span>:
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="nv">Read</span><span class="w"> </span><span class="nv">latency</span>:<span class="w"> </span><span class="nv">P95</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">150</span><span class="nv">ms</span><span class="w"> </span><span class="ss">(</span><span class="nv">not</span><span class="w"> </span><span class="nv">terrible</span>,<span class="w"> </span><span class="nv">but</span><span class="w"> </span><span class="nv">could</span><span class="w"> </span><span class="nv">be</span><span class="w"> </span><span class="nv">better</span><span class="ss">)</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="nv">Write</span><span class="w"> </span><span class="nv">latency</span>:<span class="w"> </span><span class="nv">P95</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">50</span><span class="nv">ms</span><span class="w"> </span><span class="ss">(</span><span class="nv">fine</span><span class="ss">)</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="nv">Bottleneck</span><span class="w"> </span><span class="nv">queries</span>:<span class="w"> </span><span class="nv">Identified</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="nv">slow</span><span class="w"> </span><span class="nv">queries</span><span class="w"> </span><span class="ss">(</span><span class="nv">all</span><span class="w"> </span><span class="nv">missing</span><span class="w"> </span><span class="nv">indexes</span><span class="ss">)</span>
+
+<span class="mi">2</span>.<span class="w"> </span><span class="nv">MongoDB</span><span class="w"> </span><span class="nv">vs</span><span class="w"> </span><span class="nv">MySQL</span><span class="w"> </span><span class="nv">comparison</span><span class="w"> </span><span class="ss">(</span><span class="k">for</span><span class="w"> </span><span class="nv">OUR</span><span class="w"> </span><span class="nv">use</span><span class="w"> </span><span class="nv">case</span><span class="ss">)</span>:
+<span class="w">   </span><span class="o">|</span><span class="w"> </span><span class="nv">Metric</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="nv">MySQL</span><span class="w"> </span><span class="ss">(</span><span class="nv">current</span><span class="ss">)</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="nv">MySQL</span><span class="w"> </span><span class="ss">(</span><span class="nv">optimized</span><span class="ss">)</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="nv">MongoDB</span><span class="w"> </span><span class="o">|</span>
+<span class="w">   </span><span class="o">|---|---|---|---|</span>
+<span class="w">   </span><span class="o">|</span><span class="w"> </span><span class="nv">Setup</span><span class="w"> </span><span class="nv">time</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="ss">(</span><span class="nv">already</span><span class="w"> </span><span class="nv">done</span><span class="ss">)</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="nv">week</span><span class="w"> </span><span class="ss">(</span><span class="nv">add</span><span class="w"> </span><span class="nv">indexes</span><span class="ss">)</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="nv">months</span><span class="w"> </span><span class="ss">(</span><span class="nv">migration</span><span class="ss">)</span><span class="w"> </span><span class="o">|</span>
+<span class="w">   </span><span class="o">|</span><span class="w"> </span><span class="nv">Read</span><span class="w"> </span><span class="nv">latency</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mi">150</span><span class="nv">ms</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mi">20</span><span class="nv">ms</span><span class="w"> </span><span class="ss">(</span><span class="nv">est</span>.<span class="ss">)</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mi">15</span><span class="nv">ms</span><span class="w"> </span><span class="ss">(</span><span class="nv">est</span>.<span class="ss">)</span><span class="w"> </span><span class="o">|</span>
+<span class="w">   </span><span class="o">|</span><span class="w"> </span><span class="nv">ACID</span><span class="w"> </span><span class="nv">support</span><span class="w"> </span><span class="o">|</span><span class="w"> </span>✅<span class="w"> </span><span class="nv">Full</span><span class="w"> </span><span class="o">|</span><span class="w"> </span>✅<span class="w"> </span><span class="nv">Full</span><span class="w"> </span><span class="o">|</span><span class="w"> </span>⚠️<span class="w"> </span><span class="nv">Limited</span><span class="w"> </span><span class="o">|</span>
+<span class="w">   </span><span class="o">|</span><span class="w"> </span><span class="nv">Team</span><span class="w"> </span><span class="nv">expertise</span><span class="w"> </span><span class="o">|</span><span class="w"> </span>✅<span class="w"> </span><span class="mi">12</span><span class="w"> </span><span class="nv">years</span><span class="w"> </span><span class="o">|</span><span class="w"> </span>✅<span class="w"> </span><span class="mi">12</span><span class="w"> </span><span class="nv">years</span><span class="w"> </span><span class="o">|</span><span class="w"> </span>❌<span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="nv">years</span><span class="w"> </span><span class="o">|</span>
+<span class="w">   </span><span class="o">|</span><span class="w"> </span><span class="nv">Risk</span><span class="w"> </span><span class="o">|</span><span class="w"> </span>—<span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="nv">Low</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="nv">High</span><span class="w"> </span><span class="ss">(</span><span class="nv">data</span><span class="w"> </span><span class="nv">migration</span><span class="ss">)</span><span class="w"> </span><span class="o">|</span>
+<span class="w">   </span><span class="o">|</span><span class="w"> </span><span class="nv">Cost</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mh">$5</span><span class="nv">k</span><span class="o">/</span><span class="nv">month</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mh">$5</span><span class="nv">k</span><span class="o">/</span><span class="nv">month</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mh">$8</span><span class="nv">k</span><span class="o">/</span><span class="nv">month</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nv">migration</span><span class="w"> </span><span class="o">|</span>
+
+<span class="mi">3</span>.<span class="w"> </span><span class="nv">Quick</span><span class="w"> </span><span class="nv">win</span>:<span class="w"> </span><span class="nv">Added</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="nv">indexes</span><span class="w"> </span><span class="nv">to</span><span class="w"> </span><span class="nv">slow</span><span class="w"> </span><span class="nv">queries</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="nb">Result</span>:<span class="w"> </span><span class="nv">P95</span><span class="w"> </span><span class="nv">latency</span><span class="w"> </span><span class="mi">150</span><span class="nv">ms</span><span class="w"> </span>→<span class="w"> </span><span class="mi">25</span><span class="nv">ms</span><span class="w"> </span><span class="ss">(</span><span class="nv">before</span><span class="w"> </span><span class="nv">any</span><span class="w"> </span><span class="nv">migration</span><span class="o">!</span><span class="ss">)</span>
+</code></pre></div>
+
+<p><strong>Step 3: Present Alternative (with data)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">Email</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="nl">manager</span><span class="p">:</span>
+
+<span class="nl">Subject</span><span class="p">:</span><span class="w"> </span><span class="nl">Re</span><span class="p">:</span><span class="w"> </span><span class="n">MongoDB</span><span class="w"> </span><span class="n">Migration</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">Alternative</span><span class="w"> </span><span class="n">Proposal</span>
+
+<span class="n">Hi</span><span class="w"> </span><span class="o">[</span><span class="n">Manager</span><span class="o">]</span><span class="p">,</span>
+
+<span class="n">I</span><span class="w"> </span><span class="n">dug</span><span class="w"> </span><span class="k">into</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">scaling</span><span class="w"> </span><span class="n">concerns</span><span class="p">.</span><span class="w"> </span><span class="n">Good</span><span class="w"> </span><span class="nl">news</span><span class="p">:</span><span class="w"> </span><span class="n">I</span><span class="w"> </span><span class="n">think</span><span class="w"> </span><span class="n">we</span><span class="w"> </span><span class="n">can</span><span class="w"> </span><span class="n">solve</span><span class="w"> </span><span class="n">this</span><span class="w"> </span><span class="n">faster</span><span class="w"> </span><span class="ow">and</span><span class="w"> </span><span class="n">cheaper</span><span class="w"> </span><span class="k">than</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="n">MongoDB</span><span class="w"> </span><span class="n">migration</span><span class="p">.</span>
+
+<span class="nl">Findings</span><span class="p">:</span>
+<span class="mf">1.</span><span class="w"> </span><span class="n">Root</span><span class="w"> </span><span class="n">cause</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="n">slow</span><span class="w"> </span><span class="k">reads</span><span class="err">:</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="n">missing</span><span class="w"> </span><span class="n">indexes</span><span class="w"> </span><span class="p">(</span><span class="ow">not</span><span class="w"> </span><span class="k">database</span><span class="w"> </span><span class="n">choice</span><span class="p">)</span>
+<span class="mf">2.</span><span class="w"> </span><span class="n">Quick</span><span class="w"> </span><span class="nl">test</span><span class="p">:</span><span class="w"> </span><span class="n">Added</span><span class="w"> </span><span class="n">indexes</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="n">dev</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">P95</span><span class="w"> </span><span class="n">latency</span><span class="w"> </span><span class="n">dropped</span><span class="w"> </span><span class="mi">150</span><span class="n">ms</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="mi">25</span><span class="n">ms</span>
+<span class="mf">3.</span><span class="w"> </span><span class="n">This</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="n">better</span><span class="w"> </span><span class="k">than</span><span class="w"> </span><span class="n">MongoDB</span><span class="s1">'s projected 15ms, with ZERO migration risk</span>
+
+<span class="s1">Comparison:</span>
+<span class="s1">- MongoDB migration: 3 months, $200k eng time, HIGH risk (data migration), team needs training</span>
+<span class="s1">- MySQL optimization: 1 week, $10k eng time, LOW risk (just add indexes)</span>
+
+<span class="s1">Recommendation:</span>
+<span class="s1">Phase 1 (now): Optimize MySQL (add indexes, partition tables) → Solves immediate problem</span>
+<span class="s1">Phase 2 (6 months): Re-evaluate if still hitting limits → Then consider MongoDB</span>
+
+<span class="s1">MongoDB might be right EVENTUALLY, but let'</span><span class="n">s</span><span class="w"> </span><span class="n">exhaust</span><span class="w"> </span><span class="n">cheaper</span><span class="w"> </span><span class="n">options</span><span class="w"> </span><span class="k">first</span><span class="p">.</span>
+
+<span class="n">Happy</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">discuss</span><span class="p">.</span><span class="w"> </span><span class="n">Can</span><span class="w"> </span><span class="n">I</span><span class="w"> </span><span class="n">demo</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">optimized</span><span class="w"> </span><span class="n">MySQL</span><span class="w"> </span><span class="n">performance</span><span class="vm">?</span>
+</code></pre></div>
+
+<p><strong>Step 4: Acknowledge Their Expertise (don't be arrogant)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nv">In</span><span class="w"> </span><span class="nv">the</span><span class="w"> </span><span class="nv">meeting</span>:
+
+<span class="nv">Me</span>:<span class="w"> </span><span class="err">"You're right that MongoDB scales horizontally better. That's a valid point.</span>
+
+<span class="err">My concern is: we're not at that scale YET. We can get 10x more out of MySQL before hitting its limits.</span>
+
+<span class="err">If we migrate now, we pay the migration cost (3 months) without exhausting cheaper options first.</span>
+
+<span class="nv">What</span><span class="w"> </span><span class="k">do</span><span class="w"> </span><span class="nv">you</span><span class="w"> </span><span class="nv">think</span>?<span class="err">"</span>
+</code></pre></div>
+
+<p><strong>Manager's Response:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nl">Manager</span><span class="p">:</span><span class="w"> </span><span class="s">"You're right. I was jumping to MongoDB because it's what [BigTech Company] uses, but we're not [BigTech Company].</span>
+
+<span class="n">Let</span><span class="err">'</span><span class="n">s</span><span class="w"> </span><span class="n">try</span><span class="w"> </span><span class="n">your</span><span class="w"> </span><span class="n">optimization</span><span class="w"> </span><span class="n">first</span><span class="p">.</span><span class="w"> </span><span class="n">If</span><span class="w"> </span><span class="n">it</span><span class="w"> </span><span class="n">works</span><span class="p">,</span><span class="w"> </span><span class="n">we</span><span class="w"> </span><span class="n">save</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="n">months</span><span class="p">.</span><span class="w"> </span><span class="n">If</span><span class="w"> </span><span class="n">it</span><span class="w"> </span><span class="n">doesn</span><span class="err">'</span><span class="n">t</span><span class="p">,</span><span class="w"> </span><span class="n">we</span><span class="w"> </span><span class="n">still</span><span class="w"> </span><span class="n">have</span><span class="w"> </span><span class="n">MongoDB</span><span class="w"> </span><span class="n">as</span><span class="w"> </span><span class="n">Plan</span><span class="w"> </span><span class="n">B</span><span class="p">.</span><span class="s">"</span>
+</code></pre></div>
+
+<p><strong>Outcome:</strong></p>
+<p><strong>Phase 1 (MySQL Optimization):</strong><br />
+- Week 1: Added indexes<br />
+- Week 2: Partitioned tables by date<br />
+- Week 3: Archived old data<br />
+- <strong>Result: P95 latency 150ms → 18ms (8x improvement)</strong></p>
+<p><strong>Phase 2 (Re-evaluate at 6 months):</strong><br />
+- Latency still at 18ms (stable)<br />
+- Scale increased 50% (100M → 150M rows) with no degradation<br />
+- <strong>Decision: Keep MySQL, no migration needed</strong></p>
+<p><strong>Lessons Learned:</strong></p>
+<p><strong>1. Lead with Data, Not Opinion:</strong><br />
+- ❌ "MongoDB is a bad idea" (sounds defensive)<br />
+- ✅ "Here's the latency comparison" (objective)</p>
+<p><strong>2. Acknowledge the Valid Point:</strong><br />
+- Manager WAS right that MongoDB scales horizontally<br />
+- I agreed with the concern (slow reads), just disagreed with the solution</p>
+<p><strong>3. Propose Alternative, Not Just Critique:</strong><br />
+- Don't just say "MongoDB is wrong"<br />
+- Say "Here's a cheaper way to solve the same problem"</p>
+<p><strong>4. Frame as "Phase 1 / Phase 2":</strong><br />
+- Not "MongoDB is bad forever"<br />
+- "MongoDB might be right LATER, but let's try cheaper options FIRST"</p>
+<p><strong>5. Show, Don't Tell:</strong><br />
+- "Can I demo the optimized MySQL?" (seeing is believing)</p>
+<p><strong>What If Manager Still Disagreed?</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">If</span> <span class="n">manager</span> <span class="n">said</span> <span class="s">"No, we're doing MongoDB anyway,"</span> <span class="n">I</span> <span class="n">would:</span>
+
+<span class="mi">1</span>. <span class="n">Document</span> <span class="k">my</span> <span class="n">concerns</span> (<span class="n">email</span>):
+   <span class="s">"I recommend MySQL optimization first (reasons: X, Y, Z). If we proceed with MongoDB, I'll support the team, but want my concerns on record."</span>
+
+<span class="mi">2</span>. <span class="n">Support</span> <span class="n">the</span> <span class="n">decision</span> (<span class="n">even</span> <span class="k">if</span> <span class="n">I</span> <span class="n">disagree</span>):
+   <span class="s">"OK, I'll lead the MongoDB migration. Here's my plan: [detailed migration steps]"</span>
+
+<span class="mi">3</span>. <span class="n">Make</span> <span class="n">it</span> <span class="n">succeed:</span>
+   - <span class="n">Don't</span> <span class="n">sabotage</span> (<span class="n">never</span> <span class="nb">say</span> <span class="s">"I told you so"</span>)
+   - <span class="n">Give</span> <span class="mi">100</span>% <span class="n">effort</span> <span class="nb">to</span> <span class="k">make</span> <span class="n">it</span> <span class="n">work</span>
+
+<span class="mi">4</span>. <span class="n">Learn</span> <span class="nb">from</span> <span class="n">outcome:</span>
+   - <span class="n">If</span> <span class="n">MongoDB</span> <span class="n">works</span> <span class="n">great</span> → <span class="n">I</span> <span class="n">learn</span> <span class="k">when</span> <span class="k">my</span> <span class="n">judgment</span> <span class="n">was</span> <span class="n">wrong</span>
+   - <span class="n">If</span> <span class="n">MongoDB</span> <span class="n">fails</span> → <span class="n">Documented</span> <span class="n">concerns</span> <span class="nb">protect</span> <span class="n">the</span> <span class="n">team</span>
+</code></pre></div>
+
+<p><strong>Key Principle: Disagree and Commit</strong><br />
+- Disagree strongly during discussion (with data)<br />
+- Once decision is made, commit 100% (even if you disagreed)</p>
+<hr />
+<h2 id="14-debugging-production-issues">14. Debugging &amp; Production Issues</h2>
+<h3 id="q141-production-is-down-walk-through-your-incident-response-process">Q14.1: Production is down. Walk through your incident response process.</h3>
+<p><strong>Answer:</strong></p>
+<p><strong>Scenario: EIC (customer portal) is returning 500 errors for all users</strong></p>
+<p><strong>Incident Response Timeline:</strong></p>
+<p><strong>Minute 0: Alert Received</strong></p>
+<div class="codehilite"><pre><span></span><code>PagerDuty alert: "EIC 500 error rate &gt;50%"
+Datadog dashboard: Error spike from 0.1% → 60% in last 5 minutes
+</code></pre></div>
+
+<p><strong>Minute 1-2: Acknowledge &amp; Assess Severity</strong></p>
+<p><strong>1. Acknowledge alert:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">Slack</span><span class="w"> </span><span class="n">#incidents</span><span class="err">:</span><span class="w"> </span><span class="ss">"@here - EIC down, investigating. Karthik is on it."</span>
+<span class="nl">PagerDuty</span><span class="p">:</span><span class="w"> </span><span class="n">Acknowledge</span><span class="w"> </span><span class="p">(</span><span class="n">stops</span><span class="w"> </span><span class="n">paging</span><span class="w"> </span><span class="n">others</span><span class="p">)</span>
+</code></pre></div>
+
+<p><strong>2. Quick severity check:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Check error rate</span>
+curl<span class="w"> </span>https://eic.internal/health
+<span class="c1"># Response: 500 Internal Server Error</span>
+
+<span class="c1"># Check how many users affected</span>
+Datadog<span class="w"> </span>→<span class="w"> </span>Real<span class="w"> </span>User<span class="w"> </span>Monitoring<span class="w"> </span>→<span class="w"> </span>Active<span class="w"> </span>sessions
+<span class="c1"># 1,247 active users (all seeing errors) ← HIGH SEVERITY</span>
+</code></pre></div>
+
+<p><strong>3. Classify:</strong></p>
+<div class="codehilite"><pre><span></span><code>Severity: P1 (Critical)
+Impact: ALL customers (not just one)
+Duration: 5 minutes so far
+</code></pre></div>
+
+<p><strong>Minute 3-5: Gather Information (don't guess!)</strong></p>
+<p><strong>1. Check recent changes:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Was there a recent deployment?</span>
+git<span class="w"> </span>log<span class="w"> </span>--since<span class="o">=</span><span class="s2">"1 hour ago"</span>
+<span class="c1"># commit abc123: "Update Redis config" (deployed 7 minutes ago)</span>
+<span class="c1"># ← SMOKING GUN!</span>
+</code></pre></div>
+
+<p><strong>2. Check application logs:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Tail EIC logs</span>
+tail<span class="w"> </span>-f<span class="w"> </span>/var/log/eic/app.log
+
+<span class="c1"># Output:</span>
+<span class="c1"># [2026-11-16 10:05:32] production.ERROR: RedisException: Connection refused (111.222.333.444:6379)</span>
+<span class="c1"># [2026-11-16 10:05:33] production.ERROR: RedisException: Connection refused (111.222.333.444:6379)</span>
+<span class="c1"># (repeated 1000s of times)</span>
+
+<span class="c1"># ← Redis connection is broken!</span>
+</code></pre></div>
+
+<p><strong>3. Check infrastructure:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Is Redis server up?</span>
+redis-cli<span class="w"> </span>-h<span class="w"> </span><span class="m">111</span>.222.333.444<span class="w"> </span>ping
+<span class="c1"># Error: Could not connect to Redis at 111.222.333.444:6379: Connection refused</span>
+
+<span class="c1"># Check Redis service</span>
+ssh<span class="w"> </span>redis-server.internal
+sudo<span class="w"> </span>systemctl<span class="w"> </span>status<span class="w"> </span>redis
+<span class="c1"># redis.service - failed (code=exited, status=1/FAILURE)</span>
+</code></pre></div>
+
+<p><strong>Root Cause Found: Redis crashed after config change</strong></p>
+<p><strong>Minute 6-8: Immediate Mitigation (stop the bleeding)</strong></p>
+<p><strong>Option 1: Rollback deployment (safest)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Rollback to previous commit</span>
+git<span class="w"> </span>revert<span class="w"> </span>abc123
+git<span class="w"> </span>push
+
+<span class="c1"># Deploy rollback</span>
+./deploy.sh<span class="w"> </span>production
+
+<span class="c1"># ETA: 3 minutes (too long! Users still down)</span>
+</code></pre></div>
+
+<p><strong>Option 2: Restart Redis (faster)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Restart Redis service</span>
+ssh<span class="w"> </span>redis-server.internal
+sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>redis
+
+<span class="c1"># Check if Redis is back</span>
+redis-cli<span class="w"> </span>ping
+<span class="c1"># PONG ← Redis is back!</span>
+
+<span class="c1"># Test EIC</span>
+curl<span class="w"> </span>https://eic.internal/health
+<span class="c1"># 200 OK ← EIC is back!</span>
+
+<span class="c1"># ETA: 30 seconds ← CHOOSE THIS</span>
+</code></pre></div>
+
+<p><strong>Minute 8: Mitigation Complete</strong></p>
+<div class="codehilite"><pre><span></span><code>Datadog: Error rate back to 0.1%
+Active users: 1,247 (all working again)
+
+Slack #incidents: "EIC restored. Redis restarted. Investigating root cause."
+</code></pre></div>
+
+<p><strong>Minute 9-15: Root Cause Analysis</strong></p>
+<p><strong>1. What broke?</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Check Redis config change</span>
+git<span class="w"> </span>diff<span class="w"> </span>abc123^<span class="w"> </span>abc123
+
+<span class="c1"># diff --git a/redis.conf b/redis.conf</span>
+<span class="c1"># -bind 127.0.0.1</span>
+<span class="c1"># +bind 0.0.0.0  ← Changed bind address</span>
+
+<span class="c1"># Check Redis logs</span>
+sudo<span class="w"> </span>journalctl<span class="w"> </span>-u<span class="w"> </span>redis<span class="w"> </span>-n<span class="w"> </span><span class="m">100</span>
+
+<span class="c1"># Output:</span>
+<span class="c1"># "Invalid bind address '0.0.0.0' (requires network interface)"</span>
+<span class="c1"># "Redis exiting due to config error"</span>
+</code></pre></div>
+
+<p><strong>Root Cause: Config error in Redis bind address</strong> (typo: 0.0.0.0 instead of 0.0.0.0, or wrong interface)</p>
+<p><strong>2. Why did testing miss this?</strong></p>
+<div class="codehilite"><pre><span></span><code>Deployment process:
+✅ Deployed to dev (worked - dev has different Redis config)
+✅ Deployed to stage (worked - stage has different Redis config)
+❌ Deployed to prod (failed - prod has stricter network config)
+
+Gap: Stage environment doesn't match prod network config
+</code></pre></div>
+
+<p><strong>Minute 15-20: Permanent Fix</strong></p>
+<p><strong>1. Fix the config:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Correct Redis config</span>
+git<span class="w"> </span>diff
+
+<span class="c1"># -bind 0.0.0.0  ← Wrong</span>
+<span class="c1"># +bind 127.0.0.1 10.0.0.5  ← Correct (localhost + internal IP)</span>
+
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">"fix: Correct Redis bind address"</span>
+git<span class="w"> </span>push
+</code></pre></div>
+
+<p><strong>2. Deploy fix:</strong></p>
+<div class="codehilite"><pre><span></span><code>./deploy.sh<span class="w"> </span>production
+<span class="c1"># Success</span>
+</code></pre></div>
+
+<p><strong>3. Verify:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Redis still running?</span>
+redis-cli<span class="w"> </span>ping
+<span class="c1"># PONG</span>
+
+<span class="c1"># EIC still working?</span>
+curl<span class="w"> </span>https://eic.internal/health
+<span class="c1"># 200 OK</span>
+</code></pre></div>
+
+<p><strong>Minute 20-30: Post-Incident</strong></p>
+<p><strong>1. Update incident channel:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">Slack</span><span class="w"> </span><span class="n">#incidents</span><span class="err">:</span>
+
+<span class="err">##</span><span class="w"> </span><span class="n">Incident</span><span class="w"> </span><span class="n">Summary</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">EIC</span><span class="w"> </span><span class="n">Outage</span><span class="w"> </span><span class="p">(</span><span class="n">Resolved</span><span class="p">)</span>
+
+<span class="nl">Duration</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="w"> </span><span class="n">minutes</span><span class="w"> </span><span class="p">(</span><span class="mi">10</span><span class="err">:</span><span class="mi">05</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">10</span><span class="err">:</span><span class="mi">13</span><span class="p">)</span>
+<span class="nl">Impact</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="mi">247</span><span class="w"> </span><span class="n">users</span><span class="w"> </span><span class="p">(</span><span class="mi">100</span><span class="o">%</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="n">active</span><span class="w"> </span><span class="n">sessions</span><span class="p">)</span>
+<span class="n">Root</span><span class="w"> </span><span class="nl">Cause</span><span class="p">:</span><span class="w"> </span><span class="n">Redis</span><span class="w"> </span><span class="n">crashed</span><span class="w"> </span><span class="n">due</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">incorrect</span><span class="w"> </span><span class="n">bind</span><span class="w"> </span><span class="n">address</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">config</span>
+<span class="nl">Mitigation</span><span class="p">:</span><span class="w"> </span><span class="n">Restarted</span><span class="w"> </span><span class="n">Redis</span>
+<span class="n">Permanent</span><span class="w"> </span><span class="nl">Fix</span><span class="p">:</span><span class="w"> </span><span class="n">Corrected</span><span class="w"> </span><span class="n">bind</span><span class="w"> </span><span class="n">address</span>
+
+<span class="n">RCA</span><span class="w"> </span><span class="nl">doc</span><span class="p">:</span><span class="w"> </span><span class="o">[</span><span class="n">link</span><span class="o">]</span>
+<span class="n">Follow</span><span class="o">-</span><span class="n">up</span><span class="w"> </span><span class="nl">tasks</span><span class="p">:</span>
+<span class="o">-</span><span class="w"> </span><span class="n">TODO</span><span class="o">-</span><span class="mi">1</span><span class="err">:</span><span class="w"> </span><span class="k">Update</span><span class="w"> </span><span class="n">stage</span><span class="w"> </span><span class="n">environment</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="k">match</span><span class="w"> </span><span class="n">prod</span><span class="w"> </span><span class="n">network</span><span class="w"> </span><span class="n">config</span>
+<span class="o">-</span><span class="w"> </span><span class="n">TODO</span><span class="o">-</span><span class="mi">2</span><span class="err">:</span><span class="w"> </span><span class="k">Add</span><span class="w"> </span><span class="n">Redis</span><span class="w"> </span><span class="n">config</span><span class="w"> </span><span class="n">validation</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">CI</span><span class="o">/</span><span class="n">CD</span><span class="w"> </span><span class="n">pipeline</span>
+<span class="o">-</span><span class="w"> </span><span class="n">TODO</span><span class="o">-</span><span class="mi">3</span><span class="err">:</span><span class="w"> </span><span class="n">Improve</span><span class="w"> </span><span class="n">health</span><span class="w"> </span><span class="k">check</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">detect</span><span class="w"> </span><span class="n">Redis</span><span class="w"> </span><span class="k">connection</span><span class="w"> </span><span class="n">issues</span><span class="w"> </span><span class="n">faster</span>
+
+<span class="n">Apologies</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">disruption</span><span class="p">.</span><span class="w"> </span><span class="n">Post</span><span class="o">-</span><span class="n">mortem</span><span class="w"> </span><span class="n">scheduled</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">Monday</span><span class="w"> </span><span class="mi">2</span><span class="n">pm</span><span class="p">.</span>
+</code></pre></div>
+
+<p><strong>2. Create Jira tickets:</strong></p>
+<div class="codehilite"><pre><span></span><code>NJQRT-15500: Post-Incident - Improve stage/prod parity
+NJQRT-15501: Post-Incident - Add Redis config validation to CI
+NJQRT-15502: Post-Incident - Health check should detect Redis issues
+</code></pre></div>
+
+<p><strong>3. Send customer communication:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nv">Email</span><span class="w"> </span><span class="nv">to</span><span class="w"> </span><span class="nv">affected</span><span class="w"> </span><span class="nv">customers</span>:
+
+<span class="nv">Subject</span>:<span class="w"> </span><span class="nv">Service</span><span class="w"> </span><span class="nv">Disruption</span><span class="w"> </span><span class="nv">Resolved</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nv">November</span><span class="w"> </span><span class="mi">16</span>
+
+<span class="nv">Dear</span><span class="w"> </span><span class="nv">Customer</span>,
+
+<span class="nv">You</span><span class="w"> </span><span class="nv">may</span><span class="w"> </span><span class="nv">have</span><span class="w"> </span><span class="nv">experienced</span><span class="w"> </span><span class="nv">issues</span><span class="w"> </span><span class="nv">accessing</span><span class="w"> </span><span class="nv">your</span><span class="w"> </span><span class="nv">invoices</span><span class="w"> </span><span class="nv">between</span><span class="w"> </span><span class="mi">10</span>:<span class="mi">05</span><span class="w"> </span><span class="nv">AM</span><span class="w"> </span><span class="nv">and</span><span class="w"> </span><span class="mi">10</span>:<span class="mi">13</span><span class="w"> </span><span class="nv">AM</span><span class="w"> </span><span class="nv">EST</span><span class="w"> </span><span class="nv">today</span>.
+
+<span class="nv">What</span><span class="w"> </span><span class="nv">happened</span>:<span class="w"> </span><span class="nv">A</span><span class="w"> </span><span class="nv">configuration</span><span class="w"> </span><span class="nv">error</span><span class="w"> </span><span class="nv">caused</span><span class="w"> </span><span class="nv">our</span><span class="w"> </span><span class="nv">caching</span><span class="w"> </span><span class="nv">layer</span><span class="w"> </span><span class="nv">to</span><span class="w"> </span><span class="nv">fail</span>.
+<span class="nv">Resolution</span>:<span class="w"> </span><span class="nv">Our</span><span class="w"> </span><span class="nv">team</span><span class="w"> </span><span class="nv">identified</span><span class="w"> </span><span class="nv">and</span><span class="w"> </span><span class="nv">resolved</span><span class="w"> </span><span class="nv">the</span><span class="w"> </span><span class="nv">issue</span><span class="w"> </span><span class="nv">within</span><span class="w"> </span><span class="mi">8</span><span class="w"> </span><span class="nv">minutes</span>.
+<span class="nv">Impact</span>:<span class="w"> </span><span class="nv">Invoice</span><span class="w"> </span><span class="nv">viewing</span><span class="w"> </span><span class="nv">was</span><span class="w"> </span><span class="nv">unavailable</span><span class="w"> </span><span class="nv">during</span><span class="w"> </span><span class="nv">this</span><span class="w"> </span><span class="nv">window</span>.
+
+<span class="nv">We</span><span class="w"> </span><span class="nv">sincerely</span><span class="w"> </span><span class="nv">apologize</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="nv">the</span><span class="w"> </span><span class="nv">disruption</span>.
+
+<span class="nv">Preventive</span><span class="w"> </span><span class="nv">measures</span>:
+<span class="o">-</span><span class="w"> </span><span class="nv">Enhanced</span><span class="w"> </span><span class="nv">testing</span><span class="w"> </span><span class="nv">to</span><span class="w"> </span><span class="nv">catch</span><span class="w"> </span><span class="nv">config</span><span class="w"> </span><span class="nv">errors</span><span class="w"> </span><span class="nv">before</span><span class="w"> </span><span class="nv">production</span>
+<span class="o">-</span><span class="w"> </span><span class="nv">Improved</span><span class="w"> </span><span class="nv">monitoring</span><span class="w"> </span><span class="nv">to</span><span class="w"> </span><span class="nv">detect</span><span class="w"> </span><span class="nv">issues</span><span class="w"> </span><span class="nv">faster</span>
+
+<span class="nv">Questions</span>?<span class="w"> </span><span class="nv">Contact</span><span class="w"> </span><span class="nv">support</span>@...
+
+<span class="nv">Best</span>,
+<span class="nv">Engineering</span><span class="w"> </span><span class="nv">Team</span>
+</code></pre></div>
+
+<p><strong>4. Write Post-Mortem (within 24 hours):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="gh"># Post-Mortem: EIC Outage - 2026-11-16</span>
+
+<span class="gu">## Summary</span>
+8-minute outage affecting 100% of EIC users due to Redis config error.
+
+<span class="gu">## Timeline</span>
+<span class="k">-</span><span class="w"> </span>10:00 AM: Deploy config change to Redis
+<span class="k">-</span><span class="w"> </span>10:05 AM: Redis crashes, EIC returns 500 errors
+<span class="k">-</span><span class="w"> </span>10:06 AM: PagerDuty alert, incident acknowledged
+<span class="k">-</span><span class="w"> </span>10:08 AM: Root cause identified (Redis config)
+<span class="k">-</span><span class="w"> </span>10:08 AM: Redis restarted (mitigation)
+<span class="k">-</span><span class="w"> </span>10:13 AM: Permanent fix deployed
+
+<span class="gu">## Root Cause</span>
+Redis bind address set incorrectly (<span class="sb">`0.0.0.0`</span> without required network interface).
+Production network config is stricter than stage, so error only occurred in prod.
+
+<span class="gu">## Impact</span>
+<span class="k">-</span><span class="w"> </span>Duration: 8 minutes
+<span class="k">-</span><span class="w"> </span>Users affected: 1,247 (100% of active sessions)
+<span class="k">-</span><span class="w"> </span>Revenue impact: ~$200 (estimated lost transactions)
+
+<span class="gu">## What Went Well</span>
+<span class="k">-</span><span class="w"> </span>Fast detection (1 minute from crash to alert)
+<span class="k">-</span><span class="w"> </span>Fast mitigation (restart Redis in 2 minutes)
+<span class="k">-</span><span class="w"> </span>Clear communication (Slack updates every 5 minutes)
+
+<span class="gu">## What Went Wrong</span>
+<span class="k">-</span><span class="w"> </span>Config not validated before deploy
+<span class="k">-</span><span class="w"> </span>Stage environment doesn't match prod network config
+<span class="k">-</span><span class="w"> </span>Health check didn't detect Redis connection failure
+
+<span class="gu">## Action Items</span>
+<span class="k">1.</span> [Karthik] Add Redis config validation to CI pipeline (by Nov 20)
+<span class="k">2.</span> [DevOps] Update stage network config to match prod (by Nov 25)
+<span class="k">3.</span> [Karthik] Improve health check to test Redis connection (by Nov 22)
+<span class="k">4.</span> [Manager] Conduct blameless post-mortem review (Nov 18)
+
+<span class="gu">## Lessons Learned</span>
+<span class="k">-</span><span class="w"> </span>Always validate config files before deploy
+<span class="k">-</span><span class="w"> </span>Stage must mirror prod (not just code, but infrastructure too)
+<span class="k">-</span><span class="w"> </span>Health checks should test external dependencies (not just app server)
+</code></pre></div>
+
+<p><strong>Incident Response Checklist (Printed &amp; Laminated):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="err">☐</span><span class="w"> </span><span class="mi">1</span><span class="p">.</span><span class="w"> </span><span class="nx">Acknowledge</span><span class="w"> </span><span class="p">(</span><span class="nx">Slack</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">PagerDuty</span><span class="p">)</span>
+<span class="err">☐</span><span class="w"> </span><span class="mi">2</span><span class="p">.</span><span class="w"> </span><span class="nx">Assess</span><span class="w"> </span><span class="nx">severity</span><span class="w"> </span><span class="p">(</span><span class="nx">how</span><span class="w"> </span><span class="nx">many</span><span class="w"> </span><span class="nx">users</span><span class="w"> </span><span class="nx">affected</span><span class="p">?)</span>
+<span class="err">☐</span><span class="w"> </span><span class="mi">3</span><span class="p">.</span><span class="w"> </span><span class="nx">Gather</span><span class="w"> </span><span class="nx">info</span><span class="w"> </span><span class="p">(</span><span class="nx">logs</span><span class="p">,</span><span class="w"> </span><span class="nx">recent</span><span class="w"> </span><span class="nx">changes</span><span class="p">,</span><span class="w"> </span><span class="nx">infrastructure</span><span class="p">)</span>
+<span class="err">☐</span><span class="w"> </span><span class="mi">4</span><span class="p">.</span><span class="w"> </span><span class="nx">Identify</span><span class="w"> </span><span class="nx">root</span><span class="w"> </span><span class="nx">cause</span><span class="w"> </span><span class="p">(</span><span class="nx">don</span><span class="err">'</span><span class="nx">t</span><span class="w"> </span><span class="nx">guess</span><span class="p">!)</span>
+<span class="err">☐</span><span class="w"> </span><span class="mi">5</span><span class="p">.</span><span class="w"> </span><span class="nx">Mitigate</span><span class="w"> </span><span class="nx">FAST</span><span class="w"> </span><span class="p">(</span><span class="nx">rollback</span><span class="w"> </span><span class="k">or</span><span class="w"> </span><span class="nx">quick</span><span class="w"> </span><span class="nx">fix</span><span class="p">)</span>
+<span class="err">☐</span><span class="w"> </span><span class="mi">6</span><span class="p">.</span><span class="w"> </span><span class="nx">Verify</span><span class="w"> </span><span class="nx">mitigation</span><span class="w"> </span><span class="p">(</span><span class="k">is</span><span class="w"> </span><span class="nx">it</span><span class="w"> </span><span class="nx">really</span><span class="w"> </span><span class="nx">fixed</span><span class="p">?)</span>
+<span class="err">☐</span><span class="w"> </span><span class="mi">7</span><span class="p">.</span><span class="w"> </span><span class="nx">Permanent</span><span class="w"> </span><span class="nx">fix</span><span class="w"> </span><span class="p">(</span><span class="nx">address</span><span class="w"> </span><span class="nx">root</span><span class="w"> </span><span class="nx">cause</span><span class="p">)</span>
+<span class="err">☐</span><span class="w"> </span><span class="mi">8</span><span class="p">.</span><span class="w"> </span><span class="nx">Communicate</span><span class="w"> </span><span class="p">(</span><span class="nx">team</span><span class="p">,</span><span class="w"> </span><span class="nx">customers</span><span class="p">)</span>
+<span class="err">☐</span><span class="w"> </span><span class="mi">9</span><span class="p">.</span><span class="w"> </span><span class="nx">Create</span><span class="w"> </span><span class="nx">follow</span><span class="o">-</span><span class="nx">up</span><span class="w"> </span><span class="nx">tasks</span>
+<span class="err">☐</span><span class="w"> </span><span class="mi">10</span><span class="p">.</span><span class="w"> </span><span class="nx">Post</span><span class="o">-</span><span class="nx">mortem</span><span class="w"> </span><span class="p">(</span><span class="nx">within</span><span class="w"> </span><span class="mi">24</span><span class="w"> </span><span class="nx">hours</span><span class="p">)</span>
+</code></pre></div>
+
+<p><strong>Key Principles:</strong></p>
+<p><strong>1. MTTR &gt; MTTD</strong> (Mean Time To Resolve &gt; Mean Time To Detect)<br />
+- Fixing fast is more important than detecting fast<br />
+- 8-minute outage with 1-minute detection = acceptable<br />
+- 1-hour outage with 1-minute detection = unacceptable</p>
+<p><strong>2. Mitigate First, Root Cause Later</strong><br />
+- Don't spend 20 minutes debugging while users are down<br />
+- Quick fix first (restart Redis), deep analysis later</p>
+<p><strong>3. Communicate, Communicate, Communicate</strong><br />
+- Slack updates every 5 minutes (even if no progress)<br />
+- Silence = Panic</p>
+<p><strong>4. Blameless Post-Mortems</strong><br />
+- Never "Who broke it?" (blame)<br />
+- Always "How did it break?" (systemic failure)</p>
+<p><strong>5. Turn Incidents into Improvements</strong><br />
+- Every outage → 3 follow-up tasks to prevent recurrence</p>
+<hr />
+<p><strong>📊 TOTAL QUESTIONS IN BOTH PARTS: 95+</strong></p>
+<p><strong>Part 1 (50+ questions):</strong><br />
+- EIC (5)<br />
+- CC (3)<br />
+- CSR (3)<br />
+- WCL (4)<br />
+- MPay (1)<br />
+- AMAPI (1)<br />
+- Whitelabel (1)<br />
+- Incident Tracker (1)<br />
+- Cross-Project Architecture (2)<br />
+- Performance &amp; Scalability (1)<br />
+- Security &amp; Compliance (1)</p>
+<p><strong>Part 2 (45+ questions):</strong><br />
+- Database Design (2)<br />
+- Leadership (2)<br />
+- Debugging (1)<br />
+- ... (more to come)</p>
+<hr />
+<h2 id="15-security-fraud-investigation-new-section"><strong>15. Security &amp; Fraud Investigation (NEW SECTION)</strong></h2>
+<h3 id="q66-explain-how-you-investigate-a-malicious-actor-incident-reported-by-a-customer"><strong>Q66: Explain how you investigate a malicious actor incident reported by a customer.</strong></h3>
+<p><strong>Answer:</strong></p>
+<p>"I follow a structured 6-phase investigation process:</p>
+<p><strong>Phase 1: Incident Intake &amp; Initial Scope (5 minutes)</strong><br />
+1. Customer reports suspicious activity (e.g., unauthorized login, data access, unusual payments)<br />
+2. Gather initial details:<br />
+   - <strong>What happened?</strong> (symptom: "user logged in from unknown location")<br />
+   - <strong>When?</strong> (date/time range)<br />
+   - <strong>Who's affected?</strong> (user IDs, accounts, customers)<br />
+   - <strong>What's the blast radius?</strong> (1 user, 10 users, all customers?)</p>
+<p><strong>Phase 2: Multi-Source Log Collection (15 minutes)</strong><br />
+I aggregate logs from <strong>5 monitoring systems</strong> in parallel:</p>
+<p><strong>1. Datadog APM Traces</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Search for user activity in target time window</span>
+<span class="n">env</span><span class="p">:</span><span class="n">production</span><span class="w"> </span><span class="n">service</span><span class="p">:</span><span class="n">api</span><span class="w"> </span><span class="o">@</span><span class="k">user</span><span class="p">.</span><span class="n">id</span><span class="p">:</span><span class="mi">12345</span><span class="w"> </span><span class="o">@</span><span class="k">timestamp</span><span class="p">:[</span><span class="mi">2026</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="mi">01</span><span class="n">T00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="mi">2026</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="mi">01</span><span class="n">T23</span><span class="p">:</span><span class="mi">59</span><span class="p">:</span><span class="mi">59</span><span class="p">]</span>
+</code></pre></div>
+
+<ul>
+<li><strong>What it shows:</strong> API endpoints hit, response times, errors, IP addresses</li>
+</ul>
+<p><strong>2. Splunk Audit Logs</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nx">index</span><span class="p">=</span><span class="nx">audit_logs</span><span class="w"> </span><span class="nx">user_id</span><span class="p">=</span><span class="mi">12345</span><span class="w"> </span><span class="nx">earliest</span><span class="p">=</span><span class="s">"2026-11-01:00:00:00"</span><span class="w"> </span><span class="nx">latest</span><span class="p">=</span><span class="s">"2026-11-01:23:59:59"</span>
+<span class="o">|</span><span class="w"> </span><span class="nx">table</span><span class="w"> </span><span class="nx">_time</span><span class="p">,</span><span class="w"> </span><span class="nx">action</span><span class="p">,</span><span class="w"> </span><span class="nx">resource</span><span class="p">,</span><span class="w"> </span><span class="nx">ip_address</span><span class="p">,</span><span class="w"> </span><span class="nx">user_agent</span>
+<span class="o">|</span><span class="w"> </span><span class="nx">sort</span><span class="w"> </span><span class="nx">_time</span>
+</code></pre></div>
+
+<ul>
+<li><strong>What it shows:</strong> Database writes (INSERT/UPDATE/DELETE), permission changes, authentication events</li>
+</ul>
+<p><strong>3. Pendo User Activity Tracking</strong><br />
+- <strong>API Call:</strong> <code>GET /api/pendo/events?visitorId=user_12345&amp;start=...&amp;end=...</code><br />
+- <strong>What it shows:</strong> Page views, button clicks, feature usage, session duration</p>
+<p><strong>4. SendGrid Email Monitoring</strong><br />
+- <strong>API Call:</strong> <code>GET /v3/messages?to_email=user@example.com&amp;start_date=...</code><br />
+- <strong>What it shows:</strong> Emails sent (password reset, notifications, invoices), delivery status, open/click rates</p>
+<p><strong>5. MySQL Audit Tables</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Check fsiAccountAudits for account changes</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">fsiAccountAudits</span><span class="w"> </span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">CustomerId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">12345</span><span class="w"> </span>
+<span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="n">AuditDate</span><span class="w"> </span><span class="k">BETWEEN</span><span class="w"> </span><span class="s1">'2026-11-01'</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="s1">'2026-11-02'</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">AuditDate</span><span class="p">;</span>
+
+<span class="c1">-- Check fsionlineaccountaudit for OC user changes</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">fsionlineaccountaudit</span><span class="w"> </span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">CustomerId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">12345</span><span class="w"> </span>
+<span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="n">AuditDate</span><span class="w"> </span><span class="k">BETWEEN</span><span class="w"> </span><span class="s1">'2026-11-01'</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="s1">'2026-11-02'</span><span class="p">;</span>
+</code></pre></div>
+
+<ul>
+<li><strong>What it shows:</strong> Who made changes (EventUser, EmpId), what changed (Description), timestamps</li>
+</ul>
+<p><strong>Phase 3: Timeline Reconstruction (20 minutes)</strong><br />
+I build a <strong>chronological event timeline</strong> correlating all 5 sources:</p>
+<table>
+<thead>
+<tr>
+<th>Timestamp</th>
+<th>Source</th>
+<th>Event</th>
+<th>IP Address</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2026-11-01 08:15</td>
+<td>Datadog</td>
+<td>Login POST <code>/api/auth/login</code></td>
+<td>185.220.xxx.xxx</td>
+<td>Tor exit node!</td>
+</tr>
+<tr>
+<td>2026-11-01 08:16</td>
+<td>Pendo</td>
+<td>Navigated to Invoices page</td>
+<td>185.220.xxx.xxx</td>
+<td>50 invoices viewed</td>
+</tr>
+<tr>
+<td>2026-11-01 08:17</td>
+<td>MySQL Audit</td>
+<td>UPDATE fsiAccount SET BankAccount='...'</td>
+<td>user_12345</td>
+<td>Bank account changed!</td>
+</tr>
+<tr>
+<td>2026-11-01 08:18</td>
+<td>SendGrid</td>
+<td>Password reset email sent</td>
+<td>-</td>
+<td>Triggered by attacker</td>
+</tr>
+<tr>
+<td>2026-11-01 08:20</td>
+<td>Datadog</td>
+<td>POST <code>/api/payments</code> (failed)</td>
+<td>185.220.xxx.xxx</td>
+<td>Payment attempt blocked</td>
+</tr>
+<tr>
+<td>2026-11-01 08:22</td>
+<td>Splunk</td>
+<td>Logout</td>
+<td>185.220.xxx.xxx</td>
+<td>Session ended</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Key Indicators:</strong><br />
+- <strong>Tor IP address</strong> = suspicious<br />
+- <strong>Bank account changed</strong> = malicious<br />
+- <strong>Failed payment attempt</strong> = intent to steal funds<br />
+- <strong>Password reset</strong> = attacker trying to lock out real user</p>
+<p><strong>Phase 4: Impact Assessment (10 minutes)</strong><br />
+Determine:<br />
+1. <strong>What data was accessed?</strong><br />
+   - 50 invoices viewed (PII: names, addresses, amounts)<br />
+   - Bank account changed (but payment failed)</p>
+<ol start="2">
+<li>
+<p><strong>What data was exfiltrated?</strong><br />
+   - Check Datadog for large GET responses (invoice PDFs downloaded?)<br />
+   - Check SendGrid for forwarded emails</p>
+</li>
+<li>
+<p><strong>What data was modified?</strong><br />
+   - MySQL audit: Bank account changed on 1 account<br />
+   - No other writes detected</p>
+</li>
+<li>
+<p><strong>Blast radius:</strong><br />
+   - <strong>1 user affected</strong> (not platform-wide)<br />
+   - <strong>50 invoices exposed</strong> (potential PII breach)<br />
+   - <strong>No financial loss</strong> (payment blocked)</p>
+</li>
+</ol>
+<p><strong>Phase 5: Mitigation &amp; Containment (5 minutes)</strong><br />
+1. <strong>Revoke attacker's session:</strong><br />
+<code>sql
+   DELETE FROM user_sessions WHERE ip_address = '185.220.xxx.xxx';</code></p>
+<ol start="2">
+<li>
+<p><strong>Lock the compromised account:</strong><br />
+<code>sql
+   UPDATE fsiocuser SET Active = 'N', UpdateDate = NOW(), UpdateUser = 'SECURITY_TEAM' 
+   WHERE UserId = 12345;</code></p>
+</li>
+<li>
+<p><strong>Revert malicious changes:</strong><br />
+<code>sql
+   -- Rollback bank account change
+   UPDATE fsiAccount 
+   SET BankAccount = '&lt;original_value_from_audit&gt;', 
+       UpdateUser = 'SECURITY_ROLLBACK', 
+       UpdateDate = NOW()
+   WHERE CustomerId = 12345;</code></p>
+</li>
+<li>
+<p><strong>Force password reset</strong> (legitimate user)</p>
+</li>
+</ol>
+<p><strong>Phase 6: Customer Report (30 minutes)</strong><br />
+I prepare a <strong>customer-facing investigation report</strong>:</p>
+<div class="codehilite"><pre><span></span><code><span class="gs">**Security Incident Report - Case #2026-11-001**</span>
+
+<span class="gs">**Summary:**</span>
+Unauthorized access to user account <span class="ni">#12345</span> detected on Nov 1, 2026, 8:15 AM UTC. 
+Access originated from Tor network. Attacker viewed 50 invoices and modified bank account information. 
+No financial loss occurred. Account secured.
+
+<span class="gs">**Timeline:**</span>
+<span class="k">-</span><span class="w"> </span>8:15 AM: Unauthorized login from Tor IP (185.220.xxx.xxx)
+<span class="k">-</span><span class="w"> </span>8:16 AM: 50 invoices accessed (potential PII exposure)
+<span class="k">-</span><span class="w"> </span>8:17 AM: Bank account changed
+<span class="k">-</span><span class="w"> </span>8:18 AM: Password reset email sent (by attacker)
+<span class="k">-</span><span class="w"> </span>8:20 AM: Payment attempt (blocked by fraud detection)
+<span class="k">-</span><span class="w"> </span>8:22 AM: Session ended
+
+<span class="gs">**Data Affected:**</span>
+<span class="k">-</span><span class="w"> </span>50 customer invoices viewed (names, addresses, invoice amounts)
+<span class="k">-</span><span class="w"> </span>1 bank account modified (reverted)
+
+<span class="gs">**Actions Taken:**</span>
+<span class="k">1.</span> Attacker session terminated
+<span class="k">2.</span> Account locked and secured
+<span class="k">3.</span> Bank account reverted to original value
+<span class="k">4.</span> Legitimate user notified and password reset
+
+<span class="gs">**Recommendations:**</span>
+<span class="k">1.</span> Enable 2FA for this user
+<span class="k">2.</span> Monitor for further suspicious activity (Datadog alert set)
+<span class="k">3.</span> Review other accounts accessed from Tor IPs (sweep query attached)
+</code></pre></div>
+
+<p><strong>Result:</strong><br />
+- <strong>Customer satisfied</strong> (clear timeline, no financial loss)<br />
+- <strong>Compliance met</strong> (GDPR data breach notification within 72 hours)<br />
+- <strong>Platform secured</strong> (IP blacklist updated, monitoring enhanced)</p>
+<p><strong>Key Tools:</strong><br />
+- Datadog for real-time traces<br />
+- Splunk for audit history<br />
+- Pendo for user behavior<br />
+- SendGrid for email forensics<br />
+- MySQL audits for data changes</p>
+<p><strong>Success Metrics:</strong><br />
+- Investigation completed in <strong>60 minutes</strong> (target: &lt;2 hours)<br />
+- Report delivered in <strong>90 minutes</strong> (target: same-day)<br />
+- Zero false positives (confirmed malicious, not user error)<br />
+- Customer retained (didn't churn due to incident)"</p>
+<hr />
+<h3 id="q67-how-do-you-handle-cross-team-dependencies-when-investigating-issues-in-net-core-or-other-non-php-services"><strong>Q67: How do you handle cross-team dependencies when investigating issues in .NET Core or other non-PHP services?</strong></h3>
+<p><strong>Answer:</strong></p>
+<p>"I use a <strong>3-step AI-first collaborative workflow</strong>:</p>
+<p><strong>Step 1: Self-Service Investigation with Claude AI Skills (15 minutes)</strong></p>
+<p>Before creating a Jira case or Slack thread, I try to understand the issue myself:</p>
+<p><strong>1. Use Claude Code to analyze their codebase</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Clone their repo (if public or access granted)</span>
+<span class="nb">cd</span><span class="w"> </span>~/repos
+git<span class="w"> </span>clone<span class="w"> </span>https://github.com/company/dotnet-service
+
+<span class="c1"># Ask Claude to investigate</span>
+<span class="s2">"Find where this API endpoint `/api/payments/charge` is defined and explain the authorization logic"</span>
+</code></pre></div>
+
+<p><strong>2. Read their documentation</strong><br />
+- Check their README.md, API docs, Swagger specs<br />
+- Look for known issues in their CHANGELOG or GitHub Issues</p>
+<p><strong>3. Reproduce locally (if possible)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Spin up their service in Docker</span>
+docker-compose<span class="w"> </span>up<span class="w"> </span>dotnet-service
+
+<span class="c1"># Test the failing endpoint</span>
+curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>https://localhost:5001/api/payments/charge<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">"Authorization: Bearer &lt;token&gt;"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s1">'{"amount": 100.00}'</span>
+</code></pre></div>
+
+<p><strong>What I gather:</strong><br />
+- Exact error message/stack trace<br />
+- Expected vs actual behavior<br />
+- Relevant code paths (Controller → Service → Repository)<br />
+- Dependencies (database, external APIs)</p>
+<p><strong>Step 2: Create a High-Quality Jira Case (10 minutes)</strong></p>
+<p>If I can't resolve it myself, I create a <strong>detailed</strong> Jira case:</p>
+<p><strong>Template:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="gs">**Summary:**</span> [DotNet Service] Payment charge API returns 500 for amounts &gt; $1000
+
+<span class="gs">**Description:**</span>
+
+<span class="gs">**Environment:**</span> Production (us-prod)
+
+<span class="gs">**Steps to Reproduce:**</span>
+<span class="k">1.</span> Call POST <span class="sb">`/api/payments/charge`</span> with amount &gt; $1000
+<span class="k">2.</span> Observe 500 Internal Server Error
+
+<span class="gs">**Expected:**</span> 200 OK with transaction ID
+<span class="gs">**Actual:**</span> 500 error
+
+<span class="gs">**Logs (Datadog):**</span>
+<span class="k">-</span><span class="w"> </span>Trace ID: abc123xyz
+<span class="k">-</span><span class="w"> </span>Error: "InvalidOperationException: Amount exceeds daily limit"
+<span class="k">-</span><span class="w"> </span>Stack trace:
+<span class="sb">  ```</span>
+<span class="sb">  at PaymentService.ProcessCharge(Payment payment)</span>
+<span class="sb">  at PaymentController.Charge(ChargeRequest request)</span>
+<span class="sb">  ```</span>
+
+<span class="gs">**Root Cause Hypothesis:**</span>
+<span class="k">-</span><span class="w"> </span>I suspect there's a daily limit check (<span class="sb">`payment.Amount &gt; dailyLimit`</span>) that's throwing an exception instead of returning a validation error
+<span class="k">-</span><span class="w"> </span>This might be in <span class="sb">`PaymentService.cs`</span> around line 150 (from stack trace)
+
+<span class="gs">**Files Involved:**</span>
+<span class="k">-</span><span class="w"> </span><span class="sb">`PaymentController.cs:42`</span> (entry point)
+<span class="k">-</span><span class="w"> </span><span class="sb">`PaymentService.cs:150`</span> (suspected root cause)
+<span class="k">-</span><span class="w"> </span><span class="sb">`PaymentValidator.cs`</span> (should this check happen here?)
+
+<span class="gs">**Suggested Fix:**</span>
+<span class="k">-</span><span class="w"> </span>Add validation BEFORE processing:
+<span class="sb">  ```csharp</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">payment</span><span class="p">.</span><span class="n">Amount</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">dailyLimit</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="nf">BadRequest</span><span class="p">(</span><span class="s">"Amount exceeds daily limit"</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="sb">  ```</span>
+
+<span class="gs">**Impact:**</span>
+<span class="k">-</span><span class="w"> </span>100 failed payments/day
+<span class="k">-</span><span class="w"> </span>Customers blocked from high-value transactions
+
+<span class="gs">**Workaround (temporary):**</span>
+<span class="k">-</span><span class="w"> </span>Split payments into multiple transactions &lt; $1000
+
+<span class="gs">**Attachments:**</span>
+<span class="k">-</span><span class="w"> </span>Datadog trace screenshot
+<span class="k">-</span><span class="w"> </span>Request/response JSON
+</code></pre></div>
+
+<p><strong>Step 3: Follow Up on Slack (ongoing)</strong></p>
+<p>I don't just create the Jira and disappear — I <strong>actively follow up</strong>:</p>
+<p><strong>1. Post in their Slack channel</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">Hey</span><span class="w"> </span><span class="nv">@dotnet</span><span class="o">-</span><span class="n">team</span><span class="err">!</span><span class="w"> </span><span class="n">I</span><span class="w"> </span><span class="n">created</span><span class="w"> </span><span class="n">JIRA</span><span class="o">-</span><span class="mi">1234</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">payment</span><span class="w"> </span><span class="n">charge</span><span class="w"> </span><span class="mi">500</span><span class="w"> </span><span class="n">error</span><span class="p">.</span>
+
+<span class="n">TL</span><span class="p">;</span><span class="nl">DR</span><span class="p">:</span><span class="w"> </span><span class="n">Amounts</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="err">$</span><span class="mi">1000</span><span class="w"> </span><span class="k">throw</span><span class="w"> </span><span class="n">InvalidOperationException</span><span class="w"> </span><span class="n">instead</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="n">validation</span><span class="w"> </span><span class="n">error</span><span class="p">.</span>
+
+<span class="n">I</span><span class="err">'</span><span class="n">ve</span><span class="w"> </span><span class="nl">attached</span><span class="p">:</span>
+<span class="err">✅</span><span class="w"> </span><span class="n">Datadog</span><span class="w"> </span><span class="n">trace</span>
+<span class="err">✅</span><span class="w"> </span><span class="n">Repro</span><span class="w"> </span><span class="n">steps</span>
+<span class="err">✅</span><span class="w"> </span><span class="n">Suggested</span><span class="w"> </span><span class="n">fix</span><span class="w"> </span><span class="p">(</span><span class="k">add</span><span class="w"> </span><span class="n">validation</span><span class="w"> </span><span class="k">check</span><span class="p">)</span>
+
+<span class="n">Can</span><span class="w"> </span><span class="n">someone</span><span class="w"> </span><span class="n">take</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="n">look</span><span class="vm">?</span><span class="w"> </span><span class="n">Happy</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">pair</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="n">this</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">helpful</span><span class="err">!</span>
+</code></pre></div>
+
+<p><strong>2. Offer to pair program</strong><br />
+- If it's urgent, I offer a <strong>Zoom/Slack huddle</strong> to debug together<br />
+- I share my screen showing the Datadog trace and walk through the issue</p>
+<p><strong>3. Provide context from our side</strong><br />
+- "Here's how we call your API" (show our PHP code)<br />
+- "Here's the request payload" (actual JSON)<br />
+- "Here's the response we get" (500 error)</p>
+<p><strong>4. Verify the fix</strong><br />
+- Once they deploy, I test in staging first<br />
+- Then verify in production (Datadog traces)<br />
+- Confirm in Jira and Slack: "Tested in prod — looks good! Closing JIRA-1234."</p>
+<p><strong>Real Example:</strong></p>
+<p><strong>Problem:</strong> Our PHP app calls a .NET microservice for credit card tokenization. It started returning 500 errors randomly.</p>
+<p><strong>Investigation:</strong><br />
+1. Claude analyzed their <code>.csproj</code> and <code>Startup.cs</code> → found they upgraded from .NET 5 → .NET 6<br />
+2. Datadog traces showed <code>HttpClient</code> timeout exceptions<br />
+3. I found a GitHub issue: ".NET 6 changed default HttpClient timeout from infinite → 100 seconds"</p>
+<p><strong>Fix (suggested to them):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">// In Startup.cs</span>
+<span class="n">services</span><span class="p">.</span><span class="n">AddHttpClient</span><span class="o">&lt;</span><span class="n">PaymentGatewayClient</span><span class="o">&gt;</span><span class="p">()</span>
+<span class="w">    </span><span class="p">.</span><span class="n">SetHandlerLifetime</span><span class="p">(</span><span class="n">TimeSpan</span><span class="p">.</span><span class="n">FromMinutes</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
+<span class="w">    </span><span class="p">.</span><span class="n">AddPolicyHandler</span><span class="p">(</span><span class="n">GetRetryPolicy</span><span class="p">());</span>
+</code></pre></div>
+
+<p><strong>Result:</strong><br />
+- They applied the fix same day<br />
+- 500 errors dropped to 0%<br />
+- Cross-team MTTF reduced by <strong>35%</strong> (we now create better Jira cases)</p>
+<p><strong>Key Success Factors:</strong><br />
+1. <strong>Self-service first</strong> (don't block their team unnecessarily)<br />
+2. <strong>High-quality Jira cases</strong> (not "it's broken, please fix")<br />
+3. <strong>Active follow-up</strong> (Slack, pair programming offers)<br />
+4. <strong>Verify the fix</strong> (test in production, close the loop)<br />
+5. <strong>Build relationships</strong> (teams know I do my homework first)"</p>
+<hr />
+<h3 id="q68-tell-me-about-a-time-you-used-mermaid-diagrams-to-explain-business-logic-to-productmanagement"><strong>Q68: Tell me about a time you used Mermaid diagrams to explain business logic to Product/Management.</strong></h3>
+<p><strong>Answer:</strong></p>
+<p>"<strong>Situation:</strong> Product wanted to add a new AutoPay feature: 'Charge customer only if invoice total exceeds $500 threshold.'</p>
+<p>Simple request, right? But the <strong>implementation was complex</strong> — 5 different code paths, 3 database tables, 2 edge cases.</p>
+<p><strong>Problem:</strong> Product kept asking 'Why is this taking so long?' They didn't understand the complexity.</p>
+<p><strong>Solution: Mermaid Diagram to the Rescue</strong></p>
+<p>I created a <strong>flowchart</strong> showing every decision point:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">flowchart</span><span class="w"> </span><span class="n">TD</span>
+<span class="w">    </span><span class="n">Start</span><span class="p">[</span><span class="n">Invoice</span><span class="w"> </span><span class="n">Created</span><span class="p">]</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">Check1</span><span class="p">{</span><span class="n">AutoPay</span><span class="w"> </span><span class="n">Enabled</span><span class="o">?</span><span class="p">}</span>
+<span class="w">    </span><span class="n">Check1</span><span class="w"> </span><span class="o">--&gt;|</span><span class="n">No</span><span class="o">|</span><span class="w"> </span><span class="n">End1</span><span class="p">[</span><span class="n">No</span><span class="w"> </span><span class="n">Action</span><span class="p">]</span>
+<span class="w">    </span><span class="n">Check1</span><span class="w"> </span><span class="o">--&gt;|</span><span class="n">Yes</span><span class="o">|</span><span class="w"> </span><span class="n">Check2</span><span class="p">{</span><span class="n">Has</span><span class="w"> </span><span class="n">Threshold</span><span class="o">?</span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">Check2</span><span class="w"> </span><span class="o">--&gt;|</span><span class="n">No</span><span class="o">|</span><span class="w"> </span><span class="n">Charge</span><span class="p">[</span><span class="n">Charge</span><span class="w"> </span><span class="n">Full</span><span class="w"> </span><span class="n">Amount</span><span class="p">]</span>
+<span class="w">    </span><span class="n">Check2</span><span class="w"> </span><span class="o">--&gt;|</span><span class="n">Yes</span><span class="o">|</span><span class="w"> </span><span class="n">Check3</span><span class="p">{</span><span class="n">Invoice</span><span class="w"> </span><span class="n">Total</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">Threshold</span><span class="o">?</span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">Check3</span><span class="w"> </span><span class="o">--&gt;|</span><span class="n">No</span><span class="o">|</span><span class="w"> </span><span class="n">End2</span><span class="p">[</span><span class="n">Skip</span><span class="w"> </span><span class="n">AutoPay</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">Send</span><span class="w"> </span><span class="n">Notification</span><span class="p">]</span>
+<span class="w">    </span><span class="n">Check3</span><span class="w"> </span><span class="o">--&gt;|</span><span class="n">Yes</span><span class="o">|</span><span class="w"> </span><span class="n">Check4</span><span class="p">{</span><span class="n">Payment</span><span class="w"> </span><span class="n">Method</span><span class="w"> </span><span class="n">Valid</span><span class="o">?</span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">Check4</span><span class="w"> </span><span class="o">--&gt;|</span><span class="n">No</span><span class="o">|</span><span class="w"> </span><span class="n">End3</span><span class="p">[</span><span class="n">Fail</span><span class="o">:</span><span class="w"> </span><span class="n">Invalid</span><span class="w"> </span><span class="n">Card</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">Email</span><span class="w"> </span><span class="n">Customer</span><span class="p">]</span>
+<span class="w">    </span><span class="n">Check4</span><span class="w"> </span><span class="o">--&gt;|</span><span class="n">Yes</span><span class="o">|</span><span class="w"> </span><span class="n">Check5</span><span class="p">{</span><span class="n">Sufficient</span><span class="w"> </span><span class="n">Funds</span><span class="o">?</span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">Check5</span><span class="w"> </span><span class="o">--&gt;|</span><span class="n">No</span><span class="o">|</span><span class="w"> </span><span class="n">End4</span><span class="p">[</span><span class="n">Fail</span><span class="o">:</span><span class="w"> </span><span class="n">Insufficient</span><span class="w"> </span><span class="n">Funds</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">Retry</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="mi">24</span><span class="n">h</span><span class="p">]</span>
+<span class="w">    </span><span class="n">Check5</span><span class="w"> </span><span class="o">--&gt;|</span><span class="n">Yes</span><span class="o">|</span><span class="w"> </span><span class="n">Charge</span>
+
+<span class="w">    </span><span class="n">Charge</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">Success</span><span class="p">{</span><span class="n">Payment</span><span class="w"> </span><span class="n">Success</span><span class="o">?</span><span class="p">}</span>
+<span class="w">    </span><span class="n">Success</span><span class="w"> </span><span class="o">--&gt;|</span><span class="n">Yes</span><span class="o">|</span><span class="w"> </span><span class="n">End5</span><span class="p">[</span><span class="n">Mark</span><span class="w"> </span><span class="n">as</span><span class="w"> </span><span class="n">Paid</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">Send</span><span class="w"> </span><span class="n">Receipt</span><span class="p">]</span>
+<span class="w">    </span><span class="n">Success</span><span class="w"> </span><span class="o">--&gt;|</span><span class="n">No</span><span class="o">|</span><span class="w"> </span><span class="n">End6</span><span class="p">[</span><span class="n">Log</span><span class="w"> </span><span class="n">Error</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">Notify</span><span class="w"> </span><span class="n">Support</span><span class="p">]</span>
+</code></pre></div>
+
+<p><strong>Presentation to Product (15-min meeting):</strong></p>
+<p><strong>Me:</strong> 'Here's why this takes 3 days to implement.'</p>
+<p>[Share screen with Mermaid diagram]</p>
+<p><strong>Product:</strong> 'Oh wow, I didn't realize there were 5 decision points.'</p>
+<p><strong>Me:</strong> 'Right. And look at these edge cases [points to 'Invalid Card' and 'Insufficient Funds']:<br />
+- <strong>Invalid card</strong>: We need to email the customer AND disable AutoPay (security requirement)<br />
+- <strong>Insufficient funds</strong>: We need to retry 3 times over 72 hours (not just fail once)</p>
+<p>Each of these needs:<br />
+- Database updates (status changes)<br />
+- Email notifications (SendGrid)<br />
+- Audit logging (Splunk)<br />
+- Error handling (Datadog alerts)</p>
+<p>That's 5 decision points × 3 operations each = 15 integration points.'</p>
+<p><strong>Product:</strong> 'Got it. Can we simplify this for MVP?'</p>
+<p><strong>Me:</strong> 'Yes! Let's remove the threshold check for V1. That eliminates 2 edge cases [points to diagram]. Now it's just:<br />
+1. AutoPay enabled?<br />
+2. Charge<br />
+3. Handle success/failure</p>
+<p>This cuts the work from 3 days → 1 day.'</p>
+<p><strong>Product:</strong> 'Perfect. Let's do that.'</p>
+<p><strong>Result:</strong><br />
+- <strong>Scope reduced by 40%</strong> (threshold feature moved to V2)<br />
+- <strong>Delivered on time</strong> (1 day instead of 3)<br />
+- <strong>Product happy</strong> (they understood the complexity)<br />
+- <strong>Manager impressed</strong> (I explained technically complex stuff in business terms)</p>
+<p><strong>Why Mermaid Diagrams Work:</strong></p>
+<p><strong>1. Visual &gt; Text</strong><br />
+- 'Here are 15 steps' (boring)<br />
+- vs 'Here's a flowchart' (engaging)</p>
+<p><strong>2. Shared Understanding</strong><br />
+- Product sees: 'Oh, this is complex'<br />
+- Engineering sees: 'Oh, we can simplify this'<br />
+- Management sees: 'Oh, now I understand the timeline'</p>
+<p><strong>3. Easier to Spot Edge Cases</strong><br />
+- 'What happens if the card expires?' → Add a diamond node<br />
+- 'What if threshold is $0?' → Add validation</p>
+<p><strong>4. Living Documentation</strong><br />
+- Diagram lives in Confluence<br />
+- New team members reference it<br />
+- Product updates it when requirements change</p>
+<p><strong>Other Diagrams I Create:</strong><br />
+- <strong>Sequence diagrams:</strong> API call flows (PHP → WCL → Payment Gateway)<br />
+- <strong>Entity-relationship diagrams:</strong> Database schema (customers, accounts, payments)<br />
+- <strong>Deployment diagrams:</strong> Microservices architecture (which service talks to which)</p>
+<p><strong>Tools I Use:</strong><br />
+- <strong>Mermaid Live Editor</strong> (https://mermaid.live) for quick drafts<br />
+- <strong>Confluence</strong> (embed Mermaid code blocks) for documentation<br />
+- <strong>GitHub README</strong> (renders Mermaid automatically) for repo docs</p>
+<p><strong>Success Rate:</strong><br />
+- <strong>3 major scope mismatches prevented</strong> (like the threshold example above)<br />
+- <strong>10+ diagrams</strong> created in the last year<br />
+- <strong>5+ meetings shortened</strong> (from 1 hour → 15 minutes) because diagrams explained complexity upfront"</p>
+<hr />
+<h2 id="16-on-call-support-monitoring-new-section"><strong>16. On-Call Support &amp; Monitoring (NEW SECTION)</strong></h2>
+<h3 id="q69-describe-your-pagerduty-on-call-experience-how-do-you-handle-p1-incidents"><strong>Q69: Describe your PagerDuty on-call experience. How do you handle P1 incidents?</strong></h3>
+<p><strong>Answer:</strong></p>
+<p>"I'm on <strong>PagerDuty rotation weekly</strong> — 2 days per week, 7 hours per day (business hours) for P1/P2 incidents.</p>
+<p><strong>PagerDuty Workflow:</strong></p>
+<p><strong>1. Alert Receives (&lt; 1 minute)</strong><br />
+- PagerDuty pings me (phone, SMS, app)<br />
+- Alert contains:<br />
+  - <strong>Severity:</strong> P1 (critical), P2 (high)<br />
+  - <strong>Service:</strong> Which app/API is affected<br />
+  - <strong>Symptoms:</strong> 500 errors, slow response, service down<br />
+  - <strong>Datadog link:</strong> Direct link to APM trace</p>
+<p><strong>2. Acknowledge &amp; Triage (&lt; 5 minutes)</strong><br />
+- <strong>Acknowledge in PagerDuty</strong> (stops escalation to manager)<br />
+- <strong>Check Datadog dashboard:</strong><br />
+  - Is it <strong>one service or multiple</strong>? (isolated vs platform-wide)<br />
+  - <strong>Error rate:</strong> 1%, 10%, 50%?<br />
+  - <strong>Customer impact:</strong> How many users affected?<br />
+  - <strong>Recent deployments:</strong> Did we just push code?</p>
+<p><strong>3. Immediate Decision (&lt; 10 minutes)</strong></p>
+<p><strong>Decision Tree:</strong></p>
+<p><strong>If recent deployment (&lt; 1 hour ago):</strong><br />
+→ <strong>ROLLBACK IMMEDIATELY</strong> (don't investigate, restore service first)</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Rollback to previous version</span>
+kubectl<span class="w"> </span>rollout<span class="w"> </span>undo<span class="w"> </span>deployment/api-service
+<span class="c1"># Or via CI/CD</span>
+./deploy.sh<span class="w"> </span>rollback<span class="w"> </span>production
+</code></pre></div>
+
+<p><strong>If no recent deployment:</strong><br />
+→ <strong>Investigate root cause</strong> (database? external API? memory leak?)</p>
+<p><strong>Example P1 Incident (Real):</strong></p>
+<p><strong>Alert:</strong> "API 500 error rate: 25% (normal: 0.1%)"</p>
+<p><strong>Datadog Investigation:</strong></p>
+<div class="codehilite"><pre><span></span><code>- Service: payment-api
+- Error: "PDOException: Too many connections"
+- Stack trace: PaymentController.php:42
+</code></pre></div>
+
+<p><strong>Root Cause:</strong> Database connection pool exhausted (100 connections max, all in use)</p>
+<p><strong>Immediate Fix (5 minutes):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Kill long-running queries</span>
+mysql&gt;<span class="w"> </span>SHOW<span class="w"> </span>PROCESSLIST<span class="p">;</span>
+mysql&gt;<span class="w"> </span>KILL<span class="w"> </span><span class="m">12345</span><span class="p">;</span><span class="w"> </span>KILL<span class="w"> </span><span class="m">12346</span><span class="p">;</span><span class="w"> </span>...<span class="w"> </span><span class="o">(</span><span class="nb">kill</span><span class="w"> </span><span class="m">20</span><span class="w"> </span>stuck<span class="w"> </span>queries<span class="o">)</span>
+
+<span class="c1"># Restart app servers (clear connection pool)</span>
+kubectl<span class="w"> </span>rollout<span class="w"> </span>restart<span class="w"> </span>deployment/payment-api
+</code></pre></div>
+
+<p><strong>Result:</strong><br />
+- Error rate dropped to 0% in 2 minutes<br />
+- Downtime: 7 minutes total (within 15-min SLA)</p>
+<p><strong>Permanent Fix (next day):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Increase connection pool size</span>
+<span class="x">DB_MAX_CONNECTIONS=200 (was 100)</span>
+
+<span class="x">// Add connection timeout</span>
+<span class="x">'options' =&gt; [</span>
+<span class="x">    PDO::ATTR_TIMEOUT =&gt; 5, // Kill slow queries after 5 seconds</span>
+<span class="x">]</span>
+</code></pre></div>
+
+<p><strong>Post-Incident:</strong><br />
+1. <strong>Update PagerDuty incident</strong> (root cause, resolution)<br />
+2. <strong>Write Confluence post-mortem</strong> (timeline, action items)<br />
+3. <strong>Create Jira ticket</strong> for permanent fix<br />
+4. <strong>Update runbook</strong> (add this to troubleshooting guide)</p>
+<p><strong>On-Call Statistics (2 years):</strong><br />
+- <strong>50+ P1/P2 incidents</strong> handled<br />
+- <strong>Average MTTR:</strong> 12 minutes (target: &lt; 15 min)<br />
+- <strong>SLA hit rate:</strong> 98% (missed SLA twice, both legitimate outages)<br />
+- <strong>Escalations:</strong> 2 (escalated to manager when needed DB admin access)</p>
+<p><strong>On-Call Best Practices:</strong></p>
+<ol>
+<li><strong>Always acknowledge within 1 minute</strong> (even if you don't know the fix yet)</li>
+<li><strong>Communicate early</strong> (post in Slack: 'Investigating, ETA 10 min')</li>
+<li><strong>Rollback first, investigate later</strong> (for recent deployments)</li>
+<li><strong>Don't panic</strong> (P1 doesn't mean the world is ending — stay calm, follow runbook)</li>
+<li><strong>Ask for help early</strong> (if you're stuck after 10 minutes, escalate)"</li>
+</ol>
+<hr />
+<h3 id="q70-how-do-you-use-datadog-to-identify-issues-after-php-upgrades"><strong>Q70: How do you use Datadog to identify issues after PHP upgrades?</strong></h3>
+<p><strong>Answer:</strong></p>
+<p>"After every PHP upgrade (we've done 5.6 → 7.4 → 8.0), I run a <strong>3-phase monitoring protocol</strong> to catch breaking changes:</p>
+<p><strong>Phase 1: Pre-Upgrade Baseline (1 day before)</strong></p>
+<p><strong>1. Capture Current Metrics</strong></p>
+<div class="codehilite"><pre><span></span><code>Datadog Dashboard: "PHP Production Health"
+- Error rate: 0.1% (baseline)
+- Response time (p99): 150ms
+- Memory usage: 512 MB avg
+- Top 10 slowest endpoints
+- Top 10 error endpoints
+</code></pre></div>
+
+<p><strong>2. Take Datadog Snapshots</strong><br />
+- Take screenshot of key metrics<br />
+- Export to CSV (for comparison later)</p>
+<hr />
+<p><strong>Phase 2: Post-Upgrade Monitoring (3 days after)</strong></p>
+<p><strong>Day 1 (Immediate):</strong></p>
+<p><strong>Monitor Datadog for:</strong><br />
+1. <strong>500 Internal Server Errors</strong> (new crashes?)<br />
+2. <strong>Deprecated warnings</strong> (PHP 8 removed functions)<br />
+3. <strong>Type errors</strong> (strict types enforcement)<br />
+4. <strong>Memory spikes</strong> (new memory leaks?)</p>
+<p><strong>How I Found Issues:</strong></p>
+<p><strong>Example 1: Negative Scenario Edge Case</strong></p>
+<p><strong>Datadog Alert:</strong> "500 error rate spiked to 2%"</p>
+<p><strong>Investigation:</strong></p>
+<div class="codehilite"><pre><span></span><code>Datadog APM → Error Tracking → Filter by "500"
+- Error: "Undefined array key 'discount'"
+- Stack trace: InvoiceController.php:125
+- Request: POST /api/invoices (amount: -100) ← NEGATIVE AMOUNT!
+</code></pre></div>
+
+<p><strong>Root Cause:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// OLD CODE (PHP 7.4 - worked)</span>
+<span class="x">$discount = $data['discount']; // Returns NULL if key missing (warning, not error)</span>
+
+<span class="x">// NEW BEHAVIOR (PHP 8.0 - crashes!)</span>
+<span class="x">$discount = $data['discount']; // Fatal error: Undefined array key</span>
+</code></pre></div>
+
+<p><strong>Fix:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Use null coalescing operator</span>
+<span class="x">$discount = $data['discount'] ?? 0;</span>
+
+<span class="x">// Or check if key exists</span>
+<span class="x">if (isset($data['discount'])) {</span>
+<span class="x">    $discount = $data['discount'];</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>Example 2: Type Coercion Change</strong></p>
+<p><strong>Datadog Error:</strong> "TypeError: array_sum(): Argument #1 must be of type array, null given"</p>
+<p><strong>Root Cause:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// PHP 7.4: array_sum(null) returns 0 (implicit null → empty array)</span>
+<span class="x">// PHP 8.0: array_sum(null) throws TypeError</span>
+
+<span class="x">$total = array_sum($invoices); // $invoices can be NULL</span>
+</code></pre></div>
+
+<p><strong>Fix:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">$total = array_sum($invoices ?? []);</span>
+</code></pre></div>
+
+<p><strong>Datadog Queries I Use:</strong></p>
+<p><strong>1. Find all 500 errors introduced post-upgrade:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nl">env</span><span class="p">:</span><span class="n">production</span><span class="w"> </span>
+<span class="nl">status</span><span class="p">:</span><span class="n">error</span><span class="w"> </span>
+<span class="nv">@http</span><span class="p">.</span><span class="nl">status_code</span><span class="p">:</span><span class="mi">500</span><span class="w"> </span>
+<span class="nv">@timestamp</span><span class="err">:</span><span class="o">[</span><span class="n">&lt;upgrade_date&gt; TO now</span><span class="o">]</span>
+</code></pre></div>
+
+<p><strong>2. Find deprecated function calls:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nl">env</span><span class="p">:</span><span class="n">production</span><span class="w"> </span>
+<span class="ss">"deprecated"</span><span class="w"> </span>
+<span class="nv">@timestamp</span><span class="err">:</span><span class="o">[</span><span class="n">&lt;upgrade_date&gt; TO now</span><span class="o">]</span>
+</code></pre></div>
+
+<p><strong>3. Find type errors:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nl">env</span><span class="p">:</span><span class="n">production</span><span class="w"> </span>
+<span class="ss">"TypeError"</span><span class="w"> </span><span class="ow">OR</span><span class="w"> </span><span class="ss">"Undefined array key"</span><span class="w"> </span><span class="ow">OR</span><span class="w"> </span><span class="ss">"Argument #"</span>
+<span class="nv">@timestamp</span><span class="err">:</span><span class="o">[</span><span class="n">&lt;upgrade_date&gt; TO now</span><span class="o">]</span>
+</code></pre></div>
+
+<p><strong>4. Compare error rate before/after:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="err">#</span><span class="w"> </span><span class="k">Before</span><span class="w"> </span><span class="n">upgrade</span>
+<span class="nl">env</span><span class="p">:</span><span class="n">production</span><span class="w"> </span><span class="nv">@timestamp</span><span class="err">:</span><span class="o">[</span><span class="n">2026-10-01 TO 2026-10-15</span><span class="o">]</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">stats</span><span class="w"> </span><span class="nf">count</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="nv">@error</span><span class="p">.</span><span class="n">kind</span>
+
+<span class="err">#</span><span class="w"> </span><span class="k">After</span><span class="w"> </span><span class="n">upgrade</span>
+<span class="nl">env</span><span class="p">:</span><span class="n">production</span><span class="w"> </span><span class="nv">@timestamp</span><span class="err">:</span><span class="o">[</span><span class="n">2026-10-16 TO 2026-10-30</span><span class="o">]</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">stats</span><span class="w"> </span><span class="nf">count</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="nv">@error</span><span class="p">.</span><span class="n">kind</span>
+</code></pre></div>
+
+<p><strong>Day 2-3 (Deeper Analysis):</strong></p>
+<p><strong>Check for:</strong><br />
+- <strong>Negative scenarios</strong> (edge cases: null, empty, negative numbers, special chars)<br />
+- <strong>Low-traffic endpoints</strong> (errors might not trigger high-volume alerts)<br />
+- <strong>Cron jobs</strong> (background jobs that run once/day)</p>
+<p><strong>How I Test Negative Scenarios:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Test with invalid inputs</span>
+curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>/api/invoices<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s1">'{"amount": -100}'</span><span class="w"> </span><span class="c1"># Negative amount</span>
+
+curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>/api/invoices<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s1">'{"amount": null}'</span><span class="w"> </span><span class="c1"># Null amount</span>
+
+curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>/api/invoices<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s1">'{"amount": "abc"}'</span><span class="w"> </span><span class="c1"># String instead of number</span>
+
+curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>/api/invoices<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s1">'{}'</span><span class="w"> </span><span class="c1"># Missing required field</span>
+</code></pre></div>
+
+<p><strong>Result:</strong><br />
+- <strong>20+ latent bugs found</strong> (existed before upgrade, exposed by stricter PHP 8)<br />
+- <strong>Error rate reduced:</strong> 2% → 0.3% (cleaned up technical debt)</p>
+<hr />
+<p><strong>Phase 3: Long-Term Monitoring (30 days)</strong></p>
+<p><strong>Weekly Check:</strong><br />
+- Review Datadog "Error Tracking" dashboard<br />
+- Look for new error patterns<br />
+- Check memory usage trends (memory leaks?)<br />
+- Monitor slow endpoints (performance regression?)</p>
+<p><strong>Success Metrics:</strong><br />
+- <strong>Zero customer-reported bugs</strong> related to PHP upgrade<br />
+- <strong>Error rate improved</strong> (not regressed)<br />
+- <strong>Performance maintained</strong> (p99 latency &lt; 200ms)</p>
+<p><strong>Datadog Dashboards I Maintain:</strong><br />
+1. <strong>PHP Production Health</strong> (error rate, response time, memory)<br />
+2. <strong>Error Tracking</strong> (500 errors, fatal errors, warnings)<br />
+3. <strong>Performance Monitoring</strong> (slowest endpoints, database queries)<br />
+4. <strong>Business Metrics</strong> (payment success rate, invoice generation time)"</p>
+<hr />
+<h3 id="q71-what-do-you-look-for-when-conducting-code-reviews-and-dml-reviews"><strong>Q71: What do you look for when conducting code reviews and DML reviews?</strong></h3>
+<p><strong>Answer:</strong></p>
+<p>"I've done <strong>100+ code reviews</strong> and <strong>50+ DML reviews</strong> over 2 years. Here's my checklist:</p>
+<hr />
+<p><strong>CODE REVIEW CHECKLIST</strong></p>
+<p><strong>1. Security (Most Important)</strong></p>
+<p><strong>SQL Injection:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// ❌ BAD (vulnerable to SQL injection)</span>
+<span class="x">$query = "SELECT * FROM users WHERE email = '" . $email . "'";</span>
+
+<span class="x">// ✅ GOOD (parameterized query)</span>
+<span class="x">$query = "SELECT * FROM users WHERE email = ?";</span>
+<span class="x">$stmt = $pdo-&gt;prepare($query);</span>
+<span class="x">$stmt-&gt;execute([$email]);</span>
+</code></pre></div>
+
+<p><strong>XSS (Cross-Site Scripting):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// ❌ BAD (renders raw HTML)</span>
+<span class="x">echo $user_input;</span>
+
+<span class="x">// ✅ GOOD (escape HTML)</span>
+<span class="x">echo htmlspecialchars($user_input, ENT_QUOTES, 'UTF-8');</span>
+</code></pre></div>
+
+<p><strong>Hardcoded Secrets:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// ❌ BAD</span>
+<span class="x">$apiKey = 'sk_live_abc123';</span>
+
+<span class="x">// ✅ GOOD</span>
+<span class="x">$apiKey = env('STRIPE_API_KEY');</span>
+</code></pre></div>
+
+<p><strong>PCI Compliance:</strong><br />
+- ❌ Never log credit card numbers, CVV, or full PAN<br />
+- ❌ Never store CVV in database<br />
+- ✅ Always use tokenization (Stripe, etc.)</p>
+<p><strong>2. Functionality</strong></p>
+<ul>
+<li><strong>Does it work?</strong> (run the code, test manually)</li>
+<li><strong>Does it meet acceptance criteria?</strong> (check Jira ticket)</li>
+<li><strong>Are edge cases handled?</strong> (null, empty, negative, max values)</li>
+</ul>
+<p><strong>3. Code Quality</strong></p>
+<p><strong>Avoid Duplication:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// ❌ BAD (duplicated logic)</span>
+<span class="x">if ($user-&gt;role == 'admin') { /* 10 lines */ }</span>
+<span class="x">if ($user-&gt;role == 'manager') { /* same 10 lines */ }</span>
+
+<span class="x">// ✅ GOOD (extract to method)</span>
+<span class="x">if (in_array($user-&gt;role, ['admin', 'manager'])) {</span>
+<span class="x">    $this-&gt;handleAdminAccess($user);</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>Meaningful Names:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// ❌ BAD</span>
+<span class="x">$d = 86400; // What is 'd'?</span>
+
+<span class="x">// ✅ GOOD</span>
+<span class="x">$secondsPerDay = 86400;</span>
+</code></pre></div>
+
+<p><strong>Short Functions:</strong><br />
+- Functions &gt; 50 lines → suggest breaking up<br />
+- Complexity &gt; 10 (cyclomatic) → refactor</p>
+<p><strong>4. Performance</strong></p>
+<p><strong>N+1 Queries:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// ❌ BAD (N+1 problem)</span>
+<span class="x">$users = User::all();</span>
+<span class="x">foreach ($users as $user) {</span>
+<span class="x">    echo $user-&gt;invoices-&gt;count(); // 1 query per user!</span>
+<span class="x">}</span>
+
+<span class="x">// ✅ GOOD (eager loading)</span>
+<span class="x">$users = User::with('invoices')-&gt;get();</span>
+<span class="x">foreach ($users as $user) {</span>
+<span class="x">    echo $user-&gt;invoices-&gt;count(); // 1 query total</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>Unnecessary Loops:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// ❌ BAD</span>
+<span class="x">foreach ($invoices as $invoice) {</span>
+<span class="x">    $total += $invoice-&gt;amount; // O(n)</span>
+<span class="x">}</span>
+
+<span class="x">// ✅ GOOD (use SQL)</span>
+<span class="x">$total = Invoice::sum('amount'); // Database does it faster</span>
+</code></pre></div>
+
+<p><strong>5. Testing</strong></p>
+<ul>
+<li><strong>Are tests included?</strong> (unit tests for business logic)</li>
+<li><strong>Are tests meaningful?</strong> (not just 100% coverage, but actually test behavior)</li>
+</ul>
+<hr />
+<p><strong>DML/DDL REVIEW CHECKLIST</strong></p>
+<p><strong>1. Safety Checks</strong></p>
+<p><strong>USE Statement:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- ✅ MUST start with USE</span>
+<span class="n">USE</span><span class="w"> </span><span class="n">billingclient1</span><span class="p">;</span>
+
+<span class="c1">-- Then the DML</span>
+<span class="k">UPDATE</span><span class="w"> </span><span class="n">fsiAccount</span><span class="w"> </span><span class="k">SET</span><span class="w"> </span><span class="n">BankAccount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'...'</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">CustomerId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">12345</span><span class="p">;</span>
+</code></pre></div>
+
+<p><strong>WHERE Clause:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- ❌ DANGEROUS (updates ALL rows!)</span>
+<span class="k">UPDATE</span><span class="w"> </span><span class="n">fsiAccount</span><span class="w"> </span><span class="k">SET</span><span class="w"> </span><span class="n">Active</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'N'</span><span class="p">;</span>
+
+<span class="c1">-- ✅ SAFE (updates specific rows)</span>
+<span class="k">UPDATE</span><span class="w"> </span><span class="n">fsiAccount</span><span class="w"> </span><span class="k">SET</span><span class="w"> </span><span class="n">Active</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'N'</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">CustomerId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">12345</span><span class="p">;</span>
+</code></pre></div>
+
+<p><strong>Affected Rows Count:</strong><br />
+- <strong>&lt; 1,000 rows:</strong> Auto-approve<br />
+- <strong>1,000 - 10,000 rows:</strong> Review carefully, test in staging first<br />
+- <strong>&gt; 10,000 rows:</strong> Requires DBA approval, batch processing</p>
+<p><strong>2. Rollback Script</strong></p>
+<p><strong>Every DML MUST have rollback:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Forward script</span>
+<span class="k">UPDATE</span><span class="w"> </span><span class="n">fsiAccount</span><span class="w"> </span>
+<span class="k">SET</span><span class="w"> </span><span class="n">BankAccount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'****9999'</span><span class="p">,</span><span class="w"> </span><span class="n">UpdateDate</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NOW</span><span class="p">()</span><span class="w"> </span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">CustomerId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">12345</span><span class="p">;</span>
+
+<span class="c1">-- Rollback script (saved as ROLLBACK.txt)</span>
+<span class="k">UPDATE</span><span class="w"> </span><span class="n">fsiAccount</span><span class="w"> </span>
+<span class="k">SET</span><span class="w"> </span><span class="n">BankAccount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'****1234'</span><span class="p">,</span><span class="w"> </span><span class="n">UpdateDate</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NOW</span><span class="p">()</span><span class="w"> </span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">CustomerId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">12345</span><span class="p">;</span>
+</code></pre></div>
+
+<p><strong>Check:</strong><br />
+- ✅ Rollback script exists?<br />
+- ✅ Rollback reverses EXACT changes? (not generic undo)</p>
+<p><strong>3. Data Validation</strong></p>
+<p><strong>Pre-Check Query:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Before running UPDATE, verify what will change</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="n">CustomerId</span><span class="p">,</span><span class="w"> </span><span class="n">BankAccount</span><span class="p">,</span><span class="w"> </span><span class="n">Active</span><span class="w"> </span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">fsiAccount</span><span class="w"> </span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">CustomerId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">12345</span><span class="p">;</span>
+<span class="c1">-- Expected: 1 row, BankAccount = '****1234'</span>
+</code></pre></div>
+
+<p><strong>Post-Check Query:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- After running UPDATE, verify what changed</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="n">CustomerId</span><span class="p">,</span><span class="w"> </span><span class="n">BankAccount</span><span class="p">,</span><span class="w"> </span><span class="n">Active</span><span class="p">,</span><span class="w"> </span><span class="n">UpdateDate</span><span class="w"> </span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">fsiAccount</span><span class="w"> </span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">CustomerId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">12345</span><span class="p">;</span>
+<span class="c1">-- Expected: 1 row, BankAccount = '****9999', UpdateDate = NOW()</span>
+</code></pre></div>
+
+<p><strong>4. DDL-Specific Checks</strong></p>
+<p><strong>ALTER TABLE on Large Tables:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- ❌ DANGEROUS (locks table for hours!)</span>
+<span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">invoices</span><span class="w"> </span><span class="k">ADD</span><span class="w"> </span><span class="k">COLUMN</span><span class="w"> </span><span class="n">pdf_url</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">255</span><span class="p">);</span>
+<span class="c1">-- (invoices has 100M rows → 2-hour lock)</span>
+
+<span class="c1">-- ✅ SAFE (use pt-online-schema-change)</span>
+<span class="n">pt</span><span class="o">-</span><span class="n">online</span><span class="o">-</span><span class="k">schema</span><span class="o">-</span><span class="n">change</span><span class="w"> </span><span class="c1">--alter "ADD COLUMN pdf_url VARCHAR(255)" \</span>
+<span class="w">    </span><span class="n">D</span><span class="o">=</span><span class="n">billingclient1</span><span class="p">,</span><span class="n">t</span><span class="o">=</span><span class="n">invoices</span><span class="w"> </span><span class="c1">--execute</span>
+</code></pre></div>
+
+<p><strong>Index Names:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- ❌ BAD (generic name)</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx1</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">invoices</span><span class="p">(</span><span class="n">customer_id</span><span class="p">);</span>
+
+<span class="c1">-- ✅ GOOD (descriptive name)</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_customer_id</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">invoices</span><span class="p">(</span><span class="n">customer_id</span><span class="p">);</span>
+</code></pre></div>
+
+<p><strong>5. Audit Logging</strong></p>
+<p><strong>UpdateUser Convention:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- ✅ ALWAYS set UpdateUser (for audit trail)</span>
+<span class="k">UPDATE</span><span class="w"> </span><span class="n">fsiAccount</span><span class="w"> </span>
+<span class="k">SET</span><span class="w"> </span><span class="n">BankAccount</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'****9999'</span><span class="p">,</span><span class="w"> </span>
+<span class="w">    </span><span class="n">UpdateUser</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'QRT15094'</span><span class="p">,</span><span class="w">  </span><span class="c1">-- Jira ticket number</span>
+<span class="w">    </span><span class="n">UpdateDate</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NOW</span><span class="p">()</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">CustomerId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">12345</span><span class="p">;</span>
+</code></pre></div>
+
+<hr />
+<p><strong>Review Statistics (2 years):</strong><br />
+- <strong>100+ code reviews</strong> completed<br />
+- <strong>50+ DML reviews</strong> completed<br />
+- <strong>15 critical security issues caught</strong> (SQL injection, XSS, hardcoded secrets)<br />
+- <strong>5 performance issues caught</strong> (N+1 queries, missing indexes)<br />
+- <strong>3 data corruption issues prevented</strong> (missing WHERE clause, wrong rollback)</p>
+<p><strong>Code Review Approval Time:</strong><br />
+- <strong>Simple changes (&lt; 50 lines):</strong> 10 minutes<br />
+- <strong>Medium changes (50-200 lines):</strong> 30 minutes<br />
+- <strong>Complex changes (200+ lines):</strong> 1-2 hours (request design doc first)</p>
+<p><strong>DML Review Approval Time:</strong><br />
+- <strong>&lt; 100 rows affected:</strong> 5 minutes<br />
+- <strong>100-1000 rows:</strong> 15 minutes<br />
+- <strong>1000+ rows:</strong> 30 minutes (test in staging first)"</p>
+<hr />
+<h3 id="q72-describe-your-experience-with-agilescrum-how-do-you-manage-jira-tickets"><strong>Q72: Describe your experience with Agile/Scrum. How do you manage Jira tickets?</strong></h3>
+<p><strong>Answer:</strong></p>
+<p>"I've worked in <strong>Agile/Scrum teams for 8+ years</strong>, actively participating in:</p>
+<hr />
+<p><strong>Daily Scrum (15 minutes, every morning)</strong></p>
+<p><strong>My Updates:</strong><br />
+1. <strong>Yesterday:</strong> 'Completed JIRA-1234 (payment API fix), deployed to staging'<br />
+2. <strong>Today:</strong> 'Working on JIRA-1235 (invoice PDF generation), expect to finish by EOD'<br />
+3. <strong>Blockers:</strong> 'Waiting on DevOps to provision new Redis cluster (JIRA-1200)'</p>
+<p><strong>What I Look For:</strong><br />
+- <strong>Are others blocked on me?</strong> (if yes, unblock them first)<br />
+- <strong>Can I help anyone?</strong> (pair programming, code review, advice)<br />
+- <strong>Are there dependencies?</strong> (do I need something from another team?)</p>
+<hr />
+<p><strong>Sprint Planning (2 hours, every 2 weeks)</strong></p>
+<p><strong>My Role:</strong><br />
+1. <strong>Estimate story points</strong> (Fibonacci: 1, 2, 3, 5, 8, 13)<br />
+   - <strong>1 point:</strong> Simple bug fix (&lt; 2 hours)<br />
+   - <strong>3 points:</strong> Small feature (&lt; 1 day)<br />
+   - <strong>5 points:</strong> Medium feature (2-3 days)<br />
+   - <strong>8 points:</strong> Large feature (1 week) → break down!<br />
+   - <strong>13+ points:</strong> Too big → split into smaller stories</p>
+<ol start="2">
+<li>
+<p><strong>Ask clarifying questions:</strong><br />
+   - 'What happens if the user enters a negative amount?'<br />
+   - 'Should this work for sub-users, or only primary users?'<br />
+   - 'What's the expected response if the external API times out?'</p>
+</li>
+<li>
+<p><strong>Identify dependencies:</strong><br />
+   - 'This needs a database migration first (JIRA-1100)'<br />
+   - 'This requires .NET team to deploy their API first (JIRA-1200)'</p>
+</li>
+</ol>
+<p><strong>Sprint Commitment:</strong><br />
+- Team velocity: <strong>40 points/sprint</strong> (based on last 3 sprints)<br />
+- I take: <strong>10-12 points</strong> (25-30% of team capacity, since I'm also on-call)</p>
+<hr />
+<p><strong>Kanban Board Management (Jira)</strong></p>
+<p><strong>My Board Columns:</strong><br />
+1. <strong>Backlog</strong> (not committed yet)<br />
+2. <strong>To Do</strong> (committed this sprint)<br />
+3. <strong>In Progress</strong> (actively working)<br />
+4. <strong>Code Review</strong> (waiting for review)<br />
+5. <strong>QA</strong> (testing in staging)<br />
+6. <strong>Done</strong> (deployed to production)</p>
+<p><strong>How I Manage Tickets:</strong></p>
+<p><strong>1. Prioritization:</strong><br />
+- <strong>P1 (Critical):</strong> Production down, data loss → work immediately<br />
+- <strong>P2 (High):</strong> Major bug, affects many users → work this sprint<br />
+- <strong>P3 (Medium):</strong> Minor bug, affects few users → work next sprint<br />
+- <strong>P4 (Low):</strong> Nice-to-have, cosmetic → backlog</p>
+<p><strong>2. Ticket Hygiene:</strong><br />
+- <strong>Daily:</strong> Move tickets across board (In Progress → Code Review → Done)<br />
+- <strong>Daily:</strong> Update ticket comments (progress updates, blockers)<br />
+- <strong>Weekly:</strong> Close old tickets (ask: 'Is this still needed?')<br />
+- <strong>Weekly:</strong> Refine backlog (break down large stories)</p>
+<p><strong>3. Ticket Template (I created for the team):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="gs">**Summary:**</span> [Brief title, &lt; 70 chars]
+
+<span class="gs">**Description:**</span>
+As a [user type], I want to [action], so that [benefit].
+
+<span class="gs">**Acceptance Criteria:**</span>
+<span class="k">- [ ]</span> User can do X
+<span class="k">- [ ]</span> System validates Y
+<span class="k">- [ ]</span> Error message shown for Z
+
+<span class="gs">**Technical Notes:**</span>
+<span class="k">-</span><span class="w"> </span>Files to change: PaymentController.php, Invoice.php
+<span class="k">-</span><span class="w"> </span>Database changes: ALTER TABLE invoices (see attached SQL)
+<span class="k">-</span><span class="w"> </span>API endpoints: POST /api/payments
+
+<span class="gs">**Testing:**</span>
+<span class="k">- [ ]</span> Unit tests added
+<span class="k">- [ ]</span> Manual testing in staging
+<span class="k">- [ ]</span> QA sign-off
+
+<span class="gs">**Definition of Done:**</span>
+<span class="k">- [ ]</span> Code reviewed and approved
+<span class="k">- [ ]</span> Tests passing
+<span class="k">- [ ]</span> Deployed to production
+<span class="k">- [ ]</span> Monitored in Datadog (no errors)
+</code></pre></div>
+
+<p><strong>4. Ticket Linking:</strong><br />
+- <strong>Blocks:</strong> JIRA-1234 blocks JIRA-1235 (can't start 1235 until 1234 is done)<br />
+- <strong>Related to:</strong> JIRA-1234 related to JIRA-1200 (similar work)<br />
+- <strong>Caused by:</strong> JIRA-1234 caused by JIRA-1100 (bug introduced by previous change)</p>
+<hr />
+<p><strong>Sprint Retrospective (1 hour, end of sprint)</strong></p>
+<p><strong>What I Share:</strong></p>
+<p><strong>What went well:</strong><br />
+- 'We deployed 5 features this sprint, all on time'<br />
+- 'Code reviews were fast (&lt; 1 day turnaround)'</p>
+<p><strong>What didn't go well:</strong><br />
+- 'We had 3 P1 incidents (more than usual)'<br />
+- 'DML reviews took too long (2-3 days) — we need a faster process'</p>
+<p><strong>Action items:</strong><br />
+- 'Let's create a DML review checklist (so reviews are faster)'<br />
+- 'Let's add more Datadog alerts (catch issues before they become P1)'</p>
+<hr />
+<p><strong>Jira Metrics I Track:</strong></p>
+<p><strong>Personal:</strong><br />
+- <strong>Sprint velocity:</strong> 10-12 points/sprint<br />
+- <strong>Cycle time:</strong> 3 days (average time from To Do → Done)<br />
+- <strong>Code review turnaround:</strong> &lt; 1 day</p>
+<p><strong>Team:</strong><br />
+- <strong>Sprint burndown:</strong> Are we on track to finish committed work?<br />
+- <strong>Bug rate:</strong> How many bugs are we introducing? (target: &lt; 10%)<br />
+- <strong>Velocity trend:</strong> Are we getting faster or slower over time?</p>
+<p><strong>Process Improvements I Led:</strong><br />
+1. <strong>Created ticket template</strong> (adoption: 90% of team uses it)<br />
+2. <strong>Introduced DML review checklist</strong> (reduced review time by 40%)<br />
+3. <strong>Automated story point calculation</strong> (Jira plugin for Fibonacci estimates)<br />
+4. <strong>Improved sprint velocity by 25%</strong> (better task breakdown, clearer acceptance criteria)"</p>
+<hr />
+<p><strong>SAVE THIS FILE!</strong></p>
+<p>This comprehensive guide covers:<br />
+✅ All 8 resume projects in deep technical detail<br />
+✅ System design decisions<br />
+✅ Performance optimization<br />
+✅ Security &amp; compliance (PCI-DSS)<br />
+✅ Database optimization (100M+ rows)<br />
+✅ Leadership &amp; mentoring<br />
+✅ Production incident response<br />
+✅ Real code examples<br />
+✅ Trade-off analysis<br />
+✅ 12+ years experience level depth</p>
+<p><strong>Use for:</strong><br />
+- Technical interview prep<br />
+- System design discussions<br />
+- Architecture review meetings<br />
+- Onboarding documentation</p>
+<hr />
+<p><strong>Location:</strong><br />
+<code>C:\Users\kasekar\GH\interview-prep\Technical_Interview_QA_Resume_Projects_Part2.md</code></p>
+<p><strong>Companion files:</strong><br />
+- Part 1: Technical_Interview_QA_Resume_Projects.md<br />
+- Resume: Karthikeyan_Sekar_Resume_Beautiful.html<br />
+- LinkedIn Guide: LinkedIn_Profile_Update_Guide.md</p>
+        </div>
+    </div>
+
+    <script>
+        // Progress Tracker JavaScript
+        const STORAGE_KEY = 'course_progress_technical_interview_qa_resume_projects_part2';
+
+        // Extract all H2 and H3 headings from content
+        function extractSections() {
+            const content = document.querySelector('.content');
+            const headings = content.querySelectorAll('h2, h3');
+            const sections = [];
+
+            headings.forEach((heading, index) => {
+                const level = heading.tagName === 'H2' ? 2 : 3;
+                const text = heading.textContent.trim();
+                const id = `section-${index}`;
+
+                // Add ID to heading for linking
+                heading.id = id;
+
+                sections.push({
+                    id: id,
+                    text: text,
+                    level: level
+                });
+            });
+
+            return sections;
+        }
+
+        // Load saved progress from localStorage
+        function loadProgress() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            return saved ? JSON.parse(saved) : {};
+        }
+
+        // Save progress to localStorage
+        function saveProgress(progress) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+        }
+
+        // Calculate progress percentage
+        function calculateProgress() {
+            const checkboxes = document.querySelectorAll('.progress-checkbox');
+            const total = checkboxes.length;
+            if (total === 0) return 0;
+
+            const completed = Array.from(checkboxes).filter(cb => cb.checked).length;
+            return Math.round((completed / total) * 100);
+        }
+
+        // Update progress display
+        function updateProgressDisplay() {
+            const percentage = calculateProgress();
+            document.getElementById('progress-pct').textContent = percentage + '%';
+            document.getElementById('progress-bar').style.width = percentage + '%';
+
+            // Update completed class on items
+            document.querySelectorAll('.progress-item').forEach(item => {
+                const checkbox = item.querySelector('.progress-checkbox');
+                if (checkbox.checked) {
+                    item.classList.add('completed');
+                } else {
+                    item.classList.remove('completed');
+                }
+            });
+        }
+
+        // Toggle checkbox
+        function toggleCheckbox(sectionId) {
+            const checkbox = document.getElementById('cb-' + sectionId);
+            const progress = loadProgress();
+
+            progress[sectionId] = checkbox.checked;
+            saveProgress(progress);
+            updateProgressDisplay();
+        }
+
+        // Reset all progress
+        function resetProgress() {
+            if (confirm('Reset all progress for this page?')) {
+                localStorage.removeItem(STORAGE_KEY);
+                document.querySelectorAll('.progress-checkbox').forEach(cb => {
+                    cb.checked = false;
+                });
+                updateProgressDisplay();
+            }
+        }
+
+        // Toggle progress list visibility
+        function toggleProgressList() {
+            const list = document.getElementById('progress-items');
+            const btn = document.querySelector('.toggle-progress');
+
+            if (list.classList.contains('collapsed')) {
+                list.classList.remove('collapsed');
+                btn.textContent = '▼ Hide';
+            } else {
+                list.classList.add('collapsed');
+                btn.textContent = '▶ Show';
+            }
+        }
+
+        // Initialize progress tracker
+        function initProgressTracker() {
+            const sections = extractSections();
+            const progress = loadProgress();
+            const container = document.getElementById('progress-items');
+
+            if (sections.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No sections found</p>';
+                return;
+            }
+
+            sections.forEach(section => {
+                const item = document.createElement('div');
+                item.className = 'progress-item';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'progress-checkbox';
+                checkbox.id = 'cb-' + section.id;
+                checkbox.checked = progress[section.id] || false;
+                checkbox.onchange = () => toggleCheckbox(section.id);
+
+                const label = document.createElement('label');
+                label.className = 'progress-label';
+                label.htmlFor = 'cb-' + section.id;
+                label.textContent = section.text;
+                label.style.paddingLeft = section.level === 3 ? '20px' : '0';
+                label.onclick = () => {
+                    document.getElementById(section.id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+                };
+
+                item.appendChild(checkbox);
+                item.appendChild(label);
+                container.appendChild(item);
+            });
+
+            updateProgressDisplay();
+        }
+
+        // Run on page load
+        document.addEventListener('DOMContentLoaded', initProgressTracker);
+    </script>
+</body>
+</html>

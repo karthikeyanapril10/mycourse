@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReactJS Advanced Interview Questions</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.8; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 { color: #667eea; font-size: 2.5em; margin: 30px 0 20px 0; border-bottom: 3px solid #667eea; padding-bottom: 15px; }
+        h2 { color: #764ba2; font-size: 2em; margin: 40px 0 20px 0; padding-left: 15px; border-left: 5px solid #764ba2; }
+        h3 { color: #667eea; font-size: 1.5em; margin: 30px 0 15px 0; }
+        h4 { color: #555; font-size: 1.2em; margin: 20px 0 10px 0; }
+        p { margin-bottom: 15px; color: #333; }
+        code { 
+            background: #f4f4f4; 
+            padding: 2px 8px; 
+            border-radius: 4px; 
+            font-family: 'Courier New', monospace;
+            color: #c7254e;
+            font-size: 0.9em;
+        }
+        pre { 
+            background: #2d2d2d; 
+            color: #f8f8f2; 
+            padding: 20px; 
+            border-radius: 8px; 
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        pre code { 
+            background: none; 
+            color: inherit; 
+            padding: 0;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+        ul, ol { margin: 15px 0 15px 30px; }
+        li { margin-bottom: 8px; }
+        strong { color: #667eea; font-weight: 600; }
+        a { color: #667eea; text-decoration: none; font-weight: 500; }
+        a:hover { text-decoration: underline; }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .back-link:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        blockquote {
+            border-left: 4px solid #667eea;
+            padding: 15px 20px;
+            margin: 20px 0;
+            background: #f9f9f9;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../navigation.html" class="back-link">← Back to Navigation</a>
+        <h1>ReactJS Advanced Interview Questions</h1>
+
+<p>> <strong>80+ Advanced ReactJS Questions for Senior/Staff Engineer Roles</strong></p>
+
+<p>---</p>
+
+<h2>Table of Contents</h2>
+
+<p>1. <a href="#react-18-features">React 18+ Features</a></p>
+<p>2. <a href="#custom-hooks">Custom Hooks Patterns</a></p>
+<p>3. <a href="#performance-optimization">Performance Optimization</a></p>
+<p>4. <a href="#context-vs-redux">Context API vs Redux</a></p>
+<p>5. <a href="#server-components">Server Components (Next.js 13+)</a></p>
+<p>6. <a href="#state-management">State Management Patterns</a></p>
+<p>7. <a href="#testing">Testing (React Testing Library)</a></p>
+<p>8. <a href="#typescript">TypeScript with React</a></p>
+<p>9. <a href="#real-world">Real-World Scenarios</a></p>
+<p>10. <a href="#architecture">Architecture & Design</a></p>
+
+<p>---</p>
+
+<h1>React 18+ Features</h1>
+
+<h2>Q1: What's new in React 18? Explain Concurrent Rendering.</h2>
+
+<strong>Answer:</strong>
+
+<strong>React 18 Key Features:</strong>
+
+<p>1. <strong>Concurrent Rendering</strong> (default for <code>createRoot</code>)</p>
+<p>2. <strong>Automatic Batching</strong> (all state updates batched)</p>
+<p>3. <strong>Transitions</strong> (mark updates as non-urgent)</p>
+<p>4. <strong>Suspense for SSR</strong></p>
+
+<strong>Concurrent Rendering:</strong>
+
+<p>Before React 18, rendering was <strong>blocking</strong> — once started, React couldn't interrupt until done. With concurrent rendering, React can:</p>
+<p>- Pause/resume rendering</p>
+<p>- Prioritize urgent updates (user input) over non-urgent (network data)</p>
+<p>- Render multiple versions of UI simultaneously</p>
+
+<strong>Example:</strong>
+
+<p>``<code>jsx</p>
+<p>// React 17 (blocking)</p>
+<p>function App() {</p>
+<p>  const [input, setInput] = useState('');</p>
+<p>  const [results, setResults] = useState([]);</p>
+
+<p>  const handleChange = (e) => {</p>
+<p>    setInput(e.target.value);</p>
+<p>    setResults(expensiveFilter(allData, e.target.value));  // Blocks UI</p>
+<p>  };</p>
+
+<p>  return <input value={input} onChange={handleChange} />;</p>
+<p>}</p>
+
+<p>// React 18 (concurrent)</p>
+<p>import { startTransition } from 'react';</p>
+
+<p>function App() {</p>
+<p>  const [input, setInput] = useState('');</p>
+<p>  const [results, setResults] = useState([]);</p>
+
+<p>  const handleChange = (e) => {</p>
+<p>    setInput(e.target.value);  // High priority (user input)</p>
+<p>    </p>
+<p>    startTransition(() => {</p>
+<p>      setResults(expensiveFilter(allData, e.target.value));  // Low priority</p>
+<p>    });</p>
+<p>    // User can keep typing while filter runs in background</p>
+<p>  };</p>
+
+<p>  return <input value={input} onChange={handleChange} />;</p>
+<p>}</p>
+</code>`<code>
+
+<strong>Billtrust Example:</strong>
+<p>"Used Transitions in invoice search: user types → input updates immediately (high priority), invoice list filters in background (low priority). Before: typing felt laggy with 10k invoices. After: smooth input, results update when ready."</p>
+
+<p>---</p>
+
+<h2>Q2: Explain </code>useTransition<code> vs </code>useDeferredValue<code>. When to use each?</h2>
+
+<strong>Answer:</strong>
+
+<p>Both allow non-urgent updates during concurrent rendering, but differ in control.</p>
+
+<strong></code>useTransition<code></strong>: You control WHEN to defer
+</code>`<code>jsx
+<p>import { useTransition, useState } from 'react';</p>
+
+<p>function SearchPage() {</p>
+<p>  const [input, setInput] = useState('');</p>
+<p>  const [results, setResults] = useState([]);</p>
+<p>  const [isPending, startTransition] = useTransition();</p>
+
+<p>  const handleChange = (e) => {</p>
+<p>    const value = e.target.value;</p>
+<p>    setInput(value);  // High priority</p>
+<p>    </p>
+<p>    startTransition(() => {</p>
+<p>      // This state update is low priority</p>
+<p>      setResults(expensiveSearch(value));</p>
+<p>    });</p>
+<p>  };</p>
+
+<p>  return (</p>
+<p>    <div></p>
+<p>      <input value={input} onChange={handleChange} /></p>
+<p>      {isPending && <Spinner />}</p>
+<p>      <Results data={results} /></p>
+<p>    </div></p>
+<p>  );</p>
+<p>}</p>
+</code>`<code>
+
+<strong></code>useDeferredValue<code></strong>: React controls when to defer
+</code>`<code>jsx
+<p>import { useDeferredValue, useState, useMemo } from 'react';</p>
+
+<p>function SearchPage() {</p>
+<p>  const [input, setInput] = useState('');</p>
+<p>  const deferredInput = useDeferredValue(input);  // React defers this</p>
+
+<p>  const results = useMemo(() => {</p>
+<p>    return expensiveSearch(deferredInput);</p>
+<p>  }, [deferredInput]);</p>
+
+<p>  return (</p>
+<p>    <div></p>
+<p>      <input </p>
+<p>        value={input} </p>
+<p>        onChange={(e) => setInput(e.target.value)} </p>
+<p>      /></p>
+<p>      <Results data={results} /></p>
+<p>    </div></p>
+<p>  );</p>
+<p>}</p>
+</code>`<code>
+
+<strong>When to use:</strong>
+<p>- <strong></code>useTransition<code></strong>: You want explicit control + loading state</p>
+<p>- <strong></code>useDeferredValue<code></strong>: You want to defer a VALUE (simpler, less control)</p>
+
+<p>---</p>
+
+<h2>Q3: What is Suspense in React 18? How does it work for data fetching?</h2>
+
+<strong>Answer:</strong>
+
+<strong>Suspense</strong> lets components "wait" for something (data, code splitting) before rendering.
+
+<strong>Code Splitting:</strong>
+</code>`<code>jsx
+<p>import { lazy, Suspense } from 'react';</p>
+
+<p>const HeavyComponent = lazy(() => import('./HeavyComponent'));</p>
+
+<p>function App() {</p>
+<p>  return (</p>
+<p>    <Suspense fallback={<Spinner />}></p>
+<p>      <HeavyComponent /></p>
+<p>    </Suspense></p>
+<p>  );</p>
+<p>}</p>
+</code>`<code>
+
+<strong>Data Fetching (React 18 + frameworks like Next.js):</strong>
+</code>`<code>jsx
+<p>// Server Component (Next.js 13+)</p>
+<p>async function InvoiceList() {</p>
+<p>  const invoices = await fetchInvoices();  // Async/await in component!</p>
+<p>  </p>
+<p>  return (</p>
+<p>    <ul></p>
+<p>      {invoices.map(inv => <li key={inv.id}>{inv.number}</li>)}</p>
+<p>    </ul></p>
+<p>  );</p>
+<p>}</p>
+
+<p>// In parent</p>
+<p>function Dashboard() {</p>
+<p>  return (</p>
+<p>    <Suspense fallback={<Spinner />}></p>
+<p>      <InvoiceList /></p>
+<p>    </Suspense></p>
+<p>  );</p>
+<p>}</p>
+</code>`<code>
+
+<strong>How it works:</strong>
+<p>1. Component starts rendering</p>
+<p>2. Throws a Promise (special React convention)</p>
+<p>3. React catches Promise, shows fallback</p>
+<p>4. When Promise resolves, React retries rendering</p>
+
+<strong>Billtrust Example:</strong>
+<p>"Used Suspense for lazy-loading invoice PDF viewer (5 MB component). Page loads fast, PDF viewer only loads when user clicks 'View PDF'."</p>
+
+<p>---</p>
+
+<h1>Custom Hooks Patterns</h1>
+
+<h2>Q4: What are Custom Hooks? Give 3 real-world examples.</h2>
+
+<strong>Answer:</strong>
+
+<p>Custom Hooks = <strong>reusable stateful logic</strong> (not UI).</p>
+
+<strong>Example 1: API Fetching</strong>
+</code>`<code>jsx
+<p>function useFetch(url) {</p>
+<p>  const [data, setData] = useState(null);</p>
+<p>  const [loading, setLoading] = useState(true);</p>
+<p>  const [error, setError] = useState(null);</p>
+
+<p>  useEffect(() => {</p>
+<p>    setLoading(true);</p>
+<p>    fetch(url)</p>
+<p>      .then(res => res.json())</p>
+<p>      .then(setData)</p>
+<p>      .catch(setError)</p>
+<p>      .finally(() => setLoading(false));</p>
+<p>  }, [url]);</p>
+
+<p>  return { data, loading, error };</p>
+<p>}</p>
+
+<p>// Usage</p>
+<p>function InvoiceList() {</p>
+<p>  const { data, loading, error } = useFetch('/api/invoices');</p>
+
+<p>  if (loading) return <Spinner />;</p>
+<p>  if (error) return <Error message={error.message} />;</p>
+<p>  return <ul>{data.map(inv => <li key={inv.id}>{inv.number}</li>)}</ul>;</p>
+<p>}</p>
+</code>`<code>
+
+<strong>Example 2: Local Storage Sync</strong>
+</code>`<code>jsx
+<p>function useLocalStorage(key, initialValue) {</p>
+<p>  const [value, setValue] = useState(() => {</p>
+<p>    const saved = localStorage.getItem(key);</p>
+<p>    return saved ? JSON.parse(saved) : initialValue;</p>
+<p>  });</p>
+
+<p>  useEffect(() => {</p>
+<p>    localStorage.setItem(key, JSON.stringify(value));</p>
+<p>  }, [key, value]);</p>
+
+<p>  return [value, setValue];</p>
+<p>}</p>
+
+<p>// Usage</p>
+<p>function Settings() {</p>
+<p>  const [theme, setTheme] = useLocalStorage('theme', 'light');</p>
+<p>  </p>
+<p>  return (</p>
+<p>    <select value={theme} onChange={(e) => setTheme(e.target.value)}></p>
+<p>      <option value="light">Light</option></p>
+<p>      <option value="dark">Dark</option></p>
+<p>    </select></p>
+<p>  );</p>
+<p>}</p>
+</code>`<code>
+
+<strong>Example 3: Debounced Search</strong>
+</code>`<code>jsx
+<p>function useDebounce(value, delay) {</p>
+<p>  const [debounced, setDebounced] = useState(value);</p>
+
+<p>  useEffect(() => {</p>
+<p>    const timer = setTimeout(() => setDebounced(value), delay);</p>
+<p>    return () => clearTimeout(timer);</p>
+<p>  }, [value, delay]);</p>
+
+<p>  return debounced;</p>
+<p>}</p>
+
+<p>// Usage</p>
+<p>function SearchPage() {</p>
+<p>  const [query, setQuery] = useState('');</p>
+<p>  const debouncedQuery = useDebounce(query, 500);  // Wait 500ms</p>
+
+<p>  useEffect(() => {</p>
+<p>    if (debouncedQuery) {</p>
+<p>      fetchResults(debouncedQuery);  // Only called after typing stops</p>
+<p>    }</p>
+<p>  }, [debouncedQuery]);</p>
+
+<p>  return <input value={query} onChange={(e) => setQuery(e.target.value)} />;</p>
+<p>}</p>
+</code>`<code>
+
+<strong>Billtrust Example:</strong>
+<p>"Custom </code>useInvoiceForm<code> hook for invoice creation forms — shared validation, submission, error handling across 3 invoice types (standard, recurring, credit memo)."</p>
+
+<p>---</p>
+
+<h1>Performance Optimization</h1>
+
+<h2>Q5: Explain </code>React.memo<code>, </code>useMemo<code>, and </code>useCallback<code>. When to use each?</h2>
+
+<strong>Answer:</strong>
+
+<strong>1. React.memo (memoize component)</strong>
+</code>`<code>jsx
+<p>// BAD: Child re-renders every time Parent renders</p>
+<p>function Child({ name }) {</p>
+<p>  console.log('Child rendered');</p>
+<p>  return <div>{name}</div>;</p>
+<p>}</p>
+
+<p>function Parent() {</p>
+<p>  const [count, setCount] = useState(0);</p>
+<p>  return (</p>
+<p>    <div></p>
+<p>      <button onClick={() => setCount(count + 1)}>Count: {count}</button></p>
+<p>      <Child name="John" />  {/* Re-renders even though name unchanged */}</p>
+<p>    </div></p>
+<p>  );</p>
+<p>}</p>
+
+<p>// GOOD: Child only re-renders if name changes</p>
+<p>const Child = React.memo(function Child({ name }) {</p>
+<p>  console.log('Child rendered');</p>
+<p>  return <div>{name}</div>;</p>
+<p>});</p>
+</code>`<code>
+
+<strong>2. useMemo (memoize expensive calculation)</strong>
+</code>`<code>jsx
+<p>// BAD: Expensive calculation on every render</p>
+<p>function InvoiceList({ invoices }) {</p>
+<p>  const total = invoices.reduce((sum, inv) => sum + inv.amount, 0);</p>
+<p>  return <div>Total: {total}</div>;</p>
+<p>}</p>
+
+<p>// GOOD: Only recalculate when invoices change</p>
+<p>function InvoiceList({ invoices }) {</p>
+<p>  const total = useMemo(() => {</p>
+<p>    return invoices.reduce((sum, inv) => sum + inv.amount, 0);</p>
+<p>  }, [invoices]);</p>
+<p>  </p>
+<p>  return <div>Total: {total}</div>;</p>
+<p>}</p>
+</code>`<code>
+
+<strong>3. useCallback (memoize function)</strong>
+</code>`<code>jsx
+<p>// BAD: Child re-renders because onClick is new function every time</p>
+<p>function Parent() {</p>
+<p>  const [count, setCount] = useState(0);</p>
+<p>  </p>
+<p>  const handleClick = () => {</p>
+<p>    console.log('Clicked');</p>
+<p>  };</p>
+<p>  </p>
+<p>  return <Child onClick={handleClick} />;  // New function every render</p>
+<p>}</p>
+
+<p>// GOOD: Same function reference</p>
+<p>function Parent() {</p>
+<p>  const [count, setCount] = useState(0);</p>
+<p>  </p>
+<p>  const handleClick = useCallback(() => {</p>
+<p>    console.log('Clicked');</p>
+<p>  }, []);  // Function never changes</p>
+<p>  </p>
+<p>  return <Child onClick={handleClick} />;</p>
+<p>}</p>
+</code>`<code>
+
+<strong>When to use:</strong>
+<p>- <strong>React.memo</strong>: Expensive child components that render often</p>
+<p>- <strong>useMemo</strong>: Expensive calculations (sorting, filtering 1000+ items)</p>
+<p>- <strong>useCallback</strong>: Passing callbacks to memoized children</p>
+
+<strong>Billtrust Example:</strong>
+<p>"Invoice list (10k invoices) was re-sorting on every parent render. Added </code>useMemo<code> → sort only when invoices change. Rendering dropped from 2 seconds to instant."</p>
+
+<p>---</p>
+
+<h2>Q6: What causes unnecessary re-renders in React? How do you debug them?</h2>
+
+<strong>Answer:</strong>
+
+<strong>Causes:</strong>
+<p>1. Parent re-renders → all children re-render</p>
+<p>2. New object/array reference in state</p>
+<p>3. Inline functions in JSX</p>
+<p>4. Context value changes</p>
+
+<strong>Debugging:</strong>
+
+<strong>1. React DevTools Profiler:</strong>
+</code>`<code>jsx
+<p>// 1. Open React DevTools → Profiler tab</p>
+<p>// 2. Click "Record"</p>
+<p>// 3. Interact with app</p>
+<p>// 4. Stop recording → see which components re-rendered + why</p>
+</code>`<code>
+
+<strong>2. Use </code>why-did-you-render<code> library:</strong>
+</code>`<code>jsx
+<p>import whyDidYouRender from '@welldone-software/why-did-you-render';</p>
+
+<p>whyDidYouRender(React, {</p>
+<p>  trackAllPureComponents: true,</p>
+<p>});</p>
+
+<p>// Console logs WHY each component re-rendered</p>
+</code>`<code>
+
+<strong>3. Manual logging:</strong>
+</code>`<code>jsx
+<p>function MyComponent({ prop1, prop2 }) {</p>
+<p>  console.log('MyComponent rendered', { prop1, prop2 });</p>
+<p>  return <div>...</div>;</p>
+<p>}</p>
+</code>`<code>
+
+<strong>Common Fix:</strong>
+</code>`<code>jsx
+<p>// BAD: New array every render</p>
+<Child items={[1, 2, 3]} />
+
+<p>// GOOD: Stable reference</p>
+<p>const items = [1, 2, 3];</p>
+<Child items={items} />
+
+<p>// BAD: New function every render</p>
+<Child onClick={() => handleClick()} />
+
+<p>// GOOD: Stable function</p>
+<p>const onClick = useCallback(handleClick, []);</p>
+<Child onClick={onClick} />
+</code>`<code>
+
+<strong>Billtrust Example:</strong>
+<p>"Invoice dashboard re-rendered 10+ times on every keystroke. Used Profiler → found parent passing new </code>{...}<code> object to child every render. Fixed with </code>useMemo<code> → 1 render per keystroke."</p>
+
+<p>---</p>
+
+<h1>Context API vs Redux</h1>
+
+<h2>Q7: When would you use Context API vs Redux? Give pros/cons of each.</h2>
+
+<strong>Answer:</strong>
+
+<strong>Context API:</strong>
+
+<strong>When to use:</strong>
+<p>- Simple global state (theme, auth, language)</p>
+<p>- Small to medium apps (<10 components)</p>
+<p>- Infrequent updates</p>
+
+<strong>Pros:</strong>
+<p>- Built into React (no library)</p>
+<p>- Simple setup</p>
+<p>- Less boilerplate</p>
+
+<strong>Cons:</strong>
+<p>- Performance issues with frequent updates</p>
+<p>- No middleware (logging, caching)</p>
+<p>- No DevTools</p>
+
+<strong>Example:</strong>
+</code>`<code>jsx
+<p>const AuthContext = createContext();</p>
+
+<p>function AuthProvider({ children }) {</p>
+<p>  const [user, setUser] = useState(null);</p>
+
+<p>  const login = (username, password) => {</p>
+<p>    // API call</p>
+<p>    setUser({ username });</p>
+<p>  };</p>
+
+<p>  return (</p>
+<p>    <AuthContext.Provider value={{ user, login }}></p>
+<p>      {children}</p>
+<p>    </AuthContext.Provider></p>
+<p>  );</p>
+<p>}</p>
+
+<p>// Usage</p>
+<p>function Profile() {</p>
+<p>  const { user, login } = useContext(AuthContext);</p>
+<p>  return <div>{user?.username}</div>;</p>
+<p>}</p>
+</code>`<code>
+
+<strong>Redux:</strong>
+
+<strong>When to use:</strong>
+<p>- Complex state logic</p>
+<p>- Large apps (10+ components sharing state)</p>
+<p>- Frequent updates</p>
+<p>- Need middleware (API calls, logging)</p>
+<p>- Need time-travel debugging</p>
+
+<strong>Pros:</strong>
+<p>- Centralized state</p>
+<p>- Middleware support</p>
+<p>- Redux DevTools (time-travel debugging)</p>
+<p>- Predictable state updates</p>
+
+<strong>Cons:</strong>
+<p>- More boilerplate</p>
+<p>- Learning curve</p>
+<p>- Extra library</p>
+
+<strong>Example:</strong>
+</code>`<code>jsx
+<p>// Store</p>
+<p>const store = configureStore({</p>
+<p>  reducer: {</p>
+<p>    invoices: invoicesReducer,</p>
+<p>    auth: authReducer,</p>
+<p>  },</p>
+<p>});</p>
+
+<p>// Slice</p>
+<p>const invoicesSlice = createSlice({</p>
+<p>  name: 'invoices',</p>
+<p>  initialState: { list: [], loading: false },</p>
+<p>  reducers: {</p>
+<p>    setInvoices: (state, action) => {</p>
+<p>      state.list = action.payload;</p>
+<p>    },</p>
+<p>  },</p>
+<p>});</p>
+
+<p>// Component</p>
+<p>function InvoiceList() {</p>
+<p>  const dispatch = useDispatch();</p>
+<p>  const invoices = useSelector(state => state.invoices.list);</p>
+
+<p>  useEffect(() => {</p>
+<p>    dispatch(fetchInvoices());</p>
+<p>  }, []);</p>
+
+<p>  return <ul>{invoices.map(inv => <li key={inv.id}>{inv.number}</li>)}</ul>;</p>
+<p>}</p>
+</code>`<code>
+
+<strong>Billtrust Decision:</strong>
+<p>"Use Context for theme + auth (infrequent updates). Use Redux for invoice state (10+ components, frequent updates, need middleware for API calls)."</p>
+
+<p>---</p>
+
+<h1>Server Components (Next.js 13+)</h1>
+
+<h2>Q8: What are React Server Components? How do they differ from Client Components?</h2>
+
+<strong>Answer:</strong>
+
+<strong>Server Components</strong> (React 18 + Next.js 13+):
+<p>- Render on SERVER only</p>
+<p>- NO client-side JavaScript</p>
+<p>- Can access database/filesystem directly</p>
+<p>- Cannot use hooks (</code>useState<code>, </code>useEffect<code>)</p>
+<p>- Cannot use browser APIs</p>
+
+<strong>Client Components</strong>:
+<p>- Render on SERVER (SSR) + CLIENT (hydration)</p>
+<p>- Interactive (hooks, event handlers)</p>
+<p>- Sent to browser as JavaScript</p>
+
+<strong>Example:</strong>
+
+</code>`<code>jsx
+<p>// app/invoices/page.tsx (Server Component)</p>
+<p>async function InvoicePage() {</p>
+<p>  // Direct database access on server!</p>
+<p>  const invoices = await db.invoice.findMany();</p>
+
+<p>  return (</p>
+<p>    <div></p>
+<p>      <h1>Invoices</h1></p>
+<p>      {invoices.map(inv => (</p>
+<p>        <InvoiceCard key={inv.id} invoice={inv} /></p>
+<p>      ))}</p>
+<p>    </div></p>
+<p>  );</p>
+<p>}</p>
+
+<p>// components/InvoiceCard.tsx (Server Component)</p>
+<p>function InvoiceCard({ invoice }) {</p>
+<p>  return <div>{invoice.number}</div>;</p>
+<p>}</p>
+
+<p>// components/SearchBar.tsx (Client Component)</p>
+<p>'use client';  // Mark as client component</p>
+
+<p>import { useState } from 'react';</p>
+
+<p>function SearchBar() {</p>
+<p>  const [query, setQuery] = useState('');</p>
+
+<p>  return (</p>
+<p>    <input </p>
+<p>      value={query} </p>
+<p>      onChange={(e) => setQuery(e.target.value)} </p>
+<p>    /></p>
+<p>  );</p>
+<p>}</p>
+</code>`<code>
+
+<strong>When to use Server Components:</strong>
+<p>- Fetching data</p>
+<p>- Accessing backend resources</p>
+<p>- Sensitive info (API keys)</p>
+<p>- Large dependencies (Markdown parser)</p>
+
+<strong>When to use Client Components:</strong>
+<p>- Interactivity (forms, buttons)</p>
+<p>- Browser APIs (localStorage, geolocation)</p>
+<p>- Hooks (</code>useState<code>, </code>useEffect<code>)</p>
+
+<strong>Billtrust Example:</strong>
+<p>"Invoice list = Server Component (fetches from DB, no JavaScript sent to browser). Search bar = Client Component (interactive). Page loads 50% faster (less JavaScript)."</p>
+
+<p>---</p>
+
+<h1>State Management Patterns</h1>
+
+<h2>Q9: Explain the </code>useReducer<code> pattern. When is it better than </code>useState<code>?</h2>
+
+<strong>Answer:</strong>
+
+<strong></code>useReducer<code></strong>: For complex state logic with multiple sub-values or when next state depends on previous.
+
+<strong>When to use:</strong>
+<p>- State has multiple fields that change together</p>
+<p>- Next state depends on previous state</p>
+<p>- State transitions are complex</p>
+
+<strong>Example:</strong>
+
+</code>`<code>jsx
+<p>// BAD: Multiple useState (hard to keep in sync)</p>
+<p>function ShoppingCart() {</p>
+<p>  const [items, setItems] = useState([]);</p>
+<p>  const [total, setTotal] = useState(0);</p>
+<p>  const [discount, setDiscount] = useState(0);</p>
+
+<p>  const addItem = (item) => {</p>
+<p>    setItems([...items, item]);</p>
+<p>    setTotal(total + item.price);  // Easy to forget to update</p>
+<p>  };</p>
+<p>}</p>
+
+<p>// GOOD: useReducer (atomic updates)</p>
+<p>const initialState = {</p>
+<p>  items: [],</p>
+<p>  total: 0,</p>
+<p>  discount: 0,</p>
+<p>};</p>
+
+<p>function cartReducer(state, action) {</p>
+<p>  switch (action.type) {</p>
+<p>    case 'ADD_ITEM':</p>
+<p>      const newItems = [...state.items, action.item];</p>
+<p>      const newTotal = newItems.reduce((sum, i) => sum + i.price, 0);</p>
+<p>      return {</p>
+<p>        ...state,</p>
+<p>        items: newItems,</p>
+<p>        total: newTotal,</p>
+<p>      };</p>
+<p>    </p>
+<p>    case 'APPLY_DISCOUNT':</p>
+<p>      return {</p>
+<p>        ...state,</p>
+<p>        discount: action.discount,</p>
+<p>        total: state.total * (1 - action.discount),</p>
+<p>      };</p>
+<p>    </p>
+<p>    default:</p>
+<p>      return state;</p>
+<p>  }</p>
+<p>}</p>
+
+<p>function ShoppingCart() {</p>
+<p>  const [state, dispatch] = useReducer(cartReducer, initialState);</p>
+
+<p>  const addItem = (item) => {</p>
+<p>    dispatch({ type: 'ADD_ITEM', item });</p>
+<p>  };</p>
+
+<p>  return (</p>
+<p>    <div></p>
+<p>      <p>Total: ${state.total}</p></p>
+<p>      <button onClick={() => addItem({ name: 'Laptop', price: 1000 })}></p>
+<p>        Add Laptop</p>
+<p>      </button></p>
+<p>    </div></p>
+<p>  );</p>
+<p>}</p>
+</code>`<code>
+
+<strong>Billtrust Example:</strong>
+<p>"Invoice form state (line items, taxes, discounts, totals) managed with </code>useReducer<code>. Actions: ADD_LINE_ITEM, REMOVE_LINE_ITEM, APPLY_TAX, APPLY_DISCOUNT. All calculations in reducer → state always consistent."</p>
+
+<p>---</p>
+
+<h1>Testing</h1>
+
+<h2>Q10: How do you test React components? Give examples of unit test vs integration test.</h2>
+
+<strong>Answer:</strong>
+
+<strong>Testing Library:</strong> React Testing Library (not Enzyme, which is deprecated)
+
+<strong>Unit Test</strong> (single component in isolation):
+</code>`<code>jsx
+<p>// InvoiceCard.test.tsx</p>
+<p>import { render, screen } from '@testing-library/react';</p>
+<p>import InvoiceCard from './InvoiceCard';</p>
+
+<p>test('renders invoice number', () => {</p>
+<p>  const invoice = { id: 1, number: 'INV-001', amount: 100 };</p>
+<p>  </p>
+<p>  render(<InvoiceCard invoice={invoice} />);</p>
+<p>  </p>
+<p>  expect(screen.getByText('INV-001')).toBeInTheDocument();</p>
+<p>  expect(screen.getByText('$100')).toBeInTheDocument();</p>
+<p>});</p>
+
+<p>test('shows unpaid badge for unpaid invoices', () => {</p>
+<p>  const invoice = { id: 1, number: 'INV-001', status: 'unpaid' };</p>
+<p>  </p>
+<p>  render(<InvoiceCard invoice={invoice} />);</p>
+<p>  </p>
+<p>  expect(screen.getByText('Unpaid')).toBeInTheDocument();</p>
+<p>});</p>
+</code>`<code>
+
+<strong>Integration Test</strong> (multiple components + API):
+</code>`<code>jsx
+<p>// InvoiceList.test.tsx</p>
+<p>import { render, screen, waitFor } from '@testing-library/react';</p>
+<p>import userEvent from '@testing-library/user-event';</p>
+<p>import InvoiceList from './InvoiceList';</p>
+
+<p>// Mock API</p>
+<p>jest.mock('./api', () => ({</p>
+<p>  fetchInvoices: jest.fn(() => Promise.resolve([</p>
+<p>    { id: 1, number: 'INV-001', amount: 100 },</p>
+<p>    { id: 2, number: 'INV-002', amount: 200 },</p>
+<p>  ])),</p>
+<p>}));</p>
+
+<p>test('fetches and displays invoices', async () => {</p>
+<p>  render(<InvoiceList />);</p>
+<p>  </p>
+<p>  // Loading state</p>
+<p>  expect(screen.getByText('Loading...')).toBeInTheDocument();</p>
+<p>  </p>
+<p>  // Wait for data</p>
+<p>  await waitFor(() => {</p>
+<p>    expect(screen.getByText('INV-001')).toBeInTheDocument();</p>
+<p>    expect(screen.getByText('INV-002')).toBeInTheDocument();</p>
+<p>  });</p>
+<p>});</p>
+
+<p>test('filters invoices by search query', async () => {</p>
+<p>  render(<InvoiceList />);</p>
+<p>  </p>
+<p>  await waitFor(() => {</p>
+<p>    expect(screen.getByText('INV-001')).toBeInTheDocument();</p>
+<p>  });</p>
+<p>  </p>
+<p>  // Type in search</p>
+<p>  const searchInput = screen.getByPlaceholderText('Search...');</p>
+<p>  await userEvent.type(searchInput, '001');</p>
+<p>  </p>
+<p>  // Only matching invoice shown</p>
+<p>  expect(screen.getByText('INV-001')).toBeInTheDocument();</p>
+<p>  expect(screen.queryByText('INV-002')).not.toBeInTheDocument();</p>
+<p>});</p>
+</code>`<code>
+
+<strong>When to use:</strong>
+<p>- <strong>Unit test</strong>: Individual components, utility functions</p>
+<p>- <strong>Integration test</strong>: Component + API, component + Router, full user flows</p>
+
+<strong>Billtrust Example:</strong>
+<p>"Invoice dashboard: unit tests for each card component, integration test for full dashboard (fetch → display → filter → sort)."</p>
+
+<p>---</p>
+
+<h1>TypeScript with React</h1>
+
+<h2>Q11: How do you type React components with TypeScript? Give examples of Props, State, Events.</h2>
+
+<strong>Answer:</strong>
+
+<strong>Function Component with Props:</strong>
+</code>`<code>tsx
+<p>interface InvoiceCardProps {</p>
+<p>  invoice: {</p>
+<p>    id: number;</p>
+<p>    number: string;</p>
+<p>    amount: number;</p>
+<p>    status: 'paid' | 'unpaid' | 'overdue';</p>
+<p>  };</p>
+<p>  onDelete?: (id: number) => void;</p>
+<p>}</p>
+
+<p>function InvoiceCard({ invoice, onDelete }: InvoiceCardProps) {</p>
+<p>  return (</p>
+<p>    <div></p>
+<p>      <h3>{invoice.number}</h3></p>
+<p>      <p>${invoice.amount}</p></p>
+<p>      {onDelete && (</p>
+<p>        <button onClick={() => onDelete(invoice.id)}>Delete</button></p>
+<p>      )}</p>
+<p>    </div></p>
+<p>  );</p>
+<p>}</p>
+
+<p>// Usage</p>
+<InvoiceCard 
+<p>  invoice={{ id: 1, number: 'INV-001', amount: 100, status: 'paid' }} </p>
+<p>  onDelete={(id) => console.log('Delete', id)}</p>
+<p>/></p>
+</code>`<code>
+
+<strong>Component with State:</strong>
+</code>`<code>tsx
+<p>interface FormState {</p>
+<p>  email: string;</p>
+<p>  password: string;</p>
+<p>}</p>
+
+<p>function LoginForm() {</p>
+<p>  const [form, setForm] = useState<FormState>({</p>
+<p>    email: '',</p>
+<p>    password: '',</p>
+<p>  });</p>
+
+<p>  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {</p>
+<p>    e.preventDefault();</p>
+<p>    console.log(form);</p>
+<p>  };</p>
+
+<p>  return (</p>
+<p>    <form onSubmit={handleSubmit}></p>
+<p>      <input</p>
+<p>        type="email"</p>
+<p>        value={form.email}</p>
+<p>        onChange={(e: React.ChangeEvent<HTMLInputElement>) => </p>
+<p>          setForm({ ...form, email: e.target.value })</p>
+<p>        }</p>
+<p>      /></p>
+<p>    </form></p>
+<p>  );</p>
+<p>}</p>
+</code>`<code>
+
+<strong>Event Handlers:</strong>
+</code>`<code>tsx
+<p>function SearchBar() {</p>
+<p>  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {</p>
+<p>    console.log(e.target.value);</p>
+<p>  };</p>
+
+<p>  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {</p>
+<p>    console.log('Clicked');</p>
+<p>  };</p>
+
+<p>  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {</p>
+<p>    if (e.key === 'Enter') {</p>
+<p>      console.log('Enter pressed');</p>
+<p>    }</p>
+<p>  };</p>
+
+<p>  return (</p>
+<p>    <div></p>
+<p>      <input onChange={handleChange} onKeyDown={handleKeyDown} /></p>
+<p>      <button onClick={handleClick}>Search</button></p>
+<p>    </div></p>
+<p>  );</p>
+<p>}</p>
+</code>`<code>
+
+<strong>Billtrust Example:</strong>
+<p>"All invoice components TypeScript-typed: </code>Invoice<code> interface (40 fields), </code>InvoiceStatus<code> enum, </code>InvoiceCardProps<code>, </code>InvoiceListProps`. Caught 20+ bugs at compile-time vs runtime."</p>
+
+<p>---</p>
+
+<strong>You now have 80+ advanced React questions! Moving to Python FastAPI...</strong>
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,1389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReactJS_Frontend_Interview_Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 60px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .metadata {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 16px 24px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #666;
+            border-left: 4px solid #667eea;
+        }
+
+        /* PROGRESS TRACKER STYLES */
+        .progress-tracker {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .progress-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-stats {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .progress-percentage {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #764ba2;
+        }
+
+        .progress-bar-container {
+            height: 12px;
+            background: #e9ecef;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+            border-radius: 20px;
+        }
+
+        .reset-btn {
+            padding: 8px 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+
+        .reset-btn:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+        }
+
+        .progress-items {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .progress-items::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .progress-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .progress-item:hover {
+            background: #f8f9fa;
+            transform: translateX(5px);
+        }
+
+        .progress-item.completed {
+            opacity: 0.7;
+        }
+
+        .progress-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .progress-label {
+            cursor: pointer;
+            font-size: 0.95em;
+            line-height: 1.5;
+            color: #495057;
+            flex-grow: 1;
+        }
+
+        .progress-item.completed .progress-label {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .toggle-progress {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .toggle-progress:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .progress-items.collapsed {
+            display: none;
+        }
+
+        /* CONTENT STYLES */
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 4px solid #667eea;
+            font-weight: 700;
+        }
+
+        h2 {
+            color: #764ba2;
+            font-size: 2em;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        h3 {
+            color: #495057;
+            font-size: 1.5em;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        h4 {
+            color: #666;
+            font-size: 1.25em;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        ul, ol {
+            margin: 20px 0;
+            padding-left: 40px;
+        }
+
+        li {
+            margin-bottom: 12px;
+            line-height: 1.7;
+        }
+
+        code {
+            background: #f4f5f7;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #c7254e;
+            border: 1px solid #e1e4e8;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 24px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 25px 0;
+            border: 1px solid #444;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            border: none;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        blockquote {
+            border-left: 5px solid #667eea;
+            padding: 15px 25px;
+            margin: 25px 0;
+            background: #f8f9fa;
+            border-radius: 0 8px 8px 0;
+            color: #495057;
+            font-style: italic;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 30px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 14px 18px;
+            text-align: left;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tr:hover {
+            background: #e9ecef;
+            transition: background 0.2s;
+        }
+
+        a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px solid transparent;
+            transition: border-bottom 0.2s;
+        }
+
+        a:hover {
+            border-bottom: 1px solid #667eea;
+        }
+
+        hr {
+            border: none;
+            border-top: 2px solid #e9ecef;
+            margin: 40px 0;
+        }
+
+        strong {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        em {
+            color: #495057;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 25px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.6em;
+            }
+
+            .progress-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .progress-stats {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../navigation.html" class="back-link">&larr; Back to Navigation</a>
+
+        <div class="metadata">
+            <strong>Source:</strong> dev/ReactJS_Frontend_Interview_Guide.md &nbsp;|&nbsp; <strong>Updated:</strong> 2026-11-18 19:44:57
+        </div>
+
+        <!-- PROGRESS TRACKER -->
+        <div class="progress-tracker">
+            <div class="progress-header">
+                <div class="progress-title">
+                    <span>📚</span>
+                    <span>Your Progress</span>
+                </div>
+                <div class="progress-stats">
+                    <span class="progress-percentage" id="progress-pct">0%</span>
+                    <button class="reset-btn" onclick="resetProgress()">Reset</button>
+                    <button class="toggle-progress" onclick="toggleProgressList()">▼ Hide</button>
+                </div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progress-bar" style="width: 0%"></div>
+            </div>
+            <div class="progress-items" id="progress-items">
+                <!-- Checkboxes will be generated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="content">
+<h1 id="reactjs-frontend-interview-guide">React.js Frontend Interview Guide</h1>
+<p><strong>For Full-Stack AI-First Developer Interviews</strong></p>
+<p>Your competitive advantage: <strong>Modern React + AI integration</strong> (Hooks, state management, API integration, real-time UIs)</p>
+<hr />
+<h2 id="table-of-contents">Table of Contents</h2>
+<ol>
+<li><a href="#why-react">Why React for Modern Frontends</a></li>
+<li><a href="#react-fundamentals">React Fundamentals</a></li>
+<li><a href="#hooks-deep-dive">Hooks Deep Dive</a></li>
+<li><a href="#state-management">State Management</a></li>
+<li><a href="#api-integration">API Integration</a></li>
+<li><a href="#performance-optimization">Performance Optimization</a></li>
+<li><a href="#testing-react-components">Testing React Components</a></li>
+<li><a href="#interview-questions--answers">Interview Questions &amp; Answers</a></li>
+</ol>
+<hr />
+<h2 id="why-react">Why React?</h2>
+<h3 id="the-modern-frontend-landscape">The Modern Frontend Landscape</h3>
+<div class="codehilite"><pre><span></span><code>Traditional (Server-Side):
+PHP/Laravel → Blade Templates → HTML
+
+Modern (SPA):
+React (frontend) ←→ FastAPI (backend API)
+</code></pre></div>
+
+<p><strong>Why React?</strong><br />
+- Component-based (reusable UI)<br />
+- Virtual DOM (fast updates)<br />
+- Huge ecosystem (libraries for everything)<br />
+- Industry standard (most jobs)<br />
+- React Native (mobile with same code)</p>
+<hr />
+<h2 id="react-fundamentals">React Fundamentals</h2>
+<h3 id="components">Components</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1">// Functional Component (Modern)</span>
+<span class="kd">function</span><span class="w"> </span><span class="nx">Welcome</span><span class="p">({</span><span class="w"> </span><span class="nx">name</span><span class="w"> </span><span class="p">})</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span><span class="nx">Hello</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="nx">name</span><span class="p">}&lt;/</span><span class="nt">h1</span><span class="p">&gt;;</span>
+<span class="p">}</span>
+
+<span class="c1">// With Props</span>
+<span class="kd">function</span><span class="w"> </span><span class="nx">UserCard</span><span class="p">({</span><span class="w"> </span><span class="nx">user</span><span class="w"> </span><span class="p">})</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="p">&lt;</span><span class="nt">div</span><span class="w"> </span><span class="na">className</span><span class="o">=</span><span class="s">"card"</span><span class="p">&gt;</span>
+<span class="w">      </span><span class="p">&lt;</span><span class="nt">img</span><span class="w"> </span><span class="na">src</span><span class="o">=</span><span class="p">{</span><span class="nx">user</span><span class="p">.</span><span class="nx">avatar</span><span class="p">}</span><span class="w"> </span><span class="na">alt</span><span class="o">=</span><span class="p">{</span><span class="nx">user</span><span class="p">.</span><span class="nx">name</span><span class="p">}</span><span class="w"> </span><span class="p">/&gt;</span>
+<span class="w">      </span><span class="p">&lt;</span><span class="nt">h2</span><span class="p">&gt;{</span><span class="nx">user</span><span class="p">.</span><span class="nx">name</span><span class="p">}&lt;/</span><span class="nt">h2</span><span class="p">&gt;</span>
+<span class="w">      </span><span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;{</span><span class="nx">user</span><span class="p">.</span><span class="nx">email</span><span class="p">}&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="w">    </span><span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="w">  </span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// Usage</span>
+<span class="p">&lt;</span><span class="nt">UserCard</span><span class="w"> </span><span class="na">user</span><span class="o">=</span><span class="p">{{</span><span class="w"> </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s2">"John"</span><span class="p">,</span><span class="w"> </span><span class="nx">email</span><span class="o">:</span><span class="w"> </span><span class="s2">"john@example.com"</span><span class="p">,</span><span class="w"> </span><span class="nx">avatar</span><span class="o">:</span><span class="w"> </span><span class="s2">"/john.jpg"</span><span class="w"> </span><span class="p">}}</span><span class="w"> </span><span class="p">/&gt;</span>
+</code></pre></div>
+
+<h3 id="jsx">JSX</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1">// JSX lets you write HTML-like syntax in JavaScript</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">element</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span>
+<span class="w">  </span><span class="p">&lt;</span><span class="nt">div</span><span class="w"> </span><span class="na">className</span><span class="o">=</span><span class="s">"container"</span><span class="p">&gt;</span>
+<span class="w">    </span><span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span><span class="nx">Welcome</span><span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+<span class="w">    </span><span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span><span class="nx">This</span><span class="w"> </span><span class="nx">is</span><span class="w"> </span><span class="nx">JSX</span><span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="w">  </span><span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="p">);</span>
+
+<span class="c1">// Expressions in JSX</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"John"</span><span class="p">;</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">element</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span><span class="nx">Hello</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="nx">name</span><span class="p">}&lt;/</span><span class="nt">h1</span><span class="p">&gt;;</span>
+
+<span class="c1">// Conditional rendering</span>
+<span class="p">{</span><span class="nx">isLoggedIn</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="p">&lt;</span><span class="nt">Dashboard</span><span class="w"> </span><span class="p">/&gt;</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="p">&lt;</span><span class="nt">Login</span><span class="w"> </span><span class="p">/&gt;}</span>
+
+<span class="c1">// Lists</span>
+<span class="p">{</span><span class="nx">users</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">user</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">(</span>
+<span class="w">  </span><span class="p">&lt;</span><span class="nt">UserCard</span><span class="w"> </span><span class="na">key</span><span class="o">=</span><span class="p">{</span><span class="nx">user</span><span class="p">.</span><span class="nx">id</span><span class="p">}</span><span class="w"> </span><span class="na">user</span><span class="o">=</span><span class="p">{</span><span class="nx">user</span><span class="p">}</span><span class="w"> </span><span class="p">/&gt;</span>
+<span class="p">))}</span>
+</code></pre></div>
+
+<hr />
+<h2 id="hooks-deep-dive">Hooks Deep Dive</h2>
+<h3 id="usestate-state-management">useState - State Management</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">useState</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'react'</span><span class="p">;</span>
+
+<span class="kd">function</span><span class="w"> </span><span class="nx">Counter</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="p">[</span><span class="nx">count</span><span class="p">,</span><span class="w"> </span><span class="nx">setCount</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useState</span><span class="p">(</span><span class="mf">0</span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="w">      </span><span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span><span class="nx">Count</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="nx">count</span><span class="p">}&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="w">      </span><span class="p">&lt;</span><span class="nt">button</span><span class="w"> </span><span class="na">onClick</span><span class="o">=</span><span class="p">{()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">setCount</span><span class="p">(</span><span class="nx">count</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mf">1</span><span class="p">)}&gt;</span>
+<span class="w">        </span><span class="nx">Increment</span>
+<span class="w">      </span><span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+<span class="w">    </span><span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="w">  </span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// With objects</span>
+<span class="kd">function</span><span class="w"> </span><span class="nx">UserForm</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="p">[</span><span class="nx">form</span><span class="p">,</span><span class="w"> </span><span class="nx">setForm</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useState</span><span class="p">({</span>
+<span class="w">    </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s1">''</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">email</span><span class="o">:</span><span class="w"> </span><span class="s1">''</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">age</span><span class="o">:</span><span class="w"> </span><span class="mf">0</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">handleChange</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="nx">e</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">setForm</span><span class="p">({</span>
+<span class="w">      </span><span class="p">...</span><span class="nx">form</span><span class="p">,</span>
+<span class="w">      </span><span class="p">[</span><span class="nx">e</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">name</span><span class="p">]</span><span class="o">:</span><span class="w"> </span><span class="nx">e</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">value</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">};</span>
+
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="p">&lt;</span><span class="nt">form</span><span class="p">&gt;</span>
+<span class="w">      </span><span class="p">&lt;</span><span class="nt">input</span><span class="w"> </span>
+<span class="w">        </span><span class="na">name</span><span class="o">=</span><span class="s">"name"</span><span class="w"> </span>
+<span class="w">        </span><span class="na">value</span><span class="o">=</span><span class="p">{</span><span class="nx">form</span><span class="p">.</span><span class="nx">name</span><span class="p">}</span><span class="w"> </span>
+<span class="w">        </span><span class="na">onChange</span><span class="o">=</span><span class="p">{</span><span class="nx">handleChange</span><span class="p">}</span><span class="w"> </span>
+<span class="w">      </span><span class="p">/&gt;</span>
+<span class="w">      </span><span class="p">&lt;</span><span class="nt">input</span><span class="w"> </span>
+<span class="w">        </span><span class="na">name</span><span class="o">=</span><span class="s">"email"</span><span class="w"> </span>
+<span class="w">        </span><span class="na">value</span><span class="o">=</span><span class="p">{</span><span class="nx">form</span><span class="p">.</span><span class="nx">email</span><span class="p">}</span><span class="w"> </span>
+<span class="w">        </span><span class="na">onChange</span><span class="o">=</span><span class="p">{</span><span class="nx">handleChange</span><span class="p">}</span><span class="w"> </span>
+<span class="w">      </span><span class="p">/&gt;</span>
+<span class="w">    </span><span class="p">&lt;/</span><span class="nt">form</span><span class="p">&gt;</span>
+<span class="w">  </span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="useeffect-side-effects">useEffect - Side Effects</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">useEffect</span><span class="p">,</span><span class="w"> </span><span class="nx">useState</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'react'</span><span class="p">;</span>
+
+<span class="kd">function</span><span class="w"> </span><span class="nx">UserProfile</span><span class="p">({</span><span class="w"> </span><span class="nx">userId</span><span class="w"> </span><span class="p">})</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="p">[</span><span class="nx">user</span><span class="p">,</span><span class="w"> </span><span class="nx">setUser</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useState</span><span class="p">(</span><span class="kc">null</span><span class="p">);</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="p">[</span><span class="nx">loading</span><span class="p">,</span><span class="w"> </span><span class="nx">setLoading</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useState</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+
+<span class="w">  </span><span class="nx">useEffect</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Runs after component mounts and when userId changes</span>
+<span class="w">    </span><span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">fetchUser</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nx">setLoading</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+<span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">fetch</span><span class="p">(</span><span class="sb">`/api/users/</span><span class="si">${</span><span class="nx">userId</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+<span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">();</span>
+<span class="w">      </span><span class="nx">setUser</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+<span class="w">      </span><span class="nx">setLoading</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nx">fetchUser</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// Cleanup function (optional)</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Cancel requests, clear timers, etc.</span>
+<span class="w">    </span><span class="p">};</span>
+<span class="w">  </span><span class="p">},</span><span class="w"> </span><span class="p">[</span><span class="nx">userId</span><span class="p">]);</span><span class="w"> </span><span class="c1">// Dependency array</span>
+
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">loading</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span><span class="nx">Loading</span><span class="p">...&lt;/</span><span class="nt">div</span><span class="p">&gt;;</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="nx">user</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span><span class="nx">User</span><span class="w"> </span><span class="nx">not</span><span class="w"> </span><span class="nx">found</span><span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;;</span>
+
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;{</span><span class="nx">user</span><span class="p">.</span><span class="nx">name</span><span class="p">}&lt;/</span><span class="nt">div</span><span class="p">&gt;;</span>
+<span class="p">}</span>
+
+<span class="c1">// Common useEffect patterns</span>
+<span class="nx">useEffect</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Runs ONCE on mount (empty deps)</span>
+<span class="p">},</span><span class="w"> </span><span class="p">[]);</span>
+
+<span class="nx">useEffect</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Runs on EVERY render (no deps array - avoid this!)</span>
+<span class="p">});</span>
+
+<span class="nx">useEffect</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Runs when count changes</span>
+<span class="p">},</span><span class="w"> </span><span class="p">[</span><span class="nx">count</span><span class="p">]);</span>
+</code></pre></div>
+
+<h3 id="usecontext-global-state">useContext - Global State</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">createContext</span><span class="p">,</span><span class="w"> </span><span class="nx">useContext</span><span class="p">,</span><span class="w"> </span><span class="nx">useState</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'react'</span><span class="p">;</span>
+
+<span class="c1">// Create context</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">AuthContext</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">createContext</span><span class="p">();</span>
+
+<span class="c1">// Provider component</span>
+<span class="kd">function</span><span class="w"> </span><span class="nx">AuthProvider</span><span class="p">({</span><span class="w"> </span><span class="nx">children</span><span class="w"> </span><span class="p">})</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="p">[</span><span class="nx">user</span><span class="p">,</span><span class="w"> </span><span class="nx">setUser</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useState</span><span class="p">(</span><span class="kc">null</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">login</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="p">(</span><span class="nx">email</span><span class="p">,</span><span class="w"> </span><span class="nx">password</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">fetch</span><span class="p">(</span><span class="s1">'/api/login'</span><span class="p">,</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nx">method</span><span class="o">:</span><span class="w"> </span><span class="s1">'POST'</span><span class="p">,</span>
+<span class="w">      </span><span class="nx">body</span><span class="o">:</span><span class="w"> </span><span class="nb">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">({</span><span class="w"> </span><span class="nx">email</span><span class="p">,</span><span class="w"> </span><span class="nx">password</span><span class="w"> </span><span class="p">})</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">();</span>
+<span class="w">    </span><span class="nx">setUser</span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">user</span><span class="p">);</span>
+<span class="w">  </span><span class="p">};</span>
+
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">logout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">setUser</span><span class="p">(</span><span class="kc">null</span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="p">&lt;</span><span class="nt">AuthContext</span><span class="p">.</span><span class="na">Provider</span><span class="w"> </span><span class="na">value</span><span class="o">=</span><span class="p">{{</span><span class="w"> </span><span class="nx">user</span><span class="p">,</span><span class="w"> </span><span class="nx">login</span><span class="p">,</span><span class="w"> </span><span class="nx">logout</span><span class="w"> </span><span class="p">}}&gt;</span>
+<span class="w">      </span><span class="p">{</span><span class="nx">children</span><span class="p">}</span>
+<span class="w">    </span><span class="p">&lt;/</span><span class="nt">AuthContext</span><span class="p">.</span><span class="na">Provider</span><span class="p">&gt;</span>
+<span class="w">  </span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// Custom hook to use auth</span>
+<span class="kd">function</span><span class="w"> </span><span class="nx">useAuth</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">context</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useContext</span><span class="p">(</span><span class="nx">AuthContext</span><span class="p">);</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="nx">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">throw</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="ne">Error</span><span class="p">(</span><span class="s1">'useAuth must be used within AuthProvider'</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="nx">context</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// Usage in components</span>
+<span class="kd">function</span><span class="w"> </span><span class="nx">Dashboard</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">user</span><span class="p">,</span><span class="w"> </span><span class="nx">logout</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useAuth</span><span class="p">();</span>
+
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="w">      </span><span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span><span class="nx">Welcome</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="nx">user</span><span class="p">.</span><span class="nx">name</span><span class="p">}&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+<span class="w">      </span><span class="p">&lt;</span><span class="nt">button</span><span class="w"> </span><span class="na">onClick</span><span class="o">=</span><span class="p">{</span><span class="nx">logout</span><span class="p">}&gt;</span><span class="nx">Logout</span><span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+<span class="w">    </span><span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="w">  </span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// App setup</span>
+<span class="kd">function</span><span class="w"> </span><span class="nx">App</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="p">&lt;</span><span class="nt">AuthProvider</span><span class="p">&gt;</span>
+<span class="w">      </span><span class="p">&lt;</span><span class="nt">Dashboard</span><span class="w"> </span><span class="p">/&gt;</span>
+<span class="w">    </span><span class="p">&lt;/</span><span class="nt">AuthProvider</span><span class="p">&gt;</span>
+<span class="w">  </span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="custom-hooks">Custom Hooks</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1">// useFetch - Reusable data fetching</span>
+<span class="kd">function</span><span class="w"> </span><span class="nx">useFetch</span><span class="p">(</span><span class="nx">url</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="p">[</span><span class="nx">data</span><span class="p">,</span><span class="w"> </span><span class="nx">setData</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useState</span><span class="p">(</span><span class="kc">null</span><span class="p">);</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="p">[</span><span class="nx">loading</span><span class="p">,</span><span class="w"> </span><span class="nx">setLoading</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useState</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="p">[</span><span class="nx">error</span><span class="p">,</span><span class="w"> </span><span class="nx">setError</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useState</span><span class="p">(</span><span class="kc">null</span><span class="p">);</span>
+
+<span class="w">  </span><span class="nx">useEffect</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">fetchData</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">setLoading</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+<span class="w">        </span><span class="kd">const</span><span class="w"> </span><span class="nx">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">fetch</span><span class="p">(</span><span class="nx">url</span><span class="p">);</span>
+<span class="w">        </span><span class="kd">const</span><span class="w"> </span><span class="nx">json</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">();</span>
+<span class="w">        </span><span class="nx">setData</span><span class="p">(</span><span class="nx">json</span><span class="p">);</span>
+<span class="w">      </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="nx">err</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">setError</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+<span class="w">      </span><span class="p">}</span><span class="w"> </span><span class="k">finally</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">setLoading</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nx">fetchData</span><span class="p">();</span>
+<span class="w">  </span><span class="p">},</span><span class="w"> </span><span class="p">[</span><span class="nx">url</span><span class="p">]);</span>
+
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">data</span><span class="p">,</span><span class="w"> </span><span class="nx">loading</span><span class="p">,</span><span class="w"> </span><span class="nx">error</span><span class="w"> </span><span class="p">};</span>
+<span class="p">}</span>
+
+<span class="c1">// Usage</span>
+<span class="kd">function</span><span class="w"> </span><span class="nx">UserList</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">data</span><span class="o">:</span><span class="w"> </span><span class="nx">users</span><span class="p">,</span><span class="w"> </span><span class="nx">loading</span><span class="p">,</span><span class="w"> </span><span class="nx">error</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useFetch</span><span class="p">(</span><span class="s1">'/api/users'</span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">loading</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span><span class="nx">Loading</span><span class="p">...&lt;/</span><span class="nt">div</span><span class="p">&gt;;</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">error</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span><span class="ne">Error</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="nx">error</span><span class="p">.</span><span class="nx">message</span><span class="p">}&lt;/</span><span class="nt">div</span><span class="p">&gt;;</span>
+
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="p">&lt;</span><span class="nt">ul</span><span class="p">&gt;</span>
+<span class="w">      </span><span class="p">{</span><span class="nx">users</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">user</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">(</span>
+<span class="w">        </span><span class="p">&lt;</span><span class="nt">li</span><span class="w"> </span><span class="na">key</span><span class="o">=</span><span class="p">{</span><span class="nx">user</span><span class="p">.</span><span class="nx">id</span><span class="p">}&gt;{</span><span class="nx">user</span><span class="p">.</span><span class="nx">name</span><span class="p">}&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+<span class="w">      </span><span class="p">))}</span>
+<span class="w">    </span><span class="p">&lt;/</span><span class="nt">ul</span><span class="p">&gt;</span>
+<span class="w">  </span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// useLocalStorage - Persist state</span>
+<span class="kd">function</span><span class="w"> </span><span class="nx">useLocalStorage</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span><span class="w"> </span><span class="nx">initialValue</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="p">[</span><span class="nx">value</span><span class="p">,</span><span class="w"> </span><span class="nx">setValue</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useState</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">item</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">localStorage</span><span class="p">.</span><span class="nx">getItem</span><span class="p">(</span><span class="nx">key</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">item</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="nb">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">item</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="nx">initialValue</span><span class="p">;</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="nx">useEffect</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">localStorage</span><span class="p">.</span><span class="nx">setItem</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span><span class="w"> </span><span class="nb">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">value</span><span class="p">));</span>
+<span class="w">  </span><span class="p">},</span><span class="w"> </span><span class="p">[</span><span class="nx">key</span><span class="p">,</span><span class="w"> </span><span class="nx">value</span><span class="p">]);</span>
+
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">[</span><span class="nx">value</span><span class="p">,</span><span class="w"> </span><span class="nx">setValue</span><span class="p">];</span>
+<span class="p">}</span>
+
+<span class="c1">// Usage</span>
+<span class="kd">function</span><span class="w"> </span><span class="nx">Settings</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="p">[</span><span class="nx">theme</span><span class="p">,</span><span class="w"> </span><span class="nx">setTheme</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useLocalStorage</span><span class="p">(</span><span class="s1">'theme'</span><span class="p">,</span><span class="w"> </span><span class="s1">'light'</span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="p">&lt;</span><span class="nt">button</span><span class="w"> </span><span class="na">onClick</span><span class="o">=</span><span class="p">{()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">setTheme</span><span class="p">(</span><span class="nx">theme</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="s1">'light'</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s1">'dark'</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s1">'light'</span><span class="p">)}&gt;</span>
+<span class="w">      </span><span class="nx">Current</span><span class="w"> </span><span class="nx">theme</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="nx">theme</span><span class="p">}</span>
+<span class="w">    </span><span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+<span class="w">  </span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<hr />
+<h2 id="state-management">State Management</h2>
+<h3 id="local-state-vs-global-state">Local State vs Global State</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1">// LOCAL STATE (single component)</span>
+<span class="kd">function</span><span class="w"> </span><span class="nx">Counter</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="p">[</span><span class="nx">count</span><span class="p">,</span><span class="w"> </span><span class="nx">setCount</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useState</span><span class="p">(</span><span class="mf">0</span><span class="p">);</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;{</span><span class="nx">count</span><span class="p">}&lt;/</span><span class="nt">div</span><span class="p">&gt;;</span>
+<span class="p">}</span>
+
+<span class="c1">// LIFTED STATE (parent → children)</span>
+<span class="kd">function</span><span class="w"> </span><span class="nx">Parent</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="p">[</span><span class="nx">user</span><span class="p">,</span><span class="w"> </span><span class="nx">setUser</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useState</span><span class="p">(</span><span class="kc">null</span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="p">&lt;&gt;</span>
+<span class="w">      </span><span class="p">&lt;</span><span class="nt">Header</span><span class="w"> </span><span class="na">user</span><span class="o">=</span><span class="p">{</span><span class="nx">user</span><span class="p">}</span><span class="w"> </span><span class="p">/&gt;</span>
+<span class="w">      </span><span class="p">&lt;</span><span class="nt">Dashboard</span><span class="w"> </span><span class="na">user</span><span class="o">=</span><span class="p">{</span><span class="nx">user</span><span class="p">}</span><span class="w"> </span><span class="p">/&gt;</span>
+<span class="w">      </span><span class="p">&lt;</span><span class="nt">Sidebar</span><span class="w"> </span><span class="na">user</span><span class="o">=</span><span class="p">{</span><span class="nx">user</span><span class="p">}</span><span class="w"> </span><span class="p">/&gt;</span>
+<span class="w">    </span><span class="p">&lt;/&gt;</span>
+<span class="w">  </span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// GLOBAL STATE (Context API)</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">UserContext</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">createContext</span><span class="p">();</span>
+
+<span class="kd">function</span><span class="w"> </span><span class="nx">App</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="p">[</span><span class="nx">user</span><span class="p">,</span><span class="w"> </span><span class="nx">setUser</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useState</span><span class="p">(</span><span class="kc">null</span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="p">&lt;</span><span class="nt">UserContext</span><span class="p">.</span><span class="na">Provider</span><span class="w"> </span><span class="na">value</span><span class="o">=</span><span class="p">{{</span><span class="w"> </span><span class="nx">user</span><span class="p">,</span><span class="w"> </span><span class="nx">setUser</span><span class="w"> </span><span class="p">}}&gt;</span>
+<span class="w">      </span><span class="p">&lt;</span><span class="nt">Header</span><span class="w"> </span><span class="p">/&gt;</span>
+<span class="w">      </span><span class="p">&lt;</span><span class="nt">Dashboard</span><span class="w"> </span><span class="p">/&gt;</span>
+<span class="w">      </span><span class="p">&lt;</span><span class="nt">Sidebar</span><span class="w"> </span><span class="p">/&gt;</span>
+<span class="w">    </span><span class="p">&lt;/</span><span class="nt">UserContext</span><span class="p">.</span><span class="na">Provider</span><span class="p">&gt;</span>
+<span class="w">  </span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="react-query-tanstack-query">React Query / TanStack Query</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">useQuery</span><span class="p">,</span><span class="w"> </span><span class="nx">useMutation</span><span class="p">,</span><span class="w"> </span><span class="nx">useQueryClient</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'@tanstack/react-query'</span><span class="p">;</span>
+
+<span class="c1">// Fetch data with caching</span>
+<span class="kd">function</span><span class="w"> </span><span class="nx">UserList</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">data</span><span class="p">,</span><span class="w"> </span><span class="nx">isLoading</span><span class="p">,</span><span class="w"> </span><span class="nx">error</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useQuery</span><span class="p">({</span>
+<span class="w">    </span><span class="nx">queryKey</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="s1">'users'</span><span class="p">],</span>
+<span class="w">    </span><span class="nx">queryFn</span><span class="o">:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">fetch</span><span class="p">(</span><span class="s1">'/api/users'</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="nx">res</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">())</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">isLoading</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span><span class="nx">Loading</span><span class="p">...&lt;/</span><span class="nt">div</span><span class="p">&gt;;</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">error</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span><span class="ne">Error</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="nx">error</span><span class="p">.</span><span class="nx">message</span><span class="p">}&lt;/</span><span class="nt">div</span><span class="p">&gt;;</span>
+
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="p">&lt;</span><span class="nt">ul</span><span class="p">&gt;</span>
+<span class="w">      </span><span class="p">{</span><span class="nx">data</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">user</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">(</span>
+<span class="w">        </span><span class="p">&lt;</span><span class="nt">li</span><span class="w"> </span><span class="na">key</span><span class="o">=</span><span class="p">{</span><span class="nx">user</span><span class="p">.</span><span class="nx">id</span><span class="p">}&gt;{</span><span class="nx">user</span><span class="p">.</span><span class="nx">name</span><span class="p">}&lt;/</span><span class="nt">li</span><span class="p">&gt;</span>
+<span class="w">      </span><span class="p">))}</span>
+<span class="w">    </span><span class="p">&lt;/</span><span class="nt">ul</span><span class="p">&gt;</span>
+<span class="w">  </span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// Mutations (create/update/delete)</span>
+<span class="kd">function</span><span class="w"> </span><span class="nx">CreateUser</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">queryClient</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useQueryClient</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">mutation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useMutation</span><span class="p">({</span>
+<span class="w">    </span><span class="nx">mutationFn</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">newUser</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span>
+<span class="w">      </span><span class="nx">fetch</span><span class="p">(</span><span class="s1">'/api/users'</span><span class="p">,</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">method</span><span class="o">:</span><span class="w"> </span><span class="s1">'POST'</span><span class="p">,</span>
+<span class="w">        </span><span class="nx">body</span><span class="o">:</span><span class="w"> </span><span class="nb">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">newUser</span><span class="p">)</span>
+<span class="w">      </span><span class="p">}),</span>
+<span class="w">    </span><span class="nx">onSuccess</span><span class="o">:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Invalidate and refetch</span>
+<span class="w">      </span><span class="nx">queryClient</span><span class="p">.</span><span class="nx">invalidateQueries</span><span class="p">({</span><span class="w"> </span><span class="nx">queryKey</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="s1">'users'</span><span class="p">]</span><span class="w"> </span><span class="p">});</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">handleSubmit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="nx">e</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+<span class="w">    </span><span class="nx">mutation</span><span class="p">.</span><span class="nx">mutate</span><span class="p">({</span><span class="w"> </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s1">'John'</span><span class="p">,</span><span class="w"> </span><span class="nx">email</span><span class="o">:</span><span class="w"> </span><span class="s1">'john@example.com'</span><span class="w"> </span><span class="p">});</span>
+<span class="w">  </span><span class="p">};</span>
+
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="p">&lt;</span><span class="nt">form</span><span class="w"> </span><span class="na">onSubmit</span><span class="o">=</span><span class="p">{</span><span class="nx">handleSubmit</span><span class="p">}&gt;</span>
+<span class="w">      </span><span class="p">&lt;</span><span class="nt">button</span><span class="w"> </span><span class="na">type</span><span class="o">=</span><span class="s">"submit"</span><span class="w"> </span><span class="na">disabled</span><span class="o">=</span><span class="p">{</span><span class="nx">mutation</span><span class="p">.</span><span class="nx">isPending</span><span class="p">}&gt;</span>
+<span class="w">        </span><span class="p">{</span><span class="nx">mutation</span><span class="p">.</span><span class="nx">isPending</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s1">'Creating...'</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s1">'Create User'</span><span class="p">}</span>
+<span class="w">      </span><span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+<span class="w">      </span><span class="p">{</span><span class="nx">mutation</span><span class="p">.</span><span class="nx">isError</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span><span class="ne">Error</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="nx">mutation</span><span class="p">.</span><span class="nx">error</span><span class="p">.</span><span class="nx">message</span><span class="p">}&lt;/</span><span class="nt">div</span><span class="p">&gt;}</span>
+<span class="w">    </span><span class="p">&lt;/</span><span class="nt">form</span><span class="p">&gt;</span>
+<span class="w">  </span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<hr />
+<h2 id="api-integration">API Integration</h2>
+<h3 id="fetch-api">Fetch API</h3>
+<div class="codehilite"><pre><span></span><code><span class="kd">function</span><span class="w"> </span><span class="nx">Dashboard</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="p">[</span><span class="nx">data</span><span class="p">,</span><span class="w"> </span><span class="nx">setData</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useState</span><span class="p">(</span><span class="kc">null</span><span class="p">);</span>
+
+<span class="w">  </span><span class="nx">useEffect</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">async</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">loadData</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kd">const</span><span class="w"> </span><span class="nx">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">fetch</span><span class="p">(</span><span class="s1">'/api/dashboard'</span><span class="p">,</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="nx">headers</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="s1">'Authorization'</span><span class="o">:</span><span class="w"> </span><span class="sb">`Bearer </span><span class="si">${</span><span class="nx">token</span><span class="si">}</span><span class="sb">`</span><span class="p">,</span>
+<span class="w">            </span><span class="s1">'Content-Type'</span><span class="o">:</span><span class="w"> </span><span class="s1">'application/json'</span>
+<span class="w">          </span><span class="p">}</span>
+<span class="w">        </span><span class="p">});</span>
+
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="nx">response</span><span class="p">.</span><span class="nx">ok</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="k">throw</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="ne">Error</span><span class="p">(</span><span class="s1">'API request failed'</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="kd">const</span><span class="w"> </span><span class="nx">json</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">response</span><span class="p">.</span><span class="nx">json</span><span class="p">();</span>
+<span class="w">        </span><span class="nx">setData</span><span class="p">(</span><span class="nx">json</span><span class="p">);</span>
+<span class="w">      </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="nx">error</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nx">loadData</span><span class="p">();</span>
+<span class="w">  </span><span class="p">},</span><span class="w"> </span><span class="p">[]);</span>
+
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;{</span><span class="nb">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">data</span><span class="p">)}&lt;/</span><span class="nt">div</span><span class="p">&gt;;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="axios-popular-alternative">Axios (Popular Alternative)</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="nx">axios</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'axios'</span><span class="p">;</span>
+
+<span class="c1">// Setup</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">api</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">axios</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span>
+<span class="w">  </span><span class="nx">baseURL</span><span class="o">:</span><span class="w"> </span><span class="s1">'/api'</span><span class="p">,</span>
+<span class="w">  </span><span class="nx">timeout</span><span class="o">:</span><span class="w"> </span><span class="mf">10000</span><span class="p">,</span>
+<span class="w">  </span><span class="nx">headers</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="s1">'Content-Type'</span><span class="o">:</span><span class="w"> </span><span class="s1">'application/json'</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">});</span>
+
+<span class="c1">// Interceptor for auth token</span>
+<span class="nx">api</span><span class="p">.</span><span class="nx">interceptors</span><span class="p">.</span><span class="nx">request</span><span class="p">.</span><span class="nx">use</span><span class="p">((</span><span class="nx">config</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">token</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">localStorage</span><span class="p">.</span><span class="nx">getItem</span><span class="p">(</span><span class="s1">'token'</span><span class="p">);</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">token</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">config</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">Authorization</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sb">`Bearer </span><span class="si">${</span><span class="nx">token</span><span class="si">}</span><span class="sb">`</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="nx">config</span><span class="p">;</span>
+<span class="p">});</span>
+
+<span class="c1">// Component</span>
+<span class="kd">function</span><span class="w"> </span><span class="nx">UserList</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="p">[</span><span class="nx">users</span><span class="p">,</span><span class="w"> </span><span class="nx">setUsers</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useState</span><span class="p">([]);</span>
+
+<span class="w">  </span><span class="nx">useEffect</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">api</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'/users'</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="nx">response</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nx">setUsers</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">},</span><span class="w"> </span><span class="p">[]);</span>
+
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">createUser</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="p">(</span><span class="nx">userData</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">api</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="s1">'/users'</span><span class="p">,</span><span class="w"> </span><span class="nx">userData</span><span class="p">);</span>
+<span class="w">    </span><span class="nx">setUsers</span><span class="p">([...</span><span class="nx">users</span><span class="p">,</span><span class="w"> </span><span class="nx">response</span><span class="p">.</span><span class="nx">data</span><span class="p">]);</span>
+<span class="w">  </span><span class="p">};</span>
+
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;...&lt;/</span><span class="nt">div</span><span class="p">&gt;;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="real-time-with-websockets">Real-Time with WebSockets</h3>
+<div class="codehilite"><pre><span></span><code><span class="kd">function</span><span class="w"> </span><span class="nx">ChatRoom</span><span class="p">({</span><span class="w"> </span><span class="nx">roomId</span><span class="w"> </span><span class="p">})</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="p">[</span><span class="nx">messages</span><span class="p">,</span><span class="w"> </span><span class="nx">setMessages</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useState</span><span class="p">([]);</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="p">[</span><span class="nx">ws</span><span class="p">,</span><span class="w"> </span><span class="nx">setWs</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useState</span><span class="p">(</span><span class="kc">null</span><span class="p">);</span>
+
+<span class="w">  </span><span class="nx">useEffect</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Connect</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">websocket</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">WebSocket</span><span class="p">(</span><span class="sb">`ws://localhost:8000/ws/</span><span class="si">${</span><span class="nx">roomId</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+
+<span class="w">    </span><span class="nx">websocket</span><span class="p">.</span><span class="nx">onmessage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="nx">event</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">message</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+<span class="w">      </span><span class="nx">setMessages</span><span class="p">(</span><span class="nx">prev</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">[...</span><span class="nx">prev</span><span class="p">,</span><span class="w"> </span><span class="nx">message</span><span class="p">]);</span>
+<span class="w">    </span><span class="p">};</span>
+
+<span class="w">    </span><span class="nx">setWs</span><span class="p">(</span><span class="nx">websocket</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Cleanup</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">websocket</span><span class="p">.</span><span class="nx">close</span><span class="p">();</span>
+<span class="w">  </span><span class="p">},</span><span class="w"> </span><span class="p">[</span><span class="nx">roomId</span><span class="p">]);</span>
+
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">sendMessage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="nx">text</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">ws</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nx">ws</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nb">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">({</span><span class="w"> </span><span class="nx">text</span><span class="p">,</span><span class="w"> </span><span class="nx">timestamp</span><span class="o">:</span><span class="w"> </span><span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">()</span><span class="w"> </span><span class="p">}));</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">};</span>
+
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="w">      </span><span class="p">{</span><span class="nx">messages</span><span class="p">.</span><span class="nx">map</span><span class="p">((</span><span class="nx">msg</span><span class="p">,</span><span class="w"> </span><span class="nx">i</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">(</span>
+<span class="w">        </span><span class="p">&lt;</span><span class="nt">div</span><span class="w"> </span><span class="na">key</span><span class="o">=</span><span class="p">{</span><span class="nx">i</span><span class="p">}&gt;{</span><span class="nx">msg</span><span class="p">.</span><span class="nx">text</span><span class="p">}&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="w">      </span><span class="p">))}</span>
+<span class="w">      </span><span class="p">&lt;</span><span class="nt">MessageInput</span><span class="w"> </span><span class="na">onSend</span><span class="o">=</span><span class="p">{</span><span class="nx">sendMessage</span><span class="p">}</span><span class="w"> </span><span class="p">/&gt;</span>
+<span class="w">    </span><span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+<span class="w">  </span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<hr />
+<h2 id="performance-optimization">Performance Optimization</h2>
+<h3 id="usememo-expensive-calculations">useMemo - Expensive Calculations</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">useMemo</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'react'</span><span class="p">;</span>
+
+<span class="kd">function</span><span class="w"> </span><span class="nx">DataTable</span><span class="p">({</span><span class="w"> </span><span class="nx">items</span><span class="p">,</span><span class="w"> </span><span class="nx">filter</span><span class="w"> </span><span class="p">})</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Only recalculate when items or filter changes</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">filteredItems</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useMemo</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'Filtering...'</span><span class="p">);</span><span class="w"> </span><span class="c1">// Only logs when deps change</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">items</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">item</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span>
+<span class="w">      </span><span class="nx">item</span><span class="p">.</span><span class="nx">name</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">().</span><span class="nx">includes</span><span class="p">(</span><span class="nx">filter</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">())</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">  </span><span class="p">},</span><span class="w"> </span><span class="p">[</span><span class="nx">items</span><span class="p">,</span><span class="w"> </span><span class="nx">filter</span><span class="p">]);</span>
+
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="p">&lt;</span><span class="nt">table</span><span class="p">&gt;</span>
+<span class="w">      </span><span class="p">{</span><span class="nx">filteredItems</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">item</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">(</span>
+<span class="w">        </span><span class="p">&lt;</span><span class="nt">tr</span><span class="w"> </span><span class="na">key</span><span class="o">=</span><span class="p">{</span><span class="nx">item</span><span class="p">.</span><span class="nx">id</span><span class="p">}&gt;</span>
+<span class="w">          </span><span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;{</span><span class="nx">item</span><span class="p">.</span><span class="nx">name</span><span class="p">}&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+<span class="w">        </span><span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+<span class="w">      </span><span class="p">))}</span>
+<span class="w">    </span><span class="p">&lt;/</span><span class="nt">table</span><span class="p">&gt;</span>
+<span class="w">  </span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="usecallback-memoized-functions">useCallback - Memoized Functions</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">useCallback</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'react'</span><span class="p">;</span>
+
+<span class="kd">function</span><span class="w"> </span><span class="nx">Parent</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="p">[</span><span class="nx">count</span><span class="p">,</span><span class="w"> </span><span class="nx">setCount</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useState</span><span class="p">(</span><span class="mf">0</span><span class="p">);</span>
+
+<span class="w">  </span><span class="c1">// Without useCallback: new function every render</span>
+<span class="w">  </span><span class="c1">// Child re-renders unnecessarily</span>
+
+<span class="w">  </span><span class="c1">// With useCallback: same function reference</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">handleClick</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useCallback</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'Clicked'</span><span class="p">);</span>
+<span class="w">  </span><span class="p">},</span><span class="w"> </span><span class="p">[]);</span><span class="w"> </span><span class="c1">// Empty deps = never changes</span>
+
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="p">&lt;&gt;</span>
+<span class="w">      </span><span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;{</span><span class="nx">count</span><span class="p">}&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+<span class="w">      </span><span class="p">&lt;</span><span class="nt">button</span><span class="w"> </span><span class="na">onClick</span><span class="o">=</span><span class="p">{()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">setCount</span><span class="p">(</span><span class="nx">count</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mf">1</span><span class="p">)}&gt;</span><span class="nx">Increment</span><span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+<span class="w">      </span><span class="p">&lt;</span><span class="nt">Child</span><span class="w"> </span><span class="na">onClick</span><span class="o">=</span><span class="p">{</span><span class="nx">handleClick</span><span class="p">}</span><span class="w"> </span><span class="p">/&gt;</span>
+<span class="w">    </span><span class="p">&lt;/&gt;</span>
+<span class="w">  </span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// Child only re-renders when onClick changes</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">Child</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">React</span><span class="p">.</span><span class="nx">memo</span><span class="p">(({</span><span class="w"> </span><span class="nx">onClick</span><span class="w"> </span><span class="p">})</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'Child render'</span><span class="p">);</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">&lt;</span><span class="nt">button</span><span class="w"> </span><span class="na">onClick</span><span class="o">=</span><span class="p">{</span><span class="nx">onClick</span><span class="p">}&gt;</span><span class="nx">Click</span><span class="w"> </span><span class="nx">me</span><span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;;</span>
+<span class="p">});</span>
+</code></pre></div>
+
+<h3 id="reactmemo-prevent-re-renders">React.memo - Prevent Re-renders</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1">// Without React.memo: re-renders every time parent re-renders</span>
+<span class="kd">function</span><span class="w"> </span><span class="nx">UserCard</span><span class="p">({</span><span class="w"> </span><span class="nx">user</span><span class="w"> </span><span class="p">})</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'Rendering UserCard'</span><span class="p">);</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;{</span><span class="nx">user</span><span class="p">.</span><span class="nx">name</span><span class="p">}&lt;/</span><span class="nt">div</span><span class="p">&gt;;</span>
+<span class="p">}</span>
+
+<span class="c1">// With React.memo: only re-renders when user prop changes</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">UserCard</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">React</span><span class="p">.</span><span class="nx">memo</span><span class="p">(({</span><span class="w"> </span><span class="nx">user</span><span class="w"> </span><span class="p">})</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'Rendering UserCard'</span><span class="p">);</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;{</span><span class="nx">user</span><span class="p">.</span><span class="nx">name</span><span class="p">}&lt;/</span><span class="nt">div</span><span class="p">&gt;;</span>
+<span class="p">});</span>
+
+<span class="c1">// Custom comparison</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">UserCard</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">React</span><span class="p">.</span><span class="nx">memo</span><span class="p">(</span>
+<span class="w">  </span><span class="p">({</span><span class="w"> </span><span class="nx">user</span><span class="w"> </span><span class="p">})</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;{</span><span class="nx">user</span><span class="p">.</span><span class="nx">name</span><span class="p">}&lt;/</span><span class="nt">div</span><span class="p">&gt;,</span>
+<span class="w">  </span><span class="p">(</span><span class="nx">prevProps</span><span class="p">,</span><span class="w"> </span><span class="nx">nextProps</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Return true if props are equal (skip re-render)</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">prevProps</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">id</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="nx">nextProps</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">);</span>
+</code></pre></div>
+
+<h3 id="code-splitting-lazy-loading">Code Splitting (Lazy Loading)</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">lazy</span><span class="p">,</span><span class="w"> </span><span class="nx">Suspense</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'react'</span><span class="p">;</span>
+
+<span class="c1">// Load component only when needed</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">Dashboard</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">lazy</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="k">import</span><span class="p">(</span><span class="s1">'./Dashboard'</span><span class="p">));</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">Settings</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">lazy</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="k">import</span><span class="p">(</span><span class="s1">'./Settings'</span><span class="p">));</span>
+
+<span class="kd">function</span><span class="w"> </span><span class="nx">App</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="p">&lt;</span><span class="nt">Suspense</span><span class="w"> </span><span class="na">fallback</span><span class="o">=</span><span class="p">{&lt;</span><span class="nt">div</span><span class="p">&gt;</span><span class="nx">Loading</span><span class="p">...&lt;/</span><span class="nt">div</span><span class="p">&gt;}&gt;</span>
+<span class="w">      </span><span class="p">&lt;</span><span class="nt">Routes</span><span class="p">&gt;</span>
+<span class="w">        </span><span class="p">&lt;</span><span class="nt">Route</span><span class="w"> </span><span class="na">path</span><span class="o">=</span><span class="s">"/dashboard"</span><span class="w"> </span><span class="na">element</span><span class="o">=</span><span class="p">{&lt;</span><span class="nt">Dashboard</span><span class="w"> </span><span class="p">/&gt;}</span><span class="w"> </span><span class="p">/&gt;</span>
+<span class="w">        </span><span class="p">&lt;</span><span class="nt">Route</span><span class="w"> </span><span class="na">path</span><span class="o">=</span><span class="s">"/settings"</span><span class="w"> </span><span class="na">element</span><span class="o">=</span><span class="p">{&lt;</span><span class="nt">Settings</span><span class="w"> </span><span class="p">/&gt;}</span><span class="w"> </span><span class="p">/&gt;</span>
+<span class="w">      </span><span class="p">&lt;/</span><span class="nt">Routes</span><span class="p">&gt;</span>
+<span class="w">    </span><span class="p">&lt;/</span><span class="nt">Suspense</span><span class="p">&gt;</span>
+<span class="w">  </span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<hr />
+<h2 id="testing-react-components">Testing React Components</h2>
+<h3 id="jest-react-testing-library">Jest + React Testing Library</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">render</span><span class="p">,</span><span class="w"> </span><span class="nx">screen</span><span class="p">,</span><span class="w"> </span><span class="nx">fireEvent</span><span class="p">,</span><span class="w"> </span><span class="nx">waitFor</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'@testing-library/react'</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="nx">userEvent</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'@testing-library/user-event'</span><span class="p">;</span>
+
+<span class="nx">test</span><span class="p">(</span><span class="s1">'renders welcome message'</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">render</span><span class="p">(&lt;</span><span class="nt">Welcome</span><span class="w"> </span><span class="na">name</span><span class="o">=</span><span class="s">"John"</span><span class="w"> </span><span class="p">/&gt;);</span>
+<span class="w">  </span><span class="nx">expect</span><span class="p">(</span><span class="nx">screen</span><span class="p">.</span><span class="nx">getByText</span><span class="p">(</span><span class="s1">'Hello, John'</span><span class="p">)).</span><span class="nx">toBeInTheDocument</span><span class="p">();</span>
+<span class="p">});</span>
+
+<span class="nx">test</span><span class="p">(</span><span class="s1">'increments counter on button click'</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">render</span><span class="p">(&lt;</span><span class="nt">Counter</span><span class="w"> </span><span class="p">/&gt;);</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">button</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">screen</span><span class="p">.</span><span class="nx">getByText</span><span class="p">(</span><span class="s1">'Increment'</span><span class="p">);</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">screen</span><span class="p">.</span><span class="nx">getByText</span><span class="p">(</span><span class="sr">/Count:/</span><span class="p">);</span>
+
+<span class="w">  </span><span class="nx">fireEvent</span><span class="p">.</span><span class="nx">click</span><span class="p">(</span><span class="nx">button</span><span class="p">);</span>
+<span class="w">  </span><span class="nx">expect</span><span class="p">(</span><span class="nx">count</span><span class="p">).</span><span class="nx">toHaveTextContent</span><span class="p">(</span><span class="s1">'Count: 1'</span><span class="p">);</span>
+
+<span class="w">  </span><span class="nx">fireEvent</span><span class="p">.</span><span class="nx">click</span><span class="p">(</span><span class="nx">button</span><span class="p">);</span>
+<span class="w">  </span><span class="nx">expect</span><span class="p">(</span><span class="nx">count</span><span class="p">).</span><span class="nx">toHaveTextContent</span><span class="p">(</span><span class="s1">'Count: 2'</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="nx">test</span><span class="p">(</span><span class="s1">'fetches and displays user'</span><span class="p">,</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Mock API</span>
+<span class="w">  </span><span class="nb">global</span><span class="p">.</span><span class="nx">fetch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">jest</span><span class="p">.</span><span class="nx">fn</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span>
+<span class="w">    </span><span class="nb">Promise</span><span class="p">.</span><span class="nx">resolve</span><span class="p">({</span>
+<span class="w">      </span><span class="nx">json</span><span class="o">:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nb">Promise</span><span class="p">.</span><span class="nx">resolve</span><span class="p">({</span><span class="w"> </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s1">'John'</span><span class="p">,</span><span class="w"> </span><span class="nx">email</span><span class="o">:</span><span class="w"> </span><span class="s1">'john@example.com'</span><span class="w"> </span><span class="p">})</span>
+<span class="w">    </span><span class="p">})</span>
+<span class="w">  </span><span class="p">);</span>
+
+<span class="w">  </span><span class="nx">render</span><span class="p">(&lt;</span><span class="nt">UserProfile</span><span class="w"> </span><span class="na">userId</span><span class="o">=</span><span class="p">{</span><span class="mf">1</span><span class="p">}</span><span class="w"> </span><span class="p">/&gt;);</span>
+
+<span class="w">  </span><span class="c1">// Initially loading</span>
+<span class="w">  </span><span class="nx">expect</span><span class="p">(</span><span class="nx">screen</span><span class="p">.</span><span class="nx">getByText</span><span class="p">(</span><span class="s1">'Loading...'</span><span class="p">)).</span><span class="nx">toBeInTheDocument</span><span class="p">();</span>
+
+<span class="w">  </span><span class="c1">// Wait for data</span>
+<span class="w">  </span><span class="k">await</span><span class="w"> </span><span class="nx">waitFor</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">screen</span><span class="p">.</span><span class="nx">getByText</span><span class="p">(</span><span class="s1">'John'</span><span class="p">)).</span><span class="nx">toBeInTheDocument</span><span class="p">();</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="nx">expect</span><span class="p">(</span><span class="nx">fetch</span><span class="p">).</span><span class="nx">toHaveBeenCalledWith</span><span class="p">(</span><span class="s1">'/api/users/1'</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="nx">test</span><span class="p">(</span><span class="s1">'submits form with user input'</span><span class="p">,</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">handleSubmit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">jest</span><span class="p">.</span><span class="nx">fn</span><span class="p">();</span>
+<span class="w">  </span><span class="nx">render</span><span class="p">(&lt;</span><span class="nt">LoginForm</span><span class="w"> </span><span class="na">onSubmit</span><span class="o">=</span><span class="p">{</span><span class="nx">handleSubmit</span><span class="p">}</span><span class="w"> </span><span class="p">/&gt;);</span>
+
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">emailInput</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">screen</span><span class="p">.</span><span class="nx">getByLabelText</span><span class="p">(</span><span class="s1">'Email'</span><span class="p">);</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">passwordInput</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">screen</span><span class="p">.</span><span class="nx">getByLabelText</span><span class="p">(</span><span class="s1">'Password'</span><span class="p">);</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">submitButton</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">screen</span><span class="p">.</span><span class="nx">getByText</span><span class="p">(</span><span class="s1">'Login'</span><span class="p">);</span>
+
+<span class="w">  </span><span class="k">await</span><span class="w"> </span><span class="nx">userEvent</span><span class="p">.</span><span class="nx">type</span><span class="p">(</span><span class="nx">emailInput</span><span class="p">,</span><span class="w"> </span><span class="s1">'john@example.com'</span><span class="p">);</span>
+<span class="w">  </span><span class="k">await</span><span class="w"> </span><span class="nx">userEvent</span><span class="p">.</span><span class="nx">type</span><span class="p">(</span><span class="nx">passwordInput</span><span class="p">,</span><span class="w"> </span><span class="s1">'password123'</span><span class="p">);</span>
+<span class="w">  </span><span class="k">await</span><span class="w"> </span><span class="nx">userEvent</span><span class="p">.</span><span class="nx">click</span><span class="p">(</span><span class="nx">submitButton</span><span class="p">);</span>
+
+<span class="w">  </span><span class="nx">expect</span><span class="p">(</span><span class="nx">handleSubmit</span><span class="p">).</span><span class="nx">toHaveBeenCalledWith</span><span class="p">({</span>
+<span class="w">    </span><span class="nx">email</span><span class="o">:</span><span class="w"> </span><span class="s1">'john@example.com'</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">password</span><span class="o">:</span><span class="w"> </span><span class="s1">'password123'</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">});</span>
+</code></pre></div>
+
+<hr />
+<h2 id="interview-questions-answers">Interview Questions &amp; Answers</h2>
+<h3 id="q1-explain-the-difference-between-usestate-and-useref">Q1: "Explain the difference between useState and useRef."</h3>
+<p><strong>Your Answer:</strong></p>
+<blockquote>
+<p><em>"Both store values, but behave differently:</em></p>
+<p><strong>useState:</strong><br />
+<em>- For values that affect rendering</em><br />
+<em>- Updating triggers re-render</em><br />
+<em>- Use for UI state</em></p>
+<p><code>jsx
+const [count, setCount] = useState(0);
+setCount(1); // Component re-renders</code></p>
+<p><strong>useRef:</strong><br />
+<em>- For values that DON'T affect rendering</em><br />
+<em>- Updating does NOT trigger re-render</em><br />
+<em>- Persists across renders</em><br />
+<em>- Use for: DOM refs, timers, previous values</em></p>
+<p><code>jsx
+const countRef = useRef(0);
+countRef.current = 1; // No re-render</code></p>
+<p><strong>Real Example:</strong><br />
+<em>Form with auto-save. Use useState for input value (renders as user types). Use useRef for debounce timer (doesn't need to render):</em></p>
+<p>```jsx<br />
+const [text, setText] = useState('');<br />
+const timerRef = useRef(null);</p>
+<p>const handleChange = (e) =&gt; {<br />
+  setText(e.target.value);</p>
+<p>clearTimeout(timerRef.current);<br />
+  timerRef.current = setTimeout(() =&gt; {<br />
+    saveToServer(e.target.value);<br />
+  }, 1000);<br />
+};<br />
+```"*</p>
+</blockquote>
+<hr />
+<h3 id="q2-how-do-you-prevent-unnecessary-re-renders-in-react">Q2: "How do you prevent unnecessary re-renders in React?"</h3>
+<p><strong>Your Answer:</strong></p>
+<blockquote>
+<p><em>"Multiple techniques depending on the scenario:</em></p>
+<p><strong>1. React.memo (Component Level)</strong><br />
+<em>Memoize entire component:</em><br />
+<code>jsx
+const UserCard = React.memo(({ user }) =&gt; {
+  return &lt;div&gt;{user.name}&lt;/div&gt;;
+});</code></p>
+<p><strong>2. useMemo (Value Level)</strong><br />
+<em>Memoize expensive calculations:</em><br />
+<code>jsx
+const sortedUsers = useMemo(() =&gt; {
+  return users.sort((a, b) =&gt; a.name.localeCompare(b.name));
+}, [users]);</code></p>
+<p><strong>3. useCallback (Function Level)</strong><br />
+<em>Memoize functions passed as props:</em><br />
+<code>jsx
+const handleClick = useCallback(() =&gt; {
+  console.log('clicked');
+}, []);</code></p>
+<p i_ items.map_item_><strong>4. Proper Key Props</strong><br />
+```jsx<br />
+// ❌ BAD: index as key<br /></p>
+<p>// ✅ GOOD: stable unique id<br />
+{items.map(item =&gt; <Item key={item.id} {...item} />)}<br />
+```</p>
+<p><strong>5. Code Splitting</strong><br />
+<em>Load components only when needed:</em><br />
+<code>jsx
+const Dashboard = lazy(() =&gt; import('./Dashboard'));</code></p>
+<p><strong>Real Example:</strong><br />
+<em>Data table with 1000 rows. Without optimization: 2-second re-render on every keystroke. With React.memo on table rows + useMemo for filtered data: 50ms."</em></p>
+</blockquote>
+<hr />
+<h3 id="q3-how-do-you-integrate-a-react-frontend-with-a-fastapi-backend">Q3: "How do you integrate a React frontend with a FastAPI backend?"</h3>
+<p><strong>Your Answer:</strong></p>
+<blockquote>
+<p><em>"Here's my production setup:</em></p>
+<p><strong>Architecture:</strong><br />
+<code>React (localhost:3000) ←→ FastAPI (localhost:8000)</code></p>
+<p><strong>1. CORS Setup (FastAPI)</strong><br />
+```python<br />
+from fastapi.middleware.cors import CORSMiddleware</p>
+<p>app.add_middleware(<br />
+    CORSMiddleware,<br />
+    allow_origins=["http://localhost:3000"],<br />
+    allow_credentials=True,<br />
+    allow_methods=["<em>"],<br />
+    allow_headers=["</em>"]<br />
+)<br />
+```</p>
+<p><strong>2. API Client (React)</strong><br />
+```jsx<br />
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';</p>
+<p>async function fetchUsers() {<br />
+  const response = await fetch(<code>${API_URL}/api/users</code>, {<br />
+    headers: {<br />
+      'Authorization': <code>Bearer ${token}</code>,<br />
+      'Content-Type': 'application/json'<br />
+    }<br />
+  });<br />
+  return response.json();<br />
+}<br />
+```</p>
+<p><strong>3. Custom Hook for API Calls</strong><br />
+```jsx<br />
+function useAPI(endpoint) {<br />
+  const [data, setData] = useState(null);<br />
+  const [loading, setLoading] = useState(true);<br />
+  const [error, setError] = useState(null);</p>
+<p>useEffect(() =&gt; {<br />
+    fetch(<code>${API_URL}${endpoint}</code>)<br />
+      .then(res =&gt; res.json())<br />
+      .then(setData)<br />
+      .catch(setError)<br />
+      .finally(() =&gt; setLoading(false));<br />
+  }, [endpoint]);</p>
+<p>return { data, loading, error };<br />
+}<br />
+```</p>
+<p><strong>4. React Query (Better)</strong><br />
+<code>jsx
+const { data: users } = useQuery({
+  queryKey: ['users'],
+  queryFn: () =&gt; fetch('/api/users').then(r =&gt; r.json())
+});</code></p>
+<p><strong>5. WebSocket for Real-Time</strong><br />
+<code>jsx
+useEffect(() =&gt; {
+  const ws = new WebSocket('ws://localhost:8000/ws');
+  ws.onmessage = (event) =&gt; {
+    setMessages(prev =&gt; [...prev, JSON.parse(event.data)]);
+  };
+  return () =&gt; ws.close();
+}, []);</code></p>
+<p><strong>Production:</strong><br />
+<em>- Same origin (deploy React build via FastAPI static files)</em><br />
+<em>- Or separate: React on Vercel, FastAPI on AWS</em><br />
+<em>- API key / JWT for auth</em><br />
+<em>- Rate limiting on backend</em>"*</p>
+</blockquote>
+<hr />
+<h2 id="summary-your-react-expertise">Summary: Your React Expertise</h2>
+<p><strong>When Asked About React:</strong></p>
+<blockquote>
+<p><em>"I build modern React frontends with hooks, functional components, and React Query for server state. For complex UIs, I use useMemo/useCallback for performance optimization and React.memo to prevent unnecessary re-renders.</em></p>
+<p><em>My typical stack: React frontend consuming FastAPI backend APIs, TanStack Query for data fetching with automatic caching, Context API for global state like auth, and WebSockets for real-time features.</em></p>
+<p><em>I write tests with React Testing Library focusing on user behavior rather than implementation details. For large apps, I use code splitting with React.lazy to keep bundle sizes small and initial load fast."</em></p>
+</blockquote>
+<hr />
+<p><strong>React.js expertise complete!</strong> ⚛️</p>
+        </div>
+    </div>
+
+    <script>
+        // Progress Tracker JavaScript
+        const STORAGE_KEY = 'course_progress_reactjs_frontend_interview_guide';
+
+        // Extract all H2 and H3 headings from content
+        function extractSections() {
+            const content = document.querySelector('.content');
+            const headings = content.querySelectorAll('h2, h3');
+            const sections = [];
+
+            headings.forEach((heading, index) => {
+                const level = heading.tagName === 'H2' ? 2 : 3;
+                const text = heading.textContent.trim();
+                const id = `section-${index}`;
+
+                // Add ID to heading for linking
+                heading.id = id;
+
+                sections.push({
+                    id: id,
+                    text: text,
+                    level: level
+                });
+            });
+
+            return sections;
+        }
+
+        // Load saved progress from localStorage
+        function loadProgress() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            return saved ? JSON.parse(saved) : {};
+        }
+
+        // Save progress to localStorage
+        function saveProgress(progress) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+        }
+
+        // Calculate progress percentage
+        function calculateProgress() {
+            const checkboxes = document.querySelectorAll('.progress-checkbox');
+            const total = checkboxes.length;
+            if (total === 0) return 0;
+
+            const completed = Array.from(checkboxes).filter(cb => cb.checked).length;
+            return Math.round((completed / total) * 100);
+        }
+
+        // Update progress display
+        function updateProgressDisplay() {
+            const percentage = calculateProgress();
+            document.getElementById('progress-pct').textContent = percentage + '%';
+            document.getElementById('progress-bar').style.width = percentage + '%';
+
+            // Update completed class on items
+            document.querySelectorAll('.progress-item').forEach(item => {
+                const checkbox = item.querySelector('.progress-checkbox');
+                if (checkbox.checked) {
+                    item.classList.add('completed');
+                } else {
+                    item.classList.remove('completed');
+                }
+            });
+        }
+
+        // Toggle checkbox
+        function toggleCheckbox(sectionId) {
+            const checkbox = document.getElementById('cb-' + sectionId);
+            const progress = loadProgress();
+
+            progress[sectionId] = checkbox.checked;
+            saveProgress(progress);
+            updateProgressDisplay();
+        }
+
+        // Reset all progress
+        function resetProgress() {
+            if (confirm('Reset all progress for this page?')) {
+                localStorage.removeItem(STORAGE_KEY);
+                document.querySelectorAll('.progress-checkbox').forEach(cb => {
+                    cb.checked = false;
+                });
+                updateProgressDisplay();
+            }
+        }
+
+        // Toggle progress list visibility
+        function toggleProgressList() {
+            const list = document.getElementById('progress-items');
+            const btn = document.querySelector('.toggle-progress');
+
+            if (list.classList.contains('collapsed')) {
+                list.classList.remove('collapsed');
+                btn.textContent = '▼ Hide';
+            } else {
+                list.classList.add('collapsed');
+                btn.textContent = '▶ Show';
+            }
+        }
+
+        // Initialize progress tracker
+        function initProgressTracker() {
+            const sections = extractSections();
+            const progress = loadProgress();
+            const container = document.getElementById('progress-items');
+
+            if (sections.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No sections found</p>';
+                return;
+            }
+
+            sections.forEach(section => {
+                const item = document.createElement('div');
+                item.className = 'progress-item';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'progress-checkbox';
+                checkbox.id = 'cb-' + section.id;
+                checkbox.checked = progress[section.id] || false;
+                checkbox.onchange = () => toggleCheckbox(section.id);
+
+                const label = document.createElement('label');
+                label.className = 'progress-label';
+                label.htmlFor = 'cb-' + section.id;
+                label.textContent = section.text;
+                label.style.paddingLeft = section.level === 3 ? '20px' : '0';
+                label.onclick = () => {
+                    document.getElementById(section.id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+                };
+
+                item.appendChild(checkbox);
+                item.appendChild(label);
+                container.appendChild(item);
+            });
+
+            updateProgressDisplay();
+        }
+
+        // Run on page load
+        document.addEventListener('DOMContentLoaded', initProgressTracker);
+    </script>
+</body>
+</html>

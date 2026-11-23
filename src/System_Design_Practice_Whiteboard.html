@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System_Design_Practice_Whiteboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 60px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .metadata {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 16px 24px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #666;
+            border-left: 4px solid #667eea;
+        }
+
+        /* PROGRESS TRACKER STYLES */
+        .progress-tracker {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .progress-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-stats {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .progress-percentage {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #764ba2;
+        }
+
+        .progress-bar-container {
+            height: 12px;
+            background: #e9ecef;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+            border-radius: 20px;
+        }
+
+        .reset-btn {
+            padding: 8px 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+
+        .reset-btn:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+        }
+
+        .progress-items {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .progress-items::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .progress-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .progress-item:hover {
+            background: #f8f9fa;
+            transform: translateX(5px);
+        }
+
+        .progress-item.completed {
+            opacity: 0.7;
+        }
+
+        .progress-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .progress-label {
+            cursor: pointer;
+            font-size: 0.95em;
+            line-height: 1.5;
+            color: #495057;
+            flex-grow: 1;
+        }
+
+        .progress-item.completed .progress-label {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .toggle-progress {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .toggle-progress:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .progress-items.collapsed {
+            display: none;
+        }
+
+        /* CONTENT STYLES */
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 4px solid #667eea;
+            font-weight: 700;
+        }
+
+        h2 {
+            color: #764ba2;
+            font-size: 2em;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        h3 {
+            color: #495057;
+            font-size: 1.5em;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        h4 {
+            color: #666;
+            font-size: 1.25em;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        ul, ol {
+            margin: 20px 0;
+            padding-left: 40px;
+        }
+
+        li {
+            margin-bottom: 12px;
+            line-height: 1.7;
+        }
+
+        code {
+            background: #f4f5f7;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #c7254e;
+            border: 1px solid #e1e4e8;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 24px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 25px 0;
+            border: 1px solid #444;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            border: none;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        blockquote {
+            border-left: 5px solid #667eea;
+            padding: 15px 25px;
+            margin: 25px 0;
+            background: #f8f9fa;
+            border-radius: 0 8px 8px 0;
+            color: #495057;
+            font-style: italic;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 30px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 14px 18px;
+            text-align: left;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tr:hover {
+            background: #e9ecef;
+            transition: background 0.2s;
+        }
+
+        a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px solid transparent;
+            transition: border-bottom 0.2s;
+        }
+
+        a:hover {
+            border-bottom: 1px solid #667eea;
+        }
+
+        hr {
+            border: none;
+            border-top: 2px solid #e9ecef;
+            margin: 40px 0;
+        }
+
+        strong {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        em {
+            color: #495057;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 25px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.6em;
+            }
+
+            .progress-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .progress-stats {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../navigation.html" class="back-link">&larr; Back to Navigation</a>
+
+        <div class="metadata">
+            <strong>Source:</strong> dev/System_Design_Practice_Whiteboard.md &nbsp;|&nbsp; <strong>Updated:</strong> 2026-11-18 19:44:58
+        </div>
+
+        <!-- PROGRESS TRACKER -->
+        <div class="progress-tracker">
+            <div class="progress-header">
+                <div class="progress-title">
+                    <span>📚</span>
+                    <span>Your Progress</span>
+                </div>
+                <div class="progress-stats">
+                    <span class="progress-percentage" id="progress-pct">0%</span>
+                    <button class="reset-btn" onclick="resetProgress()">Reset</button>
+                    <button class="toggle-progress" onclick="toggleProgressList()">▼ Hide</button>
+                </div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progress-bar" style="width: 0%"></div>
+            </div>
+            <div class="progress-items" id="progress-items">
+                <!-- Checkboxes will be generated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="content">
+<h1 id="system-design-practice-whiteboard-edition">System Design Practice: Whiteboard Edition</h1>
+<blockquote>
+<p><strong>For 12+ Years Experience</strong>: Interviewers expect you to design end-to-end systems, not just components</p>
+</blockquote>
+<hr />
+<h2 id="what-is-system-design-interview">📐 What is System Design Interview?</h2>
+<p><strong>NOT a coding interview.</strong> You'll spend 45 minutes:<br />
+- Drawing boxes and arrows (services, databases, queues)<br />
+- Explaining tradeoffs ("Why RabbitMQ instead of Kafka?")<br />
+- Estimating scale ("100k invoices/day = 1.16/sec average, 50/sec peak")<br />
+- Handling follow-ups ("What if S3 goes down?")</p>
+<p><strong>You'll be judged on:</strong><br />
+✅ Structured thinking (not random brainstorming)<br />
+✅ Tradeoff analysis (every choice has pros/cons)<br />
+✅ Scale estimation (back-of-envelope math)<br />
+✅ Communication (can you explain it clearly?)</p>
+<hr />
+<h2 id="5-system-design-problems-from-your-experience">🎯 5 System Design Problems (From Your Experience)</h2>
+<h3 id="problem-1-invoice-delivery-system"><strong>Problem 1: Invoice Delivery System</strong></h3>
+<p><strong>Interviewer:</strong> "Design Billtrust's invoice delivery system. 100k invoices/month, customers receive PDFs via email."</p>
+<hr />
+<h4 id="step-1-requirements-clarification-5-min"><strong>Step 1: Requirements Clarification (5 min)</strong></h4>
+<p><strong>You Ask:</strong><br />
+- "What's the invoice volume? 100k/month = 3,333/day = 2.3/sec average. What's peak?"<br />
+- "Do customers need invoices immediately or can we batch?"<br />
+- "What if email delivery fails? Retry logic? DLQ?"<br />
+- "Are PDFs generated on-demand or pre-generated?"<br />
+- "What's the SLA? 'Within 15 minutes' vs 'within 1 hour'?"</p>
+<p><strong>Interviewer Answers:</strong><br />
+- Peak is 10x average (month-end billing spike) = 23 msgs/sec<br />
+- SLA: 15 minutes from invoice creation to customer email<br />
+- Retry failed emails 3 times, then DLQ<br />
+- PDFs generated on-demand (not pre-generated)</p>
+<hr />
+<h4 id="step-2-high-level-design-10-min"><strong>Step 2: High-Level Design (10 min)</strong></h4>
+<p><strong>Draw This:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="err">┌──────────────┐</span>
+<span class="err">│</span><span class="w">  </span><span class="n">Billing</span><span class="w"> </span><span class="n">API</span><span class="w"> </span><span class="err">│</span><span class="w">  </span><span class="err">←</span><span class="w"> </span><span class="n">Creates</span><span class="w"> </span><span class="n">invoice</span><span class="w"> </span><span class="n">record</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">DB</span>
+<span class="err">└──────┬───────┘</span>
+<span class="w">       </span><span class="err">│</span><span class="w"> </span><span class="n">Publish</span><span class="w"> </span><span class="n">event</span>
+<span class="w">       </span><span class="err">▼</span>
+<span class="err">┌──────────────────┐</span>
+<span class="err">│</span><span class="w">    </span><span class="n">RabbitMQ</span><span class="w">      </span><span class="err">│</span><span class="w">  </span><span class="err">←</span><span class="w"> </span><span class="n">Invoice</span><span class="w"> </span><span class="n">generation</span><span class="w"> </span><span class="n">queue</span>
+<span class="err">│</span><span class="w">  </span><span class="p">(</span><span class="n">invoice_jobs</span><span class="p">)</span><span class="w">  </span><span class="err">│</span>
+<span class="err">└──────┬───────────┘</span>
+<span class="w">       </span><span class="err">│</span><span class="w"> </span><span class="n">Consume</span>
+<span class="w">       </span><span class="err">▼</span>
+<span class="err">┌──────────────────┐</span>
+<span class="err">│</span><span class="w">  </span><span class="n">PDF</span><span class="w"> </span><span class="n">Generator</span><span class="w">   </span><span class="err">│</span><span class="w">  </span><span class="err">←</span><span class="w"> </span><span class="n">Worker</span><span class="w"> </span><span class="n">pods</span><span class="w"> </span><span class="p">(</span><span class="mi">5</span><span class="o">-</span><span class="mi">20</span><span class="w"> </span><span class="n">auto</span><span class="o">-</span><span class="n">scale</span><span class="p">)</span>
+<span class="err">│</span><span class="w">    </span><span class="n">Workers</span><span class="w">       </span><span class="err">│</span><span class="w">  </span><span class="err">→</span><span class="w"> </span><span class="n">Generate</span><span class="w"> </span><span class="n">PDF</span><span class="w"> </span><span class="n">from</span><span class="w"> </span><span class="n">invoice</span><span class="w"> </span><span class="n">data</span>
+<span class="err">└──────┬───────────┘</span>
+<span class="w">       </span><span class="err">│</span><span class="w"> </span><span class="n">Upload</span>
+<span class="w">       </span><span class="err">▼</span>
+<span class="err">┌──────────────────┐</span>
+<span class="err">│</span><span class="w">   </span><span class="n">AWS</span><span class="w"> </span><span class="n">S3</span><span class="w">         </span><span class="err">│</span><span class="w">  </span><span class="err">←</span><span class="w"> </span><span class="n">Store</span><span class="w"> </span><span class="n">PDF</span><span class="w"> </span><span class="p">(</span><span class="n">key</span><span class="p">:</span><span class="w"> </span><span class="n">invoice_id</span><span class="o">.</span><span class="n">pdf</span><span class="p">)</span>
+<span class="err">└──────┬───────────┘</span>
+<span class="w">       </span><span class="err">│</span><span class="w"> </span><span class="n">Publish</span><span class="w"> </span><span class="n">event</span>
+<span class="w">       </span><span class="err">▼</span>
+<span class="err">┌──────────────────┐</span>
+<span class="err">│</span><span class="w">    </span><span class="n">RabbitMQ</span><span class="w">      </span><span class="err">│</span><span class="w">  </span><span class="err">←</span><span class="w"> </span><span class="n">Email</span><span class="w"> </span><span class="n">sending</span><span class="w"> </span><span class="n">queue</span>
+<span class="err">│</span><span class="w">  </span><span class="p">(</span><span class="n">email_jobs</span><span class="p">)</span><span class="w">    </span><span class="err">│</span>
+<span class="err">└──────┬───────────┘</span>
+<span class="w">       </span><span class="err">│</span><span class="w"> </span><span class="n">Consume</span>
+<span class="w">       </span><span class="err">▼</span>
+<span class="err">┌──────────────────┐</span>
+<span class="err">│</span><span class="w">  </span><span class="n">Email</span><span class="w"> </span><span class="n">Workers</span><span class="w">   </span><span class="err">│</span><span class="w">  </span><span class="err">←</span><span class="w"> </span><span class="n">SendGrid</span><span class="w"> </span><span class="n">API</span>
+<span class="err">└──────────────────┘</span>
+</code></pre></div>
+
+<p><strong>Key Components:</strong><br />
+1. <strong>Billing API</strong>: REST API, creates invoice record in MySQL<br />
+2. <strong>RabbitMQ (invoice_jobs)</strong>: Task queue, prefetch_count=1 for fair load balancing<br />
+3. <strong>PDF Generator Workers</strong>: Kubernetes pods, 5-20 auto-scale on queue depth<br />
+4. <strong>AWS S3</strong>: Object storage, PDF files (10 MB avg each)<br />
+5. <strong>RabbitMQ (email_jobs)</strong>: Second queue for email sending<br />
+6. <strong>Email Workers</strong>: Call SendGrid API, retry 3x on failure</p>
+<hr />
+<h4 id="step-3-deep-dive-15-min"><strong>Step 3: Deep Dive (15 min)</strong></h4>
+<p><strong>Interviewer:</strong> "How do you handle PDF generation failures?"</p>
+<p><strong>You Answer:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">Failure</span><span class="w"> </span><span class="n">Scenarios</span><span class="p">:</span>
+
+<span class="mf">1.</span><span class="w"> </span><span class="n">Worker</span><span class="w"> </span><span class="n">Pod</span><span class="w"> </span><span class="n">Crashes</span><span class="w"> </span><span class="n">Mid</span><span class="o">-</span><span class="n">Generation</span><span class="p">:</span>
+<span class="w">   </span><span class="err">✅</span><span class="w"> </span><span class="n">Solution</span><span class="p">:</span><span class="w"> </span><span class="n">RabbitMQ</span><span class="w"> </span><span class="n">message</span><span class="w"> </span><span class="n">requeued</span><span class="w"> </span><span class="p">(</span><span class="ow">not</span><span class="w"> </span><span class="n">acked</span><span class="p">)</span>
+<span class="w">   </span><span class="err">→</span><span class="w"> </span><span class="n">Another</span><span class="w"> </span><span class="n">worker</span><span class="w"> </span><span class="n">picks</span><span class="w"> </span><span class="n">it</span><span class="w"> </span><span class="n">up</span>
+<span class="w">   </span><span class="err">→</span><span class="w"> </span><span class="n">prefetch_count</span><span class="o">=</span><span class="mi">1</span><span class="w"> </span><span class="n">ensures</span><span class="w"> </span><span class="n">fair</span><span class="w"> </span><span class="n">redistribution</span>
+
+<span class="mf">2.</span><span class="w"> </span><span class="n">Customer</span><span class="w"> </span><span class="n">Data</span><span class="w"> </span><span class="n">Missing</span><span class="w"> </span><span class="p">(</span><span class="n">DB</span><span class="w"> </span><span class="n">query</span><span class="w"> </span><span class="n">returns</span><span class="w"> </span><span class="n">NULL</span><span class="p">):</span>
+<span class="w">   </span><span class="err">❌</span><span class="w"> </span><span class="n">Solution</span><span class="p">:</span><span class="w"> </span><span class="n">Send</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">DLQ</span><span class="w"> </span><span class="n">after</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="n">retries</span>
+<span class="w">   </span><span class="err">→</span><span class="w"> </span><span class="n">Log</span><span class="w"> </span><span class="n">error</span><span class="p">:</span><span class="w"> </span><span class="s2">"Missing customer data for invoice 12345"</span>
+<span class="w">   </span><span class="err">→</span><span class="w"> </span><span class="n">Ops</span><span class="w"> </span><span class="n">team</span><span class="w"> </span><span class="n">investigates</span><span class="w"> </span><span class="n">DLQ</span><span class="w"> </span><span class="n">manually</span>
+<span class="w">   </span><span class="err">→</span><span class="w"> </span><span class="n">Don</span><span class="s1">'t block queue with unfixable messages</span>
+
+<span class="mf">3.</span><span class="w"> </span><span class="n">S3</span><span class="w"> </span><span class="n">Upload</span><span class="w"> </span><span class="n">Timeout</span><span class="p">:</span>
+<span class="w">   </span><span class="err">🔄</span><span class="w"> </span><span class="n">Solution</span><span class="p">:</span><span class="w"> </span><span class="n">Retry</span><span class="w"> </span><span class="n">with</span><span class="w"> </span><span class="n">exponential</span><span class="w"> </span><span class="n">backoff</span>
+<span class="w">   </span><span class="err">→</span><span class="w"> </span><span class="mi">1</span><span class="n">st</span><span class="w"> </span><span class="n">retry</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="n">sec</span><span class="w"> </span><span class="n">delay</span>
+<span class="w">   </span><span class="err">→</span><span class="w"> </span><span class="mi">2</span><span class="n">nd</span><span class="w"> </span><span class="n">retry</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="n">sec</span><span class="w"> </span><span class="n">delay</span>
+<span class="w">   </span><span class="err">→</span><span class="w"> </span><span class="mi">3</span><span class="n">rd</span><span class="w"> </span><span class="n">retry</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="w"> </span><span class="n">sec</span><span class="w"> </span><span class="n">delay</span>
+<span class="w">   </span><span class="err">→</span><span class="w"> </span><span class="n">If</span><span class="w"> </span><span class="n">all</span><span class="w"> </span><span class="n">fail</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">DLQ</span>
+
+<span class="mf">4.</span><span class="w"> </span><span class="n">Duplicate</span><span class="w"> </span><span class="n">Messages</span><span class="w"> </span><span class="p">(</span><span class="n">Network</span><span class="w"> </span><span class="n">Retry</span><span class="p">):</span>
+<span class="w">   </span><span class="err">✅</span><span class="w"> </span><span class="n">Solution</span><span class="p">:</span><span class="w"> </span><span class="n">Idempotency</span><span class="w"> </span><span class="n">key</span><span class="w"> </span><span class="p">(</span><span class="n">invoice_id</span><span class="p">)</span>
+<span class="w">   </span><span class="err">→</span><span class="w"> </span><span class="n">Check</span><span class="w"> </span><span class="n">Redis</span><span class="p">:</span><span class="w"> </span><span class="s2">"processed:invoice_12345"</span><span class="w"> </span><span class="n">before</span><span class="w"> </span><span class="n">generating</span>
+<span class="w">   </span><span class="err">→</span><span class="w"> </span><span class="n">If</span><span class="w"> </span><span class="n">exists</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">skip</span><span class="w"> </span><span class="p">(</span><span class="n">already</span><span class="w"> </span><span class="n">generated</span><span class="p">)</span>
+<span class="w">   </span><span class="err">→</span><span class="w"> </span><span class="n">TTL</span><span class="p">:</span><span class="w"> </span><span class="mi">24</span><span class="w"> </span><span class="n">hours</span>
+</code></pre></div>
+
+<p><strong>Interviewer:</strong> "How do you scale during month-end spike (10x traffic)?"</p>
+<p><strong>You Answer:</strong></p>
+<div class="codehilite"><pre><span></span><code>Auto-Scaling Strategy:
+
+Kubernetes HPA (Horizontal Pod Autoscaler):
+  Metric: RabbitMQ queue depth
+  Trigger: queue_depth &gt; 100 messages
+
+  Min Replicas: 5 (normal)
+  Max Replicas: 20 (peak)
+
+  Scale Up:
+    Queue depth 500 → 10 pods
+    Queue depth 1000 → 15 pods
+    Queue depth 2000 → 20 pods (max)
+
+  Scale Down:
+    Queue depth &lt; 50 for 5 min → scale down 1 pod
+    Gradual (not instant) to avoid thrashing
+
+Cost:
+  Normal: 5 pods × $50/month = $250
+  Peak (1 day): 20 pods × $50/month ÷ 30 = $33
+  Total: $283/month
+</code></pre></div>
+
+<hr />
+<h4 id="step-4-tradeoffs-alternatives-10-min"><strong>Step 4: Tradeoffs &amp; Alternatives (10 min)</strong></h4>
+<p><strong>Interviewer:</strong> "Why RabbitMQ instead of Kafka?"</p>
+<p><strong>You Answer:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nx">RabbitMQ</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="nx">the</span><span class="w"> </span><span class="nx">right</span><span class="w"> </span><span class="kd">choice</span><span class="w"> </span><span class="nx">because</span><span class="p">:</span>
+
+<span class="err">✅</span><span class="w"> </span><span class="nx">Task</span><span class="w"> </span><span class="nx">Queue</span><span class="w"> </span><span class="nx">Pattern</span><span class="p">:</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="nx">Each</span><span class="w"> </span><span class="nx">invoice</span><span class="w"> </span><span class="nx">processed</span><span class="w"> </span><span class="nx">exactly</span><span class="w"> </span><span class="nx">once</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="nx">Message</span><span class="w"> </span><span class="nx">deleted</span><span class="w"> </span><span class="nx">after</span><span class="w"> </span><span class="nx">generation</span><span class="w"> </span><span class="p">(</span><span class="nx">no</span><span class="w"> </span><span class="nx">retention</span><span class="w"> </span><span class="nx">needed</span><span class="p">)</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="nx">Worker</span><span class="w"> </span><span class="nx">pulls</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="nx">job</span><span class="w"> </span><span class="nx">at</span><span class="w"> </span><span class="nx">a</span><span class="w"> </span><span class="nx">time</span><span class="w"> </span><span class="p">(</span><span class="nx">prefetch</span><span class="p">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="err">✅</span><span class="w"> </span><span class="nx">Throughput</span><span class="p">:</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="mi">23</span><span class="w"> </span><span class="nx">msgs</span><span class="o">/</span><span class="nx">sec</span><span class="w"> </span><span class="nx">peak</span><span class="w"> </span><span class="p">(</span><span class="nx">RabbitMQ</span><span class="w"> </span><span class="nx">handles</span><span class="w"> </span><span class="mi">1000</span><span class="o">+</span><span class="w"> </span><span class="nx">msgs</span><span class="o">/</span><span class="nx">sec</span><span class="w"> </span><span class="nx">easily</span><span class="p">)</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="nx">Kafka</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="nx">overkill</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="nx">this</span><span class="w"> </span><span class="nx">volume</span>
+
+<span class="err">✅</span><span class="w"> </span><span class="nx">Operational</span><span class="w"> </span><span class="nx">Simplicity</span><span class="p">:</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="nx">RabbitMQ</span><span class="p">:</span><span class="w"> </span><span class="nx">Single</span><span class="w"> </span><span class="nx">broker</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="nx">GB</span><span class="w"> </span><span class="nx">RAM</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="nx">Kafka</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="o">+</span><span class="w"> </span><span class="nx">brokers</span><span class="p">,</span><span class="w"> </span><span class="nx">ZooKeeper</span><span class="p">,</span><span class="w"> </span><span class="mi">8</span><span class="w"> </span><span class="nx">GB</span><span class="w"> </span><span class="nx">RAM</span>
+
+<span class="nx">Kafka</span><span class="w"> </span><span class="nx">would</span><span class="w"> </span><span class="nx">be</span><span class="w"> </span><span class="nx">better</span><span class="w"> </span><span class="nx">IF</span><span class="p">:</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="nx">Multiple</span><span class="w"> </span><span class="nx">consumers</span><span class="w"> </span><span class="nx">need</span><span class="w"> </span><span class="nx">same</span><span class="w"> </span><span class="nx">events</span><span class="w"> </span><span class="p">(</span><span class="nx">pub</span><span class="o">/</span><span class="nx">sub</span><span class="p">)</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="nx">Event</span><span class="w"> </span><span class="nx">replay</span><span class="w"> </span><span class="nx">required</span><span class="w"> </span><span class="p">(</span><span class="nx">reprocess</span><span class="w"> </span><span class="nx">last</span><span class="w"> </span><span class="nx">week</span><span class="p">)</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="nx">Throughput</span><span class="w"> </span><span class="p">&gt;</span><span class="w"> </span><span class="mi">1000</span><span class="w"> </span><span class="nx">msgs</span><span class="o">/</span><span class="nx">sec</span>
+</code></pre></div>
+
+<p><strong>Interviewer:</strong> "What if S3 goes down?"</p>
+<p><strong>You Answer:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">Disaster</span><span class="w"> </span><span class="n">Recovery</span><span class="p">:</span>
+
+<span class="n">Option</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="w"> </span><span class="n">Multi</span><span class="o">-</span><span class="n">Region</span><span class="w"> </span><span class="n">S3</span><span class="w"> </span><span class="p">(</span><span class="n">Best</span><span class="p">)</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="n">Primary</span><span class="p">:</span><span class="w"> </span><span class="n">us</span><span class="o">-</span><span class="n">east</span><span class="o">-</span><span class="mi">1</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="n">Failover</span><span class="p">:</span><span class="w"> </span><span class="n">us</span><span class="o">-</span><span class="n">west</span><span class="o">-</span><span class="mi">2</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="n">Worker</span><span class="w"> </span><span class="n">tries</span><span class="w"> </span><span class="n">us</span><span class="o">-</span><span class="n">east</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">falls</span><span class="w"> </span><span class="n">back</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">us</span><span class="o">-</span><span class="n">west</span><span class="o">-</span><span class="mi">2</span><span class="w"> </span><span class="n">on</span><span class="w"> </span><span class="n">error</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="n">Cost</span><span class="p">:</span><span class="w"> </span><span class="o">$</span><span class="mf">0.023</span><span class="o">/</span><span class="n">GB</span><span class="w"> </span><span class="p">(</span><span class="n">same</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">single</span><span class="o">-</span><span class="n">region</span><span class="p">)</span>
+
+<span class="n">Option</span><span class="w"> </span><span class="mi">2</span><span class="p">:</span><span class="w"> </span><span class="n">Retry</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">DLQ</span><span class="w"> </span><span class="p">(</span><span class="n">Good</span><span class="w"> </span><span class="n">Enough</span><span class="p">)</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="n">S3</span><span class="w"> </span><span class="n">downtime</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="n">rare</span><span class="w"> </span><span class="p">(</span><span class="mf">99.99</span><span class="o">%</span><span class="w"> </span><span class="n">uptime</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="nb">min</span><span class="o">/</span><span class="n">month</span><span class="p">)</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="n">Workers</span><span class="w"> </span><span class="n">retry</span><span class="w"> </span><span class="mi">3</span><span class="n">x</span><span class="w"> </span><span class="n">with</span><span class="w"> </span><span class="n">backoff</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="n">If</span><span class="w"> </span><span class="n">all</span><span class="w"> </span><span class="n">fail</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">DLQ</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="n">After</span><span class="w"> </span><span class="n">S3</span><span class="w"> </span><span class="n">recovers</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">replay</span><span class="w"> </span><span class="n">DLQ</span><span class="w"> </span><span class="n">manually</span>
+
+<span class="n">Option</span><span class="w"> </span><span class="mi">3</span><span class="p">:</span><span class="w"> </span><span class="n">Local</span><span class="w"> </span><span class="n">Disk</span><span class="w"> </span><span class="n">Cache</span><span class="w"> </span><span class="p">(</span><span class="n">Complex</span><span class="p">)</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="n">Workers</span><span class="w"> </span><span class="n">save</span><span class="w"> </span><span class="n">PDF</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">local</span><span class="w"> </span><span class="n">disk</span><span class="w"> </span><span class="n">first</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="n">Background</span><span class="w"> </span><span class="n">job</span><span class="w"> </span><span class="n">uploads</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">S3</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="n">Pro</span><span class="p">:</span><span class="w"> </span><span class="n">Survives</span><span class="w"> </span><span class="n">S3</span><span class="w"> </span><span class="n">outage</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="n">Con</span><span class="p">:</span><span class="w"> </span><span class="n">Pods</span><span class="w"> </span><span class="n">are</span><span class="w"> </span><span class="n">ephemeral</span><span class="w"> </span><span class="p">(</span><span class="n">restart</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="n">loss</span><span class="p">)</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="n">Not</span><span class="w"> </span><span class="n">worth</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">complexity</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="nb">min</span><span class="o">/</span><span class="n">month</span><span class="w"> </span><span class="n">downtime</span>
+</code></pre></div>
+
+<hr />
+<h4 id="step-5-monitoring-metrics-5-min"><strong>Step 5: Monitoring &amp; Metrics (5 min)</strong></h4>
+<p><strong>You Say:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">Monitoring</span><span class="w"> </span><span class="n">Dashboard</span><span class="w"> </span><span class="p">(</span><span class="n">Datadog</span><span class="p">):</span>
+
+<span class="mf">1.</span><span class="w"> </span><span class="n">Queue</span><span class="w"> </span><span class="n">Depth</span><span class="p">:</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="n">Alert</span><span class="p">:</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1000</span><span class="w"> </span><span class="n">messages</span><span class="w"> </span><span class="p">(</span><span class="n">backlog</span><span class="w"> </span><span class="n">building</span><span class="p">)</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="n">Critical</span><span class="p">:</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">5000</span><span class="w"> </span><span class="n">messages</span><span class="w"> </span><span class="p">(</span><span class="n">page</span><span class="w"> </span><span class="n">oncall</span><span class="p">)</span>
+
+<span class="mf">2.</span><span class="w"> </span><span class="n">Processing</span><span class="w"> </span><span class="n">Rate</span><span class="p">:</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="n">Target</span><span class="p">:</span><span class="w"> </span><span class="mi">23</span><span class="w"> </span><span class="n">msgs</span><span class="o">/</span><span class="n">sec</span><span class="w"> </span><span class="p">(</span><span class="n">peak</span><span class="p">),</span><span class="w"> </span><span class="mf">2.3</span><span class="w"> </span><span class="n">msgs</span><span class="o">/</span><span class="n">sec</span><span class="w"> </span><span class="p">(</span><span class="n">normal</span><span class="p">)</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="n">Alert</span><span class="p">:</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">msgs</span><span class="o">/</span><span class="n">sec</span><span class="w"> </span><span class="n">during</span><span class="w"> </span><span class="n">peak</span><span class="w"> </span><span class="p">(</span><span class="n">workers</span><span class="w"> </span><span class="n">slow</span><span class="p">)</span>
+
+<span class="mf">3.</span><span class="w"> </span><span class="n">DLQ</span><span class="w"> </span><span class="n">Depth</span><span class="p">:</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="n">Alert</span><span class="p">:</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">messages</span><span class="w"> </span><span class="p">(</span><span class="n">something</span><span class="w"> </span><span class="n">failing</span><span class="p">)</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="n">Critical</span><span class="p">:</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">50</span><span class="w"> </span><span class="n">messages</span><span class="w"> </span><span class="p">(</span><span class="n">systemic</span><span class="w"> </span><span class="n">issue</span><span class="p">)</span>
+
+<span class="mf">4.</span><span class="w"> </span><span class="n">PDF</span><span class="w"> </span><span class="n">Generation</span><span class="w"> </span><span class="n">Latency</span><span class="p">:</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="n">p50</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="n">sec</span><span class="p">,</span><span class="w"> </span><span class="n">p95</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="w"> </span><span class="n">sec</span><span class="p">,</span><span class="w"> </span><span class="n">p99</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">sec</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="n">Alert</span><span class="p">:</span><span class="w"> </span><span class="n">p95</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">sec</span><span class="w"> </span><span class="p">(</span><span class="n">bottleneck</span><span class="p">)</span>
+
+<span class="mf">5.</span><span class="w"> </span><span class="n">S3</span><span class="w"> </span><span class="n">Upload</span><span class="w"> </span><span class="n">Success</span><span class="w"> </span><span class="n">Rate</span><span class="p">:</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="n">Target</span><span class="p">:</span><span class="w"> </span><span class="mf">99.9</span><span class="o">%</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="n">Alert</span><span class="p">:</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">99</span><span class="o">%</span><span class="w"> </span><span class="p">(</span><span class="n">S3</span><span class="w"> </span><span class="n">issues</span><span class="p">)</span>
+
+<span class="mf">6.</span><span class="w"> </span><span class="n">Email</span><span class="w"> </span><span class="n">Delivery</span><span class="w"> </span><span class="n">Rate</span><span class="p">:</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="n">Target</span><span class="p">:</span><span class="w"> </span><span class="mi">95</span><span class="o">%</span><span class="w"> </span><span class="p">(</span><span class="mi">5</span><span class="o">%</span><span class="w"> </span><span class="n">bounced</span><span class="w"> </span><span class="n">emails</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="n">normal</span><span class="p">)</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="n">Alert</span><span class="p">:</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">90</span><span class="o">%</span><span class="w"> </span><span class="p">(</span><span class="n">SendGrid</span><span class="w"> </span><span class="n">issues</span><span class="p">)</span>
+</code></pre></div>
+
+<hr />
+<h3 id="problem-2-payment-processing-system"><strong>Problem 2: Payment Processing System</strong></h3>
+<p><strong>Interviewer:</strong> "Design a payment gateway for processing credit card transactions. 10k transactions/hour."</p>
+<hr />
+<h4 id="requirements-5-min"><strong>Requirements (5 min)</strong></h4>
+<p><strong>You Ask:</strong><br />
+- "What payment methods? Credit card only or also ACH, PayPal?"<br />
+- "What's the success rate? 70% approved, 30% declined?"<br />
+- "Do we need PCI compliance? (Storing card numbers?)"<br />
+- "What's the retry policy? Retry declined cards?"<br />
+- "What about fraud detection?"</p>
+<p><strong>Interviewer Answers:</strong><br />
+- Credit card only (Stripe/Authorize.Net API)<br />
+- 70% approved, 30% declined (normal for SaaS)<br />
+- PCI Level 1 compliance required (tokenize cards, don't store raw)<br />
+- No retry on declined (fraud risk), but retry on network errors<br />
+- Basic fraud detection: amount &gt; $10k = manual review</p>
+<hr />
+<h4 id="high-level-design-10-min"><strong>High-Level Design (10 min)</strong></h4>
+<div class="codehilite"><pre><span></span><code>┌──────────────┐
+│  Web UI      │  ← Customer enters card
+└──────┬───────┘
+       │ POST /charge
+       ▼
+┌──────────────────┐
+│  Payment API     │  ← Tokenize card (Stripe.js client-side)
+│  (Node.js)       │  → Validate amount, customer_id
+└──────┬───────────┘
+       │ Publish event
+       ▼
+┌──────────────────┐
+│    Kafka         │  ← Payment events stream
+│ (payment_events) │  → Multiple consumers (billing, analytics, fraud)
+└──────┬───────────┘
+       │ Consume
+       ▼
+┌──────────────────┐
+│ Payment Processor│  ← Call Stripe API
+│    Workers       │  → Charge card, handle response
+└──────┬───────────┘
+       │ Update status
+       ▼
+┌──────────────────┐
+│     MySQL        │  ← Payments table (transaction_id, status, amount)
+└──────────────────┘
+</code></pre></div>
+
+<p><strong>Why Kafka instead of RabbitMQ?</strong></p>
+<div class="codehilite"><pre><span></span><code>Payment events need multiple consumers:
+  <span class="k">-</span> Billing Service: Update invoice status
+  <span class="k">-</span> Analytics Service: Log to data warehouse
+  <span class="k">-</span> Fraud Service: Check for suspicious patterns
+
+RabbitMQ fanout exchange could work, BUT:
+  ✅ Kafka: Event replay (reprocess last week if analytics job fails)
+  ✅ Kafka: Audit log (compliance requires 7-year retention)
+  ✅ Kafka: Partitioning by customer_id (all events for a customer in order)
+</code></pre></div>
+
+<hr />
+<h4 id="deep-dive-idempotency-10-min"><strong>Deep Dive: Idempotency (10 min)</strong></h4>
+<p><strong>Interviewer:</strong> "How do you prevent double-charging?"</p>
+<p><strong>You Answer:</strong></p>
+<div class="codehilite"><pre><span></span><code>Idempotency Key Pattern:
+
+Client Request:
+  POST /charge
+  {
+    "idempotency_key": "uuid-12345",  ← Generated by client
+    "amount": 100.00,
+    "customer_id": "cust_67890",
+    "stripe_token": "tok_visa_..."
+  }
+
+Server Logic:
+  1. Check Redis: GET "charge:uuid-12345"
+     → If exists: Return cached response (skip charge)
+     → If not exists: Proceed to charge
+
+  2. Call Stripe API:
+     result = stripe.Charge.create(
+       amount=10000,  # cents
+       currency='usd',
+       source=stripe_token,
+       idempotency_key='uuid-12345'  ← Stripe also checks this!
+     )
+
+  3. Store result in Redis:
+     SET "charge:uuid-12345" = result
+     EXPIRE 24 hours
+
+  4. Return response to client
+
+Stripe's Guarantee:
+  <span class="k">-</span> If network fails after charge succeeds
+  <span class="k">-</span> Client retries with same idempotency_key
+  <span class="k">-</span> Stripe returns the ORIGINAL charge (doesn't create a new one)
+</code></pre></div>
+
+<hr />
+<h4 id="deep-dive-fraud-detection-10-min"><strong>Deep Dive: Fraud Detection (10 min)</strong></h4>
+<p><strong>Interviewer:</strong> "How do you detect fraud?"</p>
+<p><strong>You Answer:</strong></p>
+<div class="codehilite"><pre><span></span><code>Fraud Detection Rules (Real-Time):
+
+Rule 1: Velocity Check
+  <span class="k">-</span> Same card used 5+ times in 1 hour → Block
+  <span class="k">-</span> Implementation: Redis counter
+      INCR "card:4242424242424242:attempts"
+      EXPIRE 3600 (1 hour)
+
+Rule 2: Amount Threshold
+  <span class="k">-</span> Single charge &gt; $10,000 → Manual review queue
+  <span class="k">-</span> Implementation: Publish to fraud_review_queue
+
+Rule 3: Geolocation Mismatch
+  <span class="k">-</span> Card issued in US, charge from Russia → Block
+  <span class="k">-</span> Implementation: Check IP geolocation vs card BIN
+
+Rule 4: Blacklist
+  <span class="k">-</span> Known stolen cards (from industry database)
+  <span class="k">-</span> Implementation: Redis set
+      SISMEMBER "blacklist:cards" "4242424242424242"
+
+ML Model (Batch, Not Real-Time):
+  <span class="k">-</span> Train on historical fraud (1% fraud rate)
+  <span class="k">-</span> Features: amount, time, merchant, card age, billing_zip
+  <span class="k">-</span> Score: 0-100 (100 = high fraud risk)
+  <span class="k">-</span> If score &gt; 80 → Manual review
+  <span class="k">-</span> Runs async (not blocking payment flow)
+</code></pre></div>
+
+<hr />
+<h3 id="problem-3-user-authentication-system-sso-oauth"><strong>Problem 3: User Authentication System (SSO + OAuth)</strong></h3>
+<p><strong>Interviewer:</strong> "Design a Single Sign-On (SSO) system for enterprise customers. 10k companies, 1M total users."</p>
+<hr />
+<h4 id="requirements-5-min_1"><strong>Requirements (5 min)</strong></h4>
+<ul>
+<li>Support SAML 2.0 (enterprise standard)</li>
+<li>Support OAuth 2.0 (Google, Microsoft login)</li>
+<li>Session timeout: 8 hours</li>
+<li>Password reset flow</li>
+<li>Multi-factor authentication (MFA)</li>
+</ul>
+<hr />
+<h4 id="high-level-design-10-min_1"><strong>High-Level Design (10 min)</strong></h4>
+<div class="codehilite"><pre><span></span><code>┌──────────────┐
+│  Web App     │  ← User clicks "Login with SSO"
+└──────┬───────┘
+       │ Redirect
+       ▼
+┌──────────────────┐
+│  Auth Service    │  ← Redirect to IdP (Okta, Azure AD)
+│  (Node.js)       │  → Validate SAML response
+└──────┬───────────┘
+       │ Create session
+       ▼
+┌──────────────────┐
+│     Redis        │  ← Session store (session_id → user_id)
+│  (Session Store) │  → TTL: 8 hours
+└──────────────────┘
+       │
+       ▼
+┌──────────────────┐
+│     MySQL        │  ← Users table (user_id, email, company_id)
+└──────────────────┘
+</code></pre></div>
+
+<p><strong>Session Flow:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="mf">1.</span><span class="w"> </span><span class="n">User</span><span class="w"> </span><span class="n">clicks</span><span class="w"> </span><span class="s">"Login with Okta"</span>
+<span class="mf">2.</span><span class="w"> </span><span class="n">Auth</span><span class="w"> </span><span class="n">Service</span><span class="w"> </span><span class="n">redirects</span><span class="w"> </span><span class="kr">to</span><span class="w"> </span><span class="n">Okta</span><span class="w"> </span><span class="nb">log</span><span class="n">in</span><span class="w"> </span><span class="n">page</span>
+<span class="mf">3.</span><span class="w"> </span><span class="n">User</span><span class="w"> </span><span class="n">enters</span><span class="w"> </span><span class="n">credentials</span><span class="w"> </span><span class="n">in</span><span class="w"> </span><span class="n">Okta</span><span class="w"> </span><span class="p">(</span><span class="ow">not</span><span class="w"> </span><span class="n">our</span><span class="w"> </span><span class="kr">sys</span><span class="n">tem</span><span class="err">!</span><span class="p">)</span>
+<span class="mf">4.</span><span class="w"> </span><span class="n">Okta</span><span class="w"> </span><span class="n">redirects</span><span class="w"> </span><span class="n">back</span><span class="w"> </span><span class="n">with</span><span class="w"> </span><span class="n">SAML</span><span class="w"> </span><span class="n">assertion</span><span class="w"> </span><span class="p">(</span><span class="n">XML</span><span class="p">)</span>
+<span class="mf">5.</span><span class="w"> </span><span class="n">Auth</span><span class="w"> </span><span class="n">Service</span><span class="w"> </span><span class="nb">val</span><span class="n">idates</span><span class="w"> </span><span class="n">SAML</span><span class="w"> </span><span class="n">signature</span>
+<span class="mf">6.</span><span class="w"> </span><span class="n">Auth</span><span class="w"> </span><span class="n">Service</span><span class="w"> </span><span class="n">creates</span><span class="w"> </span><span class="n">session</span><span class="p">:</span>
+<span class="w">     </span><span class="n">session_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">uuid</span><span class="mf">.</span><span class="n">v4</span><span class="p">()</span>
+<span class="w">     </span><span class="n">Redis</span><span class="p">:</span><span class="w"> </span><span class="n">SET</span><span class="w"> </span><span class="s">"session:abc123"</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="err">{</span><span class="s">"user_id"</span><span class="p">:</span><span class="w"> </span><span class="mf">456</span><span class="p">,</span><span class="w"> </span><span class="s">"company_id"</span><span class="p">:</span><span class="w"> </span><span class="mf">789</span><span class="err">}</span>
+<span class="w">     </span><span class="nb">EXP</span><span class="n">IRE</span><span class="w"> </span><span class="mf">28800</span><span class="w"> </span><span class="p">(</span><span class="mf">8</span><span class="w"> </span><span class="n">hours</span><span class="p">)</span>
+<span class="mf">7.</span><span class="w"> </span><span class="n">Auth</span><span class="w"> </span><span class="n">Service</span><span class="w"> </span><span class="n">sets</span><span class="w"> </span><span class="n">cookie</span><span class="p">:</span><span class="w"> </span><span class="n">session_id</span><span class="o">=</span><span class="n">abc123</span>
+<span class="mf">8.</span><span class="w"> </span><span class="n">User</span><span class="w"> </span><span class="n">redirects</span><span class="w"> </span><span class="kr">to</span><span class="w"> </span><span class="n">app</span><span class="w"> </span><span class="n">homepage</span>
+</code></pre></div>
+
+<hr />
+<h4 id="deep-dive-session-storage-10-min"><strong>Deep Dive: Session Storage (10 min)</strong></h4>
+<p><strong>Interviewer:</strong> "Why Redis instead of MySQL for sessions?"</p>
+<p><strong>You Answer:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nv">Redis</span><span class="w"> </span><span class="nv">is</span><span class="w"> </span><span class="nv">better</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="nv">sessions</span><span class="w"> </span><span class="nv">because</span>:
+
+✅<span class="w"> </span><span class="nv">Speed</span>:
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="nv">Redis</span>:<span class="w"> </span><span class="mi">0</span>.<span class="mi">1</span><span class="w"> </span><span class="nv">ms</span><span class="w"> </span><span class="ss">(</span><span class="nv">in</span><span class="o">-</span><span class="nv">memory</span><span class="ss">)</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="nv">MySQL</span>:<span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="nv">ms</span><span class="w"> </span><span class="ss">(</span><span class="nv">disk</span><span class="w"> </span><span class="nv">I</span><span class="o">/</span><span class="nv">O</span><span class="ss">)</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="nv">Every</span><span class="w"> </span><span class="nv">HTTP</span><span class="w"> </span><span class="nv">request</span><span class="w"> </span><span class="nv">checks</span><span class="w"> </span><span class="nv">session</span><span class="w"> </span>→<span class="w"> </span><span class="nv">speed</span><span class="w"> </span><span class="nv">matters</span>
+
+✅<span class="w"> </span><span class="nv">TTL</span><span class="w"> </span><span class="ss">(</span><span class="nv">Automatic</span><span class="w"> </span><span class="nv">Expiration</span><span class="ss">)</span>:
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="nv">Redis</span>:<span class="w"> </span><span class="nv">EXPIRE</span><span class="w"> </span><span class="mi">28800</span><span class="w"> </span><span class="ss">(</span><span class="mi">8</span><span class="w"> </span><span class="nv">hours</span><span class="ss">)</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="nv">MySQL</span>:<span class="w"> </span><span class="nv">Requires</span><span class="w"> </span><span class="nv">cron</span><span class="w"> </span><span class="nv">job</span><span class="w"> </span><span class="nv">to</span><span class="w"> </span><span class="nv">delete</span><span class="w"> </span><span class="nv">expired</span><span class="w"> </span><span class="nv">rows</span>
+
+✅<span class="w"> </span><span class="nv">Scale</span>:
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="nv">M</span><span class="w"> </span><span class="nv">users</span><span class="w"> </span>×<span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="nv">KB</span><span class="w"> </span><span class="nv">session</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="nv">GB</span><span class="w"> </span><span class="ss">(</span><span class="nv">fits</span><span class="w"> </span><span class="nv">in</span><span class="w"> </span><span class="nv">memory</span><span class="ss">)</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="nv">Redis</span>:<span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="nv">GB</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">$50</span><span class="o">/</span><span class="nv">month</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="nv">MySQL</span>:<span class="w"> </span><span class="nv">Need</span><span class="w"> </span><span class="nv">indexes</span>,<span class="w"> </span><span class="nv">cleanup</span><span class="w"> </span><span class="nv">jobs</span>,<span class="w"> </span><span class="nv">more</span><span class="w"> </span><span class="nv">complex</span>
+
+<span class="nv">Tradeoff</span>:
+<span class="w">  </span>❌<span class="w"> </span><span class="nv">Redis</span><span class="w"> </span><span class="nv">is</span><span class="w"> </span><span class="nv">in</span><span class="o">-</span><span class="nv">memory</span><span class="w"> </span>→<span class="w"> </span><span class="k">If</span><span class="w"> </span><span class="nv">Redis</span><span class="w"> </span><span class="nv">crashes</span>,<span class="w"> </span><span class="nv">all</span><span class="w"> </span><span class="nv">sessions</span><span class="w"> </span><span class="nv">lost</span>
+<span class="w">  </span>✅<span class="w"> </span><span class="nv">Solution</span>:<span class="w"> </span><span class="nv">Redis</span><span class="w"> </span><span class="nv">cluster</span><span class="w"> </span><span class="nv">with</span><span class="w"> </span><span class="nv">replication</span><span class="w"> </span><span class="ss">(</span><span class="nv">master</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="nv">replicas</span><span class="ss">)</span>
+<span class="w">       </span>→<span class="w"> </span><span class="k">If</span><span class="w"> </span><span class="nv">master</span><span class="w"> </span><span class="nv">fails</span>,<span class="w"> </span><span class="nv">replica</span><span class="w"> </span><span class="nv">promoted</span><span class="w"> </span><span class="nv">automatically</span>
+<span class="w">       </span>→<span class="w"> </span><span class="nv">Downtime</span>:<span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="nv">seconds</span><span class="w"> </span><span class="ss">(</span><span class="nv">not</span><span class="w"> </span><span class="mi">0</span>,<span class="w"> </span><span class="nv">but</span><span class="w"> </span><span class="nv">acceptable</span><span class="ss">)</span>
+</code></pre></div>
+
+<hr />
+<h3 id="problem-4-fraud-detection-system"><strong>Problem 4: Fraud Detection System</strong></h3>
+<p><strong>Interviewer:</strong> "Design a system to detect fraudulent transactions in real-time. 100k transactions/hour."</p>
+<hr />
+<h4 id="requirements-5-min_2"><strong>Requirements (5 min)</strong></h4>
+<ul>
+<li>Detect fraud within 100 ms (can't block payment flow)</li>
+<li>Rules engine: Velocity checks, blacklist, geolocation</li>
+<li>ML model: Fraud score 0-100</li>
+<li>Manual review queue for suspicious transactions</li>
+<li>Analyst dashboard</li>
+</ul>
+<hr />
+<h4 id="high-level-design-10-min_2"><strong>High-Level Design (10 min)</strong></h4>
+<div class="codehilite"><pre><span></span><code><span class="err">┌──────────────┐</span>
+<span class="err">│</span><span class="w">  </span><span class="n">Payment</span><span class="w"> </span><span class="n">API</span><span class="w"> </span><span class="err">│</span><span class="w">  </span><span class="err">←</span><span class="w"> </span><span class="k">Transaction</span><span class="w"> </span><span class="n">created</span>
+<span class="err">└──────┬───────┘</span>
+<span class="w">       </span><span class="err">│</span><span class="w"> </span><span class="n">Publish</span><span class="w"> </span><span class="n">event</span>
+<span class="w">       </span><span class="err">▼</span>
+<span class="err">┌──────────────────┐</span>
+<span class="err">│</span><span class="w">    </span><span class="n">Kafka</span><span class="w">         </span><span class="err">│</span><span class="w">  </span><span class="err">←</span><span class="w"> </span><span class="k">Transaction</span><span class="w"> </span><span class="n">stream</span>
+<span class="err">│</span><span class="w"> </span><span class="p">(</span><span class="n">transactions</span><span class="p">)</span><span class="w">   </span><span class="err">│</span>
+<span class="err">└──────┬───────────┘</span>
+<span class="w">       </span><span class="err">│</span><span class="w"> </span><span class="n">Consume</span><span class="w"> </span><span class="p">(</span><span class="nc">real</span><span class="o">-</span><span class="nc">time</span><span class="p">)</span>
+<span class="w">       </span><span class="err">▼</span>
+<span class="err">┌──────────────────┐</span>
+<span class="err">│</span><span class="w">  </span><span class="n">Rules</span><span class="w"> </span><span class="n">Engine</span><span class="w">    </span><span class="err">│</span><span class="w">  </span><span class="err">←</span><span class="w"> </span><span class="k">Check</span><span class="w"> </span><span class="n">velocity</span><span class="p">,</span><span class="w"> </span><span class="n">blacklist</span><span class="p">,</span><span class="w"> </span><span class="n">geo</span>
+<span class="err">│</span><span class="w">  </span><span class="p">(</span><span class="k">Go</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">ms</span><span class="p">)</span><span class="w">     </span><span class="err">│</span><span class="w">  </span><span class="err">→</span><span class="w"> </span><span class="n">Block</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="n">Allow</span>
+<span class="err">└──────┬───────────┘</span>
+<span class="w">       </span><span class="err">│</span><span class="w"> </span><span class="n">Publish</span><span class="w"> </span><span class="k">result</span>
+<span class="w">       </span><span class="err">▼</span>
+<span class="err">┌──────────────────┐</span>
+<span class="err">│</span><span class="w">    </span><span class="n">Kafka</span><span class="w">         </span><span class="err">│</span><span class="w">  </span><span class="err">←</span><span class="w"> </span><span class="n">Fraud</span><span class="w"> </span><span class="n">decisions</span>
+<span class="err">│</span><span class="w"> </span><span class="p">(</span><span class="n">fraud_events</span><span class="p">)</span><span class="w">   </span><span class="err">│</span>
+<span class="err">└──────┬───────────┘</span>
+<span class="w">       </span><span class="err">│</span><span class="w"> </span><span class="n">Consume</span><span class="w"> </span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+<span class="w">       </span><span class="err">▼</span>
+<span class="err">┌──────────────────┐</span>
+<span class="err">│</span><span class="w">  </span><span class="n">ML</span><span class="w"> </span><span class="n">Model</span><span class="w">        </span><span class="err">│</span><span class="w">  </span><span class="err">←</span><span class="w"> </span><span class="n">Predict</span><span class="w"> </span><span class="n">fraud</span><span class="w"> </span><span class="n">score</span><span class="w"> </span><span class="p">(</span><span class="n">Python</span><span class="p">,</span><span class="w"> </span><span class="mi">500</span><span class="w"> </span><span class="n">ms</span><span class="p">)</span>
+<span class="err">│</span><span class="w"> </span><span class="p">(</span><span class="n">Async</span><span class="p">)</span><span class="w">          </span><span class="err">│</span><span class="w">  </span><span class="err">→</span><span class="w"> </span><span class="n">Score</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">80</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">Review</span><span class="w"> </span><span class="n">queue</span>
+<span class="err">└──────┬───────────┘</span>
+<span class="w">       </span><span class="err">│</span>
+<span class="w">       </span><span class="err">▼</span>
+<span class="err">┌──────────────────┐</span>
+<span class="err">│</span><span class="w">  </span><span class="n">Review</span><span class="w"> </span><span class="n">Queue</span><span class="w">    </span><span class="err">│</span><span class="w">  </span><span class="err">←</span><span class="w"> </span><span class="n">Analysts</span><span class="w"> </span><span class="n">manually</span><span class="w"> </span><span class="n">approve</span><span class="o">/</span><span class="n">reject</span>
+<span class="err">│</span><span class="w">  </span><span class="p">(</span><span class="n">Postgres</span><span class="p">)</span><span class="w">      </span><span class="err">│</span>
+<span class="err">└──────────────────┘</span>
+</code></pre></div>
+
+<p><strong>Key Insight:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nv">Rules</span><span class="w"> </span><span class="nv">Engine</span><span class="w"> </span><span class="ss">(</span><span class="mi">10</span><span class="w"> </span><span class="nv">ms</span><span class="ss">)</span><span class="w"> </span><span class="nv">runs</span><span class="w"> </span><span class="nv">SYNCHRONOUSLY</span><span class="w"> </span><span class="ss">(</span><span class="nv">before</span><span class="w"> </span><span class="nv">payment</span><span class="w"> </span><span class="nv">completes</span><span class="ss">)</span>
+<span class="nv">ML</span><span class="w"> </span><span class="nv">Model</span><span class="w"> </span><span class="ss">(</span><span class="mi">500</span><span class="w"> </span><span class="nv">ms</span><span class="ss">)</span><span class="w"> </span><span class="nv">runs</span><span class="w"> </span><span class="nv">ASYNCHRONOUSLY</span><span class="w"> </span><span class="ss">(</span><span class="nv">after</span><span class="w"> </span><span class="nv">payment</span><span class="w"> </span><span class="nv">completes</span><span class="ss">)</span>
+
+<span class="nv">Why</span>?
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="nv">ms</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">Acceptable</span><span class="w"> </span><span class="nv">payment</span><span class="w"> </span><span class="nv">latency</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="mi">500</span><span class="w"> </span><span class="nv">ms</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">Too</span><span class="w"> </span><span class="nv">slow</span>,<span class="w"> </span><span class="nv">would</span><span class="w"> </span><span class="nv">block</span><span class="w"> </span><span class="nv">payment</span><span class="w"> </span><span class="nv">flow</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="nv">ML</span><span class="w"> </span><span class="nv">model</span><span class="w"> </span><span class="nv">catches</span><span class="w"> </span><span class="nv">fraud</span><span class="w"> </span><span class="nv">AFTER</span><span class="w"> </span><span class="nv">charge</span>,<span class="w"> </span><span class="k">then</span><span class="w"> </span><span class="nv">we</span><span class="w"> </span><span class="nv">refund</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="nv">fraud</span>
+</code></pre></div>
+
+<hr />
+<h3 id="problem-5-real-time-notification-system"><strong>Problem 5: Real-Time Notification System</strong></h3>
+<p><strong>Interviewer:</strong> "Design a system to send push notifications to 10M users. Email, SMS, mobile push."</p>
+<hr />
+<h4 id="high-level-design-10-min_3"><strong>High-Level Design (10 min)</strong></h4>
+<div class="codehilite"><pre><span></span><code>┌──────────────┐
+│  Event Source│  ← Invoice created, payment succeeded, etc.
+└──────┬───────┘
+       │ Publish event
+       ▼
+┌──────────────────┐
+│    Kafka         │  ← Notification events
+│ (notifications)  │
+└──────┬───────────┘
+       │ Consume
+       ▼
+┌──────────────────┐
+│  Fan-Out Service │  ← Determine: Who gets notified? (email/SMS/push?)
+│  (Node.js)       │  → Query user preferences from DB
+└──────┬───────────┘
+       │ Publish to 3 queues
+       ▼
+┌───────────┬───────────┬───────────┐
+│ Email Q   │  SMS Q    │  Push Q   │
+└─────┬─────┴─────┬─────┴─────┬─────┘
+      │           │           │
+      ▼           ▼           ▼
+┌──────────┐┌──────────┐┌──────────┐
+│ SendGrid ││ Twilio   ││  FCM     │
+└──────────┘└──────────┘└──────────┘
+</code></pre></div>
+
+<p><strong>Scale Estimation:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="mf">10</span><span class="n">M</span><span class="w"> </span><span class="n">users</span><span class="p">,</span><span class="w"> </span><span class="mf">1</span><span class="w"> </span><span class="ow">not</span><span class="kr">if</span><span class="n">ication</span><span class="o">/</span><span class="n">user</span><span class="o">/</span><span class="n">day</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">10</span><span class="n">M</span><span class="w"> </span><span class="ow">not</span><span class="kr">if</span><span class="n">ications</span><span class="o">/</span><span class="n">day</span>
+<span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="mf">416</span><span class="n">k</span><span class="o">/</span><span class="n">hour</span>
+<span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="mf">115</span><span class="o">/</span><span class="n">sec</span><span class="w"> </span><span class="n">average</span>
+<span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="mf">1150</span><span class="o">/</span><span class="n">sec</span><span class="w"> </span><span class="n">peak</span><span class="w"> </span><span class="p">(</span><span class="mf">10</span><span class="n">x</span><span class="p">)</span>
+
+<span class="n">Each</span><span class="w"> </span><span class="n">queue</span><span class="w"> </span><span class="n">needs</span><span class="w"> </span><span class="kr">to</span><span class="w"> </span><span class="n">handle</span><span class="w"> </span><span class="err">~</span><span class="mf">400</span><span class="w"> </span><span class="n">msgs</span><span class="o">/</span><span class="n">sec</span>
+<span class="w">  </span><span class="err">→</span><span class="w"> </span><span class="n">RabbitMQ</span><span class="w"> </span><span class="n">can</span><span class="w"> </span><span class="n">handle</span><span class="w"> </span><span class="n">this</span><span class="w"> </span><span class="p">(</span><span class="nb">sin</span><span class="n">gle</span><span class="w"> </span><span class="n">broker</span><span class="p">)</span>
+<span class="w">  </span><span class="err">→</span><span class="w"> </span><span class="ow">Or</span><span class="w"> </span><span class="n">use</span><span class="w"> </span><span class="n">AWS</span><span class="w"> </span><span class="n">SQS</span><span class="w"> </span><span class="p">(</span><span class="n">serverless</span><span class="p">,</span><span class="w"> </span><span class="n">auto</span><span class="o">-</span><span class="n">scales</span><span class="p">)</span>
+</code></pre></div>
+
+<hr />
+<h2 id="how-to-practice">🎯 How to Practice</h2>
+<h3 id="week-1-draw-on-paper"><strong>Week 1: Draw on Paper</strong></h3>
+<ul>
+<li>✅ Draw all 5 designs on paper/whiteboard</li>
+<li>✅ Practice drawing boxes, arrows, labels</li>
+<li>✅ Time yourself: 10 min per high-level design</li>
+</ul>
+<h3 id="week-2-explain-out-loud"><strong>Week 2: Explain Out Loud</strong></h3>
+<ul>
+<li>📹 Record yourself explaining each design (15 min)</li>
+<li>🎤 Practice saying: "I chose X because Y, the tradeoff is Z"</li>
+<li>⏱️ Keep it under 15 minutes total (45 min interview = 15 min design + 30 min deep dive)</li>
+</ul>
+<h3 id="week-3-back-of-envelope-math"><strong>Week 3: Back-of-Envelope Math</strong></h3>
+<ul>
+<li>🧮 Practice estimating:</li>
+<li>100k requests/month = ? per second</li>
+<li>1M users × 1 KB session = ? GB memory</li>
+<li>10 TB data × $0.023/GB = ? per month</li>
+</ul>
+<h3 id="week-4-mock-interview"><strong>Week 4: Mock Interview</strong></h3>
+<ul>
+<li>🎯 Ask a friend to grill you: "What if S3 goes down?"</li>
+<li>🔥 Practice defending your choices: "Why RabbitMQ not Kafka?"</li>
+</ul>
+<hr />
+<h2 id="key-takeaways">💡 Key Takeaways</h2>
+<p>✅ <strong>Start with requirements</strong>: Don't jump to drawing<br />
+✅ <strong>High-level first, then deep dive</strong>: Don't go straight to Redis keys<br />
+✅ <strong>Every choice has a tradeoff</strong>: "RabbitMQ is simpler, Kafka scales better"<br />
+✅ <strong>Estimate scale</strong>: "100k/month = 2.3/sec average, 23/sec peak"<br />
+✅ <strong>Monitor everything</strong>: "Alert if queue depth &gt; 1000"</p>
+<p>You've BUILT these systems at Billtrust. Now you just need to explain them on a whiteboard. 🚀</p>
+        </div>
+    </div>
+
+    <script>
+        // Progress Tracker JavaScript
+        const STORAGE_KEY = 'course_progress_system_design_practice_whiteboard';
+
+        // Extract all H2 and H3 headings from content
+        function extractSections() {
+            const content = document.querySelector('.content');
+            const headings = content.querySelectorAll('h2, h3');
+            const sections = [];
+
+            headings.forEach((heading, index) => {
+                const level = heading.tagName === 'H2' ? 2 : 3;
+                const text = heading.textContent.trim();
+                const id = `section-${index}`;
+
+                // Add ID to heading for linking
+                heading.id = id;
+
+                sections.push({
+                    id: id,
+                    text: text,
+                    level: level
+                });
+            });
+
+            return sections;
+        }
+
+        // Load saved progress from localStorage
+        function loadProgress() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            return saved ? JSON.parse(saved) : {};
+        }
+
+        // Save progress to localStorage
+        function saveProgress(progress) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+        }
+
+        // Calculate progress percentage
+        function calculateProgress() {
+            const checkboxes = document.querySelectorAll('.progress-checkbox');
+            const total = checkboxes.length;
+            if (total === 0) return 0;
+
+            const completed = Array.from(checkboxes).filter(cb => cb.checked).length;
+            return Math.round((completed / total) * 100);
+        }
+
+        // Update progress display
+        function updateProgressDisplay() {
+            const percentage = calculateProgress();
+            document.getElementById('progress-pct').textContent = percentage + '%';
+            document.getElementById('progress-bar').style.width = percentage + '%';
+
+            // Update completed class on items
+            document.querySelectorAll('.progress-item').forEach(item => {
+                const checkbox = item.querySelector('.progress-checkbox');
+                if (checkbox.checked) {
+                    item.classList.add('completed');
+                } else {
+                    item.classList.remove('completed');
+                }
+            });
+        }
+
+        // Toggle checkbox
+        function toggleCheckbox(sectionId) {
+            const checkbox = document.getElementById('cb-' + sectionId);
+            const progress = loadProgress();
+
+            progress[sectionId] = checkbox.checked;
+            saveProgress(progress);
+            updateProgressDisplay();
+        }
+
+        // Reset all progress
+        function resetProgress() {
+            if (confirm('Reset all progress for this page?')) {
+                localStorage.removeItem(STORAGE_KEY);
+                document.querySelectorAll('.progress-checkbox').forEach(cb => {
+                    cb.checked = false;
+                });
+                updateProgressDisplay();
+            }
+        }
+
+        // Toggle progress list visibility
+        function toggleProgressList() {
+            const list = document.getElementById('progress-items');
+            const btn = document.querySelector('.toggle-progress');
+
+            if (list.classList.contains('collapsed')) {
+                list.classList.remove('collapsed');
+                btn.textContent = '▼ Hide';
+            } else {
+                list.classList.add('collapsed');
+                btn.textContent = '▶ Show';
+            }
+        }
+
+        // Initialize progress tracker
+        function initProgressTracker() {
+            const sections = extractSections();
+            const progress = loadProgress();
+            const container = document.getElementById('progress-items');
+
+            if (sections.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No sections found</p>';
+                return;
+            }
+
+            sections.forEach(section => {
+                const item = document.createElement('div');
+                item.className = 'progress-item';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'progress-checkbox';
+                checkbox.id = 'cb-' + section.id;
+                checkbox.checked = progress[section.id] || false;
+                checkbox.onchange = () => toggleCheckbox(section.id);
+
+                const label = document.createElement('label');
+                label.className = 'progress-label';
+                label.htmlFor = 'cb-' + section.id;
+                label.textContent = section.text;
+                label.style.paddingLeft = section.level === 3 ? '20px' : '0';
+                label.onclick = () => {
+                    document.getElementById(section.id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+                };
+
+                item.appendChild(checkbox);
+                item.appendChild(label);
+                container.appendChild(item);
+            });
+
+            updateProgressDisplay();
+        }
+
+        // Run on page load
+        document.addEventListener('DOMContentLoaded', initProgressTracker);
+    </script>
+</body>
+</html>

@@ -1,0 +1,1805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redis_Memcache_Interview_Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 60px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .metadata {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 16px 24px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #666;
+            border-left: 4px solid #667eea;
+        }
+
+        /* PROGRESS TRACKER STYLES */
+        .progress-tracker {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .progress-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-stats {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .progress-percentage {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #764ba2;
+        }
+
+        .progress-bar-container {
+            height: 12px;
+            background: #e9ecef;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+            border-radius: 20px;
+        }
+
+        .reset-btn {
+            padding: 8px 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+
+        .reset-btn:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+        }
+
+        .progress-items {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .progress-items::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .progress-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .progress-item:hover {
+            background: #f8f9fa;
+            transform: translateX(5px);
+        }
+
+        .progress-item.completed {
+            opacity: 0.7;
+        }
+
+        .progress-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .progress-label {
+            cursor: pointer;
+            font-size: 0.95em;
+            line-height: 1.5;
+            color: #495057;
+            flex-grow: 1;
+        }
+
+        .progress-item.completed .progress-label {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .toggle-progress {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .toggle-progress:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .progress-items.collapsed {
+            display: none;
+        }
+
+        /* CONTENT STYLES */
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 4px solid #667eea;
+            font-weight: 700;
+        }
+
+        h2 {
+            color: #764ba2;
+            font-size: 2em;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        h3 {
+            color: #495057;
+            font-size: 1.5em;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        h4 {
+            color: #666;
+            font-size: 1.25em;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        ul, ol {
+            margin: 20px 0;
+            padding-left: 40px;
+        }
+
+        li {
+            margin-bottom: 12px;
+            line-height: 1.7;
+        }
+
+        code {
+            background: #f4f5f7;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #c7254e;
+            border: 1px solid #e1e4e8;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 24px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 25px 0;
+            border: 1px solid #444;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            border: none;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        blockquote {
+            border-left: 5px solid #667eea;
+            padding: 15px 25px;
+            margin: 25px 0;
+            background: #f8f9fa;
+            border-radius: 0 8px 8px 0;
+            color: #495057;
+            font-style: italic;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 30px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 14px 18px;
+            text-align: left;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tr:hover {
+            background: #e9ecef;
+            transition: background 0.2s;
+        }
+
+        a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px solid transparent;
+            transition: border-bottom 0.2s;
+        }
+
+        a:hover {
+            border-bottom: 1px solid #667eea;
+        }
+
+        hr {
+            border: none;
+            border-top: 2px solid #e9ecef;
+            margin: 40px 0;
+        }
+
+        strong {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        em {
+            color: #495057;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 25px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.6em;
+            }
+
+            .progress-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .progress-stats {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../navigation.html" class="back-link">&larr; Back to Navigation</a>
+
+        <div class="metadata">
+            <strong>Source:</strong> dev/Redis_Memcache_Interview_Guide.md &nbsp;|&nbsp; <strong>Updated:</strong> 2026-11-18 19:44:57
+        </div>
+
+        <!-- PROGRESS TRACKER -->
+        <div class="progress-tracker">
+            <div class="progress-header">
+                <div class="progress-title">
+                    <span>📚</span>
+                    <span>Your Progress</span>
+                </div>
+                <div class="progress-stats">
+                    <span class="progress-percentage" id="progress-pct">0%</span>
+                    <button class="reset-btn" onclick="resetProgress()">Reset</button>
+                    <button class="toggle-progress" onclick="toggleProgressList()">▼ Hide</button>
+                </div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progress-bar" style="width: 0%"></div>
+            </div>
+            <div class="progress-items" id="progress-items">
+                <!-- Checkboxes will be generated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="content">
+<h1 id="redis-memcache-implementation-guide">Redis &amp; Memcache Implementation Guide</h1>
+<p><strong>For Senior Software Engineer Interviews</strong></p>
+<p>Your competitive advantage: <strong>Production Redis experience at scale</strong> (10,000+ tenants, customer settings cache, session storage, 1-hour TTLs, 80% database load reduction)</p>
+<hr />
+<h2 id="table-of-contents">Table of Contents</h2>
+<ol>
+<li><a href="#redis-vs-memcache-quick-comparison">Redis vs Memcache: Quick Comparison</a></li>
+<li><a href="#redis-data-structures">Redis Data Structures</a></li>
+<li><a href="#caching-patterns">Caching Patterns</a></li>
+<li><a href="#cache-eviction-policies">Cache Eviction Policies</a></li>
+<li><a href="#redis-persistence">Redis Persistence</a></li>
+<li><a href="#distributed-caching--clustering">Distributed Caching &amp; Clustering</a></li>
+<li><a href="#your-Enterprise SaaS Company-redis-experience">Production Redis Experience</a></li>
+<li><a href="#performance-optimization">Performance Optimization</a></li>
+<li><a href="#common-pitfalls--best-practices">Common Pitfalls &amp; Best Practices</a></li>
+<li><a href="#interview-questions--answers">Interview Questions &amp; Answers</a></li>
+</ol>
+<hr />
+<h2 id="redis-vs-memcache-quick-comparison">Redis vs Memcache: Quick Comparison</h2>
+<h3 id="when-to-use-what">When to Use What</h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Redis</th>
+<th>Memcache</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Data Structures</strong></td>
+<td>Strings, Lists, Sets, Sorted Sets, Hashes, Bitmaps, HyperLogLog</td>
+<td>Strings only (key-value)</td>
+</tr>
+<tr>
+<td><strong>Persistence</strong></td>
+<td>Yes (RDB snapshots, AOF logs)</td>
+<td>No (memory only)</td>
+</tr>
+<tr>
+<td><strong>Replication</strong></td>
+<td>Master-Slave, Clustering</td>
+<td>No built-in (client-side sharding)</td>
+</tr>
+<tr>
+<td><strong>Max Key Size</strong></td>
+<td>512 MB</td>
+<td>1 MB</td>
+</tr>
+<tr>
+<td><strong>Max Value Size</strong></td>
+<td>512 MB</td>
+<td>1 MB</td>
+</tr>
+<tr>
+<td><strong>Multi-threading</strong></td>
+<td>Single-threaded (event loop)</td>
+<td>Multi-threaded</td>
+</tr>
+<tr>
+<td><strong>Atomic Operations</strong></td>
+<td>Yes (INCR, DECR, list ops)</td>
+<td>Limited (CAS - Compare-And-Set)</td>
+</tr>
+<tr>
+<td><strong>Pub/Sub</strong></td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr>
+<td><strong>TTL Granularity</strong></td>
+<td>Seconds or milliseconds</td>
+<td>Seconds</td>
+</tr>
+<tr>
+<td><strong>Use Cases</strong></td>
+<td>Sessions, leaderboards, queues, caching complex objects</td>
+<td>Simple key-value caching, high throughput</td>
+</tr>
+</tbody>
+</table>
+<h3 id="decision-framework">Decision Framework</h3>
+<p><strong>Choose Redis when:</strong><br />
+- You need complex data structures (sorted sets, lists, hashes)<br />
+- Persistence is important (can't afford to lose cache on restart)<br />
+- You need atomic operations (counters, leaderboards)<br />
+- You want pub/sub messaging<br />
+- You need replication and failover</p>
+<p><strong>Choose Memcache when:</strong><br />
+- Simple key-value cache is sufficient<br />
+- Highest raw throughput is critical (multi-threaded)<br />
+- Memory efficiency for strings is priority<br />
+- You already have a Memcache infrastructure</p>
+<p><strong>Enterprise Choice: Redis (ElastiCache)</strong><br />
+- Chosen for: complex objects (customer settings), persistence, clustering, atomic operations</p>
+<hr />
+<h2 id="redis-data-structures">Redis Data Structures</h2>
+<h3 id="1-strings-most-common">1. Strings (Most Common)</h3>
+<div class="codehilite"><pre><span></span><code>SET user:1001:name "John Doe"
+GET user:1001:name
+SETEX session:abc123 3600 "session_data"  # Set with 3600s TTL
+INCR page:views:homepage                   # Atomic increment
+DECR inventory:item:42
+</code></pre></div>
+
+<p><strong>Use Cases:</strong><br />
+- Session storage ← <strong>Your real-world use case</strong><br />
+- Cache HTML fragments<br />
+- Rate limiting counters<br />
+- Distributed locks (SETNX)</p>
+<h3 id="2-hashes-objectsrecords">2. Hashes (Objects/Records)</h3>
+<div class="codehilite"><pre><span></span><code><span class="n">HSET</span><span class="w"> </span><span class="k">user</span><span class="err">:</span><span class="mi">1001</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="ss">"John"</span><span class="w"> </span><span class="n">email</span><span class="w"> </span><span class="ss">"john@example.com"</span><span class="w"> </span><span class="n">age</span><span class="w"> </span><span class="mi">30</span>
+<span class="n">HGET</span><span class="w"> </span><span class="k">user</span><span class="err">:</span><span class="mi">1001</span><span class="w"> </span><span class="n">email</span>
+<span class="n">HGETALL</span><span class="w"> </span><span class="k">user</span><span class="err">:</span><span class="mi">1001</span>
+<span class="n">HINCRBY</span><span class="w"> </span><span class="k">user</span><span class="err">:</span><span class="mi">1001</span><span class="w"> </span><span class="n">login_count</span><span class="w"> </span><span class="mi">1</span>
+</code></pre></div>
+
+<p><strong>Use Cases:</strong><br />
+- Cache database rows ← <strong>Your customer settings cache</strong><br />
+- Store user profiles<br />
+- Session attributes</p>
+<p><strong>Why Hashes Over Strings?</strong><br />
+- Memory efficient (up to 50% savings for small objects)<br />
+- Update individual fields without fetching entire object<br />
+- Atomic field operations (HINCRBY)</p>
+<h3 id="3-lists-ordered-collections">3. Lists (Ordered Collections)</h3>
+<div class="codehilite"><pre><span></span><code>LPUSH queue:jobs "job1"
+RPUSH queue:jobs "job2"
+LPOP queue:jobs          # FIFO queue
+LRANGE recent:logs 0 99  # Last 100 log entries
+</code></pre></div>
+
+<p><strong>Use Cases:</strong><br />
+- Job queues<br />
+- Activity feeds<br />
+- Recent items (capped lists with LTRIM)</p>
+<h3 id="4-sets-unique-collections">4. Sets (Unique Collections)</h3>
+<div class="codehilite"><pre><span></span><code>SADD user:1001:tags "php" "mysql" "redis"
+SISMEMBER user:1001:tags "redis"  # O(1) membership check
+SINTER user:1001:tags user:1002:tags  # Find common tags
+</code></pre></div>
+
+<p><strong>Use Cases:</strong><br />
+- Unique visitors tracking<br />
+- Tags/categories<br />
+- Social graph (followers, following)</p>
+<h3 id="5-sorted-sets-ranked-collections">5. Sorted Sets (Ranked Collections)</h3>
+<div class="codehilite"><pre><span></span><code>ZADD leaderboard 1500 "player1" 2000 "player2"
+ZRANGE leaderboard 0 9 WITHSCORES  # Top 10
+ZINCRBY leaderboard 50 "player1"   # Add 50 points
+ZRANK leaderboard "player1"        # Get rank
+</code></pre></div>
+
+<p><strong>Use Cases:</strong><br />
+- Leaderboards ← <strong>Potential Enterprise SaaS Company use for customer rankings</strong><br />
+- Time-series data (score = timestamp)<br />
+- Priority queues<br />
+- Rate limiting (sliding window)</p>
+<hr />
+<h2 id="caching-patterns">Caching Patterns</h2>
+<h3 id="1-cache-aside-lazy-loading-most-common">1. Cache-Aside (Lazy Loading) ← <strong>Most Common</strong></h3>
+<p><strong>Flow:</strong><br />
+1. App requests data from cache<br />
+2. <strong>Cache miss</strong> → Load from database<br />
+3. Write to cache with TTL<br />
+4. Return data<br />
+5. <strong>Cache hit</strong> (next time) → Return from cache</p>
+<div class="codehilite"><pre><span></span><code><span class="x">function getCustomerSettings($customerId) {</span>
+<span class="x">    $cacheKey = "customer:$customerId:settings";</span>
+
+<span class="x">    // 1. Try cache first</span>
+<span class="x">    $settings = Redis::get($cacheKey);</span>
+
+<span class="x">    if ($settings !== null) {</span>
+<span class="x">        return json_decode($settings, true);  // Cache hit</span>
+<span class="x">    }</span>
+
+<span class="x">    // 2. Cache miss - load from DB</span>
+<span class="x">    $settings = DB::table('fsicustomersettings')</span>
+<span class="x">        -&gt;where('customerid', $customerId)</span>
+<span class="x">        -&gt;where('settingsstatus', 5)  // Active only</span>
+<span class="x">        -&gt;get();</span>
+
+<span class="x">    // 3. Store in cache with 1-hour TTL</span>
+<span class="x">    Redis::setex($cacheKey, 3600, json_encode($settings));</span>
+
+<span class="x">    return $settings;</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>Your production implementation:</strong><br />
+- Customer settings cache<br />
+- 1-hour TTL<br />
+- 80% database load reduction</p>
+<p><strong>Pros:</strong><br />
+- Cache only what's actually requested (memory efficient)<br />
+- System still works if cache is down (degrades gracefully)</p>
+<p><strong>Cons:</strong><br />
+- Initial cache miss penalty (first request is slow)<br />
+- Cache stampede risk (multiple requests on miss)</p>
+<h3 id="2-write-through">2. Write-Through</h3>
+<p><strong>Flow:</strong><br />
+1. App writes to cache AND database <strong>synchronously</strong><br />
+2. Cache is always consistent with DB<br />
+3. Reads always hit cache (no misses after first write)</p>
+<div class="codehilite"><pre><span></span><code><span class="x">function updateCustomerEmail($customerId, $newEmail) {</span>
+<span class="x">    $cacheKey = "customer:$customerId:profile";</span>
+
+<span class="x">    DB::beginTransaction();</span>
+
+<span class="x">    // 1. Update database</span>
+<span class="x">    DB::table('fsionlinecustomer')</span>
+<span class="x">        -&gt;where('customerid', $customerId)</span>
+<span class="x">        -&gt;update(['emailprimary' =&gt; $newEmail]);</span>
+
+<span class="x">    // 2. Update cache immediately</span>
+<span class="x">    $profile = $this-&gt;loadCustomerProfile($customerId);</span>
+<span class="x">    Redis::setex($cacheKey, 3600, json_encode($profile));</span>
+
+<span class="x">    DB::commit();</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>Pros:</strong><br />
+- Strong consistency (cache always matches DB)<br />
+- No cache misses for reads after write</p>
+<p><strong>Cons:</strong><br />
+- Write latency (wait for both cache + DB)<br />
+- Wasted cache space (caching data that's rarely read)</p>
+<h3 id="3-write-behind-write-back">3. Write-Behind (Write-Back)</h3>
+<p><strong>Flow:</strong><br />
+1. App writes to cache immediately<br />
+2. Returns success to user<br />
+3. <strong>Async background job</strong> writes to database later<br />
+4. High write throughput</p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Fast write to cache</span>
+<span class="x">Redis::hset("customer:$customerId:settings", 'last_login', time());</span>
+<span class="x">Redis::lpush('queue:db_writes', json_encode([</span>
+<span class="x">    'table' =&gt; 'fsionlinecustomer',</span>
+<span class="x">    'id' =&gt; $customerId,</span>
+<span class="x">    'data' =&gt; ['last_login' =&gt; time()]</span>
+<span class="x">]));</span>
+
+<span class="x">// Separate worker drains queue and writes to DB</span>
+</code></pre></div>
+
+<p><strong>Pros:</strong><br />
+- Very fast writes (cache speed)<br />
+- Batching writes to DB (efficiency)</p>
+<p><strong>Cons:</strong><br />
+- Risk of data loss if cache crashes before DB write<br />
+- Complex implementation (need queue + worker)</p>
+<p><strong>When to Use:</strong><br />
+- High write volume (analytics, counters)<br />
+- Write latency is critical<br />
+- Acceptable to lose recent writes on crash</p>
+<h3 id="4-read-through">4. Read-Through</h3>
+<p><strong>Flow:</strong><br />
+- Cache sits in front of DB<br />
+- Cache itself loads from DB on miss (not the app)<br />
+- App only talks to cache</p>
+<p><strong>Pros:</strong><br />
+- Simple app code (always use cache API)<br />
+- Consistent cache loading logic</p>
+<p><strong>Cons:</strong><br />
+- Cache becomes single point of failure<br />
+- Less common in practice (most use cache-aside)</p>
+<hr />
+<h2 id="cache-eviction-policies">Cache Eviction Policies</h2>
+<h3 id="when-cache-is-full-what-gets-removed">When Cache is Full, What Gets Removed?</h3>
+<table>
+<thead>
+<tr>
+<th>Policy</th>
+<th>Behavior</th>
+<th>Use Case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>LRU</strong> (Least Recently Used)</td>
+<td>Evict items not accessed recently</td>
+<td>General-purpose (most common) ← <strong>Production default</strong></td>
+</tr>
+<tr>
+<td><strong>LFU</strong> (Least Frequently Used)</td>
+<td>Evict items with fewest accesses</td>
+<td>Long-lived cache, hot-spot access</td>
+</tr>
+<tr>
+<td><strong>TTL</strong> (Time-To-Live)</td>
+<td>Evict expired items first</td>
+<td>Session cache, time-sensitive data</td>
+</tr>
+<tr>
+<td><strong>Random</strong></td>
+<td>Evict random items</td>
+<td>Fast, but no intelligence</td>
+</tr>
+<tr>
+<td><strong>Volatile-LRU</strong></td>
+<td>LRU but only on keys with TTL</td>
+<td>Mix of permanent + temp data</td>
+</tr>
+<tr>
+<td><strong>Allkeys-LRU</strong></td>
+<td>LRU across all keys</td>
+<td>Standard cache (keys may or may not have TTL)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="production-configuration">Production Configuration:</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># ElastiCache Redis configuration</span>
+maxmemory-policy<span class="w"> </span>allkeys-lru
+maxmemory<span class="w"> </span>4gb
+</code></pre></div>
+
+<p><strong>Why LRU?</strong><br />
+- Customer settings: Frequently accessed customers stay cached<br />
+- Inactive customers evicted naturally<br />
+- Balance between memory usage and hit rate</p>
+<hr />
+<h2 id="redis-persistence">Redis Persistence</h2>
+<h3 id="two-persistence-mechanisms">Two Persistence Mechanisms:</h3>
+<h3 id="1-rdb-redis-database-snapshot">1. RDB (Redis Database Snapshot)</h3>
+<p><strong>How it works:</strong><br />
+- Point-in-time snapshot saved to disk<br />
+- Configurable intervals (e.g., every 15 min if 100+ writes)<br />
+- Fork process → child writes snapshot while parent serves requests<br />
+- Fast restarts (binary format)</p>
+<p><strong>Configuration:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nv">save</span><span class="w"> </span><span class="mi">900</span><span class="w"> </span><span class="mi">1</span><span class="w">      </span>#<span class="w"> </span><span class="nv">Save</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="mi">1</span><span class="o">+</span><span class="w"> </span><span class="nv">keys</span><span class="w"> </span><span class="nv">changed</span><span class="w"> </span><span class="nv">in</span><span class="w"> </span><span class="mi">15</span><span class="w"> </span><span class="nv">min</span>
+<span class="nv">save</span><span class="w"> </span><span class="mi">300</span><span class="w"> </span><span class="mi">10</span><span class="w">     </span>#<span class="w"> </span><span class="nv">Save</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="mi">10</span><span class="o">+</span><span class="w"> </span><span class="nv">keys</span><span class="w"> </span><span class="nv">changed</span><span class="w"> </span><span class="nv">in</span><span class="w"> </span><span class="mi">5</span><span class="w"> </span><span class="nv">min</span>
+<span class="nv">save</span><span class="w"> </span><span class="mi">60</span><span class="w"> </span><span class="mi">10000</span><span class="w">   </span>#<span class="w"> </span><span class="nv">Save</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="mi">10000</span><span class="o">+</span><span class="w"> </span><span class="nv">keys</span><span class="w"> </span><span class="nv">changed</span><span class="w"> </span><span class="nv">in</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="nv">min</span>
+</code></pre></div>
+
+<p><strong>Pros:</strong><br />
+- Compact single file<br />
+- Fast restarts<br />
+- Good for backups</p>
+<p><strong>Cons:</strong><br />
+- Data loss window (5-15 min of writes if crash happens)<br />
+- Fork can be expensive on large datasets</p>
+<h3 id="2-aof-append-only-file">2. AOF (Append-Only File)</h3>
+<p><strong>How it works:</strong><br />
+- Logs every write operation to disk<br />
+- Can replay log to rebuild dataset<br />
+- More durable (smaller data loss window)</p>
+<p><strong>Configuration:</strong></p>
+<div class="codehilite"><pre><span></span><code>appendonly yes
+appendfsync everysec  # Sync to disk every second
+</code></pre></div>
+
+<p><strong>Pros:</strong><br />
+- Better durability (1 sec data loss max)<br />
+- Human-readable log<br />
+- Auto-rewrites to compact</p>
+<p><strong>Cons:</strong><br />
+- Larger files than RDB<br />
+- Slower restarts (must replay log)</p>
+<h3 id="your-production-setup">Your production setup:</h3>
+<p><strong>ElastiCache Redis with RDB backups:</strong><br />
+- Daily snapshot to S3<br />
+- Acceptable to lose 1 hour of cache on crash (can rebuild from DB)<br />
+- Session cache is okay to lose (users re-login)</p>
+<p><strong>Interview Answer:</strong></p>
+<blockquote>
+<p><em>"In a production environment, we use RDB snapshots for our Redis cache because it's a cache, not primary storage. We can tolerate losing recent cached data on a crash since we can always rebuild from MySQL. RDB gives us fast restarts and good backup capability. For a critical use case like a shopping cart, I'd use AOF with <code>appendfsync everysec</code> for better durability."</em></p>
+</blockquote>
+<hr />
+<h2 id="distributed-caching-clustering">Distributed Caching &amp; Clustering</h2>
+<h3 id="problem-single-redis-instance-limits">Problem: Single Redis Instance Limits</h3>
+<ul>
+<li><strong>Memory</strong>: Single node max ~100 GB practical</li>
+<li><strong>Throughput</strong>: Single-threaded, ~100k ops/sec max</li>
+<li><strong>Availability</strong>: Single point of failure</li>
+</ul>
+<h3 id="solution-1-client-side-sharding-memcache-style">Solution 1: Client-Side Sharding (Memcache Style)</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">function getShardedCache($key) {</span>
+<span class="x">    $nodes = ['redis1:6379', 'redis2:6379', 'redis3:6379'];</span>
+<span class="x">    $hash = crc32($key);</span>
+<span class="x">    $nodeIndex = $hash % count($nodes);</span>
+<span class="x">    $redis = new Redis($nodes[$nodeIndex]);</span>
+<span class="x">    return $redis-&gt;get($key);</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>Pros:</strong><br />
+- Simple<br />
+- Linear scalability</p>
+<p><strong>Cons:</strong><br />
+- Adding/removing nodes requires full re-hash (cache invalidation)<br />
+- No automatic failover<br />
+- Client must handle sharding logic</p>
+<h3 id="solution-2-consistent-hashing">Solution 2: Consistent Hashing</h3>
+<p><strong>Fixes the re-hash problem:</strong><br />
+- Hash ring: Each node owns a range of hash values<br />
+- Adding a node only affects adjacent ranges (not all keys)<br />
+- ~1/N keys are invalidated (N = number of nodes)</p>
+<div class="codehilite"><pre><span></span><code>Hash Ring (0-360):
+Node A: 0-120
+Node B: 121-240
+Node C: 241-360
+
+Add Node D at 180:
+Node A: 0-120 (unchanged)
+Node B: 121-180 (shrinks, some keys move to D)
+Node D: 181-240 (new)
+Node C: 241-360 (unchanged)
+</code></pre></div>
+
+<h3 id="solution-3-redis-cluster-built-in-sharding">Solution 3: Redis Cluster (Built-in Sharding)</h3>
+<p><strong>How it works:</strong><br />
+- 16,384 hash slots (0-16383)<br />
+- Each master node owns a range of slots<br />
+- <code>HASH_SLOT = CRC16(key) mod 16384</code><br />
+- Clients redirected to correct node</p>
+<p><strong>Architecture:</strong></p>
+<div class="codehilite"><pre><span></span><code>Master 1 (slots 0-5460)    → Replica 1a
+Master 2 (slots 5461-10922) → Replica 2a
+Master 3 (slots 10923-16383) → Replica 3a
+</code></pre></div>
+
+<p><strong>Benefits:</strong><br />
+- Automatic sharding<br />
+- Automatic failover (replica promoted if master dies)<br />
+- No single point of failure</p>
+<p><strong>Your production setup:</strong></p>
+<div class="codehilite"><pre><span></span><code>ElastiCache Redis Cluster:
+- 3 master nodes (sharded)
+- 3 read replicas (1 per master)
+- Automatic failover enabled
+- Multi-AZ deployment
+</code></pre></div>
+
+<h3 id="solution-4-redis-sentinel-high-availability-no-sharding">Solution 4: Redis Sentinel (High Availability, No Sharding)</h3>
+<p><strong>Single master + replicas with auto-failover:</strong><br />
+- Sentinel nodes monitor master<br />
+- If master dies, Sentinels elect a new master from replicas<br />
+- No sharding (all data on all nodes)</p>
+<p><strong>Use when:</strong><br />
+- Dataset fits in one node<br />
+- High availability is critical<br />
+- Don't need horizontal scaling</p>
+<hr />
+<h2 id="production-redis-experience">Production Redis Experience</h2>
+<h3 id="1-customer-settings-cache">1. Customer Settings Cache</h3>
+<p><strong>Problem Solved:</strong><br />
+- MySQL <code>fsicustomersettings</code> table queried on every page load<br />
+- 10,000+ tenants × 100+ settings each = millions of rows<br />
+- Database CPU was bottleneck</p>
+<p><strong>Solution:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">class CustomerSettingsCache {</span>
+<span class="x">    private $redis;</span>
+<span class="x">    private $ttl = 3600; // 1 hour</span>
+
+<span class="x">    public function getSettings($customerId) {</span>
+<span class="x">        $cacheKey = "customer:$customerId:settings";</span>
+
+<span class="x">        // Try cache first</span>
+<span class="x">        $cached = $this-&gt;redis-&gt;get($cacheKey);</span>
+<span class="x">        if ($cached) {</span>
+<span class="x">            return json_decode($cached, true);</span>
+<span class="x">        }</span>
+
+<span class="x">        // Cache miss - load from DB</span>
+<span class="x">        $settings = DB::table('fsicustomersettings')</span>
+<span class="x">            -&gt;where('customerid', $customerId)</span>
+<span class="x">            -&gt;where('settingsstatus', 5)</span>
+<span class="x">            -&gt;get()</span>
+<span class="x">            -&gt;keyBy('fullpath');  // Index by setting path</span>
+
+<span class="x">        // Store in cache</span>
+<span class="x">        $this-&gt;redis-&gt;setex($cacheKey, $this-&gt;ttl, json_encode($settings));</span>
+
+<span class="x">        return $settings;</span>
+<span class="x">    }</span>
+
+<span class="x">    public function invalidate($customerId) {</span>
+<span class="x">        $cacheKey = "customer:$customerId:settings";</span>
+<span class="x">        $this-&gt;redis-&gt;del($cacheKey);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>Impact:</strong><br />
+- <strong>80% database load reduction</strong><br />
+- Page load time: 800ms → 200ms<br />
+- Cache hit rate: ~95%</p>
+<h3 id="2-session-storage">2. Session Storage</h3>
+<p><strong>Problem:</strong><br />
+- PHP file-based sessions don't scale (sticky sessions required)<br />
+- Need sessions accessible from any web server</p>
+<p><strong>Solution:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// config/session.php</span>
+<span class="x">'driver' =&gt; 'redis',</span>
+<span class="x">'connection' =&gt; 'default',</span>
+<span class="x">'ttl' =&gt; 7200,  // 2 hours</span>
+
+<span class="x">// Session key format:</span>
+<span class="x">// session:&lt;session_id&gt;</span>
+</code></pre></div>
+
+<p><strong>Benefits:</strong><br />
+- No sticky sessions needed<br />
+- Horizontal scaling of web tier<br />
+- Fast session reads/writes</p>
+<h3 id="3-cache-invalidation-strategy">3. Cache Invalidation Strategy</h3>
+<p><strong>Challenges:</strong><br />
+1. <strong>Write-through for critical data:</strong><br />
+<code>php
+   // When customer setting updated via CSR
+   DB::table('fsicustomersettings')-&gt;update([...]);
+   $this-&gt;cache-&gt;invalidate($customerId);  // Immediate</code></p>
+<ol start="2">
+<li>
+<p><strong>TTL-based for read-heavy data:</strong><br />
+   - 1-hour TTL acceptable for most settings<br />
+   - Eventual consistency is fine</p>
+</li>
+<li>
+<p><strong>Event-based invalidation:</strong><br />
+<code>php
+   Event::listen('CustomerUpdated', function($customer) {
+       Redis::del("customer:{$customer-&gt;id}:*");
+   });</code></p>
+</li>
+</ol>
+<h3 id="4-monitoring-metrics">4. Monitoring &amp; Metrics</h3>
+<p><strong>CloudWatch Alarms:</strong><br />
+- <code>EngineCPUUtilization</code> &gt; 75%<br />
+- <code>Evictions</code> &gt; 1000/min (cache too small)<br />
+- <code>CacheHitRate</code> &lt; 80% (TTL too short or cache too small)<br />
+- <code>CurrConnections</code> &gt; 5000 (connection leak)</p>
+<p><strong>Redis Commands for Debugging:</strong></p>
+<div class="codehilite"><pre><span></span><code>INFO stats           # Hit rate, evictions, ops/sec
+INFO memory          # Memory usage, fragmentation
+SLOWLOG GET 10       # Slow queries
+CLIENT LIST          # Active connections
+KEYS customer:*      # Find keys (DO NOT USE IN PROD!)
+SCAN 0 MATCH customer:* COUNT 100  # Use this instead
+</code></pre></div>
+
+<hr />
+<h2 id="performance-optimization">Performance Optimization</h2>
+<h3 id="1-use-pipelining-batch-commands">1. Use Pipelining (Batch Commands)</h3>
+<p><strong>Problem:</strong> Network round-trip for each command</p>
+<p><strong>Bad (3 round-trips):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">$redis-&gt;get('key1');</span>
+<span class="x">$redis-&gt;get('key2');</span>
+<span class="x">$redis-&gt;get('key3');</span>
+</code></pre></div>
+
+<p><strong>Good (1 round-trip):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">$redis-&gt;pipeline(function ($pipe) {</span>
+<span class="x">    $pipe-&gt;get('key1');</span>
+<span class="x">    $pipe-&gt;get('key2');</span>
+<span class="x">    $pipe-&gt;get('key3');</span>
+<span class="x">});</span>
+</code></pre></div>
+
+<p><strong>Impact:</strong> 10x-100x faster for bulk operations</p>
+<h3 id="2-use-hashes-for-small-objects">2. Use Hashes for Small Objects</h3>
+<p><strong>Memory savings:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="err">#</span><span class="w"> </span><span class="nl">Bad</span><span class="p">:</span><span class="w"> </span><span class="mi">1000</span><span class="w"> </span><span class="n">keys</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">~</span><span class="mi">100</span><span class="w"> </span><span class="n">KB</span><span class="w"> </span><span class="n">overhead</span>
+<span class="k">SET</span><span class="w"> </span><span class="k">user</span><span class="err">:</span><span class="mi">1</span><span class="err">:</span><span class="n">name</span><span class="w"> </span><span class="ss">"John"</span>
+<span class="k">SET</span><span class="w"> </span><span class="k">user</span><span class="err">:</span><span class="mi">1</span><span class="err">:</span><span class="n">email</span><span class="w"> </span><span class="ss">"john@example.com"</span>
+<span class="k">SET</span><span class="w"> </span><span class="k">user</span><span class="err">:</span><span class="mi">1</span><span class="err">:</span><span class="n">age</span><span class="w"> </span><span class="ss">"30"</span>
+
+<span class="err">#</span><span class="w"> </span><span class="nl">Good</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">hash</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">~</span><span class="mi">1</span><span class="w"> </span><span class="n">KB</span><span class="w"> </span><span class="n">overhead</span>
+<span class="n">HSET</span><span class="w"> </span><span class="k">user</span><span class="err">:</span><span class="mi">1</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="ss">"John"</span><span class="w"> </span><span class="n">email</span><span class="w"> </span><span class="ss">"john@example.com"</span><span class="w"> </span><span class="n">age</span><span class="w"> </span><span class="mi">30</span>
+</code></pre></div>
+
+<p><strong>When hash is smaller:</strong><br />
+- Object has &lt; 100 fields<br />
+- Each field &lt; 64 bytes<br />
+- Up to 50% memory savings</p>
+<h3 id="3-avoid-keys-command-in-production">3. Avoid KEYS Command in Production</h3>
+<p><strong>Bad (blocks entire Redis):</strong></p>
+<div class="codehilite"><pre><span></span><code>KEYS customer:*  # Scans all keys, O(N)
+</code></pre></div>
+
+<p><strong>Good (non-blocking, paginated):</strong></p>
+<div class="codehilite"><pre><span></span><code>SCAN 0 MATCH customer:* COUNT 100
+<span class="gh">#</span> Returns cursor + batch of keys
+<span class="gh">#</span> Call again with cursor until cursor = 0
+</code></pre></div>
+
+<h3 id="4-set-appropriate-ttls">4. Set Appropriate TTLs</h3>
+<p><strong>Too short:</strong> High cache miss rate, database load<br />
+<strong>Too long:</strong> Stale data, memory waste</p>
+<p><strong>Guidelines:</strong><br />
+- <strong>Session data:</strong> 30 min - 2 hours<br />
+- <strong>User profiles:</strong> 1-24 hours<br />
+- <strong>Application settings:</strong> 5-60 minutes<br />
+- <strong>Static content:</strong> 24+ hours</p>
+<p><strong>Production Settings:</strong><br />
+- Customer settings: 1 hour (good balance)<br />
+- Sessions: 2 hours (matches UI timeout)</p>
+<h3 id="5-monitor-memory-fragmentation">5. Monitor Memory Fragmentation</h3>
+<div class="codehilite"><pre><span></span><code>INFO memory
+<span class="gh">#</span> mem_fragmentation_ratio: 1.5
+
+<span class="gh">#</span> If ratio &gt; 1.5, restart Redis to reclaim memory
+<span class="gh">#</span> Or enable activedefrag (Redis 4.0+)
+CONFIG SET activedefrag yes
+</code></pre></div>
+
+<hr />
+<h2 id="common-pitfalls-best-practices">Common Pitfalls &amp; Best Practices</h2>
+<h3 id="1-cache-stampede-thundering-herd">1. Cache Stampede (Thundering Herd)</h3>
+<p><strong>Problem:</strong><br />
+- Popular cache key expires<br />
+- 1000 requests hit at once<br />
+- All miss cache → 1000 DB queries</p>
+<p><strong>Solution A: Probabilistic Early Expiration</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">function getWithEarlyExpiration($key, $ttl = 3600) {</span>
+<span class="x">    $cached = Redis::get($key);</span>
+
+<span class="x">    if ($cached) {</span>
+<span class="x">        $data = json_decode($cached, true);</span>
+<span class="x">        $expiresAt = $data['expires_at'];</span>
+<span class="x">        $now = time();</span>
+
+<span class="x">        // Randomly refresh 1 min before actual expiry</span>
+<span class="x">        $delta = $expiresAt - $now;</span>
+<span class="x">        $beta = 1.0;</span>
+<span class="x">        $randomRefresh = $delta * $beta * log(rand() / getrandmax());</span>
+
+<span class="x">        if ($randomRefresh &lt; 0) {</span>
+<span class="x">            // Refresh in background, return stale data</span>
+<span class="x">            $this-&gt;refreshInBackground($key);</span>
+<span class="x">        }</span>
+
+<span class="x">        return $data['value'];</span>
+<span class="x">    }</span>
+
+<span class="x">    // Cache miss - normal flow</span>
+<span class="x">    return $this-&gt;loadAndCache($key, $ttl);</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>Solution B: Distributed Lock</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">function getWithLock($key) {</span>
+<span class="x">    $cached = Redis::get($key);</span>
+<span class="x">    if ($cached) return $cached;</span>
+
+<span class="x">    // Try to acquire lock (SETNX with TTL)</span>
+<span class="x">    $lockKey = "lock:$key";</span>
+<span class="x">    $lockAcquired = Redis::set($lockKey, 1, 'NX', 'EX', 10);</span>
+
+<span class="x">    if ($lockAcquired) {</span>
+<span class="x">        // I won the lock - load from DB</span>
+<span class="x">        $data = $this-&gt;loadFromDB($key);</span>
+<span class="x">        Redis::setex($key, 3600, $data);</span>
+<span class="x">        Redis::del($lockKey);</span>
+<span class="x">        return $data;</span>
+<span class="x">    } else {</span>
+<span class="x">        // Someone else is loading - wait and retry</span>
+<span class="x">        sleep(0.05); // 50ms</span>
+<span class="x">        return $this-&gt;getWithLock($key); // Recursive retry</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h3 id="2-large-keys-values">2. Large Keys / Values</h3>
+<p><strong>Problem:</strong><br />
+- Redis is single-threaded<br />
+- <code>GET</code> of 10 MB value blocks all other commands</p>
+<p><strong>Solution:</strong><br />
+- Break large objects into chunks<br />
+- Use Redis hash (HGET one field instead of entire object)<br />
+- Consider storing large data in S3, cache only metadata/URL</p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Bad</span>
+<span class="x">Redis::set('customer:1:invoice_pdf', $10mbPdf);  // Blocks Redis</span>
+
+<span class="x">// Good</span>
+<span class="x">$s3Url = S3::put('invoices/customer-1.pdf', $10mbPdf);</span>
+<span class="x">Redis::setex('customer:1:invoice_url', 3600, $s3Url);  // Small</span>
+</code></pre></div>
+
+<h3 id="3-connection-pooling">3. Connection Pooling</h3>
+<p><strong>Bad (new connection per request):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">function handle() {</span>
+<span class="x">    $redis = new Redis();</span>
+<span class="x">    $redis-&gt;connect('localhost', 6379);  // TCP handshake every time</span>
+<span class="x">    $data = $redis-&gt;get('key');</span>
+<span class="x">    $redis-&gt;close();</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>Good (persistent connections):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Laravel Redis uses persistent connections by default</span>
+<span class="x">Redis::get('key');  // Reuses connection</span>
+</code></pre></div>
+
+<p><strong>Connection Limits:</strong><br />
+- Default Redis: 10,000 connections max<br />
+- Each connection: ~10 KB memory<br />
+- Monitor with: <code>INFO clients</code></p>
+<h3 id="4-serialization-overhead">4. Serialization Overhead</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// Slow</span>
+<span class="x">$settings = ['key' =&gt; 'value'];</span>
+<span class="x">Redis::set('settings', serialize($settings));  // PHP serialize</span>
+
+<span class="x">// Faster</span>
+<span class="x">Redis::set('settings', json_encode($settings));  // JSON</span>
+
+<span class="x">// Fastest (if data is already string)</span>
+<span class="x">Redis::set('settings:key', 'value');</span>
+</code></pre></div>
+
+<p><strong>Benchmarks (1000 iterations):</strong><br />
+- <code>json_encode</code>: 10ms<br />
+- <code>serialize</code>: 50ms<br />
+- <code>igbinary_serialize</code>: 5ms (binary, requires extension)</p>
+<h3 id="5-hot-key-problem">5. Hot Key Problem</h3>
+<p><strong>Problem:</strong><br />
+- One key gets millions of requests<br />
+- Single Redis shard is bottleneck</p>
+<p><strong>Solution A: Client-Side Caching</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Local in-memory cache (APCu) for 10 seconds</span>
+<span class="x">$localCache = apcu_fetch('hot_key');</span>
+<span class="x">if ($localCache) return $localCache;</span>
+
+<span class="x">$redisData = Redis::get('hot_key');</span>
+<span class="x">apcu_store('hot_key', $redisData, 10);</span>
+<span class="x">return $redisData;</span>
+</code></pre></div>
+
+<p><strong>Solution B: Replicate Hot Key</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Store same data under multiple keys</span>
+<span class="x">for ($i = 0; $i &lt; 10; $i++) {</span>
+<span class="x">    Redis::setex("hot_key:$i", 3600, $data);</span>
+<span class="x">}</span>
+
+<span class="x">// Randomly pick a replica</span>
+<span class="x">$i = rand(0, 9);</span>
+<span class="x">return Redis::get("hot_key:$i");</span>
+</code></pre></div>
+
+<hr />
+<h2 id="interview-questions-answers">Interview Questions &amp; Answers</h2>
+<h3 id="q1-how-would-you-cache-a-database-query-result-in-redis">Q1: "How would you cache a database query result in Redis?"</h3>
+<p><strong>Your Answer:</strong></p>
+<blockquote>
+<p><em>"I'd use cache-aside pattern, which is what we use In a production environment for customer settings. Here's the flow:</em></p>
+<p><em>1. Check Redis first: <code>$cached = Redis::get('customer:123:settings')</code></em><br />
+<em>2. If cache hit, decode and return immediately</em><br />
+<em>3. On cache miss, query MySQL with proper indexes and tenant scoping</em><br />
+<em>4. Store in Redis with appropriate TTL: <code>Redis::setex('customer:123:settings', 3600, json_encode($data))</code></em><br />
+<em>5. Return the data</em></p>
+<p><em>For the TTL, I consider data freshness requirements. Customer settings change infrequently, so 1 hour is acceptable. For real-time data like inventory, I'd use 30-60 seconds, or invalidate on writes.</em></p>
+<p><em>Key considerations:</em><br />
+<em>- Use predictable key naming: <code>&lt;entity&gt;:&lt;id&gt;:&lt;attribute&gt;</code></em><br />
+<em>- Serialize efficiently (JSON is good default)</em><br />
+<em>- Set memory limits and LRU eviction policy</em><br />
+<em>- Monitor cache hit rate — we maintain 95%+ In a production environment</em><br />
+<em>- Always have fallback to DB (cache should degrade gracefully)."</em></p>
+</blockquote>
+<hr />
+<h3 id="q2-explain-the-difference-between-redis-and-memcache-when-would-you-use-each">Q2: "Explain the difference between Redis and Memcache. When would you use each?"</h3>
+<p><strong>Your Answer:</strong></p>
+<blockquote>
+<p><em>"Both are in-memory key-value stores, but Redis is much more feature-rich:</em></p>
+<p><strong>Key Differences:</strong><br />
+<em>- <strong>Data structures:</strong> Redis supports lists, sets, sorted sets, hashes. Memcache is strings only.</em><br />
+<em>- <strong>Persistence:</strong> Redis can persist to disk (RDB/AOF). Memcache is ephemeral.</em><br />
+<em>- <strong>Replication:</strong> Redis has built-in replication and clustering. Memcache requires client-side sharding.</em><br />
+<em>- <strong>Operations:</strong> Redis has atomic operations (INCR, list push/pop). Memcache has basic get/set + CAS.</em></p>
+<p><strong>When to use Memcache:</strong><br />
+<em>- Simple string caching with highest raw throughput (multi-threaded)</em><br />
+<em>- You already have Memcache infrastructure</em></p>
+<p><strong>When to use Redis (my preference):</strong><br />
+<em>- Need complex data structures — we use hashes for customer settings In a production environment</em><br />
+<em>- Want persistence — we use RDB snapshots for backup</em><br />
+<em>- Need atomic operations — counters, rate limiting</em><br />
+<em>- Want pub/sub messaging</em></p>
+<p><em>In a production environment, we use AWS ElastiCache for Redis in a clustered setup with 3 master nodes and read replicas for high availability. This reduced our database load by 80%."</em></p>
+</blockquote>
+<hr />
+<h3 id="q3-what-caching-patterns-do-you-know-explain-cache-aside-vs-write-through">Q3: "What caching patterns do you know? Explain cache-aside vs write-through."</h3>
+<p><strong>Your Answer:</strong></p>
+<blockquote>
+<p><em>"I've implemented several caching patterns In a production environment:</em></p>
+<p><strong>Cache-Aside (Lazy Loading) — Our primary pattern:</strong><br />
+<em>- App reads from cache first</em><br />
+<em>- On miss, load from DB and populate cache</em><br />
+<em>- Pros: Only cache what's requested, memory efficient</em><br />
+<em>- Cons: First request is slow (cold cache)</em><br />
+<em>- <strong>Use case:</strong> Customer settings — 1-hour TTL, 95% hit rate</em></p>
+<p><strong>Write-Through:</strong><br />
+<em>- Every write goes to cache AND database synchronously</em><br />
+<em>- Cache is always consistent with DB</em><br />
+<em>- Pros: No cache misses after initial write, strong consistency</em><br />
+<em>- Cons: Write latency (both cache + DB), cache pollution (store data that's never read)</em><br />
+<em>- <strong>Use case:</strong> User profiles where read-heavy and consistency is critical</em></p>
+<p><strong>Write-Behind (Write-Back):</strong><br />
+<em>- Write to cache immediately, async write to DB later</em><br />
+<em>- Pros: Very fast writes, can batch DB writes</em><br />
+<em>- Cons: Data loss risk if cache crashes</em><br />
+<em>- <strong>Use case:</strong> Analytics counters, audit logs</em></p>
+<p><strong>Refresh-Ahead:</strong><br />
+<em>- Proactively refresh popular keys before they expire</em><br />
+<em>- Prevents cache stampede on hot keys</em><br />
+<em>- <strong>Use case:</strong> Homepage data, popular product pages</em></p>
+<p><em>For most use cases, I start with cache-aside because it's simple, memory-efficient, and degrades gracefully if cache goes down."</em></p>
+</blockquote>
+<hr />
+<h3 id="q4-how-do-you-handle-cache-invalidation">Q4: "How do you handle cache invalidation?"</h3>
+<p><strong>Your Answer:</strong></p>
+<blockquote>
+<p><em>"Cache invalidation is one of the two hard problems in computer science. In a production environment, we use multiple strategies depending on the use case:</em></p>
+<p><strong>1. TTL-Based (Simplest):</strong><br />
+<em>- Set expiration on every key</em><br />
+<em>- For customer settings: 1-hour TTL</em><br />
+<em>- Pros: Simple, automatic cleanup</em><br />
+<em>- Cons: Stale data possible, cache stampede on expiry</em></p>
+<p><strong>2. Event-Based Invalidation:</strong><br />
+<code>php
+// When customer setting updated
+Event::listen('CustomerSettingUpdated', function($customer) {
+    Redis::del("customer:{$customer-&gt;id}:settings");
+});</code><br />
+<em>- Immediate consistency</em><br />
+<em>- Use for critical data (billing info, permissions)</em></p>
+<p><strong>3. Tag-Based Invalidation (Laravel):</strong><br />
+<code>php
+Cache::tags(['customer', 'settings'])-&gt;flush();</code><br />
+<em>- Invalidate related groups of keys</em><br />
+<em>- Use for complex dependencies</em></p>
+<p><strong>4. Versioned Keys:</strong><br />
+<code>php
+$version = Redis::incr('customer:123:version');
+Redis::set("customer:123:settings:v$version", $data);</code><br />
+<em>- Old versions expire naturally</em><br />
+<em>- No explicit deletes needed</em></p>
+<p><strong>Cache Stampede Prevention:</strong><br />
+<em>- Stagger TTLs: <code>rand(3500, 3700)</code> instead of fixed 3600</em><br />
+<em>- Probabilistic early refresh</em><br />
+<em>- Distributed locks for expensive queries</em></p>
+<p><strong>Monitoring:</strong><br />
+<em>- Track cache invalidation rate (should be &lt; 5% of reads)</em><br />
+<em>- If invalidations spike, might need longer TTL or event-based approach.</em>"*</p>
+</blockquote>
+<hr />
+<h3 id="q5-how-would-you-scale-redis-for-high-availability-and-increased-capacity">Q5: "How would you scale Redis for high availability and increased capacity?"</h3>
+<p><strong>Your Answer:</strong></p>
+<blockquote>
+<p><em>"In a production environment, we run AWS ElastiCache Redis Cluster in production. Here's how I'd approach scaling:</em></p>
+<p><strong>For High Availability:</strong></p>
+<p><strong>1. Master-Replica Replication:</strong><br />
+<em>- 1 master + 2 read replicas</em><br />
+<em>- Writes go to master, reads can hit replicas</em><br />
+<em>- If master fails, promote replica</em><br />
+<em>- Use Redis Sentinel for automatic failover</em></p>
+<p><strong>2. Multi-AZ Deployment:</strong><br />
+<em>- Replicas in different availability zones</em><br />
+<em>- Survives datacenter failure</em><br />
+<em>- Our setup: us-east-1a (master) + us-east-1b, us-east-1c (replicas)</em></p>
+<p><strong>For Increased Capacity:</strong></p>
+<p><strong>1. Redis Cluster (Horizontal Scaling):</strong><br />
+<em>- 16,384 hash slots distributed across nodes</em><br />
+<em>- Example: 3 master nodes = 5461 slots each</em><br />
+<em>- Linear scaling: 3 nodes → 6 nodes = 2x capacity</em><br />
+<em>- Automatic resharding when adding nodes</em></p>
+<p><strong>2. Client-Side Sharding (Alternative):</strong><br />
+<em>- Consistent hashing in application code</em><br />
+<em>- More control, but no automatic failover</em></p>
+<p><strong>3. Vertical Scaling (Short-term):</strong><br />
+<em>- Upgrade instance type: cache.m5.large → cache.m5.xlarge</em><br />
+<em>- Doubles memory: 6.4 GB → 12.8 GB</em><br />
+<em>- Limited by largest instance size</em></p>
+<p><strong>Our Production Setup:</strong><br />
+<code>ElastiCache Redis Cluster (cluster mode enabled)
+- 3 master nodes (cache.r5.large, 13 GB each)
+- 3 read replicas (1 per master)
+- Total capacity: ~39 GB
+- Multi-AZ: Yes
+- Automatic failover: Enabled
+- Backup: Daily snapshots to S3</code></p>
+<p><strong>Monitoring for Scaling Decisions:</strong><br />
+<em>- Memory &gt; 80% → Add nodes or scale up</em><br />
+<em>- CPU &gt; 75% → Add read replicas</em><br />
+<em>- Evictions &gt; 1000/min → Increase memory</em><br />
+<em>- Network throughput &gt; 80% → Scale up instance type</em>"*</p>
+</blockquote>
+<hr />
+<h3 id="q6-explain-redis-persistence-rdb-vs-aof">Q6: "Explain Redis persistence. RDB vs AOF?"</h3>
+<p><strong>Your Answer:</strong></p>
+<blockquote>
+<p><em>"Redis offers two persistence mechanisms, and you can use both together:</em></p>
+<p><strong>RDB (Redis Database Snapshot):</strong><br />
+<em>- Point-in-time snapshot saved to disk</em><br />
+<em>- Happens at intervals: every 5 min if 10+ writes</em><br />
+<em>- Fork process to avoid blocking reads/writes</em><br />
+<em>- Compact binary format, fast restarts</em><br />
+<em>- <strong>Downside:</strong> Lose last 5-15 minutes of writes if crash</em></p>
+<p><strong>AOF (Append-Only File):</strong><br />
+<em>- Logs every write operation</em><br />
+<em>- Can sync every second or every command</em><br />
+<em>- Replay log on restart to rebuild dataset</em><br />
+<em>- <strong>Downside:</strong> Larger files, slower restarts</em></p>
+<p><strong>When to Use What:</strong></p>
+<p><em>In a production environment, we use <strong>RDB</strong> for our cache:</em><br />
+<em>- It's acceptable to lose cache data on crash</em><br />
+<em>- We can rebuild from MySQL (source of truth)</em><br />
+<em>- Fast restarts are important</em><br />
+<em>- Daily backup to S3 for disaster recovery</em></p>
+<p><em>If we were using Redis as <strong>primary storage</strong> (e.g., session store for financial transactions), I'd use <strong>AOF with appendfsync everysec</strong>:</em><br />
+<em>- Max 1 second of data loss</em><br />
+<em>- Worth the slower restart</em></p>
+<p><strong>Hybrid Approach (Recommended for Critical Data):</strong><br />
+<code>redis
+appendonly yes
+appendfsync everysec
+save 900 1     # RDB backup every 15 min</code><br />
+<em>- AOF for durability</em><br />
+<em>- RDB for fast backups and disaster recovery</em></p>
+<p><strong>Real-World Trade-off:</strong><br />
+<em>- Cache use case: RDB is sufficient (our choice)</em><br />
+<em>- Session store: AOF (1 sec loss acceptable)</em><br />
+<em>- Financial transactions: Database is source of truth, not Redis</em>"*</p>
+</blockquote>
+<hr />
+<h3 id="q7-whats-the-cache-stampede-problem-and-how-do-you-prevent-it">Q7: "What's the cache stampede problem and how do you prevent it?"</h3>
+<p><strong>Your Answer:</strong></p>
+<blockquote>
+<p><em>"Cache stampede happens when a popular cache key expires and hundreds of requests hit simultaneously, all missing cache and hitting the database:</em></p>
+<p><strong>Scenario:</strong><br />
+<em>1. Key <code>homepage:data</code> with 1-hour TTL expires at 3:00 PM</em><br />
+<em>2. 1000 concurrent requests at 3:00:01 PM</em><br />
+<em>3. All see cache miss</em><br />
+<em>4. All query database simultaneously</em><br />
+<em>5. Database CPU spikes to 100%, site slows down</em></p>
+<p><strong>Solutions I've Implemented:</strong></p>
+<p><strong>1. Probabilistic Early Refresh (Best IMO):</strong><br />
+<em>- Randomly refresh cache 1-5 min before actual expiry</em><br />
+<em>- Spreads out refresh load</em><br />
+<code>php
+$expiresAt = $data['expires_at'];
+$delta = $expiresAt - time();
+$randomRefresh = $delta * log(rand() / getrandmax());
+if ($randomRefresh &lt; 0) {
+    $this-&gt;refreshInBackground($key);
+}</code></p>
+<p><strong>2. Distributed Lock (Request Coalescing):</strong><br />
+<em>- First request acquires lock (SETNX) and loads from DB</em><br />
+<em>- Other requests wait briefly and retry</em><br />
+<em>- Only 1 DB query happens</em><br />
+<code>php
+$lockAcquired = Redis::set("lock:$key", 1, 'NX', 'EX', 10);
+if ($lockAcquired) {
+    $data = DB::query(...);
+    Redis::setex($key, 3600, $data);
+} else {
+    sleep(0.05); // 50ms
+    return $this-&gt;getFromCache($key); // Retry
+}</code></p>
+<p><strong>3. Stagger TTLs:</strong><br />
+<em>- Instead of fixed 3600s, use random: <code>rand(3400, 3600)</code></em><br />
+<em>- Prevents all keys expiring at same time</em></p>
+<p><strong>4. Cache Warming:</strong><br />
+<em>- Refresh popular keys in background cron job</em><br />
+<em>- Before they expire</em></p>
+<p><strong>What We Use In a production environment:</strong><br />
+<em>- Staggered TTLs (simple, effective)</em><br />
+<em>- Locks for very expensive queries (reports)</em><br />
+<em>- Monitor DB query spikes as early warning</em>"*</p>
+</blockquote>
+<hr />
+<h3 id="q8-how-do-you-monitor-and-troubleshoot-redis-performance-issues">Q8: "How do you monitor and troubleshoot Redis performance issues?"</h3>
+<p><strong>Your Answer:</strong></p>
+<blockquote>
+<p><em>"In a production environment, we monitor Redis through AWS CloudWatch and direct Redis commands:</em></p>
+<p><strong>Key Metrics We Track:</strong></p>
+<p><strong>1. Hit Rate (Most Important):</strong><br />
+```<br />
+Hit Rate = CacheHits / (CacheHits + CacheMisses) × 100%</p>
+<p>Our target: &gt; 95%<br />
+```<br />
+<em>- If &lt; 80%, investigate:</em><br />
+<em>- TTL too short?</em><br />
+<em>- Cache too small (evictions)?</em><br />
+<em>- Wrong keys being cached?</em></p>
+<p><strong>2. Memory Usage:</strong><br />
+<code>redis
+INFO memory
+used_memory: 4.2GB
+used_memory_rss: 4.8GB
+mem_fragmentation_ratio: 1.14  # Good (&lt; 1.5)</code><br />
+<em>- Alarm at 80% memory</em><br />
+<em>- If fragmentation &gt; 1.5, restart Redis</em></p>
+<p><strong>3. Evictions:</strong><br />
+<code>redis
+INFO stats
+evicted_keys: 150  # per second</code><br />
+<em>- Means cache is too small</em><br />
+<em>- Alarm at &gt; 1000 evictions/min</em><br />
+<em>- Solution: Increase memory or optimize key size</em></p>
+<p><strong>4. CPU Usage:</strong><br />
+<em>- Single-threaded, so &gt; 75% means bottleneck</em><br />
+<em>- Investigate:</em><br />
+<em>- Slow commands (KEYS, SMEMBERS on large sets)</em><br />
+<em>- Large values (&gt; 1 MB)</em></p>
+<p><strong>5. Latency:</strong><br />
+<code>redis
+SLOWLOG GET 10  # Commands taking &gt; 10ms</code><br />
+<em>- Normal: &lt; 1ms average</em><br />
+<em>- Slow: &gt; 10ms (investigate)</em></p>
+<p><strong>6. Connections:</strong><br />
+<code>redis
+INFO clients
+connected_clients: 250</code><br />
+<em>- Max: 10,000 connections</em><br />
+<em>- If growing unbounded: connection leak</em></p>
+<p><strong>Troubleshooting Workflow:</strong></p>
+<p><strong>Symptom: High DB Load</strong><br />
+<em>1. Check cache hit rate</em><br />
+<em>2. Check eviction rate</em><br />
+<em>3. Increase cache size or optimize TTLs</em></p>
+<p><strong>Symptom: Slow Redis Response</strong><br />
+<em>1. <code>SLOWLOG GET</code> — identify slow commands</em><br />
+<em>2. <code>INFO commandstats</code> — most frequent commands</em><br />
+<em>3. Look for <code>KEYS</code>, large <code>SMEMBERS</code>, big values</em><br />
+<em>4. Use <code>SCAN</code> instead of <code>KEYS</code></em></p>
+<p><strong>Symptom: Memory Full</strong><br />
+<em>1. <code>INFO memory</code> — check fragmentation</em><br />
+<em>2. Find largest keys: <code>redis-cli --bigkeys</code></em><br />
+<em>3. Review TTLs (too long?)</em><br />
+<em>4. Scale up instance</em></p>
+<p><strong>Production Incident Example (Enterprise SaaS Company):</strong><br />
+<em>- Cache hit rate dropped from 95% to 60%</em><br />
+<em>- Evictions spiked to 5000/min</em><br />
+<em>- Root cause: New feature cached 10 MB objects</em><br />
+<em>- Solution: Moved large objects to S3, cached URLs only</em><br />
+<em>- Result: Hit rate back to 95%, evictions near zero</em>"*</p>
+</blockquote>
+<hr />
+<h3 id="q9-design-a-rate-limiter-using-redis">Q9: "Design a rate limiter using Redis."</h3>
+<p><strong>Your Answer:</strong></p>
+<blockquote>
+<p><em>"I'd use Redis for rate limiting because it's fast, atomic, and distributed. Here's a sliding window implementation:</em></p>
+<p><strong>Requirements:</strong><br />
+<em>- Limit: 100 requests per minute per user</em><br />
+<em>- Accurate (not allow bursts)</em><br />
+<em>- Distributed (works across multiple servers)</em></p>
+<p><strong>Solution: Sorted Set + Sliding Window</strong></p>
+<p>```php<br />
+function isRateLimited($userId) {<br />
+    $key = "rate_limit:$userId";<br />
+    $now = microtime(true);<br />
+    $windowStart = $now - 60; // 60 seconds ago<br />
+    $limit = 100;</p>
+<div class="codehilite"><pre><span></span><code><span class="c1">// Remove requests older than 1 minute</span>
+<span class="n">Redis</span><span class="p">::</span><span class="n">zremrangebyscore</span><span class="p">(</span><span class="no">$</span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="no">$</span><span class="n">windowStart</span><span class="p">);</span>
+
+<span class="c1">// Count requests in current window</span>
+<span class="no">$</span><span class="n">count</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="n">Redis</span><span class="p">::</span><span class="n">zcard</span><span class="p">(</span><span class="no">$</span><span class="n">key</span><span class="p">);</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="no">$</span><span class="n">count</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="no">$</span><span class="n">limit</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Add current request (score = timestamp)</span>
+<span class="w">    </span><span class="n">Redis</span><span class="p">::</span><span class="n">zadd</span><span class="p">(</span><span class="no">$</span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="no">$</span><span class="nb">now</span><span class="p">,</span><span class="w"> </span><span class="no">$</span><span class="nb">now</span><span class="p">);</span><span class="w"> </span><span class="c1">// Unique ID = timestamp</span>
+<span class="w">    </span><span class="n">Redis</span><span class="p">::</span><span class="n">expire</span><span class="p">(</span><span class="no">$</span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="mi">60</span><span class="p">);</span><span class="w"> </span><span class="c1">// Auto-cleanup</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">false</span><span class="p">;</span><span class="w"> </span><span class="c1">// Not rate limited</span>
+<span class="p">}</span>
+
+<span class="k">return</span><span class="w"> </span><span class="n">true</span><span class="p">;</span><span class="w"> </span><span class="c1">// Rate limited</span>
+</code></pre></div>
+
+<p>}<br />
+```</p>
+<p><strong>Why This Works:</strong><br />
+<em>- Sorted set stores timestamps as scores</em><br />
+<em>- Sliding window: Only count last 60 seconds</em><br />
+<em>- Atomic operations (ZADD, ZREMRANGEBYSCORE)</em><br />
+<em>- Works across multiple servers</em></p>
+<p><strong>Alternative: Token Bucket (Simpler, But Allows Bursts):</strong><br />
+```php<br />
+function checkTokenBucket($userId) {<br />
+    $key = "tokens:$userId";<br />
+    $tokens = Redis::get($key);</p>
+<div class="codehilite"><pre><span></span><code><span class="nt">if</span><span class="w"> </span><span class="o">($</span><span class="nt">tokens</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="nt">null</span><span class="o">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="err">//</span><span class="w"> </span><span class="err">First</span><span class="w"> </span><span class="err">request</span><span class="w"> </span><span class="err">-</span><span class="w"> </span><span class="err">give</span><span class="w"> </span><span class="err">100</span><span class="w"> </span><span class="err">tokens</span>
+<span class="w">    </span><span class="n">Redis</span><span class="p">:</span><span class="o">:</span><span class="nf">setex</span><span class="p">(</span><span class="err">$</span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="mi">60</span><span class="p">,</span><span class="w"> </span><span class="mi">99</span><span class="p">);</span>
+<span class="w">    </span><span class="err">return</span><span class="w"> </span><span class="err">true</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nt">if</span><span class="w"> </span><span class="o">($</span><span class="nt">tokens</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="nt">0</span><span class="o">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">Redis</span><span class="p">:</span><span class="o">:</span><span class="nf">decr</span><span class="p">(</span><span class="err">$</span><span class="n">key</span><span class="p">);</span>
+<span class="w">    </span><span class="err">return</span><span class="w"> </span><span class="err">true</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nt">return</span><span class="w"> </span><span class="nt">false</span><span class="o">;</span><span class="w"> </span><span class="o">//</span><span class="w"> </span><span class="nt">No</span><span class="w"> </span><span class="nt">tokens</span><span class="w"> </span><span class="nt">left</span>
+</code></pre></div>
+
+<p>}<br />
+```</p>
+<p><strong>Production Considerations:</strong><br />
+<em>1. <strong>Multi-key operations:</strong> Use Lua script for atomicity</em><br />
+<code>lua
+local key = KEYS[1]
+local now = ARGV[1]
+local window = ARGV[2]
+local limit = ARGV[3]
+redis.call('zremrangebyscore', key, 0, now - window)
+local count = redis.call('zcard', key)
+if count &lt; tonumber(limit) then
+    redis.call('zadd', key, now, now)
+    redis.call('expire', key, window)
+    return 1
+else
+    return 0
+end</code></p>
+<p><em>2. <strong>Return info to client:</strong></em><br />
+<code>json
+{
+  "allowed": false,
+  "limit": 100,
+  "remaining": 0,
+  "reset_at": 1699000000
+}</code></p>
+<p><em>3. <strong>Different limits per plan:</strong></em><br />
+<em>- Free tier: 100/min</em><br />
+<em>- Pro tier: 1000/min</em><br />
+<em>- Enterprise: 10000/min</em></p>
+<p><em>4. <strong>Distributed across Redis cluster:</strong></em><br />
+<em>- Use same user ID → same hash slot → same node</em><br />
+<em>- No cross-node transactions needed</em></p>
+<p><strong>Real-World Usage (Production API Gateway):</strong><br />
+<em>- Rate limit API calls per customer</em><br />
+<em>- 1000 requests/min per tenant</em><br />
+<em>- Redis sorted set approach</em><br />
+<em>- Return 429 Too Many Requests when limited</em>"*</p>
+</blockquote>
+<hr />
+<h3 id="q10-what-are-some-redis-anti-patterns-or-things-to-avoid">Q10: "What are some Redis anti-patterns or things to avoid?"</h3>
+<p><strong>Your Answer:</strong></p>
+<blockquote>
+<p><em>"From production experience In a production environment, here are key anti-patterns:</em></p>
+<p><strong>1. Using KEYS in Production (Blocks Entire Redis)</strong><br />
+```redis</p>
+<h1 id="bad-scans-all-keys-on">BAD - scans all keys, O(N)</h1>
+<p>KEYS customer:*</p>
+<h1 id="good-non-blocking-paginated">GOOD - non-blocking, paginated</h1>
+<p>SCAN 0 MATCH customer:* COUNT 100<br />
+```</p>
+<p><strong>2. Storing Large Values (&gt; 1 MB)</strong><br />
+<em>- Redis is single-threaded</em><br />
+<em>- GET of 10 MB value blocks all other requests</em><br />
+<em>- <strong>Solution:</strong> Store in S3, cache URL/metadata in Redis</em></p>
+<p><strong>3. No TTL on Keys (Memory Leak)</strong><br />
+<em>- Without TTL, keys never expire</em><br />
+<em>- Eventually run out of memory</em><br />
+<em>- <strong>Always set expiration:</strong> <code>SETEX key 3600 value</code></em></p>
+<p><strong>4. Not Using Connection Pooling</strong><br />
+<em>- Opening new connection per request is slow</em><br />
+<em>- TCP handshake + auth overhead</em><br />
+<em>- <strong>Use persistent connections</strong> (Laravel Redis does this)</em></p>
+<p><strong>5. Inefficient Serialization</strong><br />
+```php</p>
+<h1 id="slow">Slow</h1>
+<p>Redis::set('key', serialize($data));  # PHP serialize</p>
+<h1 id="fast">Fast</h1>
+<p>Redis::set('key', json_encode($data));  # JSON</p>
+<h1 id="faster-for-repeated-fields">Faster (for repeated fields)</h1>
+<p>Redis::hset('user:1', 'name', 'John', 'email', 'john@example.com');<br />
+```</p>
+<p><strong>6. Not Monitoring Hit Rate</strong><br />
+<em>- If hit rate &lt; 80%, cache isn't helping</em><br />
+<em>- Might be caching wrong data or TTL too short</em></p>
+<p><strong>7. Cache Stampede (Not Preventing)</strong><br />
+<em>- All requests hit DB simultaneously when key expires</em><br />
+<em>- <strong>Use:</strong> Staggered TTLs, locks, early refresh</em></p>
+<p><strong>8. Using Redis as Primary Database</strong><br />
+<em>- Redis is for caching or ephemeral data</em><br />
+<em>- <strong>Critical data belongs in a real database</strong> (MySQL, Postgres)</em><br />
+<em>- Even with AOF, Redis can lose data</em></p>
+<p><strong>9. Not Setting maxmemory-policy</strong><br />
+```redis</p>
+<h1 id="without-this-redis-crashes-when-full">Without this, Redis crashes when full</h1>
+<p>maxmemory 4gb<br />
+maxmemory-policy allkeys-lru  # Evict least-recently-used<br />
+```</p>
+<p><strong>10. Ignoring Replication Lag</strong><br />
+<em>- Master-replica has async replication (milliseconds lag)</em><br />
+<em>- Read-after-write from replica might return stale data</em><br />
+<em>- <strong>Solution:</strong> Read from master for critical data</em></p>
+<p><strong>11. Using SELECT (Multiple Databases)</strong><br />
+<em>- Redis supports 16 databases (0-15)</em><br />
+<em>- But doesn't work with clustering</em><br />
+<em>- <strong>Better:</strong> Use key prefixes (<code>app1:key</code>, <code>app2:key</code>)</em></p>
+<p><strong>12. Not Using Lua Scripts for Multi-Command Atomicity</strong><br />
+```php</p>
+<h1 id="race-condition-not-atomic">Race condition - not atomic</h1>
+<p>$current = Redis::get('counter');<br />
+Redis::set('counter', $current + 1);</p>
+<h1 id="atomic">Atomic</h1>
+<p>Redis::eval('return redis.call("INCR", KEYS[1])', 1, 'counter');</p>
+<h1 id="or-just-redisincrcounter">Or just: Redis::incr('counter');</h1>
+<p>```</p>
+<p><strong>Real Incident (Enterprise SaaS Company):</strong><br />
+<em>- Developer used <code>KEYS customer:*</code> in production</em><br />
+<em>- Scanned 10 million keys</em><br />
+<em>- Blocked Redis for 5 seconds</em><br />
+<em>- 500 errors site-wide</em><br />
+<em>- <strong>Fix:</strong> Code review caught it after incident, now blocked by policy</em>"*</p>
+</blockquote>
+<hr />
+<h2 id="summary-your-redis-talking-points">Summary: Your Redis Talking Points</h2>
+<p><strong>When Asked About Caching:</strong></p>
+<blockquote>
+<p><em>"In a production environment, I implemented Redis ElastiCache to cache customer settings for 10,000+ multi-tenant customers. This reduced database load by 80% and improved page load times from 800ms to 200ms.</em></p>
+<p><em>Our architecture uses a clustered setup with 3 master nodes and read replicas across multiple availability zones. We maintain a 95%+ cache hit rate using cache-aside pattern with 1-hour TTLs.</em></p>
+<p><em>I monitor key metrics like hit rate, evictions, and memory usage through CloudWatch. When we had cache stampede issues, I implemented probabilistic early refresh and distributed locks.</em></p>
+<p><em>For session storage, we use Redis instead of file-based sessions so we can horizontally scale our web tier without sticky sessions."</em></p>
+</blockquote>
+<hr />
+<h2 id="next-steps">Next Steps</h2>
+<ol>
+<li><strong>Practice drawing Redis architecture</strong> on a whiteboard</li>
+<li><strong>Memorize key metrics:</strong> 95% hit rate, 80% DB reduction, 1-hour TTL</li>
+<li><strong>Code the cache-aside pattern</strong> from memory (you'll be asked to write code)</li>
+<li><strong>Know the trade-offs:</strong> RDB vs AOF, cache-aside vs write-through</li>
+<li><strong>Review the 10 interview questions</strong> above until you can answer without notes</li>
+</ol>
+<hr />
+<p><strong>You now have deep Redis/Memcache knowledge backed by real production experience!</strong> 🚀</p>
+        </div>
+    </div>
+
+    <script>
+        // Progress Tracker JavaScript
+        const STORAGE_KEY = 'course_progress_redis_memcache_interview_guide';
+
+        // Extract all H2 and H3 headings from content
+        function extractSections() {
+            const content = document.querySelector('.content');
+            const headings = content.querySelectorAll('h2, h3');
+            const sections = [];
+
+            headings.forEach((heading, index) => {
+                const level = heading.tagName === 'H2' ? 2 : 3;
+                const text = heading.textContent.trim();
+                const id = `section-${index}`;
+
+                // Add ID to heading for linking
+                heading.id = id;
+
+                sections.push({
+                    id: id,
+                    text: text,
+                    level: level
+                });
+            });
+
+            return sections;
+        }
+
+        // Load saved progress from localStorage
+        function loadProgress() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            return saved ? JSON.parse(saved) : {};
+        }
+
+        // Save progress to localStorage
+        function saveProgress(progress) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+        }
+
+        // Calculate progress percentage
+        function calculateProgress() {
+            const checkboxes = document.querySelectorAll('.progress-checkbox');
+            const total = checkboxes.length;
+            if (total === 0) return 0;
+
+            const completed = Array.from(checkboxes).filter(cb => cb.checked).length;
+            return Math.round((completed / total) * 100);
+        }
+
+        // Update progress display
+        function updateProgressDisplay() {
+            const percentage = calculateProgress();
+            document.getElementById('progress-pct').textContent = percentage + '%';
+            document.getElementById('progress-bar').style.width = percentage + '%';
+
+            // Update completed class on items
+            document.querySelectorAll('.progress-item').forEach(item => {
+                const checkbox = item.querySelector('.progress-checkbox');
+                if (checkbox.checked) {
+                    item.classList.add('completed');
+                } else {
+                    item.classList.remove('completed');
+                }
+            });
+        }
+
+        // Toggle checkbox
+        function toggleCheckbox(sectionId) {
+            const checkbox = document.getElementById('cb-' + sectionId);
+            const progress = loadProgress();
+
+            progress[sectionId] = checkbox.checked;
+            saveProgress(progress);
+            updateProgressDisplay();
+        }
+
+        // Reset all progress
+        function resetProgress() {
+            if (confirm('Reset all progress for this page?')) {
+                localStorage.removeItem(STORAGE_KEY);
+                document.querySelectorAll('.progress-checkbox').forEach(cb => {
+                    cb.checked = false;
+                });
+                updateProgressDisplay();
+            }
+        }
+
+        // Toggle progress list visibility
+        function toggleProgressList() {
+            const list = document.getElementById('progress-items');
+            const btn = document.querySelector('.toggle-progress');
+
+            if (list.classList.contains('collapsed')) {
+                list.classList.remove('collapsed');
+                btn.textContent = '▼ Hide';
+            } else {
+                list.classList.add('collapsed');
+                btn.textContent = '▶ Show';
+            }
+        }
+
+        // Initialize progress tracker
+        function initProgressTracker() {
+            const sections = extractSections();
+            const progress = loadProgress();
+            const container = document.getElementById('progress-items');
+
+            if (sections.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No sections found</p>';
+                return;
+            }
+
+            sections.forEach(section => {
+                const item = document.createElement('div');
+                item.className = 'progress-item';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'progress-checkbox';
+                checkbox.id = 'cb-' + section.id;
+                checkbox.checked = progress[section.id] || false;
+                checkbox.onchange = () => toggleCheckbox(section.id);
+
+                const label = document.createElement('label');
+                label.className = 'progress-label';
+                label.htmlFor = 'cb-' + section.id;
+                label.textContent = section.text;
+                label.style.paddingLeft = section.level === 3 ? '20px' : '0';
+                label.onclick = () => {
+                    document.getElementById(section.id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+                };
+
+                item.appendChild(checkbox);
+                item.appendChild(label);
+                container.appendChild(item);
+            });
+
+            updateProgressDisplay();
+        }
+
+        // Run on page load
+        document.addEventListener('DOMContentLoaded', initProgressTracker);
+    </script>
+</body>
+</html>

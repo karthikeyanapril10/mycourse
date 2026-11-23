@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Technical_Interview_QA</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 60px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .metadata {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 16px 24px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #666;
+            border-left: 4px solid #667eea;
+        }
+
+        /* PROGRESS TRACKER STYLES */
+        .progress-tracker {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .progress-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-stats {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .progress-percentage {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #764ba2;
+        }
+
+        .progress-bar-container {
+            height: 12px;
+            background: #e9ecef;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+            border-radius: 20px;
+        }
+
+        .reset-btn {
+            padding: 8px 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+
+        .reset-btn:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+        }
+
+        .progress-items {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .progress-items::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .progress-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .progress-item:hover {
+            background: #f8f9fa;
+            transform: translateX(5px);
+        }
+
+        .progress-item.completed {
+            opacity: 0.7;
+        }
+
+        .progress-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .progress-label {
+            cursor: pointer;
+            font-size: 0.95em;
+            line-height: 1.5;
+            color: #495057;
+            flex-grow: 1;
+        }
+
+        .progress-item.completed .progress-label {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .toggle-progress {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .toggle-progress:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .progress-items.collapsed {
+            display: none;
+        }
+
+        /* CONTENT STYLES */
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 4px solid #667eea;
+            font-weight: 700;
+        }
+
+        h2 {
+            color: #764ba2;
+            font-size: 2em;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        h3 {
+            color: #495057;
+            font-size: 1.5em;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        h4 {
+            color: #666;
+            font-size: 1.25em;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        ul, ol {
+            margin: 20px 0;
+            padding-left: 40px;
+        }
+
+        li {
+            margin-bottom: 12px;
+            line-height: 1.7;
+        }
+
+        code {
+            background: #f4f5f7;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #c7254e;
+            border: 1px solid #e1e4e8;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 24px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 25px 0;
+            border: 1px solid #444;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            border: none;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        blockquote {
+            border-left: 5px solid #667eea;
+            padding: 15px 25px;
+            margin: 25px 0;
+            background: #f8f9fa;
+            border-radius: 0 8px 8px 0;
+            color: #495057;
+            font-style: italic;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 30px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 14px 18px;
+            text-align: left;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tr:hover {
+            background: #e9ecef;
+            transition: background 0.2s;
+        }
+
+        a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px solid transparent;
+            transition: border-bottom 0.2s;
+        }
+
+        a:hover {
+            border-bottom: 1px solid #667eea;
+        }
+
+        hr {
+            border: none;
+            border-top: 2px solid #e9ecef;
+            margin: 40px 0;
+        }
+
+        strong {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        em {
+            color: #495057;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 25px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.6em;
+            }
+
+            .progress-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .progress-stats {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../navigation.html" class="back-link">&larr; Back to Navigation</a>
+
+        <div class="metadata">
+            <strong>Source:</strong> dev/Technical_Interview_QA.md &nbsp;|&nbsp; <strong>Updated:</strong> 2026-11-18 19:44:59
+        </div>
+
+        <!-- PROGRESS TRACKER -->
+        <div class="progress-tracker">
+            <div class="progress-header">
+                <div class="progress-title">
+                    <span>📚</span>
+                    <span>Your Progress</span>
+                </div>
+                <div class="progress-stats">
+                    <span class="progress-percentage" id="progress-pct">0%</span>
+                    <button class="reset-btn" onclick="resetProgress()">Reset</button>
+                    <button class="toggle-progress" onclick="toggleProgressList()">▼ Hide</button>
+                </div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progress-bar" style="width: 0%"></div>
+            </div>
+            <div class="progress-items" id="progress-items">
+                <!-- Checkboxes will be generated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="content">
+<h1 id="technical-interview-qa-quick-reference">Technical Interview Q&amp;A - Quick Reference</h1>
+<h2 id="php-laravel">PHP &amp; Laravel</h2>
+<h3 id="q-explain-laravels-service-container-and-dependency-injection">Q: Explain Laravel's service container and dependency injection</h3>
+<p><strong>A:</strong> Laravel's service container is an IoC (Inversion of Control) container that manages class dependencies. Instead of manually creating objects, you type-hint dependencies in constructors and Laravel automatically resolves and injects them. This makes code testable and loosely coupled.</p>
+<p><strong>Example from my work:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// In CC application - DbFactory injected for multi-tenant DB routing</span>
+<span class="x">class CustomerController extends Controller {</span>
+<span class="x">    public function __construct(</span>
+<span class="x">        protected DbFactory $dbFactory,</span>
+<span class="x">        protected CustomerService $service</span>
+<span class="x">    ) {}</span>
+
+<span class="x">    public function show(int $customerId) {</span>
+<span class="x">        $connection = $this-&gt;dbFactory-&gt;getConnection($customerId);</span>
+<span class="x">        return $this-&gt;service-&gt;find($customerId);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h3 id="q-how-do-you-prevent-sql-injection-in-php">Q: How do you prevent SQL injection in PHP?</h3>
+<p><strong>A:</strong> Always use parameterized queries, never string concatenation.</p>
+<p><strong>Laravel (Eloquent):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// GOOD - parameterized</span>
+<span class="x">User::where('email', $email)-&gt;where('status', $status)-&gt;first();</span>
+<span class="x">$users = DB::select('SELECT * FROM users WHERE email = ?', [$email]);</span>
+
+<span class="x">// BAD - vulnerable to injection</span>
+<span class="x">DB::select("SELECT * FROM users WHERE email = '$email'");</span>
+</code></pre></div>
+
+<p><strong>Zend Framework (EIC):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// GOOD</span>
+<span class="x">$select = $db-&gt;select()</span>
+<span class="x">    -&gt;from('fsiuser')</span>
+<span class="x">    -&gt;where('Email = ?', $email)</span>
+<span class="x">    -&gt;where('Active = ?', 1);</span>
+
+<span class="x">// BAD</span>
+<span class="x">$query = "SELECT * FROM fsiuser WHERE Email = '$email'";</span>
+</code></pre></div>
+
+<h3 id="q-explain-n1-query-problem-and-how-to-solve-it">Q: Explain N+1 query problem and how to solve it</h3>
+<p><strong>A:</strong> N+1 happens when you fetch N records, then make 1 additional query for each record to fetch related data.</p>
+<p><strong>Problem:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Fetches 100 customers, then 100 separate queries for accounts</span>
+<span class="x">$customers = Customer::all();</span>
+<span class="x">foreach ($customers as $customer) {</span>
+<span class="x">    echo $customer-&gt;accounts-&gt;count(); // N+1!</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>Solution - Eager Loading:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Just 2 queries: customers + all their accounts</span>
+<span class="x">$customers = Customer::with('accounts')-&gt;get();</span>
+<span class="x">foreach ($customers as $customer) {</span>
+<span class="x">    echo $customer-&gt;accounts-&gt;count(); // No additional queries</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<h3 id="q-how-do-you-handle-configuration-in-a-multi-tenant-system">Q: How do you handle configuration in a multi-tenant system?</h3>
+<p><strong>A:</strong> In our Enterprise SaaS Company system, we use an atom-based pattern:</p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Hierarchical settings: System → Customer → Account → User</span>
+<span class="x">// Stored in fsicustomersettings table</span>
+<span class="x">$setting = DB::selectOne(</span>
+<span class="x">    'CALL FindCustSettings(?, ?)',</span>
+<span class="x">    [$customerId, 'Path/To/Setting']</span>
+<span class="x">);</span>
+
+<span class="x">// Active settings have settingsstatus = 5</span>
+<span class="x">// Supports inheritance and overrides</span>
+</code></pre></div>
+
+<hr />
+<h2 id="database-sql">Database &amp; SQL</h2>
+<h3 id="q-how-do-you-optimize-a-slow-query">Q: How do you optimize a slow query?</h3>
+<p><strong>A:</strong> My systematic approach:</p>
+<ol>
+<li><strong>Get EXPLAIN plan</strong> to see execution strategy</li>
+<li><strong>Identify bottlenecks</strong>: full table scans, filesort, temporary tables</li>
+<li><strong>Add indexes</strong> on WHERE, JOIN, and ORDER BY columns</li>
+<li><strong>Optimize query structure</strong>: <br />
+   - Avoid SELECT *<br />
+   - Limit result set early<br />
+   - Use covering indexes<br />
+   - Consider query refactoring</li>
+</ol>
+<p><strong>Real example:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- SLOW (full table scan on 100M+ rows)</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">fsidocument</span><span class="w"> </span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">AccountNumber</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'12345'</span><span class="w"> </span>
+<span class="k">AND</span><span class="w"> </span><span class="n">BillingDate</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="s1">'2025-01-01'</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">BillingDate</span><span class="w"> </span><span class="k">DESC</span><span class="p">;</span>
+
+<span class="c1">-- FAST (composite index on AccountNumber + BillingDate)</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_account_billing</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">fsidocument</span><span class="p">(</span><span class="n">AccountNumber</span><span class="p">,</span><span class="w"> </span><span class="n">BillingDate</span><span class="p">);</span>
+
+<span class="c1">-- Also limited columns and added LIMIT</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="n">DocumentId</span><span class="p">,</span><span class="w"> </span><span class="n">BillingDate</span><span class="p">,</span><span class="w"> </span><span class="n">Amount</span><span class="w"> </span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">fsidocument</span><span class="w"> </span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">AccountNumber</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'12345'</span><span class="w"> </span>
+<span class="k">AND</span><span class="w"> </span><span class="n">BillingDate</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="s1">'2025-01-01'</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">BillingDate</span><span class="w"> </span><span class="k">DESC</span>
+<span class="k">LIMIT</span><span class="w"> </span><span class="mi">100</span><span class="p">;</span>
+</code></pre></div>
+
+<h3 id="q-explain-acid-properties">Q: Explain ACID properties</h3>
+<p><strong>A:</strong> <br />
+- <strong>Atomicity</strong>: Transaction is all-or-nothing (either all changes commit or all rollback)<br />
+- <strong>Consistency</strong>: Database moves from one valid state to another (constraints enforced)<br />
+- <strong>Isolation</strong>: Concurrent transactions don't interfere with each other<br />
+- <strong>Durability</strong>: Committed transactions survive crashes</p>
+<p><strong>Example from DML work:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">START</span><span class="w"> </span><span class="k">TRANSACTION</span><span class="p">;</span>
+
+<span class="k">UPDATE</span><span class="w"> </span><span class="n">fsiuser</span><span class="w"> </span>
+<span class="k">SET</span><span class="w"> </span><span class="n">Active</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">UpdateUser</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'QRT14792'</span><span class="p">,</span><span class="w"> </span><span class="n">UpdateDate</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NOW</span><span class="p">()</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">UserId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">12345</span><span class="p">;</span>
+
+<span class="k">UPDATE</span><span class="w"> </span><span class="n">fsiaccount</span><span class="w"> </span>
+<span class="k">SET</span><span class="w"> </span><span class="n">Status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'INACTIVE'</span><span class="p">,</span><span class="w"> </span><span class="n">UpdateDate</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NOW</span><span class="p">()</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">UserId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">12345</span><span class="p">;</span>
+
+<span class="c1">-- Either both succeed or both rollback</span>
+<span class="k">COMMIT</span><span class="p">;</span>
+</code></pre></div>
+
+<h3 id="q-how-do-you-design-for-multi-tenancy">Q: How do you design for multi-tenancy?</h3>
+<p><strong>A:</strong> Two approaches we use:</p>
+<p><strong>1. Shared Database, Separate Schemas/Tables (not our approach)</strong><br />
+<strong>2. Database Per Tenant (our approach In a production environment)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- billingmaster has tenant-to-database mapping</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="n">StackNum</span><span class="p">,</span><span class="w"> </span><span class="n">DBName</span><span class="w"> </span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">billingmaster</span><span class="p">.</span><span class="n">customer</span><span class="w"> </span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">CustomerId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">12345</span><span class="p">;</span>
+
+<span class="c1">-- Route to correct database</span>
+<span class="n">USE</span><span class="w"> </span><span class="n">billingclient1</span><span class="p">;</span><span class="w">  </span><span class="c1">-- or billingclient2 based on StackNum</span>
+
+<span class="c1">-- All queries scoped by CustomerId to prevent cross-tenant leaks</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">fsiaccount</span><span class="w"> </span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">CustomerId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">12345</span><span class="w">  </span><span class="c1">-- ALWAYS filter by tenant</span>
+<span class="k">AND</span><span class="w"> </span><span class="n">AccountNumber</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'67890'</span><span class="p">;</span>
+</code></pre></div>
+
+<p><strong>Critical safety rule:</strong> EVERY query must filter by CustomerId or PrimaryCustomerId</p>
+<hr />
+<h2 id="security">Security</h2>
+<h3 id="q-explain-owasp-top-10-and-give-examples-from-your-work">Q: Explain OWASP Top 10 and give examples from your work</h3>
+<p><strong>A:</strong> </p>
+<ol>
+<li><strong>Broken Access Control</strong> - Prevented by checking user permissions before data access</li>
+<li><strong>Cryptographic Failures</strong> - PCI data encrypted at rest, TLS in transit</li>
+<li><strong>Injection</strong> - Parameterized queries, input validation</li>
+<li><strong>Insecure Design</strong> - Security requirements in design phase, threat modeling</li>
+<li><strong>Security Misconfiguration</strong> - Disabled debug in production, secure headers</li>
+<li><strong>Vulnerable Components</strong> - Checkmarx SCA scanning, composer audit</li>
+<li><strong>Authentication Failures</strong> - Strong password policies, MFA, session management</li>
+<li><strong>Software &amp; Data Integrity</strong> - Code signing, verified dependencies</li>
+<li><strong>Logging Failures</strong> - Comprehensive audit trails (33 audit tables)</li>
+<li><strong>SSRF</strong> - Validate and sanitize URLs before external requests</li>
+</ol>
+<p><strong>Example - Fixing SQL Injection in legacy code:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// BEFORE (vulnerable)</span>
+<span class="x">$query = "SELECT * FROM fsiuser WHERE Email = '" . $_POST['email'] . "'";</span>
+<span class="x">$result = mysql_query($query);</span>
+
+<span class="x">// AFTER (secure)</span>
+<span class="x">$stmt = $db-&gt;prepare("SELECT * FROM fsiuser WHERE Email = ?");</span>
+<span class="x">$stmt-&gt;bind_param("s", $_POST['email']);</span>
+<span class="x">$stmt-&gt;execute();</span>
+</code></pre></div>
+
+<h3 id="q-how-do-you-handle-pci-and-hipaa-compliance">Q: How do you handle PCI and HIPAA compliance?</h3>
+<p><strong>A:</strong></p>
+<p><strong>PCI (Payment Card Industry):</strong><br />
+- Never log full credit card numbers (mask to last 4 digits)<br />
+- Never log CVV codes<br />
+- Use tokenization for card storage<br />
+- Encrypt cardholder data at rest<br />
+- Restrict database access via RBAC</p>
+<p><strong>HIPAA (Health Insurance Portability):</strong><br />
+- Never log PHI (Protected Health Information) in application logs<br />
+- Encrypt PHI at rest and in transit<br />
+- Maintain audit trails of who accessed what data<br />
+- Implement BAA (Business Associate Agreements)</p>
+<p><strong>Example from code reviews:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// BAD - logs full card number</span>
+<span class="x">Log::info("Processing payment", ['card' =&gt; $cardNumber]);</span>
+
+<span class="x">// GOOD - masks PCI data</span>
+<span class="x">Log::info("Processing payment", [</span>
+<span class="x">    'card_last4' =&gt; substr($cardNumber, -4),</span>
+<span class="x">    'customer_id' =&gt; $customerId</span>
+<span class="x">]);</span>
+</code></pre></div>
+
+<hr />
+<h2 id="system-design">System Design</h2>
+<h3 id="q-design-a-multi-tenant-saas-billing-platform">Q: Design a multi-tenant SaaS billing platform</h3>
+<p><strong>A:</strong> Key components:</p>
+<p><strong>1. Tenant Isolation Layer</strong><br />
+- Database routing based on tenant ID<br />
+- Separate connection pools per tenant database<br />
+- Query safety middleware to enforce tenant scoping</p>
+<p><strong>2. API Gateway</strong><br />
+- Authentication (JWT with tenant context)<br />
+- Rate limiting per tenant<br />
+- Request routing to correct service</p>
+<p><strong>3. Microservices Architecture</strong><br />
+- Invoice Service (generate, send, track)<br />
+- Payment Service (process, reconcile, retry)<br />
+- Customer Service (accounts, users, settings)<br />
+- Notification Service (email, SMS, webhooks)</p>
+<p><strong>4. Data Layer</strong><br />
+- Master DB (tenant metadata, routing info)<br />
+- Tenant DBs (customer data, invoices, payments)<br />
+- Cache layer (Redis for session, settings)<br />
+- Audit DB (compliance trails)</p>
+<p><strong>5. Processing Workers</strong><br />
+- Invoice generation queue<br />
+- Payment processing with retry logic<br />
+- Email sending with failure handling<br />
+- Report generation</p>
+<p><strong>6. Monitoring &amp; Observability</strong><br />
+- Splunk for logs (with tenant context)<br />
+- Datadog for metrics<br />
+- Pendo for usage analytics<br />
+- Alerting on failures and SLA breaches</p>
+<p><strong>Scaling considerations:</strong><br />
+- Horizontal scaling of stateless services<br />
+- Database sharding (we use 2 stacks, can expand)<br />
+- Caching at multiple layers<br />
+- Async processing for non-critical paths<br />
+- Circuit breakers for external dependencies</p>
+<hr />
+<h2 id="architecture-patterns">Architecture Patterns</h2>
+<h3 id="q-explain-the-difference-between-account-centric-and-user-centric-models">Q: Explain the difference between Account-Centric and User-Centric models</h3>
+<p><strong>A:</strong> This is specific to our Enterprise SaaS Company platform:</p>
+<p><strong>Account-Centric (AC):</strong><br />
+- One account = one login<br />
+- User record represents the account itself<br />
+- Single email, single login<br />
+- fsiuser.AccountNumber is populated<br />
+- Used by: standalone businesses, small customers</p>
+<p><strong>User-Centric (UC):</strong><br />
+- Multiple users per account<br />
+- Users can access multiple accounts<br />
+- Parent-child customer relationships<br />
+- fsiuser.AccountNumber is NULL<br />
+- fsionlineaccount links users to accounts<br />
+- Used by: enterprises, managed billing relationships</p>
+<p><strong>Data implications:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Finding AC customer accounts</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">fsiuser</span><span class="w"> </span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">CustomerId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="n">AccountNumber</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">;</span>
+
+<span class="c1">-- Finding UC customer accounts  </span>
+<span class="k">SELECT</span><span class="w"> </span><span class="n">u</span><span class="p">.</span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="n">oa</span><span class="p">.</span><span class="n">AccountNumber</span><span class="w"> </span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">fsiuser</span><span class="w"> </span><span class="n">u</span>
+<span class="k">JOIN</span><span class="w"> </span><span class="n">fsionlineaccount</span><span class="w"> </span><span class="n">oa</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">u</span><span class="p">.</span><span class="n">UserId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">oa</span><span class="p">.</span><span class="n">UserId</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">u</span><span class="p">.</span><span class="n">CustomerId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">?</span><span class="p">;</span>
+</code></pre></div>
+
+<h3 id="q-how-do-you-ensure-zero-downtime-deployments">Q: How do you ensure zero-downtime deployments?</h3>
+<p><strong>A:</strong> Our strategy:</p>
+<ol>
+<li>
+<p><strong>Database Changes:</strong><br />
+   - Backward-compatible migrations first<br />
+   - Deploy code that works with both old and new schema<br />
+   - Clean up old schema after code fully deployed</p>
+</li>
+<li>
+<p><strong>Rolling Deployments:</strong><br />
+   - Update one pod/server at a time<br />
+   - Health checks before routing traffic<br />
+   - Automatic rollback on failures</p>
+</li>
+<li>
+<p><strong>Feature Flags:</strong><br />
+   - New features behind flags<br />
+   - Gradual rollout to subset of users<br />
+   - Quick disable without code deployment</p>
+</li>
+<li>
+<p><strong>Blue-Green Deployments:</strong><br />
+   - Deploy to green environment<br />
+   - Test thoroughly<br />
+   - Switch traffic via load balancer<br />
+   - Keep blue as instant rollback</p>
+</li>
+</ol>
+<hr />
+<h2 id="testing">Testing</h2>
+<h3 id="q-how-do-you-test-a-multi-tenant-application">Q: How do you test a multi-tenant application?</h3>
+<p><strong>A:</strong> </p>
+<p><strong>Unit Tests:</strong><br />
+- Test tenant isolation in data access layer<br />
+- Mock tenant context in services<br />
+- Verify query scoping</p>
+<p><strong>Integration Tests:</strong><br />
+- Test with multiple tenant contexts<br />
+- Verify cross-tenant data leakage prevention<br />
+- Test tenant routing logic</p>
+<p><strong>E2E Tests (Cypress/Protractor):</strong><br />
+- Test full user flows for different tenant types<br />
+- AC vs UC customer scenarios<br />
+- Test permission boundaries</p>
+<p><strong>Example Cypress test:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nx">describe</span><span class="p">(</span><span class="s1">'Multi-tenant isolation'</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">it</span><span class="p">(</span><span class="s1">'should only show data for logged-in tenant'</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">cy</span><span class="p">.</span><span class="nx">loginAs</span><span class="p">(</span><span class="s1">'customer1@example.com'</span><span class="p">);</span>
+<span class="w">    </span><span class="nx">cy</span><span class="p">.</span><span class="nx">visit</span><span class="p">(</span><span class="s1">'/accounts'</span><span class="p">);</span>
+<span class="w">    </span><span class="nx">cy</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'[data-test=account-row]'</span><span class="p">)</span>
+<span class="w">      </span><span class="p">.</span><span class="nx">should</span><span class="p">(</span><span class="s1">'have.length.greaterThan'</span><span class="p">,</span><span class="w"> </span><span class="mf">0</span><span class="p">)</span>
+<span class="w">      </span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">$row</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// Verify all accounts belong to customer1</span>
+<span class="w">        </span><span class="nx">expect</span><span class="p">(</span><span class="nx">$row</span><span class="p">).</span><span class="nx">to</span><span class="p">.</span><span class="nx">contain</span><span class="p">(</span><span class="s1">'Customer1'</span><span class="p">);</span>
+<span class="w">      </span><span class="p">});</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">});</span>
+</code></pre></div>
+
+<hr />
+<h2 id="problem-solving-scenarios">Problem-Solving Scenarios</h2>
+<h3 id="q-a-query-is-timing-out-in-production-walk-me-through-your-debugging-process">Q: A query is timing out in production. Walk me through your debugging process.</h3>
+<p><strong>My systematic approach:</strong></p>
+<p><strong>1. Immediate response (5 min):</strong><br />
+- Check monitoring: error rate, affected users<br />
+- Review recent deployments (was this change-related?)<br />
+- Quick query EXPLAIN to see obvious issues</p>
+<p><strong>2. Investigation (30 min):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Capture slow query from logs</span>
+<span class="c1">-- Run EXPLAIN</span>
+<span class="k">EXPLAIN</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">fsidocument</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="p">...;</span>
+
+<span class="c1">-- Look for:</span>
+<span class="c1">-- - type: ALL (full table scan) - BAD</span>
+<span class="c1">-- - rows: high number scanned</span>
+<span class="c1">-- - Extra: Using filesort, Using temporary</span>
+</code></pre></div>
+
+<p><strong>3. Analysis:</strong><br />
+- Compare table size: <code>SELECT COUNT(*) FROM table;</code><br />
+- Check existing indexes: <code>SHOW INDEX FROM table;</code><br />
+- Analyze query patterns: Are we filtering on indexed columns?</p>
+<p><strong>4. Solutions (prioritized):</strong><br />
+- <strong>Quick win</strong>: Add LIMIT if appropriate, add index on filter columns<br />
+- <strong>Medium term</strong>: Refactor query, denormalize if needed, add covering index<br />
+- <strong>Long term</strong>: Partition table, archive old data, cache results</p>
+<p><strong>5. Validation:</strong><br />
+- Test fix in staging with production-scale data<br />
+- Monitor metrics after deployment<br />
+- Document for future similar issues</p>
+<p><strong>Real example:</strong> Customer report timing out<br />
+- Problem: 100M+ row table, no index on date range filter<br />
+- Solution: Added composite index on (CustomerId, BillingDate)<br />
+- Result: 3-minute query → 2 seconds</p>
+<hr />
+<h2 id="leadership-communication">Leadership &amp; Communication</h2>
+<h3 id="q-how-do-you-explain-technical-issues-to-non-technical-stakeholders">Q: How do you explain technical issues to non-technical stakeholders?</h3>
+<p><strong>My dual-audience approach:</strong></p>
+<p><strong>Technical explanation:</strong><br />
+"The SSO authentication flow failed because EmailValidationController checks <code>$this-&gt;isSSO === 1</code>, but the property is cast to boolean, making this comparison always false due to PHP's strict type checking."</p>
+<p><strong>Business explanation:</strong><br />
+"When enterprise customers try to log in through their company's single sign-on system, they're being incorrectly redirected to a page that asks them to verify their email—even though SSO already verified it. This creates friction and support tickets. The root cause is a type mismatch in our authentication logic that's blocking valid SSO users."</p>
+<p><strong>Framework:</strong><br />
+1. What the user experiences (the symptom)<br />
+2. Why it matters (business impact)<br />
+3. What's broken (root cause in plain language)<br />
+4. How we'll fix it (solution)<br />
+5. What won't be affected (scope containment)</p>
+<hr />
+<p>Ready to ace your interview! 🚀</p>
+        </div>
+    </div>
+
+    <script>
+        // Progress Tracker JavaScript
+        const STORAGE_KEY = 'course_progress_technical_interview_qa';
+
+        // Extract all H2 and H3 headings from content
+        function extractSections() {
+            const content = document.querySelector('.content');
+            const headings = content.querySelectorAll('h2, h3');
+            const sections = [];
+
+            headings.forEach((heading, index) => {
+                const level = heading.tagName === 'H2' ? 2 : 3;
+                const text = heading.textContent.trim();
+                const id = `section-${index}`;
+
+                // Add ID to heading for linking
+                heading.id = id;
+
+                sections.push({
+                    id: id,
+                    text: text,
+                    level: level
+                });
+            });
+
+            return sections;
+        }
+
+        // Load saved progress from localStorage
+        function loadProgress() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            return saved ? JSON.parse(saved) : {};
+        }
+
+        // Save progress to localStorage
+        function saveProgress(progress) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+        }
+
+        // Calculate progress percentage
+        function calculateProgress() {
+            const checkboxes = document.querySelectorAll('.progress-checkbox');
+            const total = checkboxes.length;
+            if (total === 0) return 0;
+
+            const completed = Array.from(checkboxes).filter(cb => cb.checked).length;
+            return Math.round((completed / total) * 100);
+        }
+
+        // Update progress display
+        function updateProgressDisplay() {
+            const percentage = calculateProgress();
+            document.getElementById('progress-pct').textContent = percentage + '%';
+            document.getElementById('progress-bar').style.width = percentage + '%';
+
+            // Update completed class on items
+            document.querySelectorAll('.progress-item').forEach(item => {
+                const checkbox = item.querySelector('.progress-checkbox');
+                if (checkbox.checked) {
+                    item.classList.add('completed');
+                } else {
+                    item.classList.remove('completed');
+                }
+            });
+        }
+
+        // Toggle checkbox
+        function toggleCheckbox(sectionId) {
+            const checkbox = document.getElementById('cb-' + sectionId);
+            const progress = loadProgress();
+
+            progress[sectionId] = checkbox.checked;
+            saveProgress(progress);
+            updateProgressDisplay();
+        }
+
+        // Reset all progress
+        function resetProgress() {
+            if (confirm('Reset all progress for this page?')) {
+                localStorage.removeItem(STORAGE_KEY);
+                document.querySelectorAll('.progress-checkbox').forEach(cb => {
+                    cb.checked = false;
+                });
+                updateProgressDisplay();
+            }
+        }
+
+        // Toggle progress list visibility
+        function toggleProgressList() {
+            const list = document.getElementById('progress-items');
+            const btn = document.querySelector('.toggle-progress');
+
+            if (list.classList.contains('collapsed')) {
+                list.classList.remove('collapsed');
+                btn.textContent = '▼ Hide';
+            } else {
+                list.classList.add('collapsed');
+                btn.textContent = '▶ Show';
+            }
+        }
+
+        // Initialize progress tracker
+        function initProgressTracker() {
+            const sections = extractSections();
+            const progress = loadProgress();
+            const container = document.getElementById('progress-items');
+
+            if (sections.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No sections found</p>';
+                return;
+            }
+
+            sections.forEach(section => {
+                const item = document.createElement('div');
+                item.className = 'progress-item';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'progress-checkbox';
+                checkbox.id = 'cb-' + section.id;
+                checkbox.checked = progress[section.id] || false;
+                checkbox.onchange = () => toggleCheckbox(section.id);
+
+                const label = document.createElement('label');
+                label.className = 'progress-label';
+                label.htmlFor = 'cb-' + section.id;
+                label.textContent = section.text;
+                label.style.paddingLeft = section.level === 3 ? '20px' : '0';
+                label.onclick = () => {
+                    document.getElementById(section.id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+                };
+
+                item.appendChild(checkbox);
+                item.appendChild(label);
+                container.appendChild(item);
+            });
+
+            updateProgressDisplay();
+        }
+
+        // Run on page load
+        document.addEventListener('DOMContentLoaded', initProgressTracker);
+    </script>
+</body>
+</html>

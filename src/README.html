@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>README</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 60px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .metadata {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 16px 24px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #666;
+            border-left: 4px solid #667eea;
+        }
+
+        /* PROGRESS TRACKER STYLES */
+        .progress-tracker {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .progress-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-stats {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .progress-percentage {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #764ba2;
+        }
+
+        .progress-bar-container {
+            height: 12px;
+            background: #e9ecef;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+            border-radius: 20px;
+        }
+
+        .reset-btn {
+            padding: 8px 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+
+        .reset-btn:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+        }
+
+        .progress-items {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .progress-items::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .progress-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .progress-item:hover {
+            background: #f8f9fa;
+            transform: translateX(5px);
+        }
+
+        .progress-item.completed {
+            opacity: 0.7;
+        }
+
+        .progress-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .progress-label {
+            cursor: pointer;
+            font-size: 0.95em;
+            line-height: 1.5;
+            color: #495057;
+            flex-grow: 1;
+        }
+
+        .progress-item.completed .progress-label {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .toggle-progress {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .toggle-progress:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .progress-items.collapsed {
+            display: none;
+        }
+
+        /* CONTENT STYLES */
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 4px solid #667eea;
+            font-weight: 700;
+        }
+
+        h2 {
+            color: #764ba2;
+            font-size: 2em;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        h3 {
+            color: #495057;
+            font-size: 1.5em;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        h4 {
+            color: #666;
+            font-size: 1.25em;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        ul, ol {
+            margin: 20px 0;
+            padding-left: 40px;
+        }
+
+        li {
+            margin-bottom: 12px;
+            line-height: 1.7;
+        }
+
+        code {
+            background: #f4f5f7;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #c7254e;
+            border: 1px solid #e1e4e8;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 24px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 25px 0;
+            border: 1px solid #444;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            border: none;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        blockquote {
+            border-left: 5px solid #667eea;
+            padding: 15px 25px;
+            margin: 25px 0;
+            background: #f8f9fa;
+            border-radius: 0 8px 8px 0;
+            color: #495057;
+            font-style: italic;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 30px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 14px 18px;
+            text-align: left;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tr:hover {
+            background: #e9ecef;
+            transition: background 0.2s;
+        }
+
+        a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px solid transparent;
+            transition: border-bottom 0.2s;
+        }
+
+        a:hover {
+            border-bottom: 1px solid #667eea;
+        }
+
+        hr {
+            border: none;
+            border-top: 2px solid #e9ecef;
+            margin: 40px 0;
+        }
+
+        strong {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        em {
+            color: #495057;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 25px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.6em;
+            }
+
+            .progress-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .progress-stats {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../navigation.html" class="back-link">&larr; Back to Navigation</a>
+
+        <div class="metadata">
+            <strong>Source:</strong> dev/README.md &nbsp;|&nbsp; <strong>Updated:</strong> 2026-11-18 19:44:57
+        </div>
+
+        <!-- PROGRESS TRACKER -->
+        <div class="progress-tracker">
+            <div class="progress-header">
+                <div class="progress-title">
+                    <span>📚</span>
+                    <span>Your Progress</span>
+                </div>
+                <div class="progress-stats">
+                    <span class="progress-percentage" id="progress-pct">0%</span>
+                    <button class="reset-btn" onclick="resetProgress()">Reset</button>
+                    <button class="toggle-progress" onclick="toggleProgressList()">▼ Hide</button>
+                </div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progress-bar" style="width: 0%"></div>
+            </div>
+            <div class="progress-items" id="progress-items">
+                <!-- Checkboxes will be generated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="content">
+<h1 id="full-stack-ai-first-developer-course">🎓 Full-Stack AI-First Developer Course</h1>
+<p><strong>Complete Training Program: From Senior PHP Developer to AI-First Full-Stack Engineer</strong></p>
+<p><strong>Student:</strong> Karthikeyan Sekar<br />
+<strong>Duration:</strong> 10-12 weeks<br />
+<strong>Level:</strong> Senior (12+ years experience) → AI-First Leadership<br />
+<strong>Location:</strong> <code>C:\Users\kasekar\GH\Full-Stack-AI-Developer-Course\</code>  </p>
+<hr />
+<h2 id="what-youll-learn">📚 <strong>What You'll Learn</strong></h2>
+<p>This comprehensive course transforms you from a senior PHP/Laravel developer into an <strong>AI-First Full-Stack Engineer</strong> ready for leadership roles in India's top tech companies (Chennai/Bengaluru).</p>
+<p><strong>By the end, you will:</strong><br />
+- ✅ Master <strong>AI/ML fundamentals</strong> (LLMs, Vector DBs, RAG, Agentic AI)<br />
+- ✅ Build <strong>production AI applications</strong> (FastAPI + LLMs + React)<br />
+- ✅ Ace <strong>senior-level interviews</strong> (95+ technical Q&amp;A prepared)<br />
+- ✅ Lead <strong>security investigations</strong> (malicious actor tracking, timeline reconstruction)<br />
+- ✅ Collaborate <strong>cross-team</strong> (.NET, Python, Java via Claude AI)<br />
+- ✅ Manage <strong>production incidents</strong> (PagerDuty on-call, Datadog monitoring)<br />
+- ✅ Present to <strong>Product/Management</strong> (Mermaid diagrams, business communication)</p>
+<hr />
+<h2 id="course-modules">🎯 <strong>Course Modules</strong></h2>
+<h3 id="module-1-professional-branding-week-1"><strong>MODULE 1: Professional Branding (Week 1)</strong></h3>
+<p><strong>Goal:</strong> Get interview-ready with a compelling resume and LinkedIn profile</p>
+<p><strong>Files:</strong><br />
+- 📄 <a href="Karthikeyan_Sekar_Resume_Beautiful.html">Karthikeyan_Sekar_Resume_Beautiful.html</a> — Your ATS-optimized resume<br />
+- 📋 <a href="CREATE_PDF_NOW.md">CREATE_PDF_NOW.md</a> — Convert resume to PDF<br />
+- 🔗 <a href="LinkedIn_Profile_Update_Guide.md">LinkedIn_Profile_Update_Guide.md</a> — Optimize your LinkedIn<br />
+- 📖 <a href="START_HERE.md">START_HERE.md</a> — Course navigation guide</p>
+<p><strong>Deliverables:</strong><br />
+- [ ] PDF resume ready for applications<br />
+- [ ] LinkedIn profile updated (50+ skills, Open to Work badge)<br />
+- [ ] 2-minute elevator pitch practiced</p>
+<hr />
+<h3 id="module-2-technical-interview-mastery-week-2-4"><strong>MODULE 2: Technical Interview Mastery (Week 2-4)</strong></h3>
+<p><strong>Goal:</strong> Master 95+ senior-level interview questions covering all 8 resume projects</p>
+<p><strong>Files:</strong><br />
+- 📘 <a href="Technical_Interview_QA_Resume_Projects.md">Technical_Interview_QA_Resume_Projects.md</a> — Part 1 (50+ questions)<br />
+- 📗 <a href="Technical_Interview_QA_Resume_Projects_Part2.md">Technical_Interview_QA_Resume_Projects_Part2.md</a> — Part 2 (45+ questions)<br />
+- 🎤 <a href="Mock_Interview_Questions.md">Mock_Interview_Questions.md</a> — 3 full mock interviews<br />
+- 📊 <a href="Scenario_Based_Case_Studies.md">Scenario_Based_Case_Studies.md</a> — 5 real-world scenarios<br />
+- 💻 <a href="Code_Examples_Practice.md">Code_Examples_Practice.md</a> — 10+ coding challenges</p>
+<p><strong>Topics Covered:</strong><br />
+- EIC, CC, CSR, WCL, MPay, AMAPI (database sharding, caching, idempotency)<br />
+- Multi-Domain Whitelabel Platform (dynamic RBAC)<br />
+- Incident Tracker (FastAPI + React + AI)<br />
+- Security investigations (Datadog, Splunk, Pendo, SendGrid)<br />
+- Cross-team collaboration (.NET, Python, Java)<br />
+- System design (URL shortener, scaling to 100M users)<br />
+- Leadership &amp; behavioral (mentoring, disagreements, production incidents)<br />
+- Code review &amp; DML review (100+ reviews, security checklist)<br />
+- Agile/Scrum (PagerDuty on-call, Jira/Kanban)</p>
+<p><strong>Deliverables:</strong><br />
+- [ ] Completed 3 mock interviews (self-recorded)<br />
+- [ ] Practiced all 95+ questions<br />
+- [ ] Solved 10+ coding challenges<br />
+- [ ] Can explain all 8 projects in 3 minutes each</p>
+<hr />
+<h3 id="module-3-aiml-fundamentals-week-5-6"><strong>MODULE 3: AI/ML Fundamentals (Week 5-6)</strong></h3>
+<p><strong>Goal:</strong> Understand LLMs, embeddings, and AI concepts for interviews</p>
+<p><strong>Topics:</strong><br />
+1. <strong>LLM Basics</strong> (tokens, context window, temperature, streaming)<br />
+2. <strong>Prompt Engineering</strong> (zero-shot, few-shot, chain-of-thought)<br />
+3. <strong>Vector Databases</strong> (embeddings, semantic search, ChromaDB/Pinecone)<br />
+4. <strong>OpenAI / Anthropic APIs</strong> (GPT-4, Claude, pricing, rate limits)</p>
+<p><strong>Practice Projects:</strong><br />
+- Build a chatbot API (FastAPI + OpenAI)<br />
+- Build semantic search (ChromaDB + embeddings)</p>
+<p><strong>Files:</strong><br />
+- 📚 <a href="AI_LLM_Fundamentals.md">AI_LLM_Fundamentals.md</a> — LLM concepts guide <em>(to be created)</em><br />
+- 🗄️ <a href="AI_Vector_Databases.md">AI_Vector_Databases.md</a> — Vector DB guide <em>(to be created)</em></p>
+<p><strong>Deliverables:</strong><br />
+- [ ] Working chatbot API deployed<br />
+- [ ] Semantic search demo ready<br />
+- [ ] Can explain tokens, embeddings, context window in interviews</p>
+<hr />
+<h3 id="module-4-rag-agentic-ai-week-7-8"><strong>MODULE 4: RAG &amp; Agentic AI (Week 7-8)</strong></h3>
+<p><strong>Goal:</strong> Build production AI applications using RAG and agents</p>
+<p><strong>Topics:</strong><br />
+1. <strong>RAG (Retrieval-Augmented Generation)</strong> — Chat with your data<br />
+2. <strong>Agentic AI</strong> — LLMs that take actions (function calling, tools)<br />
+3. <strong>Multi-Agent Orchestration</strong> — Complex workflows</p>
+<p><strong>Practice Projects:</strong><br />
+- <strong>"Chat with Invoices"</strong> — RAG system querying 100K invoices<br />
+- <strong>"Invoice Assistant Agent"</strong> — Agent with 3+ tools (search, fetch, update)</p>
+<p><strong>Files:</strong><br />
+- 🤖 <a href="AI_RAG_Guide.md">AI_RAG_Guide.md</a> — RAG implementation <em>(to be created)</em><br />
+- 🛠️ <a href="AI_Agentic_Workflows.md">AI_Agentic_Workflows.md</a> — Agents guide <em>(to be created)</em></p>
+<p><strong>Deliverables:</strong><br />
+- [ ] RAG chatbot deployed (FastAPI + ChromaDB + OpenAI)<br />
+- [ ] Agent with 3+ function calls working<br />
+- [ ] Can explain RAG vs fine-tuning in interviews</p>
+<hr />
+<h3 id="module-5-full-stack-ai-application-week-9-10"><strong>MODULE 5: Full-Stack AI Application (Week 9-10)</strong></h3>
+<p><strong>Goal:</strong> Build a complete AI-powered app (backend + frontend + deployment)</p>
+<p><strong>Tech Stack:</strong><br />
+- <strong>Backend:</strong> Python + FastAPI + LangChain<br />
+- <strong>Frontend:</strong> React.js + TypeScript<br />
+- <strong>Database:</strong> PostgreSQL + pgvector<br />
+- <strong>LLM:</strong> OpenAI GPT-4 or Claude<br />
+- <strong>Deployment:</strong> Docker + AWS/Render</p>
+<p><strong>Project:</strong><br />
+Build <strong>"InvoiceGPT"</strong> — AI assistant for invoice management<br />
+- Features:<br />
+  - Chat interface (ask questions about invoices)<br />
+  - RAG-powered search (semantic, not keyword)<br />
+  - Agent actions (create invoice, send email, generate report)<br />
+  - Streaming responses (real-time output)<br />
+  - Cost tracking (token usage, pricing)</p>
+<p><strong>Files:</strong><br />
+- 🚀 <a href="Project_InvoiceGPT_Spec.md">Project_InvoiceGPT_Spec.md</a> — Project specification <em>(to be created)</em><br />
+- 📱 <a href="React_FastAPI_Integration.md">React_FastAPI_Integration.md</a> — Frontend guide <em>(to be created)</em></p>
+<p><strong>Deliverables:</strong><br />
+- [ ] Working app deployed (public URL)<br />
+- [ ] GitHub repo ready (for portfolio)<br />
+- [ ] 5-minute demo video recorded</p>
+<hr />
+<h3 id="module-6-interview-preparation-job-search-week-11-12"><strong>MODULE 6: Interview Preparation &amp; Job Search (Week 11-12)</strong></h3>
+<p><strong>Goal:</strong> Apply for jobs and ace interviews</p>
+<p><strong>Activities:</strong><br />
+1. <strong>Resume distribution</strong> — Apply to 20+ companies<br />
+2. <strong>Mock interviews</strong> — Practice with peers/friends<br />
+3. <strong>Portfolio showcase</strong> — GitHub + LinkedIn projects<br />
+4. <strong>Networking</strong> — Reach out to recruiters on LinkedIn</p>
+<p><strong>Files:</strong><br />
+- 📋 <a href="Interview_Prep_Master_Plan.md">Interview_Prep_Master_Plan.md</a> — 2-week interview prep plan<br />
+- 🎯 <a href="Job_Search_Strategy.md">Job_Search_Strategy.md</a> — Application strategy <em>(to be created)</em></p>
+<p><strong>Deliverables:</strong><br />
+- [ ] Applied to 20+ senior roles (Chennai/Bengaluru)<br />
+- [ ] Received 5+ interview calls<br />
+- [ ] Completed 3+ company interviews<br />
+- [ ] Job offer received! 🎉</p>
+<hr />
+<h2 id="subject-specific-guides-20-topics">📖 <strong>Subject-Specific Guides (20+ Topics)</strong></h2>
+<p><strong>Deep-Dive Technical Guides:</strong><br />
+- <a href="System_Design_Interview_Guide.md">System_Design_Interview_Guide.md</a><br />
+- <a href="Python_FastAPI_Guide.md">Python_FastAPI_Guide.md</a><br />
+- <a href="React_JS_Guide.md">React_JS_Guide.md</a><br />
+- <a href="AWS_Services_Guide.md">AWS_Services_Guide.md</a><br />
+- <a href="Redis_Caching_Guide.md">Redis_Caching_Guide.md</a><br />
+- <a href="Kafka_Event_Streaming_Guide.md">Kafka_Event_Streaming_Guide.md</a><br />
+- <a href="Elasticsearch_Guide.md">Elasticsearch_Guide.md</a><br />
+- <a href="CI_CD_Pipelines_Guide.md">CI_CD_Pipelines_Guide.md</a><br />
+- <a href="Kubernetes_Guide.md">Kubernetes_Guide.md</a><br />
+- <a href="API_Design_Best_Practices.md">API_Design_Best_Practices.md</a><br />
+- <a href="Microservices_Architecture_Guide.md">Microservices_Architecture_Guide.md</a><br />
+- <a href="Payment_Gateway_Integration.md">Payment_Gateway_Integration.md</a><br />
+- And 8 more...</p>
+<hr />
+<h2 id="course-completion-checklist">✅ <strong>Course Completion Checklist</strong></h2>
+<h3 id="resume-profile"><strong>Resume &amp; Profile</strong></h3>
+<ul>
+<li>[ ] Resume PDF created and updated</li>
+<li>[ ] LinkedIn profile optimized (Open to Work enabled)</li>
+<li>[ ] GitHub profile updated (InvoiceGPT project showcased)</li>
+</ul>
+<h3 id="interview-skills"><strong>Interview Skills</strong></h3>
+<ul>
+<li>[ ] Completed all 95+ technical Q&amp;A</li>
+<li>[ ] Completed 3 mock interviews (recorded)</li>
+<li>[ ] Solved 10+ coding challenges</li>
+<li>[ ] Can explain all 8 projects in 3 minutes each</li>
+</ul>
+<h3 id="aiml-skills"><strong>AI/ML Skills</strong></h3>
+<ul>
+<li>[ ] Understand LLM fundamentals (tokens, embeddings, temperature)</li>
+<li>[ ] Built chatbot API (FastAPI + OpenAI)</li>
+<li>[ ] Built RAG system ("Chat with Invoices")</li>
+<li>[ ] Built agent with 3+ tools</li>
+<li>[ ] Deployed full-stack AI app (InvoiceGPT)</li>
+</ul>
+<h3 id="job-search"><strong>Job Search</strong></h3>
+<ul>
+<li>[ ] Applied to 20+ companies</li>
+<li>[ ] Received 5+ interview calls</li>
+<li>[ ] Passed 1+ company interviews</li>
+<li>[ ] Received job offer! 🎊</li>
+</ul>
+<hr />
+<h2 id="certification">🎓 <strong>Certification</strong></h2>
+<p>Upon completion, you will have:<br />
+- ✅ <strong>Portfolio:</strong> 3 AI projects on GitHub (Chatbot, RAG, InvoiceGPT)<br />
+- ✅ <strong>Resume:</strong> ATS-optimized, showcasing AI + security + cross-team skills<br />
+- ✅ <strong>Skills:</strong> 95+ interview questions mastered, AI fundamentals understood<br />
+- ✅ <strong>Confidence:</strong> Ready for senior/lead roles in Chennai/Bengaluru</p>
+<hr />
+<h2 id="support">📞 <strong>Support</strong></h2>
+<p><strong>Questions?</strong> Review these files:<br />
+- <a href="Interview_Prep_Master_Plan.md">Interview_Prep_Master_Plan.md</a> — Study schedule<br />
+- <a href="START_HERE.md">START_HERE.md</a> — Navigation guide</p>
+<hr />
+<h2 id="get-started">🚀 <strong>Get Started</strong></h2>
+<p><strong>Week 1 — Start Here:</strong><br />
+1. Open <a href="Interview_Prep_Master_Plan.md">Interview_Prep_Master_Plan.md</a><br />
+2. Create your resume PDF: <a href="CREATE_PDF_NOW.md">CREATE_PDF_NOW.md</a><br />
+3. Begin Day 1 of the 2-week interview prep plan</p>
+<p><strong>Let's go! 💪</strong></p>
+<hr />
+<p><strong>Course Version:</strong> 1.0<br />
+<strong>Last Updated:</strong> November 16, 2026<br />
+<strong>Instructor:</strong> Self-paced (AI-assisted with Claude Code)<br />
+<strong>Location:</strong> <code>C:\Users\kasekar\GH\Full-Stack-AI-Developer-Course\</code></p>
+        </div>
+    </div>
+
+    <script>
+        // Progress Tracker JavaScript
+        const STORAGE_KEY = 'course_progress_readme';
+
+        // Extract all H2 and H3 headings from content
+        function extractSections() {
+            const content = document.querySelector('.content');
+            const headings = content.querySelectorAll('h2, h3');
+            const sections = [];
+
+            headings.forEach((heading, index) => {
+                const level = heading.tagName === 'H2' ? 2 : 3;
+                const text = heading.textContent.trim();
+                const id = `section-${index}`;
+
+                // Add ID to heading for linking
+                heading.id = id;
+
+                sections.push({
+                    id: id,
+                    text: text,
+                    level: level
+                });
+            });
+
+            return sections;
+        }
+
+        // Load saved progress from localStorage
+        function loadProgress() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            return saved ? JSON.parse(saved) : {};
+        }
+
+        // Save progress to localStorage
+        function saveProgress(progress) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+        }
+
+        // Calculate progress percentage
+        function calculateProgress() {
+            const checkboxes = document.querySelectorAll('.progress-checkbox');
+            const total = checkboxes.length;
+            if (total === 0) return 0;
+
+            const completed = Array.from(checkboxes).filter(cb => cb.checked).length;
+            return Math.round((completed / total) * 100);
+        }
+
+        // Update progress display
+        function updateProgressDisplay() {
+            const percentage = calculateProgress();
+            document.getElementById('progress-pct').textContent = percentage + '%';
+            document.getElementById('progress-bar').style.width = percentage + '%';
+
+            // Update completed class on items
+            document.querySelectorAll('.progress-item').forEach(item => {
+                const checkbox = item.querySelector('.progress-checkbox');
+                if (checkbox.checked) {
+                    item.classList.add('completed');
+                } else {
+                    item.classList.remove('completed');
+                }
+            });
+        }
+
+        // Toggle checkbox
+        function toggleCheckbox(sectionId) {
+            const checkbox = document.getElementById('cb-' + sectionId);
+            const progress = loadProgress();
+
+            progress[sectionId] = checkbox.checked;
+            saveProgress(progress);
+            updateProgressDisplay();
+        }
+
+        // Reset all progress
+        function resetProgress() {
+            if (confirm('Reset all progress for this page?')) {
+                localStorage.removeItem(STORAGE_KEY);
+                document.querySelectorAll('.progress-checkbox').forEach(cb => {
+                    cb.checked = false;
+                });
+                updateProgressDisplay();
+            }
+        }
+
+        // Toggle progress list visibility
+        function toggleProgressList() {
+            const list = document.getElementById('progress-items');
+            const btn = document.querySelector('.toggle-progress');
+
+            if (list.classList.contains('collapsed')) {
+                list.classList.remove('collapsed');
+                btn.textContent = '▼ Hide';
+            } else {
+                list.classList.add('collapsed');
+                btn.textContent = '▶ Show';
+            }
+        }
+
+        // Initialize progress tracker
+        function initProgressTracker() {
+            const sections = extractSections();
+            const progress = loadProgress();
+            const container = document.getElementById('progress-items');
+
+            if (sections.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No sections found</p>';
+                return;
+            }
+
+            sections.forEach(section => {
+                const item = document.createElement('div');
+                item.className = 'progress-item';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'progress-checkbox';
+                checkbox.id = 'cb-' + section.id;
+                checkbox.checked = progress[section.id] || false;
+                checkbox.onchange = () => toggleCheckbox(section.id);
+
+                const label = document.createElement('label');
+                label.className = 'progress-label';
+                label.htmlFor = 'cb-' + section.id;
+                label.textContent = section.text;
+                label.style.paddingLeft = section.level === 3 ? '20px' : '0';
+                label.onclick = () => {
+                    document.getElementById(section.id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+                };
+
+                item.appendChild(checkbox);
+                item.appendChild(label);
+                container.appendChild(item);
+            });
+
+            updateProgressDisplay();
+        }
+
+        // Run on page load
+        document.addEventListener('DOMContentLoaded', initProgressTracker);
+    </script>
+</body>
+</html>

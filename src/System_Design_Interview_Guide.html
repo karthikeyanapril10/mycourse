@@ -1,0 +1,1682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System_Design_Interview_Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 60px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .metadata {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 16px 24px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #666;
+            border-left: 4px solid #667eea;
+        }
+
+        /* PROGRESS TRACKER STYLES */
+        .progress-tracker {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .progress-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-stats {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .progress-percentage {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #764ba2;
+        }
+
+        .progress-bar-container {
+            height: 12px;
+            background: #e9ecef;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+            border-radius: 20px;
+        }
+
+        .reset-btn {
+            padding: 8px 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+
+        .reset-btn:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+        }
+
+        .progress-items {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .progress-items::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .progress-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .progress-item:hover {
+            background: #f8f9fa;
+            transform: translateX(5px);
+        }
+
+        .progress-item.completed {
+            opacity: 0.7;
+        }
+
+        .progress-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .progress-label {
+            cursor: pointer;
+            font-size: 0.95em;
+            line-height: 1.5;
+            color: #495057;
+            flex-grow: 1;
+        }
+
+        .progress-item.completed .progress-label {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .toggle-progress {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .toggle-progress:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .progress-items.collapsed {
+            display: none;
+        }
+
+        /* CONTENT STYLES */
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 4px solid #667eea;
+            font-weight: 700;
+        }
+
+        h2 {
+            color: #764ba2;
+            font-size: 2em;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        h3 {
+            color: #495057;
+            font-size: 1.5em;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        h4 {
+            color: #666;
+            font-size: 1.25em;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        ul, ol {
+            margin: 20px 0;
+            padding-left: 40px;
+        }
+
+        li {
+            margin-bottom: 12px;
+            line-height: 1.7;
+        }
+
+        code {
+            background: #f4f5f7;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #c7254e;
+            border: 1px solid #e1e4e8;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 24px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 25px 0;
+            border: 1px solid #444;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            border: none;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        blockquote {
+            border-left: 5px solid #667eea;
+            padding: 15px 25px;
+            margin: 25px 0;
+            background: #f8f9fa;
+            border-radius: 0 8px 8px 0;
+            color: #495057;
+            font-style: italic;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 30px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 14px 18px;
+            text-align: left;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tr:hover {
+            background: #e9ecef;
+            transition: background 0.2s;
+        }
+
+        a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px solid transparent;
+            transition: border-bottom 0.2s;
+        }
+
+        a:hover {
+            border-bottom: 1px solid #667eea;
+        }
+
+        hr {
+            border: none;
+            border-top: 2px solid #e9ecef;
+            margin: 40px 0;
+        }
+
+        strong {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        em {
+            color: #495057;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 25px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.6em;
+            }
+
+            .progress-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .progress-stats {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../navigation.html" class="back-link">&larr; Back to Navigation</a>
+
+        <div class="metadata">
+            <strong>Source:</strong> dev/System_Design_Interview_Guide.md &nbsp;|&nbsp; <strong>Updated:</strong> 2026-11-18 19:44:58
+        </div>
+
+        <!-- PROGRESS TRACKER -->
+        <div class="progress-tracker">
+            <div class="progress-header">
+                <div class="progress-title">
+                    <span>📚</span>
+                    <span>Your Progress</span>
+                </div>
+                <div class="progress-stats">
+                    <span class="progress-percentage" id="progress-pct">0%</span>
+                    <button class="reset-btn" onclick="resetProgress()">Reset</button>
+                    <button class="toggle-progress" onclick="toggleProgressList()">▼ Hide</button>
+                </div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progress-bar" style="width: 0%"></div>
+            </div>
+            <div class="progress-items" id="progress-items">
+                <!-- Checkboxes will be generated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="content">
+<h1 id="system-design-interview-guide">System Design Interview Guide</h1>
+<h2 id="table-of-contents">📋 Table of Contents</h2>
+<ol>
+<li><a href="#interview-framework">Interview Framework</a></li>
+<li><a href="#key-concepts--patterns">Key Concepts &amp; Patterns</a></li>
+<li><a href="#scalability-deep-dive">Scalability Deep Dive</a></li>
+<li><a href="#database-design">Database Design</a></li>
+<li><a href="#common-system-design-problems">Common System Design Problems</a></li>
+<li><a href="#real-world-examples-from-your-experience">Real-World Examples from Your Experience</a></li>
+<li><a href="#evaluation-criteria">Evaluation Criteria</a></li>
+<li><a href="#practice-problems">Practice Problems</a></li>
+</ol>
+<hr />
+<h2 id="interview-framework">Interview Framework</h2>
+<h3 id="the-7-step-approach-45-60-min-interview">The 7-Step Approach (45-60 min interview)</h3>
+<p><strong>Step 1: Clarify Requirements (5-7 min)</strong><br />
+- Ask questions to understand scope<br />
+- Define functional requirements (what the system does)<br />
+- Define non-functional requirements (scale, performance, consistency)<br />
+- Identify constraints and assumptions</p>
+<p><strong>Step 2: Estimate Scale (3-5 min)</strong><br />
+- Daily Active Users (DAU)<br />
+- Requests per second (read/write ratio)<br />
+- Data volume and growth rate<br />
+- Bandwidth requirements</p>
+<p><strong>Step 3: Define APIs (3-5 min)</strong><br />
+- Key endpoints or interfaces<br />
+- Request/response formats<br />
+- Keep it high-level</p>
+<p><strong>Step 4: High-Level Design (10-15 min)</strong><br />
+- Draw the main components<br />
+- Show data flow<br />
+- Identify major services</p>
+<p><strong>Step 5: Deep Dive (15-20 min)</strong><br />
+- Interviewer will probe specific areas<br />
+- Database schema<br />
+- Caching strategy<br />
+- Scalability bottlenecks<br />
+- Failure scenarios</p>
+<p><strong>Step 6: Identify Bottlenecks &amp; Tradeoffs (5-10 min)</strong><br />
+- Discuss limitations<br />
+- Propose improvements<br />
+- Talk about tradeoffs</p>
+<p><strong>Step 7: Wrap Up (2-3 min)</strong><br />
+- Summarize the design<br />
+- Mention monitoring and operations</p>
+<hr />
+<h2 id="key-concepts-patterns">Key Concepts &amp; Patterns</h2>
+<h3 id="1-load-balancing">1. Load Balancing</h3>
+<p><strong>What:</strong> Distributes incoming requests across multiple servers</p>
+<p><strong>Types:</strong><br />
+- <strong>Layer 4 (Transport):</strong> Routes based on IP/port, fast but less flexible<br />
+- <strong>Layer 7 (Application):</strong> Routes based on content (URL, headers), slower but smarter</p>
+<p><strong>Algorithms:</strong><br />
+- Round Robin: Simple rotation<br />
+- Least Connections: Send to server with fewest active connections<br />
+- IP Hash: Same client always goes to same server (session affinity)</p>
+<p><strong>Your experience:</strong></p>
+<div class="codehilite"><pre><span></span><code>                  Load Balancer (AWS ELB)
+                         |
+        +----------------+----------------+
+        |                |                |
+   EIC Pod 1        EIC Pod 2        EIC Pod 3
+   (Active)         (Active)         (Active)
+</code></pre></div>
+
+<p><strong>When to discuss:</strong> Any system serving many users</p>
+<hr />
+<h3 id="2-caching">2. Caching</h3>
+<p><strong>Why:</strong> Reduce database load, improve response time</p>
+<p><strong>Cache Levels:</strong><br />
+- <strong>Client-side:</strong> Browser cache<br />
+- <strong>CDN:</strong> Static assets (images, CSS, JS)<br />
+- <strong>Application:</strong> Redis/Memcached for hot data<br />
+- <strong>Database:</strong> Query cache, buffer pool</p>
+<p><strong>Cache Strategies:</strong></p>
+<p><strong>a) Cache-Aside (Lazy Loading)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="mf">1.</span><span class="w"> </span><span class="n">App</span><span class="w"> </span><span class="n">checks</span><span class="w"> </span><span class="n">cache</span>
+<span class="mf">2.</span><span class="w"> </span><span class="kr">If</span><span class="w"> </span><span class="n">miss</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="kr">read</span><span class="w"> </span><span class="n">from</span><span class="w"> </span><span class="n">DB</span>
+<span class="mf">3.</span><span class="w"> </span><span class="n">Write</span><span class="w"> </span><span class="kr">to</span><span class="w"> </span><span class="n">cache</span>
+<span class="mf">4.</span><span class="w"> </span><span class="kr">Return</span><span class="w"> </span><span class="kr">to</span><span class="w"> </span><span class="n">user</span>
+</code></pre></div>
+
+<p><strong>Pros:</strong> Only cache what's needed<br />
+<strong>Cons:</strong> Cache miss penalty, potential stale data</p>
+<p><strong>b) Write-Through</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="mf">1.</span><span class="w"> </span><span class="n">Write</span><span class="w"> </span><span class="kr">to</span><span class="w"> </span><span class="n">cache</span><span class="w"> </span><span class="ow">AND</span><span class="w"> </span><span class="kd">data</span><span class="n">base</span><span class="w"> </span><span class="n">synchronously</span>
+<span class="mf">2.</span><span class="w"> </span><span class="n">Cache</span><span class="w"> </span><span class="n">always</span><span class="w"> </span><span class="n">consistent</span><span class="w"> </span><span class="n">with</span><span class="w"> </span><span class="n">DB</span>
+</code></pre></div>
+
+<p><strong>Pros:</strong> Consistency<br />
+<strong>Cons:</strong> Write latency</p>
+<p><strong>c) Write-Behind (Write-Back)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="mf">1.</span><span class="w"> </span><span class="n">Write</span><span class="w"> </span><span class="kr">to</span><span class="w"> </span><span class="n">cache</span><span class="w"> </span><span class="n">immediately</span>
+<span class="mf">2.</span><span class="w"> </span><span class="n">Asynchronously</span><span class="w"> </span><span class="n">write</span><span class="w"> </span><span class="kr">to</span><span class="w"> </span><span class="n">DB</span><span class="w"> </span><span class="n">later</span>
+</code></pre></div>
+
+<p><strong>Pros:</strong> Fast writes<br />
+<strong>Cons:</strong> Risk of data loss, eventual consistency</p>
+<p><strong>Cache Invalidation Strategies:</strong><br />
+- <strong>TTL (Time To Live):</strong> Auto-expire after X seconds<br />
+- <strong>Event-driven:</strong> Invalidate on data change<br />
+- <strong>LRU (Least Recently Used):</strong> Evict oldest unused items</p>
+<p><strong>Your experience In a production environment:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Customer settings cached for 1 hour</span>
+<span class="x">$cacheKey = "customer_settings_{$customerId}_{$settingPath}";</span>
+<span class="x">$settings = Cache::remember($cacheKey, 3600, function() use ($customerId, $settingPath) {</span>
+<span class="x">    return DB::selectOne('CALL FindCustSettings(?, ?)', [$customerId, $settingPath]);</span>
+<span class="x">});</span>
+</code></pre></div>
+
+<p><strong>When to discuss:</strong> Almost every system design question</p>
+<hr />
+<h3 id="3-database-scaling">3. Database Scaling</h3>
+<h4 id="vertical-scaling-scale-up">Vertical Scaling (Scale Up)</h4>
+<ul>
+<li>Add more CPU, RAM, disk to single server</li>
+<li><strong>Pros:</strong> Simple, no code changes</li>
+<li><strong>Cons:</strong> Hardware limits, single point of failure, expensive</li>
+</ul>
+<h4 id="horizontal-scaling-scale-out">Horizontal Scaling (Scale Out)</h4>
+<p><strong>a) Replication (Master-Slave)</strong></p>
+<div class="codehilite"><pre><span></span><code>         Master (Writes)
+              |
+    +---------+---------+
+    |         |         |
+  Slave 1   Slave 2   Slave 3
+  (Reads)   (Reads)   (Reads)
+</code></pre></div>
+
+<p><strong>Pros:</strong> Read scalability, failover<br />
+<strong>Cons:</strong> Replication lag, write bottleneck on master</p>
+<p><strong>b) Sharding (Partitioning)</strong></p>
+<p>Distribute data across multiple databases</p>
+<p><strong>Sharding Strategies:</strong></p>
+<ol>
+<li>
+<p><strong>Hash-based:</strong> <code>shard_id = hash(user_id) % num_shards</code><br />
+   - Pro: Even distribution<br />
+   - Con: Hard to add shards, no range queries</p>
+</li>
+<li>
+<p><strong>Range-based:</strong> User 1-1M → Shard 1, 1M-2M → Shard 2<br />
+   - Pro: Easy range queries<br />
+   - Con: Uneven distribution, hotspots</p>
+</li>
+<li>
+<p><strong>Geographic:</strong> Users by region<br />
+   - Pro: Low latency, compliance<br />
+   - Con: Uneven distribution</p>
+</li>
+<li>
+<p><strong>Entity-based:</strong> All data for customer in one shard<br />
+   - Pro: No cross-shard joins, tenant isolation<br />
+   - Con: Large tenants can overwhelm shard</p>
+</li>
+</ol>
+<p><strong>Your production experience (Entity-based sharding):</strong></p>
+<div class="codehilite"><pre><span></span><code>billingmaster (routing DB)
+  CustomerId | StackNum | DBName
+  12345      | 1        | billingclient1
+  67890      | 2        | billingclient2
+
+Stack 1 (billingclient1) → Customers 1-5000
+Stack 2 (billingclient2) → Customers 5001-10000
+</code></pre></div>
+
+<p><strong>Sharding Challenges:</strong><br />
+- Cross-shard joins become expensive<br />
+- Transactions across shards are complex<br />
+- Rebalancing data when adding shards</p>
+<hr />
+<h3 id="4-microservices-vs-monolith">4. Microservices vs Monolith</h3>
+<p><strong>Monolith:</strong></p>
+<div class="codehilite"><pre><span></span><code>+---------------------------+
+|  Single Application       |
+|  - User Management        |
+|  - Invoice Generation     |
+|  - Payment Processing     |
+|  - Notifications          |
+|  All in one codebase/DB   |
++---------------------------+
+</code></pre></div>
+
+<p><strong>Pros:</strong> Simple deployment, easy transactions, less network overhead<br />
+<strong>Cons:</strong> Hard to scale parts independently, tight coupling, large codebase</p>
+<p><strong>Microservices:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">User</span><span class="w"> </span><span class="kr">Service</span><span class="w"> </span><span class="o">&lt;---&gt;</span><span class="w"> </span><span class="n">Invoice</span><span class="w"> </span><span class="kr">Service</span><span class="w"> </span><span class="o">&lt;---&gt;</span><span class="w"> </span><span class="n">Payment</span><span class="w"> </span><span class="kr">Service</span>
+<span class="w">    </span><span class="o">|</span><span class="w">                    </span><span class="o">|</span><span class="w">                      </span><span class="o">|</span>
+<span class="w">  </span><span class="n">User</span><span class="w"> </span><span class="n">DB</span><span class="w">            </span><span class="n">Invoice</span><span class="w"> </span><span class="n">DB</span><span class="w">             </span><span class="n">Payment</span><span class="w"> </span><span class="n">DB</span>
+</code></pre></div>
+
+<p><strong>Pros:</strong> Independent scaling, technology flexibility, team autonomy<br />
+<strong>Cons:</strong> Distributed system complexity, network latency, data consistency</p>
+<p><strong>Production platform (Microservices):</strong><br />
+- <strong>EIC</strong> (eInvoice Connect): Customer portal<br />
+- <strong>CC</strong> (Client Connect): Account management<br />
+- <strong>CSR</strong> (Customer Settings Repository): Configuration service<br />
+- <strong>WCL</strong> (Web Communication Layer): Notification service<br />
+- <strong>MPay</strong> (Managed Pay): Payment processing</p>
+<p><strong>Communication Patterns:</strong><br />
+- <strong>Synchronous:</strong> REST APIs for request/response<br />
+- <strong>Asynchronous:</strong> Message queues for events</p>
+<hr />
+<h3 id="5-message-queues-async-processing">5. Message Queues &amp; Async Processing</h3>
+<p><strong>Why:</strong> Decouple services, handle traffic spikes, retry failed operations</p>
+<p><strong>Popular Tools:</strong> RabbitMQ, Apache Kafka, AWS SQS, Redis Pub/Sub</p>
+<p><strong>Patterns:</strong></p>
+<p><strong>a) Work Queue</strong></p>
+<div class="codehilite"><pre><span></span><code>Producer → Queue → Consumer 1
+                 → Consumer 2
+                 → Consumer 3
+</code></pre></div>
+
+<p><strong>Use case:</strong> Distribute work (email sending, report generation)</p>
+<p><strong>b) Pub/Sub</strong></p>
+<div class="codehilite"><pre><span></span><code>Publisher → Topic → Subscriber 1 (logs to DB)
+                  → Subscriber 2 (sends notification)
+                  → Subscriber 3 (updates cache)
+</code></pre></div>
+
+<p><strong>Use case:</strong> Event broadcasting (invoice created, payment received)</p>
+<p><strong>Guaranteed Delivery Patterns:</strong><br />
+- <strong>At-most-once:</strong> Fire and forget, may lose messages<br />
+- <strong>At-least-once:</strong> Retry until ack, may duplicate<br />
+- <strong>Exactly-once:</strong> Idempotent processing, no duplicates (hardest)</p>
+<p><strong>Your use case:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nv">Invoice</span><span class="w"> </span><span class="nv">Generation</span><span class="w"> </span><span class="nv">Queue</span>
+<span class="w">  </span>→<span class="w"> </span><span class="nv">Worker</span><span class="w"> </span><span class="mi">1</span>:<span class="w"> </span><span class="nv">Generate</span><span class="w"> </span><span class="nv">PDF</span>
+<span class="w">  </span>→<span class="w"> </span><span class="nv">Worker</span><span class="w"> </span><span class="mi">2</span>:<span class="w"> </span><span class="nv">Generate</span><span class="w"> </span><span class="nv">PDF</span>
+<span class="w">  </span>→<span class="w"> </span><span class="nv">Worker</span><span class="w"> </span><span class="mi">3</span>:<span class="w"> </span><span class="nv">Generate</span><span class="w"> </span><span class="nv">PDF</span>
+
+<span class="nv">Each</span><span class="w"> </span><span class="nv">worker</span>:
+<span class="mi">1</span>.<span class="w"> </span><span class="nv">Pull</span><span class="w"> </span><span class="nv">job</span><span class="w"> </span><span class="nv">from</span><span class="w"> </span><span class="nv">queue</span>
+<span class="mi">2</span>.<span class="w"> </span><span class="nv">Generate</span><span class="w"> </span><span class="nv">invoice</span>
+<span class="mi">3</span>.<span class="w"> </span><span class="nv">Store</span><span class="w"> </span><span class="nv">in</span><span class="w"> </span><span class="nv">S3</span><span class="o">/</span><span class="nv">DB</span>
+<span class="mi">4</span>.<span class="w"> </span><span class="k">Send</span><span class="w"> </span><span class="nv">to</span><span class="w"> </span><span class="nv">email</span><span class="w"> </span><span class="nv">queue</span>
+<span class="mi">5</span>.<span class="w"> </span><span class="nv">Ack</span><span class="w"> </span><span class="nv">completion</span>
+</code></pre></div>
+
+<hr />
+<h3 id="6-cap-theorem">6. CAP Theorem</h3>
+<p><strong>You can only have 2 of 3:</strong></p>
+<ul>
+<li><strong>C (Consistency):</strong> All nodes see the same data at the same time</li>
+<li><strong>A (Availability):</strong> Every request gets a response (success/failure)</li>
+<li><strong>P (Partition Tolerance):</strong> System works despite network failures</li>
+</ul>
+<p><strong>Trade-offs:</strong></p>
+<p><strong>CP (Consistency + Partition Tolerance):</strong><br />
+- Example: Traditional RDBMS (MySQL, PostgreSQL)<br />
+- Sacrifice: May refuse requests if nodes can't sync<br />
+- Use when: Financial transactions, inventory</p>
+<p><strong>AP (Availability + Partition Tolerance):</strong><br />
+- Example: Cassandra, DynamoDB<br />
+- Sacrifice: Different nodes may have different data (eventual consistency)<br />
+- Use when: Social media feeds, analytics</p>
+<p><strong>CA (Consistency + Availability):</strong><br />
+- Not realistic in distributed systems (network failures happen)</p>
+<p><strong>Production context:</strong><br />
+- <strong>Payment processing:</strong> CP (must be consistent)<br />
+- <strong>Invoice delivery logs:</strong> AP (eventual consistency okay)</p>
+<hr />
+<h3 id="7-consistent-hashing">7. Consistent Hashing</h3>
+<p><strong>Problem:</strong> Adding/removing servers in traditional hashing breaks many cache keys</p>
+<p><strong>Traditional hash:</strong></p>
+<div class="codehilite"><pre><span></span><code>server = hash(key) % num_servers
+Add/remove server → most keys rehash to different server → cache miss storm
+</code></pre></div>
+
+<p><strong>Consistent hashing:</strong></p>
+<div class="codehilite"><pre><span></span><code>         Server 1
+            |
+    Key A --+-- Key B
+    |              |
+Server 3 ----●---- Server 2
+              |
+          Key C
+</code></pre></div>
+
+<ul>
+<li>Keys and servers placed on a ring</li>
+<li>Each key goes to next server clockwise</li>
+<li>Adding/removing server only affects adjacent keys (~1/N)</li>
+</ul>
+<p><strong>Use cases:</strong><br />
+- Load balancer routing<br />
+- Distributed cache (Memcached)<br />
+- Distributed databases (Cassandra)</p>
+<hr />
+<h3 id="8-rate-limiting">8. Rate Limiting</h3>
+<p><strong>Why:</strong> Prevent abuse, ensure fair usage, protect against DDoS</p>
+<p><strong>Algorithms:</strong></p>
+<p><strong>a) Token Bucket</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nv">Bucket</span><span class="w"> </span><span class="nv">holds</span><span class="w"> </span><span class="nv">N</span><span class="w"> </span><span class="nv">tokens</span>
+<span class="nv">Refill</span><span class="w"> </span><span class="nv">at</span><span class="w"> </span><span class="nv">rate</span><span class="w"> </span><span class="nv">R</span><span class="w"> </span><span class="nv">per</span><span class="w"> </span><span class="nv">second</span>
+<span class="nv">Request</span><span class="w"> </span><span class="nv">consumes</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="nv">token</span>
+<span class="k">If</span><span class="w"> </span><span class="nv">bucket</span><span class="w"> </span><span class="nv">empty</span><span class="w"> </span>→<span class="w"> </span><span class="nv">reject</span>
+</code></pre></div>
+
+<p><strong>Pros:</strong> Allows bursts<br />
+<strong>Cons:</strong> More complex</p>
+<p><strong>b) Leaky Bucket</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nv">Requests</span><span class="w"> </span><span class="nv">enter</span><span class="w"> </span><span class="nv">bucket</span>
+<span class="nv">Process</span><span class="w"> </span><span class="nv">at</span><span class="w"> </span><span class="nv">fixed</span><span class="w"> </span><span class="nv">rate</span>
+<span class="k">If</span><span class="w"> </span><span class="nv">bucket</span><span class="w"> </span><span class="nv">full</span><span class="w"> </span>→<span class="w"> </span><span class="nv">reject</span>
+</code></pre></div>
+
+<p><strong>Pros:</strong> Smooth traffic<br />
+<strong>Cons:</strong> No bursts</p>
+<p><strong>c) Fixed Window</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nv">Count</span><span class="w"> </span><span class="nv">requests</span><span class="w"> </span><span class="nv">per</span><span class="w"> </span><span class="nv">minute</span>
+<span class="k">If</span><span class="w"> </span><span class="nv">count</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="nv">limit</span><span class="w"> </span>→<span class="w"> </span><span class="nv">reject</span>
+<span class="nv">Reset</span><span class="w"> </span><span class="nv">count</span><span class="w"> </span><span class="nv">at</span><span class="w"> </span><span class="nv">minute</span><span class="w"> </span><span class="nv">boundary</span>
+</code></pre></div>
+
+<p><strong>Pros:</strong> Simple<br />
+<strong>Cons:</strong> Burst at window edge</p>
+<p><strong>d) Sliding Window</strong></p>
+<div class="codehilite"><pre><span></span><code>Track timestamps of recent requests
+Count requests in last N seconds
+More accurate than fixed window
+</code></pre></div>
+
+<p><strong>Implementation:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Redis-based rate limiter</span>
+<span class="x">$key = "rate_limit:{$userId}:{$endpoint}";</span>
+<span class="x">$count = Redis::incr($key);</span>
+<span class="x">if ($count === 1) {</span>
+<span class="x">    Redis::expire($key, 60); // 1 minute window</span>
+<span class="x">}</span>
+<span class="x">if ($count &gt; 100) {</span>
+<span class="x">    throw new RateLimitException("Too many requests");</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<hr />
+<h3 id="9-content-delivery-network-cdn">9. Content Delivery Network (CDN)</h3>
+<p><strong>What:</strong> Geographically distributed servers serving cached static content</p>
+<p><strong>How it works:</strong></p>
+<div class="codehilite"><pre><span></span><code>User in Tokyo → Tokyo CDN Edge Server (cached content)
+User in NYC → NYC CDN Edge Server (cached content)
+            ↓ Cache miss only
+        Origin Server (your infrastructure)
+</code></pre></div>
+
+<p><strong>Benefits:</strong><br />
+- Reduced latency (content closer to user)<br />
+- Reduced load on origin<br />
+- Better availability<br />
+- DDoS protection</p>
+<p><strong>What to cache:</strong><br />
+- Images, videos<br />
+- JavaScript, CSS<br />
+- PDFs, documents<br />
+- API responses (with short TTL)</p>
+<p><strong>Popular CDNs:</strong> Cloudflare, AWS CloudFront, Akamai, Fastly</p>
+<hr />
+<h3 id="10-database-indexing">10. Database Indexing</h3>
+<p><strong>What:</strong> Data structure that improves query speed at cost of write speed and storage</p>
+<p><strong>Types:</strong></p>
+<p><strong>a) B-tree Index</strong> (default in MySQL)<br />
+- Good for: Equality, range queries<br />
+- Example: <code>CREATE INDEX idx_email ON users(email);</code></p>
+<p><strong>b) Hash Index</strong><br />
+- Good for: Exact match only<br />
+- Example: Looking up by unique ID</p>
+<p><strong>c) Composite Index</strong><br />
+- Multiple columns<br />
+- Example: <code>CREATE INDEX idx_customer_date ON invoices(customer_id, created_at);</code><br />
+- Order matters! Can use for <code>WHERE customer_id = ? AND created_at &gt; ?</code><br />
+- Cannot use just <code>created_at</code> alone efficiently</p>
+<p><strong>d) Covering Index</strong><br />
+- Includes all columns needed by query<br />
+- Query served from index alone, no table lookup<br />
+- Example:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_cover</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">users</span><span class="p">(</span><span class="n">email</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">);</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">users</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">email</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">?</span><span class="p">;</span><span class="w"> </span><span class="c1">-- Covered!</span>
+</code></pre></div>
+
+<p><strong>Your optimization example:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- SLOW: Full table scan on 100M rows</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">fsidocument</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">AccountNumber</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'12345'</span><span class="p">;</span>
+
+<span class="c1">-- FAST: Index on AccountNumber</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_account</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">fsidocument</span><span class="p">(</span><span class="n">AccountNumber</span><span class="p">);</span>
+
+<span class="c1">-- FASTER: Composite covering index</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_account_billing</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">fsidocument</span><span class="p">(</span><span class="n">AccountNumber</span><span class="p">,</span><span class="w"> </span><span class="n">BillingDate</span><span class="p">,</span><span class="w"> </span><span class="n">Amount</span><span class="p">);</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="n">BillingDate</span><span class="p">,</span><span class="w"> </span><span class="n">Amount</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">fsidocument</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">AccountNumber</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'12345'</span><span class="p">;</span>
+</code></pre></div>
+
+<hr />
+<h2 id="scalability-deep-dive">Scalability Deep Dive</h2>
+<h3 id="scaling-dimensions">Scaling Dimensions</h3>
+<p><strong>1. Compute Scaling</strong><br />
+- Horizontal: Add more app servers<br />
+- Auto-scaling based on CPU/memory/request rate<br />
+- Containerization (Docker) + orchestration (Kubernetes)</p>
+<p><strong>2. Database Scaling</strong><br />
+- Read replicas for read-heavy workloads<br />
+- Sharding for write-heavy workloads<br />
+- Connection pooling to limit DB connections</p>
+<p><strong>3. Storage Scaling</strong><br />
+- Object storage (S3) for files<br />
+- Separate hot (recent) vs cold (archived) data<br />
+- Compression and deduplication</p>
+<p><strong>4. Network Scaling</strong><br />
+- CDN for static content<br />
+- Load balancers at multiple layers<br />
+- Keep services in same region/AZ when possible</p>
+<h3 id="handling-1m-daily-active-users">Handling 1M Daily Active Users</h3>
+<p><strong>Traffic estimation:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="mf">1</span><span class="n">M</span><span class="w"> </span><span class="n">DAU</span>
+<span class="n">Avg</span><span class="w"> </span><span class="mf">10</span><span class="w"> </span><span class="n">requests</span><span class="w"> </span><span class="n">per</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="n">per</span><span class="w"> </span><span class="n">day</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">10</span><span class="n">M</span><span class="w"> </span><span class="n">requests</span><span class="o">/</span><span class="n">day</span>
+<span class="mf">10</span><span class="n">M</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">86400</span><span class="w"> </span><span class="n">seconds</span><span class="w"> </span><span class="err">≈</span><span class="w"> </span><span class="mf">116</span><span class="w"> </span><span class="n">requests</span><span class="o">/</span><span class="n">second</span><span class="w"> </span><span class="p">(</span><span class="n">average</span><span class="p">)</span>
+<span class="n">Peak</span><span class="w"> </span><span class="p">(</span><span class="mf">3</span><span class="n">x</span><span class="w"> </span><span class="n">average</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">350</span><span class="w"> </span><span class="n">RPS</span>
+
+<span class="kr">Read</span><span class="p">:</span><span class="n">Write</span><span class="w"> </span><span class="n">ratio</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">80</span><span class="p">:</span><span class="mf">20</span><span class="w"> </span><span class="p">(</span><span class="n">typical</span><span class="p">)</span>
+<span class="mf">280</span><span class="w"> </span><span class="kr">read</span><span class="w"> </span><span class="n">RPS</span><span class="p">,</span><span class="w"> </span><span class="mf">70</span><span class="w"> </span><span class="n">write</span><span class="w"> </span><span class="n">RPS</span>
+</code></pre></div>
+
+<p><strong>Architecture:</strong></p>
+<div class="codehilite"><pre><span></span><code>              CDN (static assets)
+                   |
+              Load Balancer
+                   |
+       +-----------+-----------+
+       |           |           |
+   App Server  App Server  App Server
+   (autoscale 3-10 instances)
+       |           |           |
+       +-----Redis Cache-------+
+                   |
+       +-----------+-----------+
+       |                       |
+   Master DB              Read Replicas (3)
+   (writes)               (reads)
+       |
+   Backup + Archive
+</code></pre></div>
+
+<p><strong>Database:</strong><br />
+- Master DB: 16 cores, 64GB RAM, SSD<br />
+- 3 read replicas for read traffic<br />
+- Connection pool: max 200 connections<br />
+- Cache hit rate: 80% (reduce DB load)</p>
+<p><strong>Storage:</strong><br />
+- User data: ~1KB per user = 1GB<br />
+- Invoices: ~100KB each, 10 per user/year = 1TB/year<br />
+- Archive old data to S3 (&gt; 2 years)</p>
+<hr />
+<h3 id="handling-100m-daily-active-users">Handling 100M Daily Active Users</h3>
+<p><strong>Traffic estimation:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="mf">100</span><span class="n">M</span><span class="w"> </span><span class="n">DAU</span>
+<span class="n">Avg</span><span class="w"> </span><span class="mf">20</span><span class="w"> </span><span class="n">requests</span><span class="w"> </span><span class="n">per</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="n">per</span><span class="w"> </span><span class="n">day</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">2</span><span class="n">B</span><span class="w"> </span><span class="n">requests</span><span class="o">/</span><span class="n">day</span>
+<span class="mf">2</span><span class="n">B</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">86400</span><span class="w"> </span><span class="err">≈</span><span class="w"> </span><span class="mf">23</span><span class="p">,</span><span class="mf">000</span><span class="w"> </span><span class="n">RPS</span><span class="w"> </span><span class="p">(</span><span class="n">average</span><span class="p">)</span>
+<span class="n">Peak</span><span class="w"> </span><span class="p">(</span><span class="mf">3</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">70</span><span class="p">,</span><span class="mf">000</span><span class="w"> </span><span class="n">RPS</span>
+</code></pre></div>
+
+<p><strong>Changes from 1M design:</strong></p>
+<ol>
+<li>
+<p><strong>Multi-region deployment</strong><br />
+   - US, EU, Asia regions<br />
+   - Route users to nearest region (latency)<br />
+   - Data sovereignty compliance</p>
+</li>
+<li>
+<p><strong>Database sharding</strong> (can't scale single master)<br />
+   - 100 shards, 1M users per shard<br />
+   - Shard by user_id hash or geographic region</p>
+</li>
+<li>
+<p><strong>Microservices</strong> (monolith can't scale)<br />
+   - User Service<br />
+   - Invoice Service<br />
+   - Payment Service<br />
+   - Notification Service<br />
+   Each scales independently</p>
+</li>
+<li>
+<p><strong>Distributed cache</strong><br />
+   - Redis cluster (sharded)<br />
+   - Cache miss → expensive at this scale</p>
+</li>
+<li>
+<p><strong>Message queues</strong><br />
+   - Async processing for non-critical paths<br />
+   - Email, notifications, analytics</p>
+</li>
+<li>
+<p><strong>Object storage</strong><br />
+   - S3 for all files (invoices, documents)<br />
+   - ~10TB new data per year</p>
+</li>
+</ol>
+<hr />
+<h2 id="database-design">Database Design</h2>
+<h3 id="normalization-vs-denormalization">Normalization vs Denormalization</h3>
+<p><strong>Normalization (3NF):</strong><br />
+- Eliminate redundancy<br />
+- Each fact in one place<br />
+- Good for: Write-heavy, changing data</p>
+<p><strong>Example:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Normalized</span>
+<span class="n">users</span><span class="p">:</span><span class="w"> </span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">email</span><span class="p">,</span><span class="w"> </span><span class="n">name</span>
+<span class="n">orders</span><span class="p">:</span><span class="w"> </span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">user_id</span><span class="p">,</span><span class="w"> </span><span class="n">total</span>
+<span class="n">order_items</span><span class="p">:</span><span class="w"> </span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">order_id</span><span class="p">,</span><span class="w"> </span><span class="n">product_id</span><span class="p">,</span><span class="w"> </span><span class="n">quantity</span>
+
+<span class="c1">-- Join required for order details</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="n">u</span><span class="p">.</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">o</span><span class="p">.</span><span class="n">total</span><span class="p">,</span><span class="w"> </span><span class="n">oi</span><span class="p">.</span><span class="n">quantity</span><span class="w"> </span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">users</span><span class="w"> </span><span class="n">u</span>
+<span class="k">JOIN</span><span class="w"> </span><span class="n">orders</span><span class="w"> </span><span class="n">o</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">u</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">o</span><span class="p">.</span><span class="n">user_id</span>
+<span class="k">JOIN</span><span class="w"> </span><span class="n">order_items</span><span class="w"> </span><span class="n">oi</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">o</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">oi</span><span class="p">.</span><span class="n">order_id</span><span class="p">;</span>
+</code></pre></div>
+
+<p><strong>Denormalization:</strong><br />
+- Duplicate data for read performance<br />
+- Good for: Read-heavy, analytics</p>
+<p><strong>Example:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Denormalized</span>
+<span class="n">orders</span><span class="p">:</span><span class="w"> </span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">user_id</span><span class="p">,</span><span class="w"> </span><span class="n">user_name</span><span class="p">,</span><span class="w"> </span><span class="n">user_email</span><span class="p">,</span><span class="w"> </span><span class="n">total</span><span class="p">,</span><span class="w"> </span><span class="n">items_count</span>
+
+<span class="c1">-- No joins needed</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="n">user_name</span><span class="p">,</span><span class="w"> </span><span class="n">total</span><span class="p">,</span><span class="w"> </span><span class="n">items_count</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">orders</span><span class="p">;</span>
+</code></pre></div>
+
+<p><strong>Your multi-tenant pattern:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Normalized approach</span>
+<span class="n">fsiuser</span><span class="p">:</span><span class="w"> </span><span class="n">UserId</span><span class="p">,</span><span class="w"> </span><span class="n">Email</span><span class="p">,</span><span class="w"> </span><span class="n">CustomerId</span>
+<span class="n">fsiaccount</span><span class="p">:</span><span class="w"> </span><span class="n">AccountId</span><span class="p">,</span><span class="w"> </span><span class="n">UserId</span><span class="p">,</span><span class="w"> </span><span class="n">AccountNumber</span>
+<span class="n">fsionlineaccount</span><span class="p">:</span><span class="w"> </span><span class="n">UserId</span><span class="p">,</span><span class="w"> </span><span class="n">AccountNumber</span><span class="w"> </span><span class="p">(</span><span class="k">for</span><span class="w"> </span><span class="n">UC</span><span class="w"> </span><span class="n">model</span><span class="p">)</span>
+
+<span class="c1">-- Denormalized for performance</span>
+<span class="c1">-- Cache customer settings to avoid CALL FindCustSettings on every request</span>
+</code></pre></div>
+
+<p><strong>Trade-off:</strong> Writes slower (update multiple places), reads faster (no joins)</p>
+<hr />
+<h3 id="sql-vs-nosql">SQL vs NoSQL</h3>
+<p><strong>When to use SQL (MySQL, PostgreSQL):</strong><br />
+- ✅ Structured data with relationships<br />
+- ✅ ACID transactions required<br />
+- ✅ Complex queries with JOINs<br />
+- ✅ Data integrity constraints<br />
+- <strong>Your use case:</strong> Financial transactions, user accounts, billing</p>
+<p><strong>When to use NoSQL:</strong></p>
+<p><strong>Document DB (MongoDB, Couchbase):</strong><br />
+- ✅ Flexible schema<br />
+- ✅ Hierarchical data (JSON)<br />
+- ✅ Rapid iteration<br />
+- <strong>Use case:</strong> Product catalogs, content management</p>
+<p><strong>Key-Value (Redis, DynamoDB):</strong><br />
+- ✅ Simple lookups by key<br />
+- ✅ High throughput<br />
+- ✅ Caching<br />
+- <strong>Use case:</strong> Session storage, cache</p>
+<p><strong>Column-Family (Cassandra, HBase):</strong><br />
+- ✅ Time-series data<br />
+- ✅ Write-heavy workloads<br />
+- ✅ Massive scale<br />
+- <strong>Use case:</strong> Logs, analytics, IoT</p>
+<p><strong>Graph DB (Neo4j):</strong><br />
+- ✅ Relationship-heavy data<br />
+- ✅ Social networks, recommendations</p>
+<p><strong>Polyglot Persistence:</strong><br />
+Use multiple databases for different needs:<br />
+- MySQL: User accounts, transactions (ACID)<br />
+- Redis: Cache, session storage<br />
+- S3: File storage<br />
+- Elasticsearch: Full-text search</p>
+<hr />
+<h2 id="common-system-design-problems">Common System Design Problems</h2>
+<h3 id="1-design-a-url-shortener-like-bitly">1. Design a URL Shortener (like bit.ly)</h3>
+<p><strong>Functional Requirements:</strong><br />
+- Shorten long URL to short URL<br />
+- Redirect short URL to original URL<br />
+- Optional: Custom aliases, expiration, analytics</p>
+<p><strong>Non-functional:</strong><br />
+- High availability<br />
+- Low latency redirects<br />
+- 1M new URLs per day<br />
+- 100:1 read:write ratio</p>
+<p><strong>API:</strong></p>
+<div class="codehilite"><pre><span></span><code>POST /shorten
+  Body: { "url": "https://example.com/very/long/url" }
+  Response: { "short_url": "https://short.ly/abc123" }
+
+GET /&lt;short_code&gt;
+  Redirect to original URL
+</code></pre></div>
+
+<p><strong>Scale estimation:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="mf">1</span><span class="n">M</span><span class="w"> </span><span class="kr">new</span><span class="w"> </span><span class="n">URLs</span><span class="o">/</span><span class="n">day</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">12</span><span class="w"> </span><span class="n">URLs</span><span class="o">/</span><span class="n">second</span>
+<span class="mf">100</span><span class="p">:</span><span class="mf">1</span><span class="w"> </span><span class="n">ratio</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1200</span><span class="w"> </span><span class="n">redirects</span><span class="o">/</span><span class="n">second</span>
+<span class="mf">7</span><span class="w"> </span><span class="n">characters</span><span class="w"> </span><span class="p">(</span><span class="n">base62</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">62</span><span class="o">^</span><span class="mf">7</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">3.5</span><span class="w"> </span><span class="n">trillion</span><span class="w"> </span><span class="n">combinations</span>
+<span class="n">Storage</span><span class="p">:</span><span class="w"> </span><span class="mf">1</span><span class="n">M</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">365</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">5</span><span class="w"> </span><span class="n">years</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">500</span><span class="w"> </span><span class="n">bytes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">900</span><span class="w"> </span><span class="n">GB</span>
+</code></pre></div>
+
+<p><strong>High-level design:</strong></p>
+<div class="codehilite"><pre><span></span><code>        Load Balancer
+             |
+    +--------+--------+
+    |                 |
+App Servers      Cache (Redis)
+    |                 |
+    +--------+--------+
+             |
+        Database
+     (short → long URL mapping)
+</code></pre></div>
+
+<p><strong>Encoding algorithm:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Base62 encoding (0-9, a-z, A-Z)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">encode</span><span class="p">(</span><span class="nb">id</span><span class="p">):</span>
+    <span class="n">chars</span> <span class="o">=</span> <span class="s2">"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="s2">""</span>
+    <span class="k">while</span> <span class="nb">id</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">chars</span><span class="p">[</span><span class="nb">id</span> <span class="o">%</span> <span class="mi">62</span><span class="p">]</span> <span class="o">+</span> <span class="n">result</span>
+        <span class="nb">id</span> <span class="o">=</span> <span class="nb">id</span> <span class="o">//</span> <span class="mi">62</span>
+    <span class="k">return</span> <span class="n">result</span>
+
+<span class="c1"># Auto-incrementing ID → short code</span>
+<span class="nb">id</span> <span class="o">=</span> <span class="mi">123456789</span>
+<span class="n">short_code</span> <span class="o">=</span> <span class="n">encode</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>  <span class="c1"># "8M0kX"</span>
+</code></pre></div>
+
+<p><strong>Database schema:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">urls</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="nb">BIGINT</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="n">AUTO_INCREMENT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">short_code</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="w"> </span><span class="k">UNIQUE</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span>
+<span class="w">    </span><span class="n">original_url</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">2048</span><span class="p">)</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span>
+<span class="w">    </span><span class="n">created_at</span><span class="w"> </span><span class="k">TIMESTAMP</span><span class="p">,</span>
+<span class="w">    </span><span class="n">expires_at</span><span class="w"> </span><span class="k">TIMESTAMP</span><span class="p">,</span>
+<span class="w">    </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_short</span><span class="w"> </span><span class="p">(</span><span class="n">short_code</span><span class="p">)</span>
+<span class="p">);</span>
+</code></pre></div>
+
+<p><strong>Optimization:</strong><br />
+- Cache hot URLs in Redis (80% hit rate)<br />
+- CDN for static redirect pages<br />
+- Bloom filter to check existence before DB hit</p>
+<p><strong>Deep dive questions:</strong><br />
+- How to handle custom aliases? (Check uniqueness, reserve keywords)<br />
+- Analytics? (Async write to analytics DB via message queue)<br />
+- Expiration? (Cron job or lazy deletion on read)<br />
+- Security? (Validate URLs, prevent malicious sites, rate limit)</p>
+<hr />
+<h3 id="2-design-a-rate-limiter">2. Design a Rate Limiter</h3>
+<p><strong>Requirements:</strong><br />
+- Limit requests per user per time window<br />
+- Multiple limits (per API endpoint, global)<br />
+- Distributed system (multiple servers)</p>
+<p><strong>API:</strong></p>
+<div class="codehilite"><pre><span></span><code>boolean allowRequest(userId, endpoint)
+</code></pre></div>
+
+<p><strong>Algorithm choice: Sliding Window Log</strong></p>
+<p><strong>Implementation:</strong></p>
+<div class="codehilite"><pre><span></span><code>Redis key<span class="p">:</span> <span class="s2">"rate_limit:{userId}:{endpoint}"</span>
+Value<span class="p">:</span> Sorted set of timestamps
+
+On each request<span class="p">:</span>
+<span class="mf">1.</span> Remove timestamps older than window <span class="p">(</span><span class="mi">60</span> seconds ago<span class="p">)</span>
+<span class="mf">2.</span> Count remaining timestamps
+<span class="mf">3.</span> If count <span class="o">&lt;</span> limit<span class="p">:</span> add current timestamp<span class="p">,</span> allow
+<span class="mf">4.</span> If count <span class="o">&gt;=</span> limit<span class="p">:</span> reject
+</code></pre></div>
+
+<p><strong>Code:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">allow_request</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">endpoint</span><span class="p">,</span> <span class="n">limit</span><span class="p">,</span> <span class="n">window_seconds</span><span class="p">):</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"rate_limit:</span><span class="si">{</span><span class="n">user_id</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">endpoint</span><span class="si">}</span><span class="s2">"</span>
+    <span class="n">now</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="c1"># Remove old timestamps</span>
+    <span class="n">redis</span><span class="o">.</span><span class="n">zremrangebyscore</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">now</span> <span class="o">-</span> <span class="n">window_seconds</span><span class="p">)</span>
+
+    <span class="c1"># Count requests in window</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="n">redis</span><span class="o">.</span><span class="n">zcard</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">count</span> <span class="o">&lt;</span> <span class="n">limit</span><span class="p">:</span>
+        <span class="c1"># Add current request</span>
+        <span class="n">redis</span><span class="o">.</span><span class="n">zadd</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">{</span><span class="n">now</span><span class="p">:</span> <span class="n">now</span><span class="p">})</span>
+        <span class="n">redis</span><span class="o">.</span><span class="n">expire</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">window_seconds</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">return</span> <span class="kc">False</span>
+</code></pre></div>
+
+<p><strong>Distributed considerations:</strong><br />
+- Race condition: Use Redis MULTI/EXEC transaction<br />
+- Multiple datacenters: Eventual consistency, or sync writes<br />
+- Precision: Sliding window vs fixed window trade-off</p>
+<hr />
+<h3 id="3-design-a-notification-system">3. Design a Notification System</h3>
+<p><strong>Requirements:</strong><br />
+- Send email, SMS, push notifications<br />
+- Millions of notifications per day<br />
+- Prioritization (urgent vs normal)<br />
+- Retry failed deliveries<br />
+- Track delivery status</p>
+<p><strong>High-level design:</strong></p>
+<div class="codehilite"><pre><span></span><code>       API Gateway
+            |
+     Notification Service
+            |
+    +--------------+--------------+
+    |              |              |
+Email Queue    SMS Queue    Push Queue
+    |              |              |
+Email Workers  SMS Workers  Push Workers
+    |              |              |
+SendGrid       Twilio         FCM/APNS
+</code></pre></div>
+
+<p><strong>Database:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">notifications</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="nb">BIGINT</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span>
+<span class="w">    </span><span class="n">user_id</span><span class="w"> </span><span class="nb">BIGINT</span><span class="p">,</span>
+<span class="w">    </span><span class="k">type</span><span class="w"> </span><span class="n">ENUM</span><span class="p">(</span><span class="s1">'email'</span><span class="p">,</span><span class="w"> </span><span class="s1">'sms'</span><span class="p">,</span><span class="w"> </span><span class="s1">'push'</span><span class="p">),</span>
+<span class="w">    </span><span class="n">priority</span><span class="w"> </span><span class="n">ENUM</span><span class="p">(</span><span class="s1">'urgent'</span><span class="p">,</span><span class="w"> </span><span class="s1">'normal'</span><span class="p">,</span><span class="w"> </span><span class="s1">'low'</span><span class="p">),</span>
+<span class="w">    </span><span class="n">template_id</span><span class="w"> </span><span class="nb">INT</span><span class="p">,</span>
+<span class="w">    </span><span class="k">data</span><span class="w"> </span><span class="n">JSON</span><span class="p">,</span>
+<span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="n">ENUM</span><span class="p">(</span><span class="s1">'pending'</span><span class="p">,</span><span class="w"> </span><span class="s1">'sent'</span><span class="p">,</span><span class="w"> </span><span class="s1">'failed'</span><span class="p">,</span><span class="w"> </span><span class="s1">'bounced'</span><span class="p">),</span>
+<span class="w">    </span><span class="n">scheduled_at</span><span class="w"> </span><span class="k">TIMESTAMP</span><span class="p">,</span>
+<span class="w">    </span><span class="n">sent_at</span><span class="w"> </span><span class="k">TIMESTAMP</span><span class="p">,</span>
+<span class="w">    </span><span class="n">retry_count</span><span class="w"> </span><span class="nb">INT</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="mi">0</span>
+<span class="p">);</span>
+
+<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">notification_logs</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="nb">BIGINT</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span>
+<span class="w">    </span><span class="n">notification_id</span><span class="w"> </span><span class="nb">BIGINT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">provider</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">50</span><span class="p">),</span>
+<span class="w">    </span><span class="n">response</span><span class="w"> </span><span class="n">JSON</span><span class="p">,</span>
+<span class="w">    </span><span class="n">created_at</span><span class="w"> </span><span class="k">TIMESTAMP</span>
+<span class="p">);</span>
+</code></pre></div>
+
+<p><strong>Workflow:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="mf">1.</span><span class="w"> </span><span class="n">API</span><span class="w"> </span><span class="n">receives</span><span class="w"> </span><span class="ow">not</span><span class="kr">if</span><span class="n">ication</span><span class="w"> </span><span class="n">request</span>
+<span class="mf">2.</span><span class="w"> </span><span class="nb">Val</span><span class="n">idate</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="n">preferences</span><span class="w"> </span><span class="p">(</span><span class="n">opt</span><span class="o">-</span><span class="n">in</span><span class="o">/</span><span class="n">opt</span><span class="o">-</span><span class="n">out</span><span class="p">)</span>
+<span class="mf">3.</span><span class="w"> </span><span class="n">Enqueue</span><span class="w"> </span><span class="kr">to</span><span class="w"> </span><span class="n">appropriate</span><span class="w"> </span><span class="n">queue</span>
+<span class="mf">4.</span><span class="w"> </span><span class="n">Worker</span><span class="w"> </span><span class="n">picks</span><span class="w"> </span><span class="n">up</span><span class="w"> </span><span class="n">job</span>
+<span class="mf">5.</span><span class="w"> </span><span class="n">Send</span><span class="w"> </span><span class="n">via</span><span class="w"> </span><span class="n">provider</span><span class="w"> </span><span class="p">(</span><span class="n">SendGrid</span><span class="p">,</span><span class="w"> </span><span class="n">Twilio</span><span class="p">)</span>
+<span class="mf">6.</span><span class="w"> </span><span class="n">Update</span><span class="w"> </span><span class="n">status</span>
+<span class="mf">7.</span><span class="w"> </span><span class="kr">On</span><span class="w"> </span><span class="n">failure</span><span class="p">:</span><span class="w"> </span><span class="n">retry</span><span class="w"> </span><span class="n">with</span><span class="w"> </span><span class="nb">exp</span><span class="kr">on</span><span class="n">ential</span><span class="w"> </span><span class="n">backoff</span>
+</code></pre></div>
+
+<p><strong>Optimizations:</strong><br />
+- Batch emails (1000 at a time to SendGrid)<br />
+- Template caching (don't regenerate each time)<br />
+- User preference caching (don't check DB each time)<br />
+- Dead letter queue for permanent failures</p>
+<p><strong>Deep dive:</strong><br />
+- How to prevent duplicate sends? (Idempotency key)<br />
+- How to handle unsubscribes? (Check user preferences table)<br />
+- How to prioritize? (Separate queues, more workers for urgent)<br />
+- How to track opens/clicks? (Tracking pixel, redirect links)</p>
+<hr />
+<h3 id="4-design-a-news-feed-like-facebooktwitter">4. Design a News Feed (like Facebook/Twitter)</h3>
+<p><strong>Requirements:</strong><br />
+- User follows other users<br />
+- Feed shows posts from followed users<br />
+- Recent posts first<br />
+- 100M DAU, each user follows 200, views feed 10 times/day</p>
+<p><strong>Two approaches:</strong></p>
+<p><strong>A) Pull Model (Fan-out on Read)</strong></p>
+<div class="codehilite"><pre><span></span><code>User requests feed →
+  Query: SELECT * FROM posts 
+         WHERE user_id IN (followed_users) 
+         ORDER BY created_at DESC 
+         LIMIT 20
+</code></pre></div>
+
+<p><strong>Pros:</strong> Fast writes, no storage duplication<br />
+<strong>Cons:</strong> Slow reads (must join at read time)</p>
+<p><strong>B) Push Model (Fan-out on Write)</strong></p>
+<div class="codehilite"><pre><span></span><code>User creates post →
+  For each follower:
+    Write post_id to their feed table
+
+User requests feed →
+  Read from pre-generated feed table
+</code></pre></div>
+
+<p><strong>Pros:</strong> Fast reads<br />
+<strong>Cons:</strong> Slow writes (especially for celebrities), storage duplication</p>
+<p><strong>Hybrid approach (Best):</strong></p>
+<div class="codehilite"><pre><span></span><code>Regular users (&lt; 10k followers): Push model
+Celebrities (&gt; 10k followers): Pull model
+
+Feed = Pre-generated feed + Recent celebrity posts merged
+</code></pre></div>
+
+<p><strong>Database:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">posts</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="nb">BIGINT</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span>
+<span class="w">    </span><span class="n">user_id</span><span class="w"> </span><span class="nb">BIGINT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">content</span><span class="w"> </span><span class="nb">TEXT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">created_at</span><span class="w"> </span><span class="k">TIMESTAMP</span><span class="p">,</span>
+<span class="w">    </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_user_time</span><span class="w"> </span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span><span class="w"> </span><span class="n">created_at</span><span class="p">)</span>
+<span class="p">);</span>
+
+<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">follows</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="n">follower_id</span><span class="w"> </span><span class="nb">BIGINT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">followee_id</span><span class="w"> </span><span class="nb">BIGINT</span><span class="p">,</span>
+<span class="w">    </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">(</span><span class="n">follower_id</span><span class="p">,</span><span class="w"> </span><span class="n">followee_id</span><span class="p">),</span>
+<span class="w">    </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_followee</span><span class="w"> </span><span class="p">(</span><span class="n">followee_id</span><span class="p">)</span><span class="w">  </span><span class="c1">-- For fan-out</span>
+<span class="p">);</span>
+
+<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">feeds</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="n">user_id</span><span class="w"> </span><span class="nb">BIGINT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">post_id</span><span class="w"> </span><span class="nb">BIGINT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">created_at</span><span class="w"> </span><span class="k">TIMESTAMP</span><span class="p">,</span><span class="w">  </span><span class="c1">-- Denormalized for sorting</span>
+<span class="w">    </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span><span class="w"> </span><span class="n">created_at</span><span class="p">,</span><span class="w"> </span><span class="n">post_id</span><span class="p">)</span>
+<span class="p">);</span>
+</code></pre></div>
+
+<p><strong>Optimizations:</strong><br />
+- Cache user's feed (Redis, 1000 most recent posts)<br />
+- Paginate (cursor-based, not offset)<br />
+- Async fan-out via message queue<br />
+- Pre-compute at off-peak hours</p>
+<hr />
+<h3 id="5-design-a-distributed-cache">5. Design a Distributed Cache</h3>
+<p><strong>Requirements:</strong><br />
+- Get/Put/Delete operations<br />
+- High availability<br />
+- Scalability (add/remove nodes)<br />
+- Data partitioning</p>
+<p><strong>High-level design:</strong></p>
+<div class="codehilite"><pre><span></span><code>    Client
+       |
+Cache Cluster (Consistent Hashing)
+  Node 1  Node 2  Node 3  Node 4
+
+Each node: In-memory key-value store
+</code></pre></div>
+
+<p><strong>Consistent hashing:</strong><br />
+- Keys distributed evenly<br />
+- Adding/removing node affects minimal keys</p>
+<p><strong>Replication:</strong></p>
+<div class="codehilite"><pre><span></span><code>Primary Node 1 → Replica Node 1a
+Primary Node 2 → Replica Node 2a
+Primary Node 3 → Replica Node 3a
+</code></pre></div>
+
+<p><strong>Eviction policies:</strong><br />
+- LRU (Least Recently Used)<br />
+- LFU (Least Frequently Used)<br />
+- TTL (Time To Live)</p>
+<p><strong>Cache invalidation:</strong><br />
+- Write-through: Update cache + DB<br />
+- Write-around: Update DB, invalidate cache<br />
+- Write-back: Update cache, async update DB</p>
+<p><strong>Redis Cluster example:</strong><br />
+- 16,384 hash slots<br />
+- Each node responsible for subset of slots<br />
+- Automatic resharding when nodes added/removed<br />
+- Master-slave replication for availability</p>
+<hr />
+<h2 id="real-world-examples-from-your-experience">Real-World Examples from Your Experience</h2>
+<h3 id="1-multi-tenant-saas-billing-platform">1. Multi-Tenant SaaS Billing Platform</h3>
+<p><strong>Scale:</strong><br />
+- 10,000+ tenants<br />
+- Millions of invoices per month<br />
+- 99.9% uptime SLA<br />
+- PCI-DSS and HIPAA compliant</p>
+<p><strong>Architecture:</strong></p>
+<div class="codehilite"><pre><span></span><code>            CDN (static assets)
+                 |
+            AWS ELB
+                 |
+      +----------+----------+
+      |          |          |
+   EIC (Zend) CC (Laravel) CSR (Laravel)
+   Kubernetes Kubernetes   Kubernetes
+      |          |          |
+      +-----Redis Cache-----+
+                 |
+           billingmaster
+          (routing database)
+                 |
+      +----------+----------+
+      |                     |
+billingclient1        billingclient2
+(Stack 1 tenants)     (Stack 2 tenants)
+</code></pre></div>
+
+<p><strong>Key design decisions:</strong></p>
+<p><strong>1. Sharding strategy: Entity-based</strong><br />
+- All data for one customer in one database<br />
+- Pros: No cross-shard joins, tenant isolation, easier compliance<br />
+- Cons: Large tenants can be hot spots</p>
+<p><strong>2. Routing layer:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- billingmaster lookup</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="n">StackNum</span><span class="p">,</span><span class="w"> </span><span class="n">DBName</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">customer</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">CustomerId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">?</span><span class="p">;</span>
+
+<span class="c1">-- Then connect to billingclientN</span>
+</code></pre></div>
+
+<p><strong>3. Configuration service (CSR):</strong><br />
+- Centralized settings across all apps<br />
+- Redis cache (1 hour TTL)<br />
+- Atom-based hierarchical settings</p>
+<p><strong>4. Async processing:</strong><br />
+- Invoice generation queue<br />
+- Email sending queue<br />
+- Payment retry queue</p>
+<p><strong>5. Multi-region:</strong> US-East, US-West, EU</p>
+<hr />
+<h3 id="2-payment-processing-system">2. Payment Processing System</h3>
+<p><strong>Requirements:</strong><br />
+- Process credit card payments<br />
+- Handle retries for failed payments<br />
+- Idempotent (don't charge twice)<br />
+- Audit trail for compliance</p>
+<p><strong>Design:</strong></p>
+<div class="codehilite"><pre><span></span><code>          Payment API
+               |
+        Idempotency Check (Redis)
+               |
+        +------+------+
+        |             |
+   Validate      Payment DB
+   (CVV, etc)    (transactions)
+        |
+   Payment Gateway (Stripe/Authorize.net)
+        |
+   +----+----+
+   |         |
+Success   Failure
+   |         |
+   |    Retry Queue
+   |         |
+ Update    Worker
+ Status    (exponential backoff)
+</code></pre></div>
+
+<p><strong>Idempotency:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">process_payment</span><span class="p">(</span><span class="n">payment_id</span><span class="p">,</span> <span class="n">idempotency_key</span><span class="p">):</span>
+    <span class="c1"># Check if already processed</span>
+    <span class="n">cached</span> <span class="o">=</span> <span class="n">redis</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">"payment:</span><span class="si">{</span><span class="n">idempotency_key</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">cached</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">cached</span><span class="p">)</span>
+
+    <span class="c1"># Process payment</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">stripe</span><span class="o">.</span><span class="n">charge</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+
+    <span class="c1"># Cache result (24 hours)</span>
+    <span class="n">redis</span><span class="o">.</span><span class="n">setex</span><span class="p">(</span><span class="sa">f</span><span class="s2">"payment:</span><span class="si">{</span><span class="n">idempotency_key</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="mi">86400</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">result</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">result</span>
+</code></pre></div>
+
+<p><strong>Retry logic:</strong></p>
+<div class="codehilite"><pre><span></span><code>Attempt 1: Immediate
+Attempt 2: +1 minute
+Attempt 3: +5 minutes
+Attempt 4: +15 minutes
+Attempt 5: +1 hour
+After 5 attempts: Dead letter queue, manual review
+</code></pre></div>
+
+<p><strong>Audit trail:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">payment_audit</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="nb">BIGINT</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span>
+<span class="w">    </span><span class="n">payment_id</span><span class="w"> </span><span class="nb">BIGINT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">action</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">50</span><span class="p">),</span><span class="w">  </span><span class="c1">-- 'attempted', 'success', 'failed', 'refunded'</span>
+<span class="w">    </span><span class="n">details</span><span class="w"> </span><span class="n">JSON</span><span class="p">,</span>
+<span class="w">    </span><span class="n">created_at</span><span class="w"> </span><span class="k">TIMESTAMP</span>
+<span class="p">);</span>
+</code></pre></div>
+
+<hr />
+<h3 id="3-report-generation-system">3. Report Generation System</h3>
+<p><strong>Problem:</strong> Large reports (100M+ rows) timing out</p>
+<p><strong>Original design (blocking):</strong></p>
+<div class="codehilite"><pre><span></span><code>User clicks "Generate Report"
+  → Query 100M rows (5 minutes)
+  → Generate PDF (3 minutes)
+  → Display to user
+
+User's browser times out after 30 seconds
+</code></pre></div>
+
+<p><strong>Improved design (async):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">User</span><span class="w"> </span><span class="n">clicks</span><span class="w"> </span><span class="s2">"Generate Report"</span>
+<span class="w">  </span><span class="err">↓</span>
+<span class="n">API</span><span class="w"> </span><span class="n">creates</span><span class="w"> </span><span class="n">job</span><span class="w"> </span><span class="n">record</span><span class="p">,</span><span class="w"> </span><span class="n">returns</span><span class="w"> </span><span class="n">job_id</span><span class="w"> </span><span class="n">immediately</span>
+<span class="w">  </span><span class="err">↓</span>
+<span class="n">Background</span><span class="w"> </span><span class="n">worker</span><span class="w"> </span><span class="n">picks</span><span class="w"> </span><span class="n">up</span><span class="w"> </span><span class="n">job</span>
+<span class="w">  </span><span class="err">↓</span>
+<span class="n">Streams</span><span class="w"> </span><span class="n">query</span><span class="w"> </span><span class="n">results</span><span class="w"> </span><span class="p">(</span><span class="n">pagination</span><span class="p">)</span>
+<span class="w">  </span><span class="err">↓</span>
+<span class="n">Generates</span><span class="w"> </span><span class="n">PDF</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">chunks</span>
+<span class="w">  </span><span class="err">↓</span>
+<span class="n">Uploads</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">S3</span>
+<span class="w">  </span><span class="err">↓</span>
+<span class="n">Sends</span><span class="w"> </span><span class="n">email</span><span class="w"> </span><span class="n">with</span><span class="w"> </span><span class="n">download</span><span class="w"> </span><span class="n">link</span>
+<span class="w">  </span><span class="err">↓</span>
+<span class="n">User</span><span class="w"> </span><span class="n">downloads</span><span class="w"> </span><span class="n">from</span><span class="w"> </span><span class="n">S3</span><span class="w"> </span><span class="p">(</span><span class="ow">or</span><span class="w"> </span><span class="n">views</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">browser</span><span class="p">)</span>
+</code></pre></div>
+
+<p><strong>Implementation:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Don't pull all rows at once</span>
+<span class="c1">-- Stream with cursor pagination</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">fsidocument</span><span class="w"> </span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">CustomerId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">?</span><span class="w"> </span>
+<span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="n">created_at</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">?</span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">created_at</span>
+<span class="k">LIMIT</span><span class="w"> </span><span class="mi">10000</span><span class="w"> </span><span class="k">OFFSET</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+
+<span class="c1">-- Process in chunks of 10k</span>
+<span class="c1">-- Append to PDF</span>
+<span class="c1">-- Continue with next chunk</span>
+</code></pre></div>
+
+<p><strong>Optimization:</strong><br />
+- Indexed query (CustomerId, created_at)<br />
+- Partition table by month<br />
+- Archive old data to S3<br />
+- Generate summary reports (aggregated) instead of detail</p>
+<hr />
+<h2 id="evaluation-criteria">Evaluation Criteria</h2>
+<p>Interviewers look for:</p>
+<h3 id="1-clarifying-questions-10">1. Clarifying Questions (10%)</h3>
+<ul>
+<li>Did you ask about scale, performance requirements, constraints?</li>
+<li>Did you define functional vs non-functional requirements?</li>
+</ul>
+<h3 id="2-high-level-design-20">2. High-Level Design (20%)</h3>
+<ul>
+<li>Clear component diagram</li>
+<li>Logical data flow</li>
+<li>Appropriate technology choices</li>
+</ul>
+<h3 id="3-deep-dive-30">3. Deep Dive (30%)</h3>
+<ul>
+<li>Database schema</li>
+<li>API design</li>
+<li>Scalability considerations</li>
+<li>Caching strategy</li>
+</ul>
+<h3 id="4-trade-offs-20">4. Trade-offs (20%)</h3>
+<ul>
+<li>Acknowledged pros/cons of decisions</li>
+<li>Discussed alternatives</li>
+<li>Cost vs performance vs complexity</li>
+</ul>
+<h3 id="5-bottlenecks-improvements-15">5. Bottlenecks &amp; Improvements (15%)</h3>
+<ul>
+<li>Identified single points of failure</li>
+<li>Proposed scaling improvements</li>
+<li>Discussed monitoring and operations</li>
+</ul>
+<h3 id="6-communication-5">6. Communication (5%)</h3>
+<ul>
+<li>Clear explanations</li>
+<li>Drew diagrams</li>
+<li>Engaged with interviewer</li>
+</ul>
+<hr />
+<h2 id="practice-problems">Practice Problems</h2>
+<p><strong>Beginner:</strong><br />
+1. Design a file storage service (like Dropbox)<br />
+2. Design a web crawler<br />
+3. Design a chat application (like WhatsApp)</p>
+<p><strong>Intermediate:</strong><br />
+4. Design YouTube<br />
+5. Design Uber<br />
+6. Design Instagram<br />
+7. Design Twitter<br />
+8. Design a recommendation system</p>
+<p><strong>Advanced:</strong><br />
+9. Design a distributed database<br />
+10. Design a search engine (like Google)<br />
+11. Design a distributed message queue<br />
+12. Design a stock exchange</p>
+<hr />
+<h2 id="resources-for-further-study">Resources for Further Study</h2>
+<p><strong>Books:</strong><br />
+- "Designing Data-Intensive Applications" by Martin Kleppmann<br />
+- "System Design Interview" by Alex Xu<br />
+- "Database Internals" by Alex Petrov</p>
+<p><strong>Online:</strong><br />
+- System Design Primer (GitHub)<br />
+- High Scalability blog<br />
+- AWS Architecture Center<br />
+- Papers We Love (distributed systems papers)</p>
+<p><strong>Practice:</strong><br />
+- Mock interviews with friends<br />
+- Draw out systems you use daily<br />
+- Read engineering blogs (Netflix, Uber, Airbnb tech blogs)</p>
+<hr />
+<p><strong>Remember:</strong><br />
+- There's no single "right" answer<br />
+- Focus on trade-offs, not perfect solutions<br />
+- Communicate your thought process<br />
+- Ask clarifying questions<br />
+- Start simple, then scale<br />
+- Drive the conversation (don't wait for prompting)</p>
+<p>Good luck! 🚀</p>
+        </div>
+    </div>
+
+    <script>
+        // Progress Tracker JavaScript
+        const STORAGE_KEY = 'course_progress_system_design_interview_guide';
+
+        // Extract all H2 and H3 headings from content
+        function extractSections() {
+            const content = document.querySelector('.content');
+            const headings = content.querySelectorAll('h2, h3');
+            const sections = [];
+
+            headings.forEach((heading, index) => {
+                const level = heading.tagName === 'H2' ? 2 : 3;
+                const text = heading.textContent.trim();
+                const id = `section-${index}`;
+
+                // Add ID to heading for linking
+                heading.id = id;
+
+                sections.push({
+                    id: id,
+                    text: text,
+                    level: level
+                });
+            });
+
+            return sections;
+        }
+
+        // Load saved progress from localStorage
+        function loadProgress() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            return saved ? JSON.parse(saved) : {};
+        }
+
+        // Save progress to localStorage
+        function saveProgress(progress) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+        }
+
+        // Calculate progress percentage
+        function calculateProgress() {
+            const checkboxes = document.querySelectorAll('.progress-checkbox');
+            const total = checkboxes.length;
+            if (total === 0) return 0;
+
+            const completed = Array.from(checkboxes).filter(cb => cb.checked).length;
+            return Math.round((completed / total) * 100);
+        }
+
+        // Update progress display
+        function updateProgressDisplay() {
+            const percentage = calculateProgress();
+            document.getElementById('progress-pct').textContent = percentage + '%';
+            document.getElementById('progress-bar').style.width = percentage + '%';
+
+            // Update completed class on items
+            document.querySelectorAll('.progress-item').forEach(item => {
+                const checkbox = item.querySelector('.progress-checkbox');
+                if (checkbox.checked) {
+                    item.classList.add('completed');
+                } else {
+                    item.classList.remove('completed');
+                }
+            });
+        }
+
+        // Toggle checkbox
+        function toggleCheckbox(sectionId) {
+            const checkbox = document.getElementById('cb-' + sectionId);
+            const progress = loadProgress();
+
+            progress[sectionId] = checkbox.checked;
+            saveProgress(progress);
+            updateProgressDisplay();
+        }
+
+        // Reset all progress
+        function resetProgress() {
+            if (confirm('Reset all progress for this page?')) {
+                localStorage.removeItem(STORAGE_KEY);
+                document.querySelectorAll('.progress-checkbox').forEach(cb => {
+                    cb.checked = false;
+                });
+                updateProgressDisplay();
+            }
+        }
+
+        // Toggle progress list visibility
+        function toggleProgressList() {
+            const list = document.getElementById('progress-items');
+            const btn = document.querySelector('.toggle-progress');
+
+            if (list.classList.contains('collapsed')) {
+                list.classList.remove('collapsed');
+                btn.textContent = '▼ Hide';
+            } else {
+                list.classList.add('collapsed');
+                btn.textContent = '▶ Show';
+            }
+        }
+
+        // Initialize progress tracker
+        function initProgressTracker() {
+            const sections = extractSections();
+            const progress = loadProgress();
+            const container = document.getElementById('progress-items');
+
+            if (sections.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No sections found</p>';
+                return;
+            }
+
+            sections.forEach(section => {
+                const item = document.createElement('div');
+                item.className = 'progress-item';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'progress-checkbox';
+                checkbox.id = 'cb-' + section.id;
+                checkbox.checked = progress[section.id] || false;
+                checkbox.onchange = () => toggleCheckbox(section.id);
+
+                const label = document.createElement('label');
+                label.className = 'progress-label';
+                label.htmlFor = 'cb-' + section.id;
+                label.textContent = section.text;
+                label.style.paddingLeft = section.level === 3 ? '20px' : '0';
+                label.onclick = () => {
+                    document.getElementById(section.id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+                };
+
+                item.appendChild(checkbox);
+                item.appendChild(label);
+                container.appendChild(item);
+            });
+
+            updateProgressDisplay();
+        }
+
+        // Run on page load
+        document.addEventListener('DOMContentLoaded', initProgressTracker);
+    </script>
+</body>
+</html>

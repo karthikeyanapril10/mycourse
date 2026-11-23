@@ -1,0 +1,1747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment_Gateway_End_to_End_Flow</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 60px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .metadata {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 16px 24px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #666;
+            border-left: 4px solid #667eea;
+        }
+
+        /* PROGRESS TRACKER STYLES */
+        .progress-tracker {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .progress-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-stats {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .progress-percentage {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #764ba2;
+        }
+
+        .progress-bar-container {
+            height: 12px;
+            background: #e9ecef;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+            border-radius: 20px;
+        }
+
+        .reset-btn {
+            padding: 8px 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+
+        .reset-btn:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+        }
+
+        .progress-items {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .progress-items::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .progress-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .progress-item:hover {
+            background: #f8f9fa;
+            transform: translateX(5px);
+        }
+
+        .progress-item.completed {
+            opacity: 0.7;
+        }
+
+        .progress-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .progress-label {
+            cursor: pointer;
+            font-size: 0.95em;
+            line-height: 1.5;
+            color: #495057;
+            flex-grow: 1;
+        }
+
+        .progress-item.completed .progress-label {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .toggle-progress {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .toggle-progress:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .progress-items.collapsed {
+            display: none;
+        }
+
+        /* CONTENT STYLES */
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 4px solid #667eea;
+            font-weight: 700;
+        }
+
+        h2 {
+            color: #764ba2;
+            font-size: 2em;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        h3 {
+            color: #495057;
+            font-size: 1.5em;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        h4 {
+            color: #666;
+            font-size: 1.25em;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        ul, ol {
+            margin: 20px 0;
+            padding-left: 40px;
+        }
+
+        li {
+            margin-bottom: 12px;
+            line-height: 1.7;
+        }
+
+        code {
+            background: #f4f5f7;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #c7254e;
+            border: 1px solid #e1e4e8;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 24px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 25px 0;
+            border: 1px solid #444;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            border: none;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        blockquote {
+            border-left: 5px solid #667eea;
+            padding: 15px 25px;
+            margin: 25px 0;
+            background: #f8f9fa;
+            border-radius: 0 8px 8px 0;
+            color: #495057;
+            font-style: italic;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 30px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 14px 18px;
+            text-align: left;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tr:hover {
+            background: #e9ecef;
+            transition: background 0.2s;
+        }
+
+        a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px solid transparent;
+            transition: border-bottom 0.2s;
+        }
+
+        a:hover {
+            border-bottom: 1px solid #667eea;
+        }
+
+        hr {
+            border: none;
+            border-top: 2px solid #e9ecef;
+            margin: 40px 0;
+        }
+
+        strong {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        em {
+            color: #495057;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 25px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.6em;
+            }
+
+            .progress-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .progress-stats {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../navigation.html" class="back-link">&larr; Back to Navigation</a>
+
+        <div class="metadata">
+            <strong>Source:</strong> dev/Payment_Gateway_End_to_End_Flow.md &nbsp;|&nbsp; <strong>Updated:</strong> 2026-11-18 19:44:56
+        </div>
+
+        <!-- PROGRESS TRACKER -->
+        <div class="progress-tracker">
+            <div class="progress-header">
+                <div class="progress-title">
+                    <span>📚</span>
+                    <span>Your Progress</span>
+                </div>
+                <div class="progress-stats">
+                    <span class="progress-percentage" id="progress-pct">0%</span>
+                    <button class="reset-btn" onclick="resetProgress()">Reset</button>
+                    <button class="toggle-progress" onclick="toggleProgressList()">▼ Hide</button>
+                </div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progress-bar" style="width: 0%"></div>
+            </div>
+            <div class="progress-items" id="progress-items">
+                <!-- Checkboxes will be generated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="content">
+<h1 id="payment-gateway-end-to-end-flow">Payment Gateway - End-to-End Flow</h1>
+<h2 id="table-of-contents">📋 Table of Contents</h2>
+<ol>
+<li><a href="#what-is-a-payment-gateway">What is a Payment Gateway?</a></li>
+<li><a href="#key-players--components">Key Players &amp; Components</a></li>
+<li><a href="#complete-transaction-flow">Complete Transaction Flow</a></li>
+<li><a href="#payment-methods">Payment Methods</a></li>
+<li><a href="#security--compliance">Security &amp; Compliance</a></li>
+<li><a href="#error-handling--retries">Error Handling &amp; Retries</a></li>
+<li><a href="#reconciliation--settlement">Reconciliation &amp; Settlement</a></li>
+<li><a href="#system-design-considerations">System Design Considerations</a></li>
+<li><a href="#real-world-example-Enterprise SaaS Company-mpay">Real-World Example (Enterprise SaaS Company MPay)</a></li>
+<li><a href="#interview-questions">Interview Questions</a></li>
+</ol>
+<hr />
+<h2 id="what-is-a-payment-gateway">What is a Payment Gateway?</h2>
+<p><strong>Simple definition:</strong><br />
+A payment gateway is the technology that securely transmits payment information from a customer to the payment processor and returns transaction results.</p>
+<p><strong>Analogy:</strong><br />
+Think of it like a POS (Point of Sale) terminal in a physical store, but for online transactions.</p>
+<p><strong>What it does:</strong><br />
+- Encrypts sensitive payment data<br />
+- Transmits data to payment processor<br />
+- Receives authorization/decline response<br />
+- Returns result to merchant</p>
+<p><strong>What it is NOT:</strong><br />
+- Not a payment processor (doesn't actually process the payment)<br />
+- Not a merchant account (doesn't hold funds)<br />
+- Not a bank (doesn't settle money)</p>
+<hr />
+<h2 id="key-players-components">Key Players &amp; Components</h2>
+<h3 id="1-customer-cardholder">1. Customer (Cardholder)</h3>
+<ul>
+<li>The person making the payment</li>
+<li>Provides card/bank details</li>
+<li>Expects confirmation</li>
+</ul>
+<h3 id="2-merchant-your-business">2. Merchant (Your Business)</h3>
+<ul>
+<li>Sells goods/services</li>
+<li>Wants to accept payments</li>
+<li>Needs funds deposited to bank account</li>
+</ul>
+<h3 id="3-payment-gateway">3. Payment Gateway</h3>
+<ul>
+<li><strong>Examples:</strong> Stripe, Authorize.Net, Braintree, Adyen</li>
+<li>Encrypts and transmits payment data</li>
+<li>Returns authorization results</li>
+<li>May store tokenized card data</li>
+</ul>
+<h3 id="4-payment-processor-acquirer">4. Payment Processor (Acquirer)</h3>
+<ul>
+<li><strong>Examples:</strong> First Data, Worldpay, Chase Paymentech</li>
+<li>Routes transaction to card network</li>
+<li>Handles merchant account</li>
+<li>Batches settlements</li>
+</ul>
+<h3 id="5-card-network">5. Card Network</h3>
+<ul>
+<li><strong>Examples:</strong> Visa, Mastercard, American Express, Discover</li>
+<li>Routes authorization request to issuing bank</li>
+<li>Sets interchange fees</li>
+<li>Manages fraud rules</li>
+</ul>
+<h3 id="6-issuing-bank">6. Issuing Bank</h3>
+<ul>
+<li>Customer's bank that issued the card</li>
+<li>Holds customer's funds</li>
+<li>Approves or declines transaction</li>
+<li>Checks fraud rules, balance, limits</li>
+</ul>
+<h3 id="7-acquiring-bank-merchant-bank">7. Acquiring Bank (Merchant Bank)</h3>
+<ul>
+<li>Merchant's bank</li>
+<li>Receives settlement funds</li>
+<li>Deposits to merchant account</li>
+</ul>
+<hr />
+<h2 id="complete-transaction-flow">Complete Transaction Flow</h2>
+<h3 id="phase-1-authorization-real-time-2-3-seconds">Phase 1: Authorization (Real-time, ~2-3 seconds)</h3>
+<p><strong>Step 1: Customer Initiates Payment</strong></p>
+<div class="codehilite"><pre><span></span><code>Customer on merchant website
+  ↓
+Clicks "Pay Now"
+  ↓
+Enters credit card details:
+  - Card Number (PAN)
+  - Expiration Date
+  - CVV
+  - Billing Address
+</code></pre></div>
+
+<p><strong>Step 2: Merchant Website → Payment Gateway</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">// Frontend sends payment request</span>
+<span class="nx">POST</span><span class="w"> </span><span class="nx">https</span><span class="o">:</span><span class="c1">//api.stripe.com/v1/charges</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="s2">"amount"</span><span class="o">:</span><span class="w"> </span><span class="mf">5000</span><span class="p">,</span><span class="w">  </span><span class="c1">// $50.00 in cents</span>
+<span class="w">  </span><span class="s2">"currency"</span><span class="o">:</span><span class="w"> </span><span class="s2">"usd"</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"source"</span><span class="o">:</span><span class="w"> </span><span class="s2">"tok_visa"</span><span class="p">,</span><span class="w">  </span><span class="c1">// Tokenized card</span>
+<span class="w">  </span><span class="s2">"description"</span><span class="o">:</span><span class="w"> </span><span class="s2">"Invoice #12345"</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong>Behind the scenes:</strong><br />
+- SSL/TLS encryption (HTTPS)<br />
+- Tokenization if using hosted payment form<br />
+- PCI-compliant data transmission</p>
+<p><strong>Step 3: Payment Gateway → Payment Processor</strong></p>
+<div class="codehilite"><pre><span></span><code>Payment Gateway (e.g., Stripe)
+  ↓
+Encrypts card data
+  ↓
+Adds merchant credentials
+  ↓
+Sends to Payment Processor (e.g., First Data)
+</code></pre></div>
+
+<p><strong>Message format (ISO 8583):</strong></p>
+<div class="codehilite"><pre><span></span><code>Message Type: 0100 (Authorization Request)
+PAN: 4111111111111111
+Amount: 5000
+Currency: 840 (USD)
+Merchant ID: 123456789
+Transaction Date/Time: 2026-11-13 22:30:00
+CVV: 123
+</code></pre></div>
+
+<p><strong>Step 4: Payment Processor → Card Network</strong></p>
+<div class="codehilite"><pre><span></span><code>Payment Processor
+  ↓
+Routes based on card BIN (first 6 digits)
+  ↓
+Sends to appropriate Card Network
+  - 4xxx → Visa
+  - 5xxx → Mastercard
+  - 37xx → Amex
+</code></pre></div>
+
+<p><strong>Step 5: Card Network → Issuing Bank</strong></p>
+<div class="codehilite"><pre><span></span><code>Visa/Mastercard Network
+  ↓
+Looks up issuing bank from BIN
+  ↓
+Routes authorization request to Issuing Bank
+</code></pre></div>
+
+<p><strong>Step 6: Issuing Bank Decision</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nx">Issuing</span><span class="w"> </span><span class="nx">Bank</span><span class="w"> </span><span class="nx">checks</span><span class="p">:</span>
+<span class="w">  </span><span class="err">✓</span><span class="w"> </span><span class="nx">Card</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="nx">active</span><span class="w"> </span><span class="p">(</span><span class="k">not</span><span class="w"> </span><span class="nx">canceled</span><span class="o">/</span><span class="nx">expired</span><span class="p">)</span>
+<span class="w">  </span><span class="err">✓</span><span class="w"> </span><span class="nx">Sufficient</span><span class="w"> </span><span class="nx">funds</span><span class="o">/</span><span class="nx">credit</span><span class="w"> </span><span class="nx">available</span>
+<span class="w">  </span><span class="err">✓</span><span class="w"> </span><span class="nx">CVV</span><span class="w"> </span><span class="nx">matches</span>
+<span class="w">  </span><span class="err">✓</span><span class="w"> </span><span class="nx">Billing</span><span class="w"> </span><span class="nx">address</span><span class="w"> </span><span class="nx">matches</span><span class="w"> </span><span class="p">(</span><span class="nx">AVS</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nx">Address</span><span class="w"> </span><span class="nx">Verification</span><span class="p">)</span>
+<span class="w">  </span><span class="err">✓</span><span class="w"> </span><span class="nx">No</span><span class="w"> </span><span class="nx">fraud</span><span class="w"> </span><span class="nx">indicators</span><span class="w"> </span><span class="p">(</span><span class="nx">velocity</span><span class="p">,</span><span class="w"> </span><span class="nx">location</span><span class="p">,</span><span class="w"> </span><span class="nx">amount</span><span class="p">)</span>
+<span class="w">  </span><span class="err">✓</span><span class="w"> </span><span class="nx">Not</span><span class="w"> </span><span class="nx">over</span><span class="w"> </span><span class="nx">daily</span><span class="o">/</span><span class="nx">monthly</span><span class="w"> </span><span class="nx">limits</span>
+
+<span class="nx">Decision</span><span class="p">:</span>
+<span class="w">  </span><span class="err">→</span><span class="w"> </span><span class="nx">APPROVED</span><span class="w"> </span><span class="p">(</span><span class="nx">Authorization</span><span class="w"> </span><span class="nx">Code</span><span class="p">:</span><span class="w"> </span><span class="mi">123456</span><span class="p">)</span>
+<span class="w">  </span><span class="err">→</span><span class="w"> </span><span class="nx">DECLINED</span><span class="w"> </span><span class="p">(</span><span class="nx">Reason</span><span class="p">:</span><span class="w"> </span><span class="nx">Insufficient</span><span class="w"> </span><span class="nx">Funds</span><span class="p">)</span>
+<span class="w">  </span><span class="err">→</span><span class="w"> </span><span class="nx">HOLD</span><span class="w"> </span><span class="p">(</span><span class="nx">Requires</span><span class="w"> </span><span class="mi">3</span><span class="nx">D</span><span class="w"> </span><span class="nx">Secure</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nx">Additional</span><span class="w"> </span><span class="nx">Verification</span><span class="p">)</span>
+</code></pre></div>
+
+<p><strong>Step 7: Response Flows Back</strong></p>
+<div class="codehilite"><pre><span></span><code>Issuing Bank
+  ↓ (Authorization Code or Decline Reason)
+Card Network
+  ↓
+Payment Processor
+  ↓
+Payment Gateway
+  ↓
+Merchant Website
+  ↓
+Customer sees: "Payment Successful!" or "Payment Declined"
+</code></pre></div>
+
+<p><strong>Response format:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ch_3abc123"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"succeeded"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"amount"</span><span class="p">:</span><span class="w"> </span><span class="mi">5000</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"currency"</span><span class="p">:</span><span class="w"> </span><span class="s2">"usd"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"authorization_code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"123456"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"last4"</span><span class="p">:</span><span class="w"> </span><span class="s2">"4242"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"brand"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Visa"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"avs_result"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Y"</span><span class="p">,</span><span class="w">  </span><span class="c1">// Address matches</span>
+<span class="w">  </span><span class="nt">"cvv_result"</span><span class="p">:</span><span class="w"> </span><span class="s2">"M"</span><span class="w">   </span><span class="c1">// CVV matches</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong>Timeline:</strong> 2-3 seconds total</p>
+<p><strong>What happened to the money?</strong><br />
+- <strong>Authorization ONLY</strong> - no money moved yet<br />
+- Issuing bank "holds" $50 on customer's card<br />
+- Customer's available credit reduced by $50<br />
+- Money still in customer's account</p>
+<hr />
+<h3 id="phase-2-capture-1-7-days-later">Phase 2: Capture (1-7 days later)</h3>
+<p><strong>When:</strong> Merchant ships product or delivers service</p>
+<p><strong>Step 1: Merchant Requests Capture</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">// Capture previously authorized payment</span>
+<span class="nx">POST</span><span class="w"> </span><span class="nx">https</span><span class="o">:</span><span class="c1">//api.stripe.com/v1/charges/ch_3abc123/capture</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="s2">"amount"</span><span class="o">:</span><span class="w"> </span><span class="mf">5000</span><span class="w">  </span><span class="c1">// Can capture partial amount</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong>Step 2: Gateway Marks for Settlement</strong></p>
+<div class="codehilite"><pre><span></span><code>Payment Gateway
+  ↓
+Includes transaction in daily batch
+  ↓
+Sends batch to Payment Processor
+</code></pre></div>
+
+<p><strong>What if merchant never captures?</strong><br />
+- Authorization expires (typically 7-30 days)<br />
+- Hold is released<br />
+- Customer never charged</p>
+<p><strong>Partial capture example:</strong></p>
+<div class="codehilite"><pre><span></span><code>Authorized: $100
+Item out of stock, only ship $60 worth
+Capture: $60
+Remaining $40 authorization is voided
+</code></pre></div>
+
+<hr />
+<h3 id="phase-3-settlement-1-3-days-after-capture">Phase 3: Settlement (1-3 days after capture)</h3>
+<p><strong>Step 1: Batch Processing</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">End</span><span class="w"> </span><span class="nv">of</span><span class="w"> </span><span class="nv">day</span><span class="w"> </span><span class="ss">(</span><span class="nv">typically</span><span class="w"> </span><span class="mi">11</span>:<span class="mi">59</span><span class="w"> </span><span class="nv">PM</span><span class="w"> </span><span class="nv">merchant</span><span class="w"> </span><span class="nv">timezone</span><span class="ss">)</span>
+<span class="w">  </span>↓
+<span class="nv">Payment</span><span class="w"> </span><span class="nv">Processor</span><span class="w"> </span><span class="nv">collects</span><span class="w"> </span><span class="nv">all</span><span class="w"> </span><span class="nv">captures</span><span class="w"> </span><span class="nv">from</span><span class="w"> </span><span class="nv">all</span><span class="w"> </span><span class="nv">merchants</span>
+<span class="w">  </span>↓
+<span class="nv">Creates</span><span class="w"> </span><span class="nv">settlement</span><span class="w"> </span><span class="nv">batches</span>
+</code></pre></div>
+
+<p><strong>Step 2: Card Network Clearing</strong></p>
+<div class="codehilite"><pre><span></span><code>Payment Processor → Card Network
+  ↓
+"Here are all Visa transactions from today"
+  ↓
+Card Network → Issuing Banks
+  ↓
+"Debit these customer accounts"
+  ↓
+Card Network → Acquiring Banks
+  ↓
+"Credit these merchant accounts"
+</code></pre></div>
+
+<p><strong>Step 3: Money Movement</strong></p>
+<div class="codehilite"><pre><span></span><code>Day 0: Customer makes purchase
+Day 1: Settlement batch sent
+Day 2: Issuing bank debits customer account
+Day 2: Acquiring bank credits merchant account (minus fees)
+Day 3: Merchant sees funds in bank account
+</code></pre></div>
+
+<p><strong>Settlement amount calculation:</strong></p>
+<div class="codehilite"><pre><span></span><code>Gross Sale:           $100.00
+Interchange Fee:      -$1.80  (Visa/MC fee, ~1.8%)
+Assessment Fee:       -$0.15  (Card network fee, ~0.15%)
+Processor Fee:        -$0.30  (Payment processor markup)
+Gateway Fee:          -$0.30  (Gateway transaction fee)
+                      -------
+Net to Merchant:      $97.45
+</code></pre></div>
+
+<p><strong>Who gets what:</strong><br />
+- <strong>Customer's bank:</strong> Debits $100 from customer<br />
+- <strong>Merchant's bank:</strong> Credits $97.45 to merchant<br />
+- <strong>Card network (Visa/MC):</strong> Gets $1.95 (interchange + assessment)<br />
+- <strong>Payment processor:</strong> Gets $0.30<br />
+- <strong>Payment gateway:</strong> Gets $0.30</p>
+<hr />
+<h2 id="payment-methods">Payment Methods</h2>
+<h3 id="1-credit-card-debit-card">1. Credit Card / Debit Card</h3>
+<p><strong>Flow:</strong> As described above</p>
+<p><strong>Authorization types:</strong><br />
+- <strong>Sale:</strong> Auth + Capture in one step (common for digital goods)<br />
+- <strong>Auth-Only:</strong> Hold funds, capture later (common for physical goods)<br />
+- <strong>Pre-Auth:</strong> Hold more than final amount (hotels, gas stations)</p>
+<p><strong>Card types:</strong><br />
+- Credit cards (Visa, Mastercard, Amex, Discover)<br />
+- Debit cards (PIN or signature-based)<br />
+- Prepaid cards</p>
+<hr />
+<h3 id="2-ach-bank-transfer-echeck">2. ACH / Bank Transfer (eCheck)</h3>
+<p><strong>Flow:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nx">Customer</span><span class="w"> </span><span class="nx">provides</span><span class="p">:</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="nx">Bank</span><span class="w"> </span><span class="nx">routing</span><span class="w"> </span><span class="nx">number</span><span class="w"> </span><span class="p">(</span><span class="mi">9</span><span class="w"> </span><span class="nx">digits</span><span class="p">)</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="nx">Account</span><span class="w"> </span><span class="nx">number</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="nx">Account</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="p">(</span><span class="nx">checking</span><span class="o">/</span><span class="nx">savings</span><span class="p">)</span>
+
+<span class="nx">Merchant</span><span class="w"> </span><span class="nx">submits</span><span class="w"> </span><span class="nx">to</span><span class="w"> </span><span class="nx">ACH</span><span class="w"> </span><span class="nx">processor</span>
+<span class="w">  </span><span class="err">↓</span>
+<span class="nx">Next</span><span class="w"> </span><span class="nx">business</span><span class="w"> </span><span class="nx">day</span><span class="p">:</span><span class="w"> </span><span class="nx">ACH</span><span class="w"> </span><span class="nx">network</span><span class="w"> </span><span class="nx">batches</span>
+<span class="w">  </span><span class="err">↓</span>
+<span class="mi">2</span><span class="o">-</span><span class="mi">3</span><span class="w"> </span><span class="nx">business</span><span class="w"> </span><span class="nx">days</span><span class="p">:</span><span class="w"> </span><span class="nx">Money</span><span class="w"> </span><span class="nx">debits</span><span class="w"> </span><span class="nx">customer</span><span class="w"> </span><span class="nx">account</span>
+<span class="w">  </span><span class="err">↓</span>
+<span class="mi">2</span><span class="o">-</span><span class="mi">3</span><span class="w"> </span><span class="nx">business</span><span class="w"> </span><span class="nx">days</span><span class="p">:</span><span class="w"> </span><span class="nx">Money</span><span class="w"> </span><span class="nx">credits</span><span class="w"> </span><span class="nx">merchant</span><span class="w"> </span><span class="nx">account</span>
+</code></pre></div>
+
+<p><strong>Characteristics:</strong><br />
+- <strong>Slower:</strong> 3-5 days vs 2-3 seconds for cards<br />
+- <strong>Cheaper:</strong> $0.25-0.50 per transaction vs 2-3% for cards<br />
+- <strong>Riskier:</strong> Higher chargeback window (60 days vs 120-180 days for cards)<br />
+- <strong>Returns:</strong> Customer can request return within 60 days</p>
+<p><strong>Common in B2B:</strong> Enterprise SaaS Company's invoice payments often use ACH</p>
+<hr />
+<h3 id="3-digital-wallets-apple-pay-google-pay-paypal">3. Digital Wallets (Apple Pay, Google Pay, PayPal)</h3>
+<p><strong>Flow:</strong></p>
+<div class="codehilite"><pre><span></span><code>Customer clicks "Pay with Apple Pay"
+  ↓
+Apple Pay provides tokenized card number
+  ↓
+Flows through standard card network
+  (Gateway → Processor → Visa/MC → Issuing Bank)
+  ↓
+But uses device token, not real card number
+</code></pre></div>
+
+<p><strong>Benefits:</strong><br />
+- More secure (tokenization)<br />
+- Faster checkout (no typing card details)<br />
+- Better conversion rates</p>
+<p><strong>Behind the scenes:</strong><br />
+- Apple/Google doesn't see transaction details<br />
+- Real card number never touches merchant<br />
+- Token maps to real card at network level</p>
+<hr />
+<h3 id="4-buy-now-pay-later-klarna-affirm-afterpay">4. Buy Now Pay Later (Klarna, Affirm, Afterpay)</h3>
+<p><strong>Flow:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nv">Customer</span><span class="w"> </span><span class="nv">selects</span><span class="w"> </span><span class="s2">"Pay with Klarna"</span>
+<span class="w">  </span>↓
+<span class="nv">Klarna</span><span class="w"> </span><span class="nv">performs</span><span class="w"> </span><span class="nv">instant</span><span class="w"> </span><span class="nv">credit</span><span class="w"> </span><span class="nv">check</span>
+<span class="w">  </span>↓
+<span class="nv">Approves</span><span class="w"> </span><span class="nv">customer</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="nv">installment</span><span class="w"> </span><span class="nv">plan</span>
+<span class="w">  </span>↓
+<span class="nv">Klarna</span><span class="w"> </span><span class="nv">pays</span><span class="w"> </span><span class="nv">merchant</span><span class="w"> </span><span class="nv">in</span><span class="w"> </span><span class="nv">full</span><span class="w"> </span><span class="nv">immediately</span>
+<span class="w">  </span>↓
+<span class="nv">Customer</span><span class="w"> </span><span class="nv">pays</span><span class="w"> </span><span class="nv">Klarna</span><span class="w"> </span><span class="nv">in</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="nv">installments</span><span class="w"> </span><span class="nv">over</span><span class="w"> </span><span class="mi">6</span><span class="w"> </span><span class="nv">weeks</span>
+</code></pre></div>
+
+<p><strong>Risk:</strong><br />
+- Merchant gets paid immediately (no risk)<br />
+- Klarna takes on credit risk<br />
+- Customer gets short-term loan</p>
+<hr />
+<h2 id="security-compliance">Security &amp; Compliance</h2>
+<h3 id="pci-dss-compliance">PCI-DSS Compliance</h3>
+<p><strong>What is it?</strong><br />
+Payment Card Industry Data Security Standard - rules for handling card data</p>
+<p><strong>4 Levels based on transaction volume:</strong><br />
+- <strong>Level 1:</strong> &gt; 6M transactions/year (most stringent)<br />
+- <strong>Level 2:</strong> 1M - 6M transactions/year<br />
+- <strong>Level 3:</strong> 20K - 1M transactions/year<br />
+- <strong>Level 4:</strong> &lt; 20K transactions/year</p>
+<p><strong>12 Requirements:</strong><br />
+1. Install and maintain firewall<br />
+2. Don't use vendor defaults (passwords, keys)<br />
+3. Protect stored cardholder data<br />
+4. Encrypt card data in transit<br />
+5. Use and update antivirus<br />
+6. Develop secure systems<br />
+7. Restrict access by business need<br />
+8. Assign unique ID to each person with access<br />
+9. Restrict physical access to card data<br />
+10. Track and monitor all access<br />
+11. Test security systems regularly<br />
+12. Maintain security policy</p>
+<p><strong>How to avoid PCI scope:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">Bad</span> (<span class="n">In</span> <span class="n">PCI</span> <span class="nb">scope</span>):
+  <span class="n">Customer</span> → <span class="n">Your</span> <span class="n">server</span> (<span class="n">receives</span> <span class="n">card</span> <span class="n">number</span>) → <span class="n">Gateway</span>
+
+<span class="n">Good</span> (<span class="n">Out</span> <span class="nb">of</span> <span class="n">PCI</span> <span class="nb">scope</span>):
+  <span class="n">Customer</span> → <span class="n">Gateway</span> <span class="n">hosted</span> <span class="n">form</span> → <span class="n">Gateway</span>
+  <span class="n">Your</span> <span class="n">server</span> ← <span class="n">Token</span> ← <span class="n">Gateway</span>
+</code></pre></div>
+
+<p><strong>Tokenization:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nb">Real</span> <span class="n">card:</span> <span class="mi">4111</span><span class="o">-</span><span class="mi">1111</span><span class="o">-</span><span class="mi">1111</span><span class="o">-</span><span class="mi">1111</span>
+   ↓
+<span class="n">Tokenized:</span> <span class="n">tok_1abc234xyz567</span>
+   ↓
+<span class="n">Store</span> <span class="k">token</span><span class="n"> in</span> <span class="n">your</span> <span class="n">database</span> (<span class="n">safe</span>!)
+   ↓
+<span class="n">Use</span> <span class="k">token</span><span class="n"> for</span> <span class="n">future</span> <span class="n">charges</span> (<span class="n">gateway</span> <span class="n">maps</span> <span class="nb">to</span> <span class="n">real</span> <span class="n">card</span>)
+</code></pre></div>
+
+<hr />
+<h3 id="3d-secure-3ds">3D Secure (3DS)</h3>
+<p><strong>What is it?</strong><br />
+Additional authentication layer (like 2FA for payments)</p>
+<p><strong>Names:</strong><br />
+- Visa: Verified by Visa<br />
+- Mastercard: Mastercard SecureCode<br />
+- Amex: SafeKey</p>
+<p><strong>Flow:</strong></p>
+<div class="codehilite"><pre><span></span><code>Customer enters card details
+  ↓
+Gateway detects card requires 3DS
+  ↓
+Redirects to issuing bank's auth page
+  ↓
+Customer enters SMS code / biometric / password
+  ↓
+Bank confirms identity
+  ↓
+Redirects back to merchant
+  ↓
+Payment proceeds
+</code></pre></div>
+
+<p><strong>Why use it?</strong><br />
+- <strong>Fraud protection:</strong> Shifts liability to issuing bank<br />
+- <strong>Required in EU:</strong> Strong Customer Authentication (SCA) regulation<br />
+- <strong>Lower fraud rates:</strong> Extra verification step</p>
+<p><strong>Trade-off:</strong><br />
+- Lower fraud vs lower conversion (some customers abandon)</p>
+<hr />
+<h3 id="fraud-detection">Fraud Detection</h3>
+<p><strong>Common checks:</strong></p>
+<p><strong>1. AVS (Address Verification Service)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nx">Customer</span><span class="w"> </span><span class="nx">enters</span><span class="p">:</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="nx">Street</span><span class="w"> </span><span class="nx">address</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="nx">ZIP</span><span class="w"> </span><span class="nx">code</span>
+
+<span class="nx">Gateway</span><span class="w"> </span><span class="nx">sends</span><span class="w"> </span><span class="nx">to</span><span class="w"> </span><span class="nx">issuing</span><span class="w"> </span><span class="nx">bank</span>
+<span class="w">  </span><span class="err">↓</span>
+<span class="nx">Bank</span><span class="w"> </span><span class="nx">compares</span><span class="w"> </span><span class="nx">to</span><span class="w"> </span><span class="nx">address</span><span class="w"> </span><span class="nx">on</span><span class="w"> </span><span class="nx">file</span>
+<span class="w">  </span><span class="err">↓</span>
+<span class="nx">Returns</span><span class="w"> </span><span class="k">match</span><span class="w"> </span><span class="nx">result</span><span class="p">:</span>
+<span class="w">  </span><span class="nx">Y</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">Address</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="nx">ZIP</span><span class="w"> </span><span class="k">match</span>
+<span class="w">  </span><span class="nx">A</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">Address</span><span class="w"> </span><span class="nx">matches</span><span class="p">,</span><span class="w"> </span><span class="nx">ZIP</span><span class="w"> </span><span class="nx">doesn</span><span class="err">'</span><span class="nx">t</span>
+<span class="w">  </span><span class="nx">Z</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">ZIP</span><span class="w"> </span><span class="nx">matches</span><span class="p">,</span><span class="w"> </span><span class="nx">address</span><span class="w"> </span><span class="nx">doesn</span><span class="err">'</span><span class="nx">t</span>
+<span class="w">  </span><span class="nx">N</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">Neither</span><span class="w"> </span><span class="nx">matches</span>
+</code></pre></div>
+
+<p><strong>2. CVV Verification</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nv">CVV</span><span class="w"> </span><span class="ss">(</span><span class="mi">3</span><span class="o">-</span><span class="mi">4</span><span class="w"> </span><span class="nv">digit</span><span class="w"> </span><span class="nv">code</span><span class="w"> </span><span class="nv">on</span><span class="w"> </span><span class="nv">back</span><span class="w"> </span><span class="nv">of</span><span class="w"> </span><span class="nv">card</span><span class="ss">)</span>
+<span class="w">  </span>↓
+<span class="nv">Sent</span><span class="w"> </span><span class="nv">to</span><span class="w"> </span><span class="nv">issuing</span><span class="w"> </span><span class="nv">bank</span>
+<span class="w">  </span>↓
+<span class="nv">Bank</span><span class="w"> </span><span class="nv">checks</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="nv">it</span><span class="w"> </span><span class="nv">matches</span>
+<span class="w">  </span>↓
+<span class="nb">Result</span>:<span class="w"> </span><span class="nv">M</span><span class="w"> </span><span class="ss">(</span><span class="nv">match</span><span class="ss">)</span>,<span class="w"> </span><span class="nv">N</span><span class="w"> </span><span class="ss">(</span><span class="nv">no</span><span class="w"> </span><span class="nv">match</span><span class="ss">)</span>,<span class="w"> </span><span class="nv">U</span><span class="w"> </span><span class="ss">(</span><span class="nv">unavailable</span><span class="ss">)</span>
+</code></pre></div>
+
+<p><strong>3. Velocity Checks</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nx">Same</span><span class="w"> </span><span class="nx">card</span><span class="w"> </span><span class="nx">used</span><span class="w"> </span><span class="mi">5</span><span class="w"> </span><span class="nx">times</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="nx">minutes</span><span class="p">?</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="nx">DECLINE</span>
+<span class="nx">Same</span><span class="w"> </span><span class="nx">IP</span><span class="w"> </span><span class="nx">address</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="nx">different</span><span class="w"> </span><span class="nx">cards</span><span class="p">?</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="nx">DECLINE</span>
+<span class="nx">High</span><span class="o">-</span><span class="nx">value</span><span class="w"> </span><span class="nx">purchase</span><span class="w"> </span><span class="nx">from</span><span class="w"> </span><span class="nx">new</span><span class="w"> </span><span class="nx">customer</span><span class="p">?</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="nx">REVIEW</span>
+</code></pre></div>
+
+<p><strong>4. Geolocation</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nx">Customer</span><span class="err">'</span><span class="nx">s</span><span class="w"> </span><span class="nx">IP</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="nx">Nigeria</span>
+<span class="nx">Billing</span><span class="w"> </span><span class="nx">address</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="nx">USA</span>
+<span class="nx">Shipping</span><span class="w"> </span><span class="nx">to</span><span class="w"> </span><span class="nx">Russia</span>
+<span class="err">→</span><span class="w"> </span><span class="nx">High</span><span class="w"> </span><span class="nx">fraud</span><span class="w"> </span><span class="nx">risk</span>
+</code></pre></div>
+
+<p><strong>5. Device Fingerprinting</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nx">Browser</span><span class="w"> </span><span class="k">type</span><span class="p">,</span><span class="w"> </span><span class="nx">screen</span><span class="w"> </span><span class="nx">resolution</span><span class="p">,</span><span class="w"> </span><span class="nx">timezone</span><span class="p">,</span><span class="w"> </span><span class="nx">installed</span><span class="w"> </span><span class="nx">fonts</span>
+<span class="w">  </span><span class="err">↓</span>
+<span class="nx">Creates</span><span class="w"> </span><span class="nx">unique</span><span class="w"> </span><span class="nx">device</span><span class="w"> </span><span class="nx">ID</span>
+<span class="w">  </span><span class="err">↓</span>
+<span class="nx">Recognizes</span><span class="w"> </span><span class="nx">returning</span><span class="w"> </span><span class="nx">customers</span><span class="w"> </span><span class="p">(</span><span class="nx">good</span><span class="p">)</span>
+<span class="w">  </span><span class="err">↓</span>
+<span class="nx">Flags</span><span class="w"> </span><span class="nx">suspicious</span><span class="w"> </span><span class="nx">devices</span><span class="w"> </span><span class="p">(</span><span class="nx">bad</span><span class="p">)</span>
+</code></pre></div>
+
+<p><strong>6. Machine Learning Models</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nx">Train</span><span class="w"> </span><span class="nx">on</span><span class="w"> </span><span class="nx">historical</span><span class="w"> </span><span class="nx">fraud</span><span class="w"> </span><span class="nx">patterns</span><span class="p">:</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="nx">Transaction</span><span class="w"> </span><span class="nx">amount</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="nx">Time</span><span class="w"> </span><span class="nx">of</span><span class="w"> </span><span class="nx">day</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="nx">Customer</span><span class="w"> </span><span class="nx">history</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="nx">Product</span><span class="w"> </span><span class="k">type</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="nx">Shipping</span><span class="w"> </span><span class="nx">speed</span>
+
+<span class="nx">Score</span><span class="w"> </span><span class="nx">each</span><span class="w"> </span><span class="nx">transaction</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="o">-</span><span class="mi">100</span><span class="w"> </span><span class="p">(</span><span class="nx">fraud</span><span class="w"> </span><span class="nx">probability</span><span class="p">)</span>
+<span class="w">  </span><span class="mi">0</span><span class="o">-</span><span class="mi">30</span><span class="p">:</span><span class="w"> </span><span class="nx">Auto</span><span class="o">-</span><span class="nx">approve</span>
+<span class="w">  </span><span class="mi">31</span><span class="o">-</span><span class="mi">70</span><span class="p">:</span><span class="w"> </span><span class="nx">Manual</span><span class="w"> </span><span class="nx">review</span>
+<span class="w">  </span><span class="mi">71</span><span class="o">-</span><span class="mi">100</span><span class="p">:</span><span class="w"> </span><span class="nx">Auto</span><span class="o">-</span><span class="nx">decline</span>
+</code></pre></div>
+
+<hr />
+<h2 id="error-handling-retries">Error Handling &amp; Retries</h2>
+<h3 id="common-decline-reasons">Common Decline Reasons</h3>
+<p><strong>1. Insufficient Funds</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nv">Decline</span><span class="w"> </span><span class="nv">Code</span>:<span class="w"> </span><span class="mi">51</span>
+<span class="nv">Message</span>:<span class="w"> </span><span class="s2">"Insufficient funds"</span>
+<span class="nv">Merchant</span><span class="w"> </span><span class="nv">action</span>:<span class="w"> </span><span class="nv">Ask</span><span class="w"> </span><span class="nv">customer</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="nv">different</span><span class="w"> </span><span class="nv">payment</span><span class="w"> </span><span class="nv">method</span>
+<span class="nv">Retry</span>:<span class="w"> </span><span class="nv">NO</span><span class="w"> </span><span class="ss">(</span><span class="nv">won</span><span class="err">'t work unless customer adds money)</span>
+</code></pre></div>
+
+<p><strong>2. Card Expired</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nv">Decline</span><span class="w"> </span><span class="nv">Code</span>:<span class="w"> </span><span class="mi">54</span>
+<span class="nv">Message</span>:<span class="w"> </span><span class="s2">"Expired card"</span>
+<span class="nv">Merchant</span><span class="w"> </span><span class="nv">action</span>:<span class="w"> </span><span class="nv">Ask</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="nv">updated</span><span class="w"> </span><span class="nv">card</span><span class="w"> </span><span class="nv">details</span>
+<span class="nv">Retry</span>:<span class="w"> </span><span class="nv">NO</span>
+</code></pre></div>
+
+<p><strong>3. Do Not Honor</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nv">Decline</span><span class="w"> </span><span class="nv">Code</span>:<span class="w"> </span><span class="mi">05</span>
+<span class="nv">Message</span>:<span class="w"> </span><span class="s2">"Do not honor"</span><span class="w"> </span><span class="ss">(</span><span class="nv">generic</span><span class="w"> </span><span class="nv">decline</span><span class="ss">)</span>
+<span class="nv">Reason</span>:<span class="w"> </span><span class="nv">Could</span><span class="w"> </span><span class="nv">be</span><span class="w"> </span><span class="nv">fraud</span><span class="w"> </span><span class="nv">suspicion</span>,<span class="w"> </span><span class="nv">credit</span><span class="w"> </span><span class="nv">limit</span>,<span class="w"> </span><span class="nv">etc</span>.
+<span class="nv">Merchant</span><span class="w"> </span><span class="nv">action</span>:<span class="w"> </span><span class="nv">Ask</span><span class="w"> </span><span class="nv">customer</span><span class="w"> </span><span class="nv">to</span><span class="w"> </span><span class="nv">contact</span><span class="w"> </span><span class="nv">their</span><span class="w"> </span><span class="nv">bank</span>
+<span class="nv">Retry</span>:<span class="w"> </span><span class="nv">MAYBE</span><span class="w"> </span><span class="nv">after</span><span class="w"> </span><span class="nv">customer</span><span class="w"> </span><span class="nv">contacts</span><span class="w"> </span><span class="nv">bank</span>
+</code></pre></div>
+
+<p><strong>4. Invalid Card Number</strong></p>
+<div class="codehilite"><pre><span></span><code>Decline Code: 14
+Message: "Invalid card number"
+Merchant action: Ask customer to re-enter correctly
+Retry: NO (unless typo)
+</code></pre></div>
+
+<p><strong>5. Pickup Card (Fraud)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nv">Decline</span><span class="w"> </span><span class="nv">Code</span>:<span class="w"> </span><span class="mi">04</span><span class="w"> </span><span class="nv">or</span><span class="w"> </span><span class="mi">07</span>
+<span class="nv">Message</span>:<span class="w"> </span><span class="s2">"Pickup card"</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="s2">"Pickup card, special condition"</span>
+<span class="nv">Reason</span>:<span class="w"> </span><span class="nv">Card</span><span class="w"> </span><span class="nv">reported</span><span class="w"> </span><span class="nv">stolen</span><span class="o">/</span><span class="nv">fraudulent</span>
+<span class="nv">Merchant</span><span class="w"> </span><span class="nv">action</span>:<span class="w"> </span><span class="k">DO</span><span class="w"> </span><span class="nv">NOT</span><span class="w"> </span><span class="nv">RETRY</span>,<span class="w"> </span><span class="nv">flag</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="nv">fraud</span><span class="w"> </span><span class="nv">review</span>
+</code></pre></div>
+
+<p><strong>6. Gateway Timeout</strong></p>
+<div class="codehilite"><pre><span></span><code>No response from gateway after 30 seconds
+Merchant action: RETRY (network issue, not customer issue)
+Idempotency key: Ensure not double-charged
+</code></pre></div>
+
+<hr />
+<h3 id="retry-strategy">Retry Strategy</h3>
+<p><strong>Immediate retries (network errors only):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">process_payment</span><span class="p">(</span><span class="n">payment_data</span><span class="p">,</span> <span class="n">max_retries</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">attempt</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_retries</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="n">gateway</span><span class="o">.</span><span class="n">charge</span><span class="p">(</span><span class="n">payment_data</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">response</span>
+
+        <span class="k">except</span> <span class="n">NetworkError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">attempt</span> <span class="o">&lt;</span> <span class="n">max_retries</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="n">attempt</span><span class="p">)</span>  <span class="c1"># Exponential backoff: 1s, 2s, 4s</span>
+                <span class="k">continue</span>
+            <span class="k">raise</span>
+
+        <span class="k">except</span> <span class="n">DeclineError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="c1"># Don't retry declines - customer issue, not network</span>
+            <span class="k">raise</span>
+</code></pre></div>
+
+<p><strong>Scheduled retries (for subscription billing):</strong></p>
+<div class="codehilite"><pre><span></span><code>Day 1: Initial attempt → Declined (insufficient funds)
+Day 3: Retry #1 (payday might have happened)
+Day 7: Retry #2
+Day 14: Retry #3
+Day 30: Give up, suspend service
+</code></pre></div>
+
+<p><strong>Smart retry:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">should_retry</span><span class="p">(</span><span class="n">decline_code</span><span class="p">):</span>
+    <span class="c1"># Retry these (temporary issues)</span>
+    <span class="n">retriable_codes</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s1">'51'</span><span class="p">,</span>  <span class="c1"># Insufficient funds (might have money later)</span>
+        <span class="s1">'61'</span><span class="p">,</span>  <span class="c1"># Exceeds withdrawal limit (resets daily)</span>
+        <span class="s1">'65'</span><span class="p">,</span>  <span class="c1"># Exceeds transaction limit</span>
+    <span class="p">]</span>
+
+    <span class="c1"># Don't retry these (permanent issues)</span>
+    <span class="n">do_not_retry</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s1">'04'</span><span class="p">,</span>  <span class="c1"># Pickup card (fraud)</span>
+        <span class="s1">'07'</span><span class="p">,</span>  <span class="c1"># Pickup card (fraud)</span>
+        <span class="s1">'14'</span><span class="p">,</span>  <span class="c1"># Invalid card number</span>
+        <span class="s1">'54'</span><span class="p">,</span>  <span class="c1"># Expired card</span>
+        <span class="s1">'57'</span><span class="p">,</span>  <span class="c1"># Transaction not permitted</span>
+    <span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">decline_code</span> <span class="ow">in</span> <span class="n">retriable_codes</span>
+</code></pre></div>
+
+<hr />
+<h3 id="idempotency">Idempotency</h3>
+<p><strong>Problem:</strong></p>
+<div class="codehilite"><pre><span></span><code>Customer clicks "Pay"
+  ↓
+Gateway processes payment (SUCCESS)
+  ↓
+Response times out (network issue)
+  ↓
+Customer clicks "Pay" again
+  ↓
+Gateway processes AGAIN (DUPLICATE CHARGE!)
+</code></pre></div>
+
+<p><strong>Solution: Idempotency Key</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">// Generate unique key per payment attempt</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">idempotencyKey</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sb">`payment_</span><span class="si">${</span><span class="nx">invoiceId</span><span class="si">}</span><span class="sb">_</span><span class="si">${</span><span class="nx">customerId</span><span class="si">}</span><span class="sb">_</span><span class="si">${</span><span class="nx">timestamp</span><span class="si">}</span><span class="sb">`</span><span class="p">;</span>
+
+<span class="c1">// Send with payment request</span>
+<span class="nx">POST</span><span class="w"> </span><span class="nx">https</span><span class="o">:</span><span class="c1">//api.stripe.com/v1/charges</span>
+<span class="nx">Headers</span><span class="o">:</span>
+<span class="w">  </span><span class="nx">Idempotency</span><span class="o">-</span><span class="nx">Key</span><span class="o">:</span><span class="w"> </span><span class="nx">payment_12345_67890_1699999999</span>
+
+<span class="c1">// Gateway caches result for 24 hours</span>
+<span class="c1">// If same key sent again → returns cached result (no new charge)</span>
+</code></pre></div>
+
+<p><strong>Implementation:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Store in Redis with 24-hour TTL</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">process_payment</span><span class="p">(</span><span class="n">payment_data</span><span class="p">,</span> <span class="n">idempotency_key</span><span class="p">):</span>
+    <span class="c1"># Check if already processed</span>
+    <span class="n">cached</span> <span class="o">=</span> <span class="n">redis</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">"payment:</span><span class="si">{</span><span class="n">idempotency_key</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">cached</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">cached</span><span class="p">)</span>
+
+    <span class="c1"># Process payment</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">gateway</span><span class="o">.</span><span class="n">charge</span><span class="p">(</span><span class="n">payment_data</span><span class="p">)</span>
+
+    <span class="c1"># Cache result</span>
+    <span class="n">redis</span><span class="o">.</span><span class="n">setex</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">"payment:</span><span class="si">{</span><span class="n">idempotency_key</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+        <span class="mi">86400</span><span class="p">,</span>  <span class="c1"># 24 hours</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">result</span>
+</code></pre></div>
+
+<hr />
+<h2 id="reconciliation-settlement">Reconciliation &amp; Settlement</h2>
+<h3 id="daily-reconciliation">Daily Reconciliation</h3>
+<p><strong>Purpose:</strong> Ensure gateway charges match bank deposits</p>
+<p><strong>Process:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">Every</span><span class="w"> </span><span class="n">morning</span><span class="p">:</span>
+<span class="w">  </span><span class="err">↓</span>
+<span class="mf">1.</span><span class="w"> </span><span class="n">Download</span><span class="w"> </span><span class="n">settlement</span><span class="w"> </span><span class="n">report</span><span class="w"> </span><span class="n">from</span><span class="w"> </span><span class="n">gateway</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="n">All</span><span class="w"> </span><span class="n">successful</span><span class="w"> </span><span class="n">charges</span><span class="w"> </span><span class="n">from</span><span class="w"> </span><span class="n">yesterday</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="n">Total</span><span class="p">:</span><span class="w"> </span><span class="o">$</span><span class="mi">10</span><span class="p">,</span><span class="mf">450.75</span>
+
+<span class="mf">2.</span><span class="w"> </span><span class="n">Download</span><span class="w"> </span><span class="n">bank</span><span class="w"> </span><span class="n">statement</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="n">Deposit</span><span class="p">:</span><span class="w"> </span><span class="o">$</span><span class="mi">10</span><span class="p">,</span><span class="mf">088.19</span><span class="w"> </span><span class="p">(</span><span class="n">after</span><span class="w"> </span><span class="n">fees</span><span class="p">)</span>
+
+<span class="mf">3.</span><span class="w"> </span><span class="n">Calculate</span><span class="w"> </span><span class="n">expected</span><span class="w"> </span><span class="n">deposit</span>
+<span class="w">   </span><span class="n">Gross</span><span class="p">:</span><span class="w">      </span><span class="o">$</span><span class="mi">10</span><span class="p">,</span><span class="mf">450.75</span>
+<span class="w">   </span><span class="n">Fees</span><span class="w"> </span><span class="p">(</span><span class="mi">3</span><span class="o">%</span><span class="p">):</span><span class="w">    </span><span class="o">-$</span><span class="mf">313.52</span>
+<span class="w">   </span><span class="n">Refunds</span><span class="p">:</span><span class="w">       </span><span class="o">-$</span><span class="mf">49.04</span>
+<span class="w">   </span><span class="n">Expected</span><span class="p">:</span><span class="w">   </span><span class="o">$</span><span class="mi">10</span><span class="p">,</span><span class="mf">088.19</span><span class="w"> </span><span class="err">✓</span><span class="w"> </span><span class="n">MATCHES</span>
+
+<span class="mf">4.</span><span class="w"> </span><span class="n">Match</span><span class="w"> </span><span class="n">individual</span><span class="w"> </span><span class="n">transactions</span>
+<span class="w">   </span><span class="n">Gateway</span><span class="w"> </span><span class="n">Transaction</span><span class="w"> </span><span class="n">ID</span><span class="w"> </span><span class="err">↔</span><span class="w"> </span><span class="n">Bank</span><span class="w"> </span><span class="n">Reference</span><span class="w"> </span><span class="n">Number</span>
+</code></pre></div>
+
+<p><strong>Discrepancies to watch for:</strong><br />
+- Chargebacks (customer disputed charge)<br />
+- Refunds processed but not recorded<br />
+- Failed settlements (account closed, invalid account)<br />
+- Gateway fees changed</p>
+<hr />
+<h3 id="chargeback-process">Chargeback Process</h3>
+<p><strong>What is it?</strong><br />
+Customer disputes a charge with their bank</p>
+<p><strong>Flow:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nx">Day</span><span class="w"> </span><span class="mi">0</span><span class="p">:</span><span class="w"> </span><span class="nx">Customer</span><span class="w"> </span><span class="nx">makes</span><span class="w"> </span><span class="nx">purchase</span><span class="w"> </span><span class="p">(</span><span class="err">$</span><span class="mi">100</span><span class="p">)</span>
+<span class="nx">Day</span><span class="w"> </span><span class="mi">30</span><span class="p">:</span><span class="w"> </span><span class="nx">Customer</span><span class="w"> </span><span class="nx">calls</span><span class="w"> </span><span class="nx">bank</span><span class="p">:</span><span class="w"> </span><span class="s">"I didn't authorize this"</span>
+<span class="nx">Day</span><span class="w"> </span><span class="mi">31</span><span class="p">:</span><span class="w"> </span><span class="nx">Bank</span><span class="w"> </span><span class="nx">initiates</span><span class="w"> </span><span class="nx">chargeback</span>
+<span class="w">  </span><span class="err">↓</span>
+<span class="nx">Bank</span><span class="w"> </span><span class="nx">debits</span><span class="w"> </span><span class="nx">merchant</span><span class="w"> </span><span class="nx">account</span><span class="w"> </span><span class="err">$</span><span class="mi">100</span>
+<span class="w">  </span><span class="err">↓</span>
+<span class="nx">Bank</span><span class="w"> </span><span class="nx">credits</span><span class="w"> </span><span class="nx">customer</span><span class="w"> </span><span class="nx">account</span><span class="w"> </span><span class="err">$</span><span class="mi">100</span>
+<span class="w">  </span><span class="err">↓</span>
+<span class="nx">Merchant</span><span class="w"> </span><span class="nx">receives</span><span class="w"> </span><span class="nx">chargeback</span><span class="w"> </span><span class="nx">notice</span><span class="w"> </span><span class="p">(</span><span class="nx">via</span><span class="w"> </span><span class="nx">gateway</span><span class="p">)</span>
+<span class="w">  </span><span class="err">↓</span>
+<span class="nx">Merchant</span><span class="w"> </span><span class="nx">has</span><span class="w"> </span><span class="mi">7</span><span class="o">-</span><span class="mi">10</span><span class="w"> </span><span class="nx">days</span><span class="w"> </span><span class="nx">to</span><span class="w"> </span><span class="nx">provide</span><span class="w"> </span><span class="nx">evidence</span><span class="p">:</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="nx">Proof</span><span class="w"> </span><span class="nx">of</span><span class="w"> </span><span class="nx">delivery</span><span class="w"> </span><span class="p">(</span><span class="nx">tracking</span><span class="w"> </span><span class="nx">number</span><span class="p">)</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="nx">Customer</span><span class="w"> </span><span class="nx">signature</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="nx">IP</span><span class="w"> </span><span class="nx">address</span><span class="w"> </span><span class="nx">matching</span><span class="w"> </span><span class="nx">billing</span><span class="w"> </span><span class="nx">address</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="nx">Customer</span><span class="w"> </span><span class="nx">communication</span><span class="w"> </span><span class="p">(</span><span class="nx">emails</span><span class="p">)</span>
+<span class="w">  </span><span class="err">↓</span>
+<span class="nx">Bank</span><span class="w"> </span><span class="nx">reviews</span><span class="w"> </span><span class="nx">evidence</span>
+<span class="w">  </span><span class="err">↓</span>
+<span class="nx">Outcome</span><span class="p">:</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="nx">Merchant</span><span class="w"> </span><span class="nx">wins</span><span class="p">:</span><span class="w"> </span><span class="err">$</span><span class="mi">100</span><span class="w"> </span><span class="k">returned</span><span class="w"> </span><span class="nx">to</span><span class="w"> </span><span class="nx">merchant</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="nx">Customer</span><span class="w"> </span><span class="nx">wins</span><span class="p">:</span><span class="w"> </span><span class="nx">Customer</span><span class="w"> </span><span class="nx">keeps</span><span class="w"> </span><span class="err">$</span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="nx">merchant</span><span class="w"> </span><span class="nx">loses</span>
+</code></pre></div>
+
+<p><strong>Chargeback reason codes:</strong><br />
+- <strong>Fraud:</strong> "I didn't make this purchase"<br />
+- <strong>Product not received:</strong> "Item never arrived"<br />
+- <strong>Product not as described:</strong> "Different from photo"<br />
+- <strong>Duplicate charge:</strong> "Charged twice"<br />
+- <strong>Canceled subscription:</strong> "I canceled but still charged"</p>
+<p><strong>Chargeback fees:</strong><br />
+- $15-$25 per chargeback (even if you win!)<br />
+- High chargeback rate (&gt; 1%) → gateway penalties or account termination</p>
+<p><strong>Prevention:</strong><br />
+- Require signature for high-value orders<br />
+- Use delivery confirmation (tracking)<br />
+- Clear product descriptions<br />
+- Responsive customer service (resolve before chargeback)<br />
+- 3D Secure (shifts liability to bank)</p>
+<hr />
+<h2 id="system-design-considerations">System Design Considerations</h2>
+<h3 id="database-schema">Database Schema</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Customers</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">customers</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="nb">BIGINT</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span>
+<span class="w">    </span><span class="n">email</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">255</span><span class="p">),</span>
+<span class="w">    </span><span class="n">name</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">255</span><span class="p">),</span>
+<span class="w">    </span><span class="n">created_at</span><span class="w"> </span><span class="k">TIMESTAMP</span>
+<span class="p">);</span>
+
+<span class="c1">-- Payment Methods (Tokenized)</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">payment_methods</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="nb">BIGINT</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span>
+<span class="w">    </span><span class="n">customer_id</span><span class="w"> </span><span class="nb">BIGINT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">gateway_token</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">255</span><span class="p">),</span><span class="w">  </span><span class="c1">-- tok_abc123 (NOT real card number!)</span>
+<span class="w">    </span><span class="k">type</span><span class="w"> </span><span class="n">ENUM</span><span class="p">(</span><span class="s1">'card'</span><span class="p">,</span><span class="w"> </span><span class="s1">'bank_account'</span><span class="p">),</span>
+<span class="w">    </span><span class="n">last4</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span>
+<span class="w">    </span><span class="n">brand</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">50</span><span class="p">),</span><span class="w">  </span><span class="c1">-- Visa, Mastercard, etc.</span>
+<span class="w">    </span><span class="n">exp_month</span><span class="w"> </span><span class="nb">INT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">exp_year</span><span class="w"> </span><span class="nb">INT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">is_default</span><span class="w"> </span><span class="nb">BOOLEAN</span><span class="p">,</span>
+<span class="w">    </span><span class="n">created_at</span><span class="w"> </span><span class="k">TIMESTAMP</span><span class="p">,</span>
+<span class="w">    </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_customer</span><span class="w"> </span><span class="p">(</span><span class="n">customer_id</span><span class="p">)</span>
+<span class="p">);</span>
+
+<span class="c1">-- Transactions</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">transactions</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="nb">BIGINT</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span>
+<span class="w">    </span><span class="n">customer_id</span><span class="w"> </span><span class="nb">BIGINT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">payment_method_id</span><span class="w"> </span><span class="nb">BIGINT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">invoice_id</span><span class="w"> </span><span class="nb">BIGINT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">amount</span><span class="w"> </span><span class="nb">DECIMAL</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span>
+<span class="w">    </span><span class="n">currency</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span>
+<span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="n">ENUM</span><span class="p">(</span><span class="s1">'pending'</span><span class="p">,</span><span class="w"> </span><span class="s1">'authorized'</span><span class="p">,</span><span class="w"> </span><span class="s1">'captured'</span><span class="p">,</span><span class="w"> </span><span class="s1">'failed'</span><span class="p">,</span><span class="w"> </span><span class="s1">'refunded'</span><span class="p">,</span><span class="w"> </span><span class="s1">'disputed'</span><span class="p">),</span>
+<span class="w">    </span><span class="n">gateway</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">50</span><span class="p">),</span><span class="w">  </span><span class="c1">-- stripe, authorize_net, etc.</span>
+<span class="w">    </span><span class="n">gateway_transaction_id</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">255</span><span class="p">),</span>
+<span class="w">    </span><span class="n">authorization_code</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">50</span><span class="p">),</span>
+<span class="w">    </span><span class="n">decline_code</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span>
+<span class="w">    </span><span class="n">decline_message</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">255</span><span class="p">),</span>
+<span class="w">    </span><span class="n">idempotency_key</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">255</span><span class="p">)</span><span class="w"> </span><span class="k">UNIQUE</span><span class="p">,</span>
+<span class="w">    </span><span class="n">created_at</span><span class="w"> </span><span class="k">TIMESTAMP</span><span class="p">,</span>
+<span class="w">    </span><span class="n">authorized_at</span><span class="w"> </span><span class="k">TIMESTAMP</span><span class="p">,</span>
+<span class="w">    </span><span class="n">captured_at</span><span class="w"> </span><span class="k">TIMESTAMP</span><span class="p">,</span>
+<span class="w">    </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_customer</span><span class="w"> </span><span class="p">(</span><span class="n">customer_id</span><span class="p">),</span>
+<span class="w">    </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_invoice</span><span class="w"> </span><span class="p">(</span><span class="n">invoice_id</span><span class="p">),</span>
+<span class="w">    </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_status</span><span class="w"> </span><span class="p">(</span><span class="n">status</span><span class="p">),</span>
+<span class="w">    </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_created</span><span class="w"> </span><span class="p">(</span><span class="n">created_at</span><span class="p">)</span>
+<span class="p">);</span>
+
+<span class="c1">-- Audit Log</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">payment_audit</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="nb">BIGINT</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span>
+<span class="w">    </span><span class="n">transaction_id</span><span class="w"> </span><span class="nb">BIGINT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">action</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">50</span><span class="p">),</span><span class="w">  </span><span class="c1">-- 'authorize', 'capture', 'refund', 'chargeback'</span>
+<span class="w">    </span><span class="n">request</span><span class="w"> </span><span class="n">JSON</span><span class="p">,</span>
+<span class="w">    </span><span class="n">response</span><span class="w"> </span><span class="n">JSON</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ip_address</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">45</span><span class="p">),</span>
+<span class="w">    </span><span class="n">user_agent</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">255</span><span class="p">),</span>
+<span class="w">    </span><span class="n">created_at</span><span class="w"> </span><span class="k">TIMESTAMP</span><span class="p">,</span>
+<span class="w">    </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_transaction</span><span class="w"> </span><span class="p">(</span><span class="n">transaction_id</span><span class="p">)</span>
+<span class="p">);</span>
+</code></pre></div>
+
+<hr />
+<h3 id="high-level-architecture">High-Level Architecture</h3>
+<div class="codehilite"><pre><span></span><code>┌─────────────────────────────────────────────────────────────┐
+│                     CUSTOMER                                 │
+│                  (Web / Mobile App)                          │
+└──────────────────────┬──────────────────────────────────────┘
+                       │
+                       │ HTTPS
+                       ↓
+┌──────────────────────────────────────────────────────────────┐
+│                   LOAD BALANCER                               │
+└──────────────────────┬──────────────────────────────────────┘
+                       │
+        ┌──────────────┼──────────────┐
+        ↓              ↓              ↓
+┌──────────────┐ ┌──────────────┐ ┌──────────────┐
+│  App Server  │ │  App Server  │ │  App Server  │
+│              │ │              │ │              │
+│ - Payment    │ │ - Payment    │ │ - Payment    │
+│   API        │ │   API        │ │   API        │
+│ - Validation │ │ - Validation │ │ - Validation │
+└──────┬───────┘ └──────┬───────┘ └──────┬───────┘
+       │                │                │
+       └────────────────┼────────────────┘
+                        │
+         ┌──────────────┼──────────────┐
+         ↓              ↓              ↓
+┌──────────────┐ ┌──────────────┐ ┌──────────────┐
+│   Redis      │ │  PostgreSQL  │ │  Message     │
+│   (Cache)    │ │  (Database)  │ │  Queue       │
+│              │ │              │ │  (RabbitMQ)  │
+│ - Tokens     │ │ - Customers  │ │              │
+│ - Idempotent │ │ - Txns       │ │ - Async jobs │
+│ - Rate limit │ │ - Audit      │ │ - Retries    │
+└──────────────┘ └──────────────┘ └──────┬───────┘
+                                         │
+                                         ↓
+                                  ┌──────────────┐
+                                  │   Workers    │
+                                  │              │
+                                  │ - Retry      │
+                                  │ - Settlement │
+                                  │ - Webhooks   │
+                                  └──────┬───────┘
+                                         │
+         ┌───────────────────────────────┼─────────────┐
+         ↓                               ↓             ↓
+┌──────────────────┐          ┌──────────────┐  ┌──────────────┐
+│ Payment Gateway  │          │   Fraud      │  │   Monitoring │
+│                  │          │   Service    │  │              │
+│ - Stripe         │          │              │  │ - Datadog    │
+│ - Authorize.Net  │          │ - Rules      │  │ - Splunk     │
+│ - Braintree      │          │ - ML Models  │  │ - Alerts     │
+└──────────────────┘          └──────────────┘  └──────────────┘
+</code></pre></div>
+
+<hr />
+<h3 id="scalability-considerations">Scalability Considerations</h3>
+<p><strong>1. Horizontal Scaling</strong><br />
+- Stateless app servers (scale to 100s of instances)<br />
+- Load balancer distributes traffic<br />
+- Session data in Redis (shared across servers)</p>
+<p><strong>2. Database</strong><br />
+- Read replicas for reporting/analytics<br />
+- Shard by customer_id (isolate high-volume merchants)<br />
+- Archive old transactions (&gt; 2 years) to S3</p>
+<p><strong>3. Caching</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Cache customer payment methods (1 hour TTL)</span>
+<span class="n">cache_key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"customer:</span><span class="si">{</span><span class="n">customer_id</span><span class="si">}</span><span class="s2">:payment_methods"</span>
+<span class="n">payment_methods</span> <span class="o">=</span> <span class="n">redis</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">cache_key</span><span class="p">)</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">payment_methods</span><span class="p">:</span>
+    <span class="n">payment_methods</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+    <span class="n">redis</span><span class="o">.</span><span class="n">setex</span><span class="p">(</span><span class="n">cache_key</span><span class="p">,</span> <span class="mi">3600</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">payment_methods</span><span class="p">))</span>
+</code></pre></div>
+
+<p><strong>4. Async Processing</strong></p>
+<div class="codehilite"><pre><span></span><code>Synchronous (blocking):
+  Customer → API → Gateway (2-3 seconds) → Response
+
+Asynchronous (non-blocking):
+  Customer → API → Queue → Immediate "Processing..." response
+                      ↓
+                   Worker → Gateway → Update DB → Webhook to customer
+</code></pre></div>
+
+<p><strong>5. Rate Limiting</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Prevent abuse: 10 payment attempts per customer per hour</span>
+<span class="n">key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"rate_limit:payment:</span><span class="si">{</span><span class="n">customer_id</span><span class="si">}</span><span class="s2">"</span>
+<span class="n">count</span> <span class="o">=</span> <span class="n">redis</span><span class="o">.</span><span class="n">incr</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">count</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="n">redis</span><span class="o">.</span><span class="n">expire</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="mi">3600</span><span class="p">)</span>  <span class="c1"># 1 hour</span>
+<span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="n">TooManyAttemptsError</span><span class="p">()</span>
+</code></pre></div>
+
+<hr />
+<h2 id="real-world-example-enterprise-saas-company-mpay">Real-World Example (Enterprise SaaS Company MPay)</h2>
+<p><strong>Your payment processing context:</strong></p>
+<h3 id="architecture">Architecture</h3>
+<div class="codehilite"><pre><span></span><code>Invoice Generated in EIC
+  ↓
+Customer receives email with "Pay Now" link
+  ↓
+Clicks link → Redirects to MPay (Managed Pay)
+  ↓
+MPay presents payment options:
+  - Credit Card (via Stripe/Authorize.Net)
+  - ACH / eCheck (via Nacha network)
+  - Saved payment methods (tokenized)
+  ↓
+Customer enters payment details
+  ↓
+MPay → Payment Gateway → Card Network → Issuing Bank
+  ↓
+Authorization response
+  ↓
+MPay updates invoice status in EIC
+  ↓
+Funds settled to Enterprise SaaS Company merchant account (2-3 days)
+  ↓
+Enterprise SaaS Company reconciles and remits to actual merchant
+</code></pre></div>
+
+<h3 id="key-features">Key Features</h3>
+<p><strong>1. Tokenization</strong><br />
+- First payment: Store card as token<br />
+- Future payments: Use stored token (no re-entering)<br />
+- Reduces PCI scope</p>
+<p><strong>2. AutoPay</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Check for autopay enrollment</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">fsiaccountautopay</span><span class="w"> </span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">AccountNumber</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="n">Active</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+
+<span class="c1">-- Automatic payment on due date</span>
+<span class="c1">-- Worker checks invoices due today</span>
+<span class="c1">-- Processes payments with stored tokens</span>
+<span class="c1">-- Retries on failure (smart retry logic)</span>
+</code></pre></div>
+
+<p><strong>3. Payment Retry Logic</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># From your actual work</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">retry_payment</span><span class="p">(</span><span class="n">invoice_id</span><span class="p">):</span>
+    <span class="n">attempt</span> <span class="o">=</span> <span class="n">get_retry_attempt</span><span class="p">(</span><span class="n">invoice_id</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">attempt</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="c1"># Immediate retry</span>
+        <span class="n">process_payment</span><span class="p">(</span><span class="n">invoice_id</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">attempt</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="c1"># Wait 1 day (payday might have occurred)</span>
+        <span class="n">schedule_payment</span><span class="p">(</span><span class="n">invoice_id</span><span class="p">,</span> <span class="n">days</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">attempt</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="c1"># Wait 5 more days</span>
+        <span class="n">schedule_payment</span><span class="p">(</span><span class="n">invoice_id</span><span class="p">,</span> <span class="n">days</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Give up, notify customer</span>
+        <span class="n">send_payment_failed_email</span><span class="p">(</span><span class="n">invoice_id</span><span class="p">)</span>
+</code></pre></div>
+
+<p><strong>4. Multi-Gateway Support</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Route based on customer preference or gateway availability</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_gateway</span><span class="p">(</span><span class="n">customer_id</span><span class="p">):</span>
+    <span class="n">customer</span> <span class="o">=</span> <span class="n">get_customer</span><span class="p">(</span><span class="n">customer_id</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">customer</span><span class="o">.</span><span class="n">preferred_gateway</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">customer</span><span class="o">.</span><span class="n">preferred_gateway</span>
+    <span class="k">elif</span> <span class="n">customer</span><span class="o">.</span><span class="n">monthly_volume</span> <span class="o">&gt;</span> <span class="mi">100000</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">'authorize_net'</span>  <span class="c1"># Better rates for high volume</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">'stripe'</span>  <span class="c1"># Default</span>
+</code></pre></div>
+
+<p><strong>5. Reconciliation</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Daily settlement report</span>
+<span class="k">SELECT</span><span class="w"> </span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">transaction_count</span><span class="p">,</span>
+<span class="w">    </span><span class="k">SUM</span><span class="p">(</span><span class="n">amount</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">gross_amount</span><span class="p">,</span>
+<span class="w">    </span><span class="k">SUM</span><span class="p">(</span><span class="n">gateway_fee</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">total_fees</span><span class="p">,</span>
+<span class="w">    </span><span class="k">SUM</span><span class="p">(</span><span class="n">amount</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">gateway_fee</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">net_amount</span><span class="p">,</span>
+<span class="w">    </span><span class="n">gateway</span><span class="p">,</span>
+<span class="w">    </span><span class="nb">DATE</span><span class="p">(</span><span class="n">settled_at</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">settlement_date</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">transactions</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'captured'</span>
+<span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="n">settled_at</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">CURDATE</span><span class="p">()</span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">gateway</span><span class="p">,</span><span class="w"> </span><span class="nb">DATE</span><span class="p">(</span><span class="n">settled_at</span><span class="p">);</span>
+</code></pre></div>
+
+<hr />
+<h2 id="interview-questions">Interview Questions</h2>
+<h3 id="q1-design-a-payment-processing-system-for-an-e-commerce-site-processing-10m-transactionsday">Q1: Design a payment processing system for an e-commerce site processing 10M transactions/day.</h3>
+<p><strong>Answer:</strong></p>
+<div class="codehilite"><pre><span></span><code>Requirements:
+<span class="k">-</span> 10M txns/day = ~116 txns/second average, ~350 peak
+<span class="k">-</span> Subsecond latency for auth
+<span class="k">-</span> 99.99% uptime
+<span class="k">-</span> PCI-compliant
+<span class="k">-</span> Support retries and idempotency
+
+Architecture:
+[Draw the high-level architecture diagram above]
+
+Key components:
+1. Load balancer (AWS ELB)
+2. Stateless app servers (10-50 instances, autoscale)
+3. Redis cluster (idempotency cache, rate limiting, session)
+4. PostgreSQL (customer data, transactions) - master + read replicas
+5. Message queue (RabbitMQ) for async retries
+6. Payment gateway integration (Stripe or Authorize.Net)
+
+Database sharding:
+<span class="k">-</span> Shard by customer_id (isolate high-volume merchants)
+<span class="k">-</span> 100 shards, 100K customers per shard
+
+Caching:
+<span class="k">-</span> Customer payment methods (1 hour TTL)
+<span class="k">-</span> Fraud rules (10 min TTL)
+
+Security:
+<span class="k">-</span> Never store real card numbers (use tokens)
+<span class="k">-</span> SSL/TLS everywhere
+<span class="k">-</span> PCI-DSS Level 1 compliance
+<span class="k">-</span> 3D Secure for high-risk transactions
+</code></pre></div>
+
+<hr />
+<h3 id="q2-how-do-you-handle-payment-retries-without-double-charging">Q2: How do you handle payment retries without double-charging?</h3>
+<p><strong>Answer:</strong></p>
+<div class="codehilite"><pre><span></span><code>Idempotency keys:
+
+1. Generate unique key per payment attempt:
+   key = hash(invoice_id + customer_id + timestamp)
+
+2. Before processing, check Redis cache:
+   cached_result = redis.get(f"payment:{key}")
+   if cached_result:
+       return cached_result  # Don't process again
+
+3. Process payment with gateway:
+   result = gateway.charge(amount, token, idempotency_key=key)
+
+4. Cache result for 24 hours:
+   redis.setex(f"payment:{key}", 86400, result)
+
+5. Return result
+
+If network times out and customer retries:
+<span class="k">-</span> Same key → Redis returns cached result
+<span class="k">-</span> No double charge
+
+Gateway-level idempotency:
+<span class="k">-</span> Most gateways also support idempotency keys
+<span class="k">-</span> Send same key to gateway on retry
+<span class="k">-</span> Gateway returns same response (doesn't process twice)
+</code></pre></div>
+
+<hr />
+<h3 id="q3-how-do-you-detect-and-prevent-fraud">Q3: How do you detect and prevent fraud?</h3>
+<p><strong>Answer:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nx">Multiple</span><span class="w"> </span><span class="nx">layers</span><span class="p">:</span>
+
+<span class="mi">1</span><span class="p">.</span><span class="w"> </span><span class="nx">AVS</span><span class="w"> </span><span class="p">(</span><span class="nx">Address</span><span class="w"> </span><span class="nx">Verification</span><span class="p">):</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="nx">Match</span><span class="w"> </span><span class="nx">billing</span><span class="w"> </span><span class="nx">address</span><span class="w"> </span><span class="nx">to</span><span class="w"> </span><span class="nx">bank</span><span class="w"> </span><span class="nx">records</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="nx">Decline</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="nx">no</span><span class="w"> </span><span class="k">match</span>
+
+<span class="mi">2</span><span class="p">.</span><span class="w"> </span><span class="nx">CVV</span><span class="w"> </span><span class="nx">Check</span><span class="p">:</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="nx">Require</span><span class="w"> </span><span class="nx">CVV</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="nx">card</span><span class="o">-</span><span class="k">not</span><span class="o">-</span><span class="nx">present</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="nx">Issuing</span><span class="w"> </span><span class="nx">bank</span><span class="w"> </span><span class="nx">validates</span>
+
+<span class="mi">3</span><span class="p">.</span><span class="w"> </span><span class="mi">3</span><span class="nx">D</span><span class="w"> </span><span class="nx">Secure</span><span class="p">:</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="nx">Redirect</span><span class="w"> </span><span class="nx">to</span><span class="w"> </span><span class="nx">bank</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="nx">SMS</span><span class="o">/</span><span class="nx">biometric</span><span class="w"> </span><span class="nx">auth</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="nx">Required</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="nx">high</span><span class="o">-</span><span class="nx">value</span><span class="w"> </span><span class="k">or</span><span class="w"> </span><span class="nx">high</span><span class="o">-</span><span class="nx">risk</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="nx">Shifts</span><span class="w"> </span><span class="nx">liability</span><span class="w"> </span><span class="nx">to</span><span class="w"> </span><span class="nx">bank</span>
+
+<span class="mi">4</span><span class="p">.</span><span class="w"> </span><span class="nx">Velocity</span><span class="w"> </span><span class="nx">Checks</span><span class="p">:</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="nx">Same</span><span class="w"> </span><span class="nx">card</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="o">+</span><span class="w"> </span><span class="nx">attempts</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="nx">min</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="nx">DECLINE</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="nx">Same</span><span class="w"> </span><span class="nx">IP</span><span class="p">,</span><span class="w"> </span><span class="nx">different</span><span class="w"> </span><span class="nx">cards</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="nx">FLAG</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="nx">New</span><span class="w"> </span><span class="nx">customer</span><span class="p">,</span><span class="w"> </span><span class="nx">high</span><span class="o">-</span><span class="nx">value</span><span class="w"> </span><span class="nx">purchase</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="nx">REVIEW</span>
+
+<span class="mi">5</span><span class="p">.</span><span class="w"> </span><span class="nx">Geolocation</span><span class="p">:</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="nx">IP</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="nx">Country</span><span class="w"> </span><span class="nx">A</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="nx">Billing</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="nx">Country</span><span class="w"> </span><span class="nx">B</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="nx">Shipping</span><span class="w"> </span><span class="nx">to</span><span class="w"> </span><span class="nx">Country</span><span class="w"> </span><span class="nx">C</span>
+<span class="w">   </span><span class="err">→</span><span class="w"> </span><span class="nx">High</span><span class="w"> </span><span class="nx">fraud</span><span class="w"> </span><span class="nx">score</span>
+
+<span class="mi">6</span><span class="p">.</span><span class="w"> </span><span class="nx">Device</span><span class="w"> </span><span class="nx">Fingerprinting</span><span class="p">:</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="nx">Browser</span><span class="p">,</span><span class="w"> </span><span class="nx">screen</span><span class="p">,</span><span class="w"> </span><span class="nx">timezone</span><span class="p">,</span><span class="w"> </span><span class="nx">fonts</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="nx">Creates</span><span class="w"> </span><span class="nx">unique</span><span class="w"> </span><span class="nx">device</span><span class="w"> </span><span class="nx">ID</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="nx">Recognize</span><span class="w"> </span><span class="nx">returning</span><span class="w"> </span><span class="nx">customers</span><span class="w"> </span><span class="p">(</span><span class="nx">good</span><span class="p">)</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="nx">Flag</span><span class="w"> </span><span class="nx">suspicious</span><span class="w"> </span><span class="nx">devices</span><span class="w"> </span><span class="p">(</span><span class="nx">bad</span><span class="p">)</span>
+
+<span class="mi">7</span><span class="p">.</span><span class="w"> </span><span class="nx">Machine</span><span class="w"> </span><span class="nx">Learning</span><span class="p">:</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="nx">Train</span><span class="w"> </span><span class="nx">on</span><span class="w"> </span><span class="nx">historical</span><span class="w"> </span><span class="nx">fraud</span><span class="w"> </span><span class="p">(</span><span class="nx">labeled</span><span class="w"> </span><span class="nx">data</span><span class="p">)</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="nx">Features</span><span class="p">:</span><span class="w"> </span><span class="nx">amount</span><span class="p">,</span><span class="w"> </span><span class="nx">time</span><span class="p">,</span><span class="w"> </span><span class="nx">customer</span><span class="w"> </span><span class="nx">age</span><span class="p">,</span><span class="w"> </span><span class="nx">product</span><span class="p">,</span><span class="w"> </span><span class="nx">shipping</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="nx">Score</span><span class="w"> </span><span class="mi">0</span><span class="o">-</span><span class="mi">100</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="mi">0</span><span class="o">-</span><span class="mi">30</span><span class="p">:</span><span class="w"> </span><span class="nx">Auto</span><span class="o">-</span><span class="nx">approve</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="mi">31</span><span class="o">-</span><span class="mi">70</span><span class="p">:</span><span class="w"> </span><span class="nx">Manual</span><span class="w"> </span><span class="nx">review</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="mi">71</span><span class="o">-</span><span class="mi">100</span><span class="p">:</span><span class="w"> </span><span class="nx">Auto</span><span class="o">-</span><span class="nx">decline</span>
+
+<span class="mi">8</span><span class="p">.</span><span class="w"> </span><span class="nx">Manual</span><span class="w"> </span><span class="nx">Review</span><span class="w"> </span><span class="nx">Queue</span><span class="p">:</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="nx">Human</span><span class="w"> </span><span class="nx">reviews</span><span class="w"> </span><span class="nx">flagged</span><span class="w"> </span><span class="nx">transactions</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="nx">Checks</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="nx">patterns</span><span class="p">:</span><span class="w"> </span><span class="nx">fake</span><span class="w"> </span><span class="nx">addresses</span><span class="p">,</span><span class="w"> </span><span class="nx">burner</span><span class="w"> </span><span class="nx">phones</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="nx">Approve</span><span class="w"> </span><span class="k">or</span><span class="w"> </span><span class="nx">decline</span>
+</code></pre></div>
+
+<hr />
+<h3 id="q4-what-happens-if-the-payment-gateway-goes-down">Q4: What happens if the payment gateway goes down?</h3>
+<p><strong>Answer:</strong></p>
+<div class="codehilite"><pre><span></span><code>Multiple strategies:
+
+1. Multi-Gateway Failover:
+   Primary: Stripe
+   Fallback: Authorize.Net
+
+   try:
+       result = stripe.charge(...)
+   except GatewayDownError:
+       result = authorize_net.charge(...)
+
+2. Circuit Breaker Pattern:
+   <span class="k">-</span> After 5 consecutive failures, open circuit
+   <span class="k">-</span> Don't send more requests (fail fast)
+   <span class="k">-</span> Retry after 60 seconds (half-open)
+   <span class="k">-</span> If success, close circuit (resume normal)
+
+3. Queue for Retry:
+   <span class="k">-</span> If all gateways down, queue payment
+   <span class="k">-</span> Worker retries every 5 minutes
+   <span class="k">-</span> Customer sees "Payment processing, you'll receive confirmation"
+
+4. Monitoring &amp; Alerts:
+   <span class="k">-</span> Gateway response time &gt; 5 seconds → Alert
+   <span class="k">-</span> Error rate &gt; 1% → Page on-call
+   <span class="k">-</span> Switch to backup gateway automatically
+
+5. Status Page:
+   <span class="k">-</span> If extended outage, show banner:
+     "Payments temporarily unavailable. Your order is saved."
+   <span class="k">-</span> Prevent customer frustration
+</code></pre></div>
+
+<hr />
+<h3 id="q5-how-do-you-handle-chargebacks">Q5: How do you handle chargebacks?</h3>
+<p><strong>Answer:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nl">Process:</span>
+<span class="err">1</span><span class="nf">.</span><span class="w"> </span><span class="nv">Receive</span><span class="w"> </span><span class="nv">chargeback</span><span class="w"> </span><span class="nv">notice</span><span class="w"> </span><span class="nv">from</span><span class="w"> </span><span class="nv">gateway</span><span class="w"> </span><span class="p">(</span><span class="nv">webhook</span><span class="p">)</span>
+<span class="err">2</span><span class="nf">.</span><span class="w"> </span><span class="nv">Debit</span><span class="w"> </span><span class="nv">merchant</span><span class="w"> </span><span class="nv">account</span><span class="w"> </span><span class="nv">immediately</span><span class="w"> </span><span class="p">(</span><span class="nv">reversible</span><span class="w"> </span><span class="nv">if</span><span class="w"> </span><span class="nv">we</span><span class="w"> </span><span class="nv">win</span><span class="p">)</span>
+<span class="err">3</span><span class="nf">.</span><span class="w"> </span><span class="nv">Store</span><span class="w"> </span><span class="nv">in</span><span class="w"> </span><span class="nv">database</span><span class="p">:</span>
+<span class="w">   </span><span class="err">-</span><span class="w"> </span><span class="nf">Transaction</span><span class="w"> </span><span class="nv">ID</span>
+<span class="w">   </span><span class="err">-</span><span class="w"> </span><span class="nf">Chargeback</span><span class="w"> </span><span class="nv">reason</span><span class="w"> </span><span class="nv">code</span>
+<span class="w">   </span><span class="err">-</span><span class="w"> </span><span class="nf">Evidence</span><span class="w"> </span><span class="nv">deadline</span><span class="w"> </span><span class="p">(</span><span class="mi">7</span><span class="o">-</span><span class="mi">10</span><span class="w"> </span><span class="nv">days</span><span class="p">)</span>
+
+<span class="err">4</span><span class="nf">.</span><span class="w"> </span><span class="nv">Gather</span><span class="w"> </span><span class="nv">evidence</span><span class="w"> </span><span class="nv">automatically</span><span class="p">:</span>
+<span class="w">   </span><span class="err">-</span><span class="w"> </span><span class="nf">Delivery</span><span class="w"> </span><span class="nv">confirmation</span><span class="w"> </span><span class="p">(</span><span class="nv">tracking</span><span class="w"> </span><span class="nv">number</span><span class="p">)</span>
+<span class="w">   </span><span class="err">-</span><span class="w"> </span><span class="nf">Customer</span><span class="w"> </span><span class="nv">communication</span><span class="w"> </span><span class="p">(</span><span class="nv">emails</span><span class="p">,</span><span class="w"> </span><span class="nv">support</span><span class="w"> </span><span class="nv">tickets</span><span class="p">)</span>
+<span class="w">   </span><span class="err">-</span><span class="w"> </span><span class="nf">IP</span><span class="w"> </span><span class="nv">address</span><span class="w"> </span><span class="p">(</span><span class="nv">from</span><span class="w"> </span><span class="nv">transaction</span><span class="w"> </span><span class="nv">log</span><span class="p">)</span>
+<span class="w">   </span><span class="err">-</span><span class="w"> </span><span class="nf">Device</span><span class="w"> </span><span class="nv">fingerprint</span>
+<span class="w">   </span><span class="err">-</span><span class="w"> </span><span class="err">3</span><span class="nf">D</span><span class="w"> </span><span class="nv">Secure</span><span class="w"> </span><span class="nv">authentication</span><span class="w"> </span><span class="p">(</span><span class="nv">if</span><span class="w"> </span><span class="nv">used</span><span class="p">)</span>
+
+<span class="err">5</span><span class="nf">.</span><span class="w"> </span><span class="nv">Submit</span><span class="w"> </span><span class="nv">evidence</span><span class="w"> </span><span class="nv">to</span><span class="w"> </span><span class="nv">gateway</span><span class="w"> </span><span class="nv">portal</span>
+<span class="err">6</span><span class="nf">.</span><span class="w"> </span><span class="nv">Await</span><span class="w"> </span><span class="nv">bank</span><span class="w"> </span><span class="nv">decision</span><span class="w"> </span><span class="p">(</span><span class="mi">30</span><span class="o">-</span><span class="mi">90</span><span class="w"> </span><span class="nv">days</span><span class="p">)</span>
+<span class="err">7</span><span class="nf">.</span><span class="w"> </span><span class="nv">Outcome</span><span class="p">:</span>
+<span class="w">   </span><span class="err">-</span><span class="w"> </span><span class="nl">WIN:</span><span class="w"> </span><span class="nf">Funds</span><span class="w"> </span><span class="nv">returned</span><span class="w"> </span><span class="nv">to</span><span class="w"> </span><span class="nv">merchant</span>
+<span class="w">   </span><span class="err">-</span><span class="w"> </span><span class="nl">LOSE:</span><span class="w"> </span><span class="nf">Customer</span><span class="w"> </span><span class="nv">keeps</span><span class="w"> </span><span class="nv">money</span>
+
+<span class="nl">Prevention:</span>
+<span class="err">-</span><span class="w"> </span><span class="nf">Clear</span><span class="w"> </span><span class="nv">product</span><span class="w"> </span><span class="nv">descriptions</span>
+<span class="err">-</span><span class="w"> </span><span class="nf">Require</span><span class="w"> </span><span class="nv">signature</span><span class="w"> </span><span class="nv">for</span><span class="w"> </span><span class="nv">high</span><span class="o">-</span><span class="nv">value</span>
+<span class="err">-</span><span class="w"> </span><span class="nf">Responsive</span><span class="w"> </span><span class="nv">customer</span><span class="w"> </span><span class="nv">service</span><span class="w"> </span><span class="p">(</span><span class="nv">resolve</span><span class="w"> </span><span class="nv">before</span><span class="w"> </span><span class="nv">chargeback</span><span class="p">)</span>
+<span class="err">-</span><span class="w"> </span><span class="err">3</span><span class="nf">D</span><span class="w"> </span><span class="nv">Secure</span><span class="w"> </span><span class="p">(</span><span class="nv">shifts</span><span class="w"> </span><span class="nv">liability</span><span class="w"> </span><span class="nv">to</span><span class="w"> </span><span class="nv">bank</span><span class="p">)</span>
+<span class="err">-</span><span class="w"> </span><span class="nf">Delivery</span><span class="w"> </span><span class="nv">confirmation</span>
+<span class="err">-</span><span class="w"> </span><span class="nf">Clear</span><span class="w"> </span><span class="nv">billing</span><span class="w"> </span><span class="nv">descriptor</span><span class="w"> </span><span class="p">(</span><span class="nv">customer</span><span class="w"> </span><span class="nv">recognizes</span><span class="w"> </span><span class="nv">charge</span><span class="p">)</span>
+
+<span class="nf">Chargeback</span><span class="w"> </span><span class="nv">monitoring</span><span class="p">:</span>
+<span class="err">-</span><span class="w"> </span><span class="nf">Track</span><span class="w"> </span><span class="nv">rate</span><span class="p">:</span><span class="w"> </span><span class="nv">chargebacks</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nv">total</span><span class="w"> </span><span class="nv">transactions</span>
+<span class="err">-</span><span class="w"> </span><span class="nf">If</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="o">%</span><span class="p">:</span><span class="w"> </span><span class="nv">Gateway</span><span class="w"> </span><span class="nv">penalties</span><span class="w"> </span><span class="nv">or</span><span class="w"> </span><span class="nv">account</span><span class="w"> </span><span class="nv">termination</span>
+<span class="err">-</span><span class="w"> </span><span class="nf">Implement</span><span class="w"> </span><span class="ow">strict</span><span class="nv">er</span><span class="w"> </span><span class="nv">fraud</span><span class="w"> </span><span class="nv">rules</span><span class="w"> </span><span class="nv">to</span><span class="w"> </span><span class="nv">reduce</span>
+</code></pre></div>
+
+<hr />
+<h2 id="summary-cheat-sheet">Summary Cheat Sheet</h2>
+<p><strong>Payment Flow (10 seconds):</strong></p>
+<div class="codehilite"><pre><span></span><code>Customer → Merchant → Gateway → Processor → Card Network → Issuing Bank
+         ← Response ← Response ← Response ← Response ← Approve/Decline
+</code></pre></div>
+
+<p><strong>Key Players:</strong><br />
+1. Customer (cardholder)<br />
+2. Merchant (your business)<br />
+3. Payment Gateway (Stripe, Authorize.Net)<br />
+4. Payment Processor (First Data, Worldpay)<br />
+5. Card Network (Visa, Mastercard)<br />
+6. Issuing Bank (customer's bank)<br />
+7. Acquiring Bank (merchant's bank)</p>
+<p><strong>3 Phases:</strong><br />
+1. <strong>Authorization:</strong> Real-time (2-3 sec), hold funds<br />
+2. <strong>Capture:</strong> 1-7 days later, mark for settlement<br />
+3. <strong>Settlement:</strong> 1-3 days after capture, money moves</p>
+<p><strong>Security:</strong><br />
+- <strong>PCI-DSS:</strong> Don't store real card numbers<br />
+- <strong>Tokenization:</strong> Store tokens instead<br />
+- <strong>3D Secure:</strong> Additional auth (like 2FA)<br />
+- <strong>Fraud detection:</strong> AVS, CVV, velocity, ML</p>
+<p><strong>Error Handling:</strong><br />
+- <strong>Idempotency:</strong> Prevent double charges<br />
+- <strong>Retries:</strong> Only for network errors, not declines<br />
+- <strong>Chargebacks:</strong> Customer disputes, gather evidence</p>
+<hr />
+<p>Good luck with interviews and understanding payment systems! 🚀</p>
+        </div>
+    </div>
+
+    <script>
+        // Progress Tracker JavaScript
+        const STORAGE_KEY = 'course_progress_payment_gateway_end_to_end_flow';
+
+        // Extract all H2 and H3 headings from content
+        function extractSections() {
+            const content = document.querySelector('.content');
+            const headings = content.querySelectorAll('h2, h3');
+            const sections = [];
+
+            headings.forEach((heading, index) => {
+                const level = heading.tagName === 'H2' ? 2 : 3;
+                const text = heading.textContent.trim();
+                const id = `section-${index}`;
+
+                // Add ID to heading for linking
+                heading.id = id;
+
+                sections.push({
+                    id: id,
+                    text: text,
+                    level: level
+                });
+            });
+
+            return sections;
+        }
+
+        // Load saved progress from localStorage
+        function loadProgress() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            return saved ? JSON.parse(saved) : {};
+        }
+
+        // Save progress to localStorage
+        function saveProgress(progress) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+        }
+
+        // Calculate progress percentage
+        function calculateProgress() {
+            const checkboxes = document.querySelectorAll('.progress-checkbox');
+            const total = checkboxes.length;
+            if (total === 0) return 0;
+
+            const completed = Array.from(checkboxes).filter(cb => cb.checked).length;
+            return Math.round((completed / total) * 100);
+        }
+
+        // Update progress display
+        function updateProgressDisplay() {
+            const percentage = calculateProgress();
+            document.getElementById('progress-pct').textContent = percentage + '%';
+            document.getElementById('progress-bar').style.width = percentage + '%';
+
+            // Update completed class on items
+            document.querySelectorAll('.progress-item').forEach(item => {
+                const checkbox = item.querySelector('.progress-checkbox');
+                if (checkbox.checked) {
+                    item.classList.add('completed');
+                } else {
+                    item.classList.remove('completed');
+                }
+            });
+        }
+
+        // Toggle checkbox
+        function toggleCheckbox(sectionId) {
+            const checkbox = document.getElementById('cb-' + sectionId);
+            const progress = loadProgress();
+
+            progress[sectionId] = checkbox.checked;
+            saveProgress(progress);
+            updateProgressDisplay();
+        }
+
+        // Reset all progress
+        function resetProgress() {
+            if (confirm('Reset all progress for this page?')) {
+                localStorage.removeItem(STORAGE_KEY);
+                document.querySelectorAll('.progress-checkbox').forEach(cb => {
+                    cb.checked = false;
+                });
+                updateProgressDisplay();
+            }
+        }
+
+        // Toggle progress list visibility
+        function toggleProgressList() {
+            const list = document.getElementById('progress-items');
+            const btn = document.querySelector('.toggle-progress');
+
+            if (list.classList.contains('collapsed')) {
+                list.classList.remove('collapsed');
+                btn.textContent = '▼ Hide';
+            } else {
+                list.classList.add('collapsed');
+                btn.textContent = '▶ Show';
+            }
+        }
+
+        // Initialize progress tracker
+        function initProgressTracker() {
+            const sections = extractSections();
+            const progress = loadProgress();
+            const container = document.getElementById('progress-items');
+
+            if (sections.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No sections found</p>';
+                return;
+            }
+
+            sections.forEach(section => {
+                const item = document.createElement('div');
+                item.className = 'progress-item';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'progress-checkbox';
+                checkbox.id = 'cb-' + section.id;
+                checkbox.checked = progress[section.id] || false;
+                checkbox.onchange = () => toggleCheckbox(section.id);
+
+                const label = document.createElement('label');
+                label.className = 'progress-label';
+                label.htmlFor = 'cb-' + section.id;
+                label.textContent = section.text;
+                label.style.paddingLeft = section.level === 3 ? '20px' : '0';
+                label.onclick = () => {
+                    document.getElementById(section.id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+                };
+
+                item.appendChild(checkbox);
+                item.appendChild(label);
+                container.appendChild(item);
+            });
+
+            updateProgressDisplay();
+        }
+
+        // Run on page load
+        document.addEventListener('DOMContentLoaded', initProgressTracker);
+    </script>
+</body>
+</html>

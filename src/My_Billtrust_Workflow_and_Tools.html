@@ -1,0 +1,1402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My_Billtrust_Workflow_and_Tools</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 60px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .metadata {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 16px 24px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #666;
+            border-left: 4px solid #667eea;
+        }
+
+        /* PROGRESS TRACKER STYLES */
+        .progress-tracker {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .progress-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-stats {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .progress-percentage {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #764ba2;
+        }
+
+        .progress-bar-container {
+            height: 12px;
+            background: #e9ecef;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+            border-radius: 20px;
+        }
+
+        .reset-btn {
+            padding: 8px 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+
+        .reset-btn:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+        }
+
+        .progress-items {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .progress-items::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .progress-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .progress-item:hover {
+            background: #f8f9fa;
+            transform: translateX(5px);
+        }
+
+        .progress-item.completed {
+            opacity: 0.7;
+        }
+
+        .progress-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .progress-label {
+            cursor: pointer;
+            font-size: 0.95em;
+            line-height: 1.5;
+            color: #495057;
+            flex-grow: 1;
+        }
+
+        .progress-item.completed .progress-label {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .toggle-progress {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .toggle-progress:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .progress-items.collapsed {
+            display: none;
+        }
+
+        /* CONTENT STYLES */
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 4px solid #667eea;
+            font-weight: 700;
+        }
+
+        h2 {
+            color: #764ba2;
+            font-size: 2em;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        h3 {
+            color: #495057;
+            font-size: 1.5em;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        h4 {
+            color: #666;
+            font-size: 1.25em;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        ul, ol {
+            margin: 20px 0;
+            padding-left: 40px;
+        }
+
+        li {
+            margin-bottom: 12px;
+            line-height: 1.7;
+        }
+
+        code {
+            background: #f4f5f7;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #c7254e;
+            border: 1px solid #e1e4e8;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 24px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 25px 0;
+            border: 1px solid #444;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            border: none;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        blockquote {
+            border-left: 5px solid #667eea;
+            padding: 15px 25px;
+            margin: 25px 0;
+            background: #f8f9fa;
+            border-radius: 0 8px 8px 0;
+            color: #495057;
+            font-style: italic;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 30px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 14px 18px;
+            text-align: left;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tr:hover {
+            background: #e9ecef;
+            transition: background 0.2s;
+        }
+
+        a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px solid transparent;
+            transition: border-bottom 0.2s;
+        }
+
+        a:hover {
+            border-bottom: 1px solid #667eea;
+        }
+
+        hr {
+            border: none;
+            border-top: 2px solid #e9ecef;
+            margin: 40px 0;
+        }
+
+        strong {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        em {
+            color: #495057;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 25px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.6em;
+            }
+
+            .progress-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .progress-stats {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../navigation.html" class="back-link">&larr; Back to Navigation</a>
+
+        <div class="metadata">
+            <strong>Source:</strong> dev/My_Billtrust_Workflow_and_Tools.md &nbsp;|&nbsp; <strong>Updated:</strong> 2026-11-18 19:44:56
+        </div>
+
+        <!-- PROGRESS TRACKER -->
+        <div class="progress-tracker">
+            <div class="progress-header">
+                <div class="progress-title">
+                    <span>📚</span>
+                    <span>Your Progress</span>
+                </div>
+                <div class="progress-stats">
+                    <span class="progress-percentage" id="progress-pct">0%</span>
+                    <button class="reset-btn" onclick="resetProgress()">Reset</button>
+                    <button class="toggle-progress" onclick="toggleProgressList()">▼ Hide</button>
+                </div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progress-bar" style="width: 0%"></div>
+            </div>
+            <div class="progress-items" id="progress-items">
+                <!-- Checkboxes will be generated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="content">
+<h1 id="my-billtrust-workflow-tools">🛠️ My Billtrust Workflow &amp; Tools</h1>
+<p><strong>Purpose:</strong> Document my personal workflow, tools, and processes at Billtrust for interview prep and knowledge transfer.</p>
+<hr />
+<h2 id="module-overview">📋 Module Overview</h2>
+<p>This module captures <strong>how I actually work</strong> at Billtrust — not generic best practices, but the specific tools, skills, rules, and patterns I've built over 12+ years.</p>
+<p><strong>What You'll Find Here:</strong><br />
+1. Context files in repos (CLAUDE.md, CONTEXT.md) and how they accelerate triage<br />
+2. AWS database access via Docker (safe read-only pattern)<br />
+3. Custom skills I created (karthik-triage, fraud-investigator, etc.)<br />
+4. My global rules and memory system<br />
+5. Checkmarx Developer Assist in VS Code (pre-commit security)<br />
+6. Confluence pages I authored (high-level context)<br />
+7. Malicious actor investigation patterns</p>
+<hr />
+<h2 id="section-1-context-files-in-repositories">📄 Section 1: Context Files in Repositories</h2>
+<h3 id="what-are-context-files"><strong>What Are Context Files?</strong></h3>
+<p>Context files are <strong>AI-readable documentation</strong> I've added to Billtrust repos to speed up triage and onboarding. They live in <code>.claude/</code> or root directories and contain:<br />
+- Architecture decisions<br />
+- Active vs legacy code paths<br />
+- Common pitfalls and "gotchas"<br />
+- Triage starting points</p>
+<h3 id="files-ive-created"><strong>Files I've Created</strong></h3>
+<h4 id="1-claudemd-per-repo-rules"><strong>1. CLAUDE.md (Per-Repo Rules)</strong></h4>
+<p><strong>Location:</strong> <code>.claude/CLAUDE.md</code> or root <code>CLAUDE.md</code></p>
+<p><strong>Purpose:</strong> Repo-specific instructions for AI assistants (Claude Code, GitHub Copilot)</p>
+<p><strong>What It Contains:</strong><br />
+- <strong>Active modules:</strong> Which code paths are actively maintained (e.g., <code>ig70/</code> in EIC, <code>application/cc/</code> in CC)<br />
+- <strong>Legacy areas:</strong> Code to avoid touching (<code>autoemailenrollment/</code>, <code>wwwroot/</code>)<br />
+- <strong>Database patterns:</strong> How this repo queries the DB (Eloquent, Zend_Db, Phalcon ORM)<br />
+- <strong>Testing conventions:</strong> Cypress/Protractor/Postman patterns<br />
+- <strong>Common bugs:</strong> Known anti-patterns (e.g., SQL injection via string concat)<br />
+- <strong>Deployment notes:</strong> Environment-specific configs (dev/stage/UAT/prod)</p>
+<p><strong>Example Entry (EIC):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="gu">## Active Modules</span>
+<span class="k">-</span><span class="w"> </span><span class="sb">`ig70/`</span> - PRIMARY active codebase (invoicing gateway v70)
+<span class="k">-</span><span class="w"> </span><span class="sb">`autoemailenrollment/`</span> - SECONDARY (bug fixes only)
+<span class="k">-</span><span class="w"> </span>Everything else is LEGACY - DO NOT TOUCH without approval
+
+<span class="gu">## Database Access</span>
+<span class="k">-</span><span class="w"> </span>Uses Zend_Db_Select with prepared statements
+<span class="k">-</span><span class="w"> </span>NEVER use string concatenation in WHERE clauses
+<span class="k">-</span><span class="w"> </span>Always parameterize: <span class="sb">`-&gt;where('CustomerId = ?', $customerId)`</span>
+
+<span class="gu">## Common Pitfalls</span>
+<span class="k">-</span><span class="w"> </span>fsiDocument table has 5.2B rows - ALWAYS use LIMIT
+<span class="k">-</span><span class="w"> </span>BillingDate is varchar('MM/DD/YYYY'), not DATE - use DATE(STR_TO_DATE())
+<span class="k">-</span><span class="w"> </span>Stack routing: query billingmaster first, then billingclient1/billingclient2
+</code></pre></div>
+
+<p><strong>How It Helps Triage:</strong><br />
+- ✅ <strong>Faster root cause:</strong> Know which module to investigate first<br />
+- ✅ <strong>Avoid false leads:</strong> Skip legacy code that's not in play<br />
+- ✅ <strong>Correct SQL patterns:</strong> Prevents timeout queries on 5B-row tables</p>
+<hr />
+<h4 id="2-contextmd-architecture-context"><strong>2. CONTEXT.md (Architecture Context)</strong></h4>
+<p><strong>Location:</strong> Root or <code>.claude/CONTEXT.md</code></p>
+<p><strong>Purpose:</strong> High-level architecture and data flow</p>
+<p><strong>What It Contains:</strong><br />
+- System architecture diagrams (as ASCII or Mermaid references)<br />
+- Request/response flow (browser → WCL → EIC → DB)<br />
+- Authentication flow (SSO vs Direct Login)<br />
+- Cache layers (APCu → Redis → MySQL)<br />
+- External service dependencies (Test Data API, BTPay, Payment Platform)</p>
+<p><strong>Example Entry (CSR):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="gu">## Architecture</span>
+
+Client Connect (Laravel) → CSR API (Laravel) → 3-Layer Cache → MySQL
+
+Cache Layers:
+<span class="k">1.</span> APCu (in-process, 60s TTL)
+<span class="k">2.</span> Redis (shared, 300s TTL)
+<span class="k">3.</span> MySQL (source of truth)
+
+Hit rate: 95%+ (measured via Datadog)
+
+<span class="gu">## Critical Settings</span>
+<span class="k">-</span><span class="w"> </span>Autopay settings live in fsicustomersettings (atom pattern)
+<span class="k">-</span><span class="w"> </span>Active settings: settingsstatus = 5
+<span class="k">-</span><span class="w"> </span>Retrieve via: CALL FindCustSettings(CustomerId, 'Path')
+</code></pre></div>
+
+<p><strong>How It Helps Triage:</strong><br />
+- ✅ <strong>Understand cache behavior:</strong> Know which layer a stale value might be stuck in<br />
+- ✅ <strong>Trace requests:</strong> Follow the flow from browser to database<br />
+- ✅ <strong>Identify dependencies:</strong> Know which external services might be down</p>
+<hr />
+<h4 id="3-constitutionmd-non-negotiable-rules"><strong>3. constitution.md (Non-Negotiable Rules)</strong></h4>
+<p><strong>Location:</strong> <code>.claude/constitution.md</code></p>
+<p><strong>Purpose:</strong> Hard rules that must NEVER be violated</p>
+<p><strong>What It Contains:</strong><br />
+- <strong>Security rules:</strong> Always use parameterized queries, never log PAN/CVV<br />
+- <strong>Multi-tenant rules:</strong> Always filter by CustomerId/PrimaryCustomerId<br />
+- <strong>Performance rules:</strong> Never SELECT * from fsidocument (5.2B rows)<br />
+- <strong>Code style rules:</strong> PSR-12 for PHP, follow existing patterns</p>
+<p><strong>Example Entry:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="gu">## Security - NON-NEGOTIABLE</span>
+
+<span class="k">1.</span> NEVER use string concatenation in SQL queries
+   ❌ BAD: "SELECT * FROM users WHERE id = " . $id
+   ✅ GOOD: "SELECT * FROM users WHERE id = ?" with bind params
+
+<span class="k">2.</span> NEVER log PCI data (PAN, CVV, full bank account)
+   ❌ BAD: Log::info("Card: " . $cardNumber)
+   ✅ GOOD: Log::info("Card: " . maskPan($cardNumber))
+
+<span class="k">3.</span> ALWAYS filter by tenant
+   ❌ BAD: SELECT * FROM fsiaccount
+   ✅ GOOD: SELECT * FROM fsiaccount WHERE CustomerId = ?
+</code></pre></div>
+
+<p><strong>How It Helps Triage:</strong><br />
+- ✅ <strong>Catch security issues:</strong> Immediately flag SQL injection, PCI exposure<br />
+- ✅ <strong>Prevent regressions:</strong> Know what NOT to change during a fix<br />
+- ✅ <strong>Code review faster:</strong> Use this as a checklist</p>
+<hr />
+<h3 id="how-i-use-context-files-during-triage"><strong>How I Use Context Files During Triage</strong></h3>
+<p><strong>Step 1: Load Context</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># In Claude Code or Copilot</span>
+/developer<span class="w"> </span>eic<span class="w">  </span><span class="c1"># Loads CLAUDE.md + CONTEXT.md + constitution.md</span>
+</code></pre></div>
+
+<p><strong>Step 2: Ask Context-Aware Questions</strong></p>
+<div class="codehilite"><pre><span></span><code>"Why is this query timing out?"
+→ AI reads CONTEXT.md, sees fsidocument has 5.2B rows
+→ Suggests adding LIMIT and proper indexes
+</code></pre></div>
+
+<p><strong>Step 3: Verify Against Rules</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="s2">"Is this fix safe?"</span>
+<span class="err">→</span><span class="w"> </span><span class="n">AI</span><span class="w"> </span><span class="n">checks</span><span class="w"> </span><span class="n">constitution</span><span class="o">.</span><span class="n">md</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">SQL</span><span class="w"> </span><span class="n">injection</span><span class="p">,</span><span class="w"> </span><span class="n">tenant</span><span class="w"> </span><span class="n">scoping</span>
+<span class="err">→</span><span class="w"> </span><span class="n">Flags</span><span class="w"> </span><span class="n">violations</span><span class="w"> </span><span class="n">before</span><span class="w"> </span><span class="n">code</span><span class="w"> </span><span class="n">review</span>
+</code></pre></div>
+
+<hr />
+<h2 id="section-2-aws-database-access-via-docker">🐳 Section 2: AWS Database Access via Docker</h2>
+<h3 id="the-problem"><strong>The Problem</strong></h3>
+<p>Billtrust databases (MySQL) are on private AWS networks. Direct mysql client access requires:<br />
+- VPN connection<br />
+- Credentials in .env files (security risk)<br />
+- Native mysql client install (not on all dev machines)</p>
+<h3 id="my-solution-docker-based-gateway"><strong>My Solution: Docker-Based Gateway</strong></h3>
+<p><strong>Repo:</strong> <code>inv-ai-mysql-access</code></p>
+<p><strong>Pattern:</strong> Read-only PowerShell gateway that runs MySQL queries via Docker</p>
+<p><strong>Why Docker?</strong><br />
+- ✅ No mysql client install needed<br />
+- ✅ Credentials stay in Docker, not .env files<br />
+- ✅ Read-only access enforced<br />
+- ✅ Works cross-platform (Windows/Mac/Linux)</p>
+<h3 id="how-it-works"><strong>How It Works</strong></h3>
+<h4 id="1-gateway-script-db-queryps1"><strong>1. Gateway Script (<code>db-query.ps1</code>)</strong></h4>
+<p><strong>Location:</strong> <code>C:\Users\kasekar\GH\inv-ai-mysql-access\db-query.ps1</code></p>
+<p><strong>Usage:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="p">.\</span><span class="n">db-query</span><span class="p">.</span><span class="n">ps1</span> <span class="n">-env</span> <span class="n">dev</span> <span class="n">-db</span> <span class="n">billingmaster</span> <span class="n">-query</span> <span class="s2">"SELECT CustomerId, Name FROM fsicustomer WHERE Name LIKE '%ACME%'"</span>
+</code></pre></div>
+
+<p><strong>Supported Environments:</strong><br />
+- <code>dev</code> (us-dev)<br />
+- <code>stage</code> (us-stage)<br />
+- <code>uat</code> (us-uat)<br />
+- <code>prod</code> (us-prod) - READ ONLY</p>
+<p><strong>Supported Databases:</strong><br />
+- <code>billingmaster</code> (tenant routing DB)<br />
+- <code>billingclient1</code> (Stack 1 write DB)<br />
+- <code>billingclient2</code> (Stack 2 write DB)</p>
+<h4 id="2-docker-container"><strong>2. Docker Container</strong></h4>
+<p><strong>Image:</strong> <code>mysql:8.0</code></p>
+<p><strong>How It Runs:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Docker command (abstracted by db-query.ps1)</span>
+docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-e<span class="w"> </span><span class="nv">MYSQL_HOST</span><span class="o">=</span>&lt;aws-rds-endpoint&gt;<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-e<span class="w"> </span><span class="nv">MYSQL_USER</span><span class="o">=</span>&lt;read-only-user&gt;<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-e<span class="w"> </span><span class="nv">MYSQL_PASSWORD</span><span class="o">=</span>&lt;password&gt;<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>mysql:8.0<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>mysql<span class="w"> </span>-h<span class="nv">$MYSQL_HOST</span><span class="w"> </span>-u<span class="nv">$MYSQL_USER</span><span class="w"> </span>-p<span class="nv">$MYSQL_PASSWORD</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-e<span class="w"> </span><span class="s2">"SELECT ..."</span>
+</code></pre></div>
+
+<p><strong>Key Points:</strong><br />
+- <code>--rm</code>: Container is deleted after query runs (no state left behind)<br />
+- Credentials injected as env vars (not stored on disk)<br />
+- Read-only user (cannot INSERT/UPDATE/DELETE)</p>
+<h4 id="3-schema-dumps-for-offline-reference"><strong>3. Schema Dumps (for Offline Reference)</strong></h4>
+<p><strong>Location:</strong> <code>inv-ai-mysql-access/schema-dumps/</code></p>
+<p><strong>Files:</strong><br />
+- <code>billingmaster-schema.sql</code><br />
+- <code>billingclient1-schema.sql</code><br />
+- <code>billingclient2-schema.sql</code></p>
+<p><strong>Purpose:</strong> Autocomplete and offline reference (table names, columns, indexes)</p>
+<p><strong>How to Use:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Search for a table</span>
+grep<span class="w"> </span>-i<span class="w"> </span><span class="s2">"CREATE TABLE fsiaccount"</span><span class="w"> </span>schema-dumps/billingclient1-schema.sql
+
+<span class="c1"># Find columns</span>
+grep<span class="w"> </span>-A<span class="w"> </span><span class="m">20</span><span class="w"> </span><span class="s2">"CREATE TABLE fsiDocument"</span><span class="w"> </span>schema-dumps/billingclient1-schema.sql
+</code></pre></div>
+
+<hr />
+<h3 id="triage-example-finding-customer-by-name"><strong>Triage Example: Finding Customer by Name</strong></h3>
+<p><strong>Problem:</strong> NJQRT ticket says "Customer ACME Corp can't see invoices"</p>
+<p><strong>Step 1: Find CustomerId</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="p">.\</span><span class="n">db-query</span><span class="p">.</span><span class="n">ps1</span> <span class="n">-env</span> <span class="n">prod</span> <span class="n">-db</span> <span class="n">billingmaster</span> <span class="n">-query</span> <span class="sh">@"</span>
+<span class="sh">SELECT CustomerId, Name, Stack</span>
+<span class="sh">FROM fsicustomer</span>
+<span class="sh">WHERE Name LIKE '%ACME%'</span>
+<span class="sh">"@</span>
+</code></pre></div>
+
+<p><strong>Step 2: Check Stack Routing</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c"># Output from Step 1: CustomerId = 12345, Stack = 1</span>
+
+<span class="p">.\</span><span class="n">db-query</span><span class="p">.</span><span class="n">ps1</span> <span class="n">-env</span> <span class="n">prod</span> <span class="n">-db</span> <span class="n">billingclient1</span> <span class="n">-query</span> <span class="sh">@"</span>
+<span class="sh">SELECT COUNT(*) AS InvoiceCount</span>
+<span class="sh">FROM fsiDocument</span>
+<span class="sh">WHERE CustomerId = 12345</span>
+<span class="sh">AND DocumentType = 'INV'</span>
+<span class="sh">"@</span>
+</code></pre></div>
+
+<p><strong>Step 3: Verify Invoice Gateway Filter</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="p">.\</span><span class="n">db-query</span><span class="p">.</span><span class="n">ps1</span> <span class="n">-env</span> <span class="n">prod</span> <span class="n">-db</span> <span class="n">billingclient1</span> <span class="n">-query</span> <span class="sh">@"</span>
+<span class="sh">SELECT *</span>
+<span class="sh">FROM fsiInvoiceGatewayFilter</span>
+<span class="sh">WHERE CustomerId = 12345</span>
+<span class="sh">"@</span>
+</code></pre></div>
+
+<p><strong>Result:</strong> Found root cause in 3 queries (~2 minutes)</p>
+<hr />
+<h3 id="safety-rules"><strong>Safety Rules</strong></h3>
+<p>✅ <strong>DO:</strong><br />
+- Use for read-only queries (SELECT)<br />
+- Mask PII in results before sharing<br />
+- Query with LIMIT (especially on fsidocument)<br />
+- Verify environment (dev/stage before prod)</p>
+<p>❌ <strong>DON'T:</strong><br />
+- Run INSERT/UPDATE/DELETE (gateway blocks them)<br />
+- Query fsidocument without WHERE + LIMIT<br />
+- Share raw query results with PAN/CVV in Jira<br />
+- Use for performance testing (use Datadog APM instead)</p>
+<hr />
+<h2 id="section-3-custom-skills-i-created">🎯 Section 3: Custom Skills I Created</h2>
+<h3 id="overview"><strong>Overview</strong></h3>
+<p>I've created <strong>7 custom AI skills</strong> (slash commands) for recurring workflows. These are invoked via <code>/skill-name</code> in Claude Code.</p>
+<hr />
+<h3 id="1-karthik-triage-njqrt-triage"><strong>1. <code>/karthik-triage</code> (NJQRT Triage)</strong></h3>
+<p><strong>Purpose:</strong> Full triage workflow for First Responders (NJQRT) tickets</p>
+<p><strong>When to Use:</strong> Any NJQRT-XXXXX ticket assigned to me</p>
+<p><strong>What It Does:</strong><br />
+1. Fetches ticket + all comments + linked cases<br />
+2. Searches Jira backlog for similar past cases<br />
+3. Searches Confluence/KB for functionality context<br />
+4. Detects platform (BT_Invoicing vs Workspace)<br />
+5. Runs AC/UC model detection<br />
+6. Invokes researcher/developer/db-query sub-skills<br />
+7. Queries Datadog MCP for errors/traces<br />
+8. Queries Pendo MCP for usage/adoption<br />
+9. Prepares technical + business summaries<br />
+10. Posts findings to Development subtask</p>
+<p><strong>Completion Trigger:</strong> "triage over"</p>
+<p><strong>Output:</strong> Dev Update comment + 5 parent-ticket fields (Issue, Impact, Root Cause, Solution, Solution Impact)</p>
+<p><strong>Key Rules:</strong><br />
+- RC-5 sanity check before recording root cause<br />
+- Origin/Blast Radius/Ownership follow-up mandatory<br />
+- Never assume — verify every claim against code/data<br />
+- Show proof in every answer (code lines, query results)</p>
+<p><strong>Example:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nv">User</span>:<span class="w"> </span><span class="o">/</span><span class="nv">karthik</span><span class="o">-</span><span class="nv">triage</span><span class="w"> </span><span class="nv">NJQRT</span><span class="o">-</span><span class="mi">15400</span>
+→<span class="w"> </span><span class="nv">Fetches</span><span class="w"> </span><span class="nv">ticket</span>,<span class="w"> </span><span class="nv">searches</span><span class="w"> </span><span class="nv">backlog</span>,<span class="w"> </span><span class="nv">investigates</span><span class="w"> </span><span class="nv">code</span>,<span class="w"> </span><span class="nv">queries</span><span class="w"> </span><span class="nv">DB</span>
+→<span class="w"> </span><span class="nv">Drafts</span><span class="w"> </span><span class="nv">findings</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="nv">approval</span><span class="w"> </span><span class="nv">before</span><span class="w"> </span><span class="nv">posting</span>
+</code></pre></div>
+
+<hr />
+<h3 id="2-fraud-malicious-investigator-fraud-investigation"><strong>2. <code>/fraud-malicious-investigator</code> (Fraud Investigation)</strong></h3>
+<p><strong>Purpose:</strong> Reconstruct user activity timeline for fraud/account-compromise cases</p>
+<p><strong>When to Use:</strong> <br />
+- "Investigate fraud for account XYZ"<br />
+- "Check suspicious activity"<br />
+- "Account compromise check"</p>
+<p><strong>What It Does:</strong></p>
+<p><strong>Mode A (Targeted):</strong> Account/email → chronological timeline<br />
+- Login history (fsiocuseraudit, fsiAccountAudits)<br />
+- Payment attempts (BTPay payment gateway logs)<br />
+- Document access (Datadog APM traces)<br />
+- IP addresses + geolocation (Pendo user sessions)<br />
+- Timeline output (CSV + markdown table)</p>
+<p><strong>Mode B (Discovery):</strong> Sweep tenant for risky users<br />
+- Multiple accounts same email<br />
+- Login from multiple IPs same day<br />
+- Payment failures → retry → different card<br />
+- Rank by risk score</p>
+<p><strong>Mode C (Data Exposure):</strong> Phishing/leak questions<br />
+- Anomalous access patterns<br />
+- Download spikes (invoice PDFs)<br />
+- Email forwarding rules</p>
+<p><strong>Key Patterns (High-Level):</strong><br />
+- <strong>Credential stuffing:</strong> Same email, multiple failed logins, success from new IP<br />
+- <strong>Card testing:</strong> Multiple $1 charges, rapid fire, different cards<br />
+- <strong>Account takeover:</strong> IP change + email change + payment method change within 1 hour<br />
+- <strong>Insider abuse:</strong> Admin user accessing invoices for unrelated customers<br />
+- <strong>Data exfiltration:</strong> 100+ invoice downloads in 1 session (normal: 5-10)</p>
+<p><strong>Output:</strong> Timeline table (never raw PAN/CVV)</p>
+<hr />
+<h3 id="3-db-query-database-query-skill"><strong>3. <code>/db-query</code> (Database Query Skill)</strong></h3>
+<p><strong>Purpose:</strong> Safe, credential-less MySQL queries via Docker gateway</p>
+<p><strong>When to Use:</strong><br />
+- "What's the customerId for ACME?"<br />
+- "Query the database for..."<br />
+- "Find this account in the DB"</p>
+<p><strong>What It Does:</strong><br />
+1. Validates query is read-only (blocks INSERT/UPDATE/DELETE)<br />
+2. Routes to correct environment + database<br />
+3. Runs query via <code>db-query.ps1</code> Docker gateway<br />
+4. Returns results as markdown table<br />
+5. Masks PII automatically</p>
+<p><strong>Safety Checks:</strong><br />
+- Rejects queries without WHERE clause on large tables<br />
+- Enforces LIMIT on fsidocument queries<br />
+- Never returns PAN/CVV columns<br />
+- Logs all queries for audit</p>
+<hr />
+<h3 id="4-qrt-automation-automation-coverage"><strong>4. <code>/qrt-automation</code> (Automation Coverage)</strong></h3>
+<p><strong>Purpose:</strong> Write Cypress test coverage for NJQRT fixes</p>
+<p><strong>When to Use:</strong><br />
+- "Automate NJQRT-15400"<br />
+- "Write automation for this fix"<br />
+- "Add regression spec"</p>
+<p><strong>What It Does:</strong></p>
+<p><strong>Mode A (Write Coverage):</strong><br />
+1. Reads Dev ticket + fix PR<br />
+2. Maps dev test cases to F/R test IDs<br />
+3. Self-provisions customer via Test Data API<br />
+4. Writes Cypress spec (Page Object pattern)<br />
+5. Proves pre-fix RED / post-fix GREEN<br />
+6. Creates PR in automation repo</p>
+<p><strong>Mode B (Review Automation PR):</strong><br />
+1. Runs automation-specific review checklist:<br />
+   - CI green ≠ tests pass (check actual assertions)<br />
+   - Discrimination evidence (did it catch the bug?)<br />
+   - Shared page-object blast radius<br />
+   - Assertions vs artifacts (screenshots aren't tests)<br />
+2. Drafts verdict for approval</p>
+<hr />
+<h3 id="5-eic-autopay-autopay-validation"><strong>5. <code>/eic-autopay</code> (AutoPay Validation)</strong></h3>
+<p><strong>Purpose:</strong> Full DB-backed AutoPay settings sweep</p>
+<p><strong>When to Use:</strong><br />
+- "EIC autopay check for customer 12345"<br />
+- "Validate autopay settings"<br />
+- "AutoPay not triggering investigation"</p>
+<p><strong>What It Does:</strong><br />
+1. Detects AC (Account-Centric) vs UC (User-Centric) schema<br />
+2. Runs 15+ queries across tables:<br />
+   - <code>fsiaccountautopay</code> (enrollment config)<br />
+   - <code>fsicustomersettings</code> (AutopayVersion atom)<br />
+   - <code>fsionlinebillingparms</code> (AutoPayActive column)<br />
+   - <code>fsiDocumentTemplate</code> (eligibility)<br />
+   - <code>fsieftRisk</code> (risk records)<br />
+   - Payment history (last 6 months)<br />
+3. Checks universality (other customers affected?)<br />
+4. Separates DB-verifiable from Platform-only settings<br />
+5. Produces consolidated markdown table (query + result + verdict)</p>
+<p><strong>Output:</strong> One table, copy-pasteable to Jira comment</p>
+<hr />
+<h3 id="6-dml-review-dmlddl-case-review"><strong>6. <code>/dml-review</code> (DML/DDL Case Review)</strong></h3>
+<p><strong>Purpose:</strong> Structured review of DML/DDL Jira tickets before DBA approval</p>
+<p><strong>When to Use:</strong><br />
+- "Review my DML tickets"<br />
+- "Review DML NJQRT-15335"<br />
+- "DDL review"</p>
+<p><strong>What It Does:</strong><br />
+1. Fetches assigned DML/DDL cases in "Code Review" status<br />
+2. Runs AI-review gate checks:<br />
+   - Apply Date ≤ 12h past (acceptable)<br />
+   - Affected Records ≤ 100k<br />
+   - At least one .sql/.js/.json attached<br />
+   - USE statement matches target env<br />
+   - No TRUNCATE/DROP/DDL on permanent objects<br />
+   - No forced index hints<br />
+   - No UPDATE/DELETE without WHERE<br />
+   - No system databases targeted<br />
+3. <strong>Data verification</strong> (live queries):<br />
+   - Row-level facts (CustomerId, status constants)<br />
+   - Byte fidelity check (CRC32 of INSERT data vs source)<br />
+   - Rollback 1:1 match with seed<br />
+4. Posts verdict to Jira</p>
+<p><strong>Auto-Transition:</strong> If all checks green → moves case to "DBA2Apply"</p>
+<hr />
+<h3 id="7-release-review-release-readiness"><strong>7. <code>/release-review</code> (Release Readiness)</strong></h3>
+<p><strong>Purpose:</strong> Multi-stage release review (Pre-Cut → Stage → UAT → PROD)</p>
+<p><strong>When to Use:</strong><br />
+- "Run release readiness"<br />
+- "Pre-release branch analysis"<br />
+- "UAT sign-off"</p>
+<p><strong>What It Does:</strong></p>
+<p><strong>Stage 1 (Pre-Cut Readiness):</strong><br />
+- Git branch state (uncommitted changes, commits ahead)<br />
+- Jira ticket hygiene (all fix-version tickets closed?)<br />
+- MR links recorded?</p>
+<p><strong>Stage 2 (Stage Deployment Sign-off):</strong><br />
+- Records Production Pipeline ID<br />
+- Verifies Checkmarx scan (NEW findings only)<br />
+- Marks cert ticket "QA Review"</p>
+<p><strong>Stage 3 (Pre-UAT Readiness):</strong><br />
+- Re-verifies ticket/field hygiene<br />
+- Only transitions to "Ready for Security Approval" if 100% green</p>
+<p><strong>Stage 4 (UAT Sign-off):</strong><br />
+- Same as Stage 2, UAT environment</p>
+<p><strong>Stage 5 (Pre-PROD Checklist):</strong><br />
+- Rollback plan verified<br />
+- Monitoring alerts configured<br />
+- Oncall schedule confirmed</p>
+<p><strong>Stage 6 (Post-PROD Closeout):</strong><br />
+- Verifies deployment success<br />
+- Closes all tickets<br />
+- Archives release notes</p>
+<hr />
+<h2 id="section-4-my-global-rules-memory-system">🧠 Section 4: My Global Rules &amp; Memory System</h2>
+<h3 id="global-rules-from-claudeclaudemd"><strong>Global Rules (from ~/.claude/CLAUDE.md)</strong></h3>
+<p>These are <strong>standing instructions</strong> that apply to ALL my work, across all repos.</p>
+<h4 id="1-verification-protocol-non-negotiable"><strong>1. Verification Protocol (NON-NEGOTIABLE)</strong></h4>
+<p><strong>Rule:</strong> Every claim needs code proof or data proof before sharing.</p>
+<p><strong>Why:</strong> Repeated incidents (NJQRT-14987, 14947, 13296, 15094) where unverified claims were stated as fact.</p>
+<p><strong>How:</strong><br />
+- Run the query/read the code FIRST<br />
+- Show the proof IN the answer (not just "I verified")<br />
+- Never inherit a claim from an earlier session without re-verifying</p>
+<h4 id="2-tool-call-loop-guard"><strong>2. Tool-Call Loop Guard</strong></h4>
+<p><strong>Rule:</strong> If tool calls repeat without progress, abort within 5 seconds.</p>
+<p><strong>Why:</strong> Agent emitted dozens of no-op <code>echo</code> commands instead of the approved action (NJQRT-15077).</p>
+<p><strong>How:</strong><br />
+- Detect stuck loop (same call 3+ times)<br />
+- Stop emitting calls<br />
+- State what got stuck + intended action<br />
+- Ask user how to proceed</p>
+<h4 id="3-commit-approval-gate"><strong>3. Commit Approval Gate</strong></h4>
+<p><strong>Rule:</strong> Show full diff + commit message, wait for explicit approval before ANY git commit/push.</p>
+<p><strong>Why:</strong> Prevents unauthorized commits, even after a plan is approved.</p>
+<p><strong>How:</strong><br />
+- Plan approval ≠ commit approval<br />
+- Every commit is a separate approval gate<br />
+- Never stage/commit/push without showing diff first</p>
+<h4 id="4-jira-post-approval-critical-rule"><strong>4. Jira Post Approval (Critical Rule)</strong></h4>
+<p><strong>Rule:</strong> NEVER post comments, transitions, or any writes to Jira without showing draft + getting approval.</p>
+<p><strong>Why:</strong> Comments are customer/sales-facing; mistakes are public.</p>
+<p><strong>How:</strong><br />
+- Draft FIRST<br />
+- Show to user<br />
+- Wait for "approved" / "post it"<br />
+- Then and only then call MCP write tool</p>
+<h4 id="5-root-cause-sanity-check-rc-5"><strong>5. Root Cause Sanity Check (RC-5)</strong></h4>
+<p><strong>Rule:</strong> Before recording ANY root cause, answer 5 questions:</p>
+<ol>
+<li><strong>Prior conclusion:</strong> What did this ticket already conclude? If changing it, say why.</li>
+<li><strong>Universality:</strong> Is my cause also present on SUCCEEDING cases? (If yes, not the discriminator)</li>
+<li><strong>Reachability:</strong> Does my blamed code actually EXECUTE on the failing request?</li>
+<li><strong>Signature:</strong> Does my chain produce the EXACT error string observed?</li>
+<li><strong>Fix vs Mask:</strong> Does my fix restore function, or only stop the error appearing?</li>
+</ol>
+<p><strong>Why:</strong> Prevents false root causes that explain symptoms but aren't the actual defect.</p>
+<hr />
+<h3 id="memory-system-auto-memory"><strong>Memory System (Auto-Memory)</strong></h3>
+<p><strong>Location:</strong> <code>~/.claude/projects/c--Users-kasekar-GH/memory/</code></p>
+<p><strong>What It Stores:</strong></p>
+<ol>
+<li><strong>User memories:</strong> My role, preferences, knowledge level</li>
+<li><strong>Feedback memories:</strong> Corrections and confirmations (what to avoid, what to keep doing)</li>
+<li><strong>Project memories:</strong> Ongoing work, goals, timelines</li>
+<li><strong>Reference memories:</strong> Where to find things (Linear projects, Grafana dashboards, Slack channels)</li>
+</ol>
+<p><strong>Example Memories:</strong></p>
+<p><strong>feedback_verify_before_proposing.md:</strong></p>
+<div class="codehilite"><pre><span></span><code>---
+name: verify-before-proposing
+description: Manually verify every claim against source before including in ANY draft
+metadata:
+<span class="gu">  type: feedback</span>
+<span class="gu">---</span>
+
+Manually verify every claim, detail, and fact against source material before including it
+in ANY draft — code-behavior claims, test/comparison matrices, root-cause analysis, fix
+proposals, emails, Jira comments, documents.
+
+<span class="gs">**Why:**</span> 6th occurrence NJQRT-13296 — built a 3-table PHP behavior matrix asserting a
+condition always redirects when the variable is a strict boolean and the comparison was
+<span class="sb">`=== 1`</span> (always false in PHP).
+
+<span class="gs">**How to apply:**</span> While drafting each claim, check it against actual code or query result.
+"Let me check" AFTER user pushes back is too late.
+</code></pre></div>
+
+<p><strong>project_njqrt15274_dml_rollout_phasing.md:</strong></p>
+<div class="codehilite"><pre><span></span><code>---
+name: njqrt15274-dml-rollout-phasing
+description: Reported account first, then rest of customer, then other AC customers on request
+metadata:
+<span class="gu">  type: project</span>
+<span class="gu">---</span>
+
+For NJQRT-15274 (SSOValidateAccountBeforeLinkingToUser default Y rollout):
+<span class="k">-</span><span class="w"> </span>Phase 1: Reported account only
+<span class="k">-</span><span class="w"> </span>Phase 2: Rest of customer's accounts
+<span class="k">-</span><span class="w"> </span>Phase 3: Other AC customers (on explicit request)
+<span class="k">-</span><span class="w"> </span>UC customers excluded (needs cross-table migration, separate POC)
+
+<span class="gs">**Why:**</span> UC schema different — fsionlineaccount vs fsiuseraccount.
+</code></pre></div>
+
+<hr />
+<h2 id="section-5-checkmarx-developer-assist-in-vs-code">🔒 Section 5: Checkmarx Developer Assist in VS Code</h2>
+<h3 id="what-is-it"><strong>What Is It?</strong></h3>
+<p><strong>Checkmarx Developer Assist</strong> is a VS Code extension that scans code for security issues <strong>pre-commit</strong> (before git add).</p>
+<h3 id="why-i-use-it"><strong>Why I Use It</strong></h3>
+<p><strong>Problem:</strong> Waiting for CI Checkmarx scan after push wastes time (5-10 min scan + fix + re-push = 15+ min loop).</p>
+<p><strong>Solution:</strong> Scan locally BEFORE commit → catch issues in dev phase.</p>
+<h3 id="setup"><strong>Setup</strong></h3>
+<h4 id="1-install-extension"><strong>1. Install Extension</strong></h4>
+<div class="codehilite"><pre><span></span><code><span class="c1"># VS Code Extensions Marketplace</span>
+ext<span class="w"> </span>install<span class="w"> </span>Checkmarx.checkmarx-ast
+</code></pre></div>
+
+<h4 id="2-authenticate"><strong>2. Authenticate</strong></h4>
+<div class="codehilite"><pre><span></span><code><span class="c1"># CLI auth (tenant: billtrust)</span>
+cx<span class="w"> </span>auth<span class="w"> </span>login<span class="w"> </span>--tenant<span class="w"> </span>billtrust
+</code></pre></div>
+
+<h4 id="3-scan-on-save-optional"><strong>3. Scan on Save (Optional)</strong></h4>
+<div class="codehilite"><pre><span></span><code><span class="c1">// .vscode/settings.json</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="nt">"checkmarx.scanOnSave"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"checkmarx.showInProblems"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="how-i-use-it"><strong>How I Use It</strong></h3>
+<h4 id="pre-commit-workflow"><strong>Pre-Commit Workflow</strong></h4>
+<p><strong>Step 1: Write Code</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Example: Payment processing</span>
+<span class="x">$amount = $_POST['amount'];</span>
+<span class="x">$query = "SELECT * FROM payments WHERE amount = $amount"; // ❌ SQL Injection!</span>
+</code></pre></div>
+
+<p><strong>Step 2: Save File</strong><br />
+→ Checkmarx scans in background (5-10 seconds)</p>
+<p><strong>Step 3: Check Problems Panel</strong></p>
+<div class="codehilite"><pre><span></span><code>⚠️ HIGH: SQL Injection via unsanitized user input
+   File: PaymentController.php:42
+   Fix: Use parameterized query
+</code></pre></div>
+
+<p><strong>Step 4: Fix Before Commit</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Fixed</span>
+<span class="x">$amount = $_POST['amount'];</span>
+<span class="x">$query = "SELECT * FROM payments WHERE amount = ?";</span>
+<span class="x">$stmt = $pdo-&gt;prepare($query);</span>
+<span class="x">$stmt-&gt;execute([$amount]); // ✅ Safe</span>
+</code></pre></div>
+
+<p><strong>Step 5: Re-Scan</strong><br />
+→ Checkmarx: ✅ No issues found</p>
+<p><strong>Step 6: Commit</strong></p>
+<div class="codehilite"><pre><span></span><code>git<span class="w"> </span>add<span class="w"> </span>PaymentController.php
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">"fix: SQL injection in payment amount query"</span>
+</code></pre></div>
+
+<p><strong>Result:</strong> No CI failure, no re-push loop.</p>
+<hr />
+<h3 id="what-it-catches"><strong>What It Catches</strong></h3>
+<table>
+<thead>
+<tr>
+<th>Vulnerability</th>
+<th>Example</th>
+<th>Severity</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>SQL Injection</strong></td>
+<td>String concat in WHERE clause</td>
+<td>HIGH</td>
+</tr>
+<tr>
+<td><strong>XSS</strong></td>
+<td>Unescaped user input in HTML</td>
+<td>HIGH</td>
+</tr>
+<tr>
+<td><strong>Hardcoded Secrets</strong></td>
+<td>API key in source code</td>
+<td>CRITICAL</td>
+</tr>
+<tr>
+<td><strong>Path Traversal</strong></td>
+<td>Unsanitized file path</td>
+<td>MEDIUM</td>
+</tr>
+<tr>
+<td><strong>LDAP Injection</strong></td>
+<td>Unescaped LDAP filter</td>
+<td>MEDIUM</td>
+</tr>
+<tr>
+<td><strong>Command Injection</strong></td>
+<td>shell_exec() with user input</td>
+<td>HIGH</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="interview-answer"><strong>Interview Answer</strong></h3>
+<p><strong>Q: "How do you catch security issues before code review?"</strong></p>
+<p><strong>A:</strong> <br />
+"I use Checkmarx Developer Assist in VS Code for pre-commit security scanning. It runs in the background on save and flags issues like SQL injection, XSS, hardcoded secrets in the Problems panel. This catches vulnerabilities in the dev phase — before commit — so I never push insecure code to CI. It's saved me from at least a dozen CI failures."</p>
+<p><strong>Follow-up Q: "Example?"</strong></p>
+<p><strong>A:</strong><br />
+"Recently I was writing a payment query and accidentally used string concatenation for the amount filter. Checkmarx flagged it as HIGH severity SQL injection within 10 seconds. I fixed it to use parameterized queries, re-scanned, got the green light, then committed. Without it, I would've pushed, failed CI Checkmarx scan, then had to fix and re-push — 15 minute loop avoided."</p>
+<hr />
+<h2 id="section-6-confluence-pages-i-created">📚 Section 6: Confluence Pages I Created</h2>
+<p><strong>Note:</strong> High-level bullet points only — context, not full content.</p>
+<h3 id="1-njqrt-fraud-investigation-template"><strong>1. NJQRT Fraud Investigation Template</strong></h3>
+<p><strong>URL:</strong> <code>https://billtrust.atlassian.net/wiki/spaces/.../NJQRT+Fraud+Investigation</code></p>
+<p><strong>Purpose:</strong> Standardized workflow for fraud/account-compromise cases</p>
+<p><strong>Key Sections:</strong><br />
+- <strong>Data Sources:</strong> Which tables/logs to check (fsiocuseraudit, BTPay gateway, Datadog, Pendo)<br />
+- <strong>Timeline Reconstruction:</strong> How to build chronological activity log<br />
+- <strong>Red Flags:</strong> Patterns indicating fraud (IP change + email change + payment within 1 hour)<br />
+- <strong>Escalation Path:</strong> When to involve Security team vs handle in NJQRT<br />
+- <strong>Sample Queries:</strong> MySQL queries for login history, payment attempts, document access</p>
+<hr />
+<h3 id="2-eic-autopay-investigation-checklist"><strong>2. EIC AutoPay Investigation Checklist</strong></h3>
+<p><strong>URL:</strong> <code>https://billtrust.atlassian.net/wiki/spaces/.../EIC+AutoPay+Checklist</code></p>
+<p><strong>Purpose:</strong> Step-by-step AutoPay troubleshooting</p>
+<p><strong>Key Sections:</strong><br />
+- <strong>AC vs UC Detection:</strong> How to identify customer model (AccountNumber presence in fsionlineaccount)<br />
+- <strong>Settings Hierarchy:</strong> Account-level → Customer-level → Template-level<br />
+- <strong>DB Tables:</strong> 8 tables that control AutoPay (fsiaccountautopay, fsicustomersettings, etc.)<br />
+- <strong>Common Gotchas:</strong> Schema default 'Y' enrolls guest users (BTPay payment stubs)<br />
+- <strong>Platform vs EIC:</strong> Which settings live in Platform API vs EIC database</p>
+<hr />
+<h3 id="3-database-sharding-guide-eic-stack-12"><strong>3. Database Sharding Guide (EIC Stack 1/2)</strong></h3>
+<p><strong>URL:</strong> <code>https://billtrust.atlassian.net/wiki/spaces/.../EIC+Stack+Sharding</code></p>
+<p><strong>Purpose:</strong> How EIC's horizontal sharding works</p>
+<p><strong>Key Sections:</strong><br />
+- <strong>Routing Logic:</strong> billingmaster.fsicustomer.Stack → billingclient1 or billingclient2<br />
+- <strong>Stack Assignment:</strong> New customers assigned round-robin (alternates 1/2)<br />
+- <strong>Cross-Stack Queries:</strong> When you need data from BOTH stacks (use UNION)<br />
+- <strong>Migration Notes:</strong> How Stack 3 migration happened (2019) and lessons learned<br />
+- <strong>Performance:</strong> 100M+ invoice rows per stack, &lt;50ms p99 latency</p>
+<hr />
+<h3 id="4-test-data-api-usage-guide"><strong>4. Test Data API Usage Guide</strong></h3>
+<p><strong>URL:</strong> <code>https://billtrust.atlassian.net/wiki/spaces/.../Test+Data+API</code></p>
+<p><strong>Purpose:</strong> How to provision test customers via AWS API</p>
+<p><strong>Key Sections:</strong><br />
+- <strong>Authentication:</strong> API key + bearer token (SSM Parameter Store)<br />
+- <strong>Endpoints:</strong> Create customer, update settings, create documents, delete customer<br />
+- <strong>Customer Models:</strong> AC vs UC provisioning differences<br />
+- <strong>Settings Atoms:</strong> How to set AutopayVersion, EnableEBill, etc.<br />
+- <strong>Cleanup:</strong> Always delete test customers after test (or they pollute dev)</p>
+<hr />
+<h3 id="5-njqrt-triage-best-practices"><strong>5. NJQRT Triage Best Practices</strong></h3>
+<p><strong>URL:</strong> <code>https://billtrust.atlassian.net/wiki/spaces/.../NJQRT+Triage+Best+Practices</code></p>
+<p><strong>Purpose:</strong> How I triage NJQRT tickets (before it became <code>/karthik-triage</code> skill)</p>
+<p><strong>Key Sections:</strong><br />
+- <strong>Step 0:</strong> Read the ticket + ALL comments + linked cases FIRST<br />
+- <strong>Step 1:</strong> Reproduce the issue (dev environment if possible)<br />
+- <strong>Step 2:</strong> Hypothesis generation (3+ possible causes)<br />
+- <strong>Step 3:</strong> Hypothesis testing (DB queries, code tracing, Datadog logs)<br />
+- <strong>Step 4:</strong> Root cause validation (RC-5 sanity check)<br />
+- <strong>Step 5:</strong> Blast radius analysis (how many customers affected?)<br />
+- <strong>Step 6:</strong> Solution proposal (fix vs workaround)<br />
+- <strong>Step 7:</strong> Jira update (technical + business summaries)</p>
+<hr />
+<h2 id="section-7-malicious-actor-investigation-patterns">🕵️ Section 7: Malicious Actor Investigation Patterns</h2>
+<p><strong>Context:</strong> Patterns I've identified in fraud investigations, NOT code or queries.</p>
+<h3 id="pattern-1-credential-stuffing"><strong>Pattern 1: Credential Stuffing</strong></h3>
+<p><strong>Indicators:</strong><br />
+- Same email address, 10+ failed login attempts<br />
+- Different passwords each attempt (brute force list)<br />
+- Success from new IP address (different city/country than previous logins)<br />
+- Immediate email change after successful login<br />
+- Immediate payment method change</p>
+<p><strong>Timeline:</strong><br />
+1. 10:00 AM - 10 failed logins (IPs from botnet)<br />
+2. 10:05 AM - 1 successful login (legitimate password from data breach)<br />
+3. 10:06 AM - Email changed to attacker's email<br />
+4. 10:07 AM - Payment method added (attacker's card)<br />
+5. 10:10 AM - 5 invoices downloaded (data exfiltration)</p>
+<p><strong>Data Sources:</strong><br />
+- Login audit table (failed vs success)<br />
+- IP geolocation (Pendo user sessions)<br />
+- Email change audit<br />
+- Payment method audit</p>
+<hr />
+<h3 id="pattern-2-card-testing-carding"><strong>Pattern 2: Card Testing (Carding)</strong></h3>
+<p><strong>Indicators:</strong><br />
+- Multiple $1 or $0.50 charges (testing if card is valid)<br />
+- Rapid fire (10+ attempts in 1 minute)<br />
+- Different card numbers each time (stolen card list)<br />
+- All from same IP address<br />
+- After valid card found → 1 large charge ($500+)</p>
+<p><strong>Timeline:</strong><br />
+1. 2:00 PM - $1 charge declined (card 1)<br />
+2. 2:00 PM - $1 charge declined (card 2)<br />
+3. 2:01 PM - $1 charge declined (card 3)<br />
+4. 2:01 PM - $1 charge SUCCESS (card 4)<br />
+5. 2:02 PM - $500 charge SUCCESS (same card 4)</p>
+<p><strong>Data Sources:</strong><br />
+- BTPay payment gateway logs (transaction attempts)<br />
+- Payment decline reasons (insufficient funds vs invalid card)<br />
+- IP address (all from same source)</p>
+<hr />
+<h3 id="pattern-3-account-takeover-ato"><strong>Pattern 3: Account Takeover (ATO)</strong></h3>
+<p><strong>Indicators:</strong><br />
+- IP change (previous logins from USA, now from Russia)<br />
+- Email change within 1 hour of IP change<br />
+- Payment method change immediately after email change<br />
+- Invoice download spike (10+ invoices in 1 session, normal is 2-3)<br />
+- Password reset requested (forgot password flow)</p>
+<p><strong>Timeline:</strong><br />
+1. Jan 1 - Jan 30: Normal logins from New York (IP: 1.2.3.4)<br />
+2. Jan 31, 9:00 AM: Login from Moscow (IP: 5.6.7.8) ⚠️<br />
+3. Jan 31, 9:05 AM: Email changed ⚠️<br />
+4. Jan 31, 9:10 AM: Payment method changed ⚠️<br />
+5. Jan 31, 9:15 AM: 25 invoices downloaded ⚠️</p>
+<p><strong>Data Sources:</strong><br />
+- Login history (IP address, timestamp)<br />
+- Email audit (old email → new email)<br />
+- Payment method audit<br />
+- Document download logs (Datadog APM)</p>
+<hr />
+<h3 id="pattern-4-insider-abuse"><strong>Pattern 4: Insider Abuse</strong></h3>
+<p><strong>Indicators:</strong><br />
+- Admin user (not customer) accessing invoices<br />
+- Access to customers they don't manage (CustomerId outside their territory)<br />
+- Download spike (100+ invoices in 1 day, normal is 5-10 for support)<br />
+- After-hours access (2:00 AM downloads)<br />
+- Personal email forwarding rules set up</p>
+<p><strong>Timeline:</strong><br />
+1. Jan 1-15: Normal support activity (5-10 invoice views/day)<br />
+2. Jan 16, 2:00 AM: 100 invoice downloads (all for competitor customers) ⚠️<br />
+3. Jan 17: Email forwarding rule created → personal Gmail ⚠️<br />
+4. Jan 18: Terminated employee (learned from HR)</p>
+<p><strong>Data Sources:</strong><br />
+- Admin user audit (EmpId, IPAddress)<br />
+- Document access logs (CustomerId, AccountNumber)<br />
+- Email rules audit (forwarding destinations)<br />
+- HR termination records</p>
+<hr />
+<h3 id="pattern-5-data-exfiltration"><strong>Pattern 5: Data Exfiltration</strong></h3>
+<p><strong>Indicators:</strong><br />
+- Automated download pattern (every 30 seconds, exact timing)<br />
+- API calls instead of UI (curl/Postman, not browser)<br />
+- All invoices for 1 customer (not selective)<br />
+- Large volume (500+ invoices, normal user: 10-20)<br />
+- Specific date range (last 2 years, targeting historical data)</p>
+<p><strong>Timeline:</strong><br />
+1. 10:00 AM - API call: Download invoice 1<br />
+2. 10:00:30 AM - API call: Download invoice 2<br />
+3. 10:01 AM - API call: Download invoice 3<br />
+... (continues every 30 seconds)<br />
+4. 12:00 PM - 500 invoices downloaded</p>
+<p><strong>Data Sources:</strong><br />
+- API access logs (user agent: curl, not browser)<br />
+- Document download logs (timestamp pattern)<br />
+- Rate limiting alerts (exceeded 100 req/hour threshold)</p>
+<hr />
+<h3 id="how-i-investigate"><strong>How I Investigate</strong></h3>
+<p><strong>Step 1: Identify Pattern</strong><br />
+- Read ticket description<br />
+- Look for keywords: "fraud", "suspicious", "unauthorized", "multiple IPs"</p>
+<p><strong>Step 2: Run Timeline Query</strong><br />
+- Get all activity for user/account (last 30 days)<br />
+- Sort chronologically<br />
+- Flag anomalies (IP change, email change, payment spike)</p>
+<p><strong>Step 3: Cross-Reference Data Sources</strong><br />
+- Login audit (when did IP change?)<br />
+- Email audit (when did email change?)<br />
+- Payment audit (when did payment method change?)<br />
+- Document logs (when did download spike?)</p>
+<p><strong>Step 4: Determine Pattern</strong><br />
+- Does it match credential stuffing? (10+ failed → 1 success → email change)<br />
+- Does it match card testing? (10+ $1 charges → 1 success)<br />
+- Does it match ATO? (IP change → email change → payment change)<br />
+- Does it match insider abuse? (admin user, after-hours, competitor customers)<br />
+- Does it match exfiltration? (automated, API, 500+ downloads)</p>
+<p><strong>Step 5: Draft Timeline for Jira</strong><br />
+- Markdown table (timestamp, event, source)<br />
+- Never include PAN/CVV<br />
+- Mask email/IP if needed<br />
+- Recommendation (escalate to Security vs handle in NJQRT)</p>
+<hr />
+<h2 id="interview-prep-how-to-talk-about-your-workflow">✅ Interview Prep: How to Talk About Your Workflow</h2>
+<h3 id="q-walk-me-through-your-triage-process"><strong>Q: "Walk me through your triage process"</strong></h3>
+<p><strong>Answer:</strong><br />
+"I start by reading the full ticket — description, all comments, linked cases — to understand what was already tried. Then I load the repo context via <code>/developer eic</code> which pulls in CLAUDE.md, CONTEXT.md, and constitution.md — these are AI-readable docs I've added to our repos that specify active vs legacy code, common pitfalls, and security rules.</p>
+<p>Next, I search our Jira backlog and Confluence for similar past cases — often the answer is already documented. If it's a new issue, I invoke sub-skills: <code>/researcher</code> explores the codebase, <code>/db-query</code> runs read-only MySQL queries via a Docker gateway I built, and for complex investigations I'll query Datadog for error traces or Pendo for user behavior.</p>
+<p>Once I have a root cause hypothesis, I run it through RC-5 — a 5-question sanity check: Does this explain the EXACT error? Is it present on succeeding cases too? Does my blamed code actually execute? Does my fix restore function or just mask the error? And what was the prior conclusion — am I changing it?</p>
+<p>Finally, I draft findings in two versions — technical for developers, business for stakeholders — get approval, then post to the Jira Development subtask. The whole process is tracked in my <code>/karthik-triage</code> skill."</p>
+<hr />
+<h3 id="q-how-do-you-handle-security-in-your-code"><strong>Q: "How do you handle security in your code?"</strong></h3>
+<p><strong>Answer:</strong><br />
+"I use a multi-layer approach:</p>
+<p><strong>Pre-commit:</strong> Checkmarx Developer Assist in VS Code scans my code on save and flags issues like SQL injection, XSS, hardcoded secrets in the Problems panel. This catches vulnerabilities before I even commit.</p>
+<p><strong>Pre-push:</strong> Our repos have constitution.md files with hard rules — always use parameterized queries, never log PAN/CVV, always filter by tenant. I validate against these before creating a PR.</p>
+<p><strong>CI:</strong> Our GitHub Actions pipeline runs Checkmarx AST scans and SonarQube quality gates. I check for NEW findings only — pre-existing issues are baseline, not blockers.</p>
+<p><strong>Post-merge:</strong> I monitor Datadog for errors and Pendo for unexpected user behavior that might indicate a security issue slipped through.</p>
+<p>This layered approach means I'm not just relying on CI to catch issues — I'm proactive about security from the first line of code."</p>
+<hr />
+<h3 id="q-tell-me-about-a-fraud-investigation-you-handled"><strong>Q: "Tell me about a fraud investigation you handled"</strong></h3>
+<p><strong>Answer:</strong><br />
+"We had a case where a customer reported unauthorized invoice downloads. I used the fraud investigation pattern I documented in Confluence:</p>
+<p>First, I pulled a timeline of all activity for that account over the last 30 days — login history, email changes, payment methods, document downloads. I noticed an IP change from New York to Moscow, followed within 1 hour by an email change, payment method change, and 25 invoice downloads (normal is 2-3).</p>
+<p>This matched the Account Takeover pattern: IP change → email change → payment change → data exfiltration. I cross-referenced the new email against our user database and found it was used on 3 other accounts — all with similar patterns.</p>
+<p>I escalated to Security with a full timeline, they confirmed it was a credential stuffing attack from a data breach, and we locked down all affected accounts. I then created a Confluence page documenting the pattern so future triages could recognize it faster."</p>
+<hr />
+<h2 id="next-steps">🎯 Next Steps</h2>
+<ol>
+<li><strong>Review this module</strong> (~1 hour read)</li>
+<li><strong>Practice explaining your workflow</strong> (say it out loud)</li>
+<li><strong>Update your resume</strong> with specific tools (Checkmarx, Docker, custom skills)</li>
+<li><strong>Prepare STAR stories</strong> for each section</li>
+<li><strong>Be ready to demo</strong> (show CLAUDE.md in a repo, run db-query.ps1, explain RC-5)</li>
+</ol>
+<hr />
+<p><strong>Last Updated:</strong> November 17, 2026<br />
+<strong>Next Module:</strong> System Design &amp; Architecture</p>
+        </div>
+    </div>
+
+    <script>
+        // Progress Tracker JavaScript
+        const STORAGE_KEY = 'course_progress_my_billtrust_workflow_and_tools';
+
+        // Extract all H2 and H3 headings from content
+        function extractSections() {
+            const content = document.querySelector('.content');
+            const headings = content.querySelectorAll('h2, h3');
+            const sections = [];
+
+            headings.forEach((heading, index) => {
+                const level = heading.tagName === 'H2' ? 2 : 3;
+                const text = heading.textContent.trim();
+                const id = `section-${index}`;
+
+                // Add ID to heading for linking
+                heading.id = id;
+
+                sections.push({
+                    id: id,
+                    text: text,
+                    level: level
+                });
+            });
+
+            return sections;
+        }
+
+        // Load saved progress from localStorage
+        function loadProgress() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            return saved ? JSON.parse(saved) : {};
+        }
+
+        // Save progress to localStorage
+        function saveProgress(progress) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+        }
+
+        // Calculate progress percentage
+        function calculateProgress() {
+            const checkboxes = document.querySelectorAll('.progress-checkbox');
+            const total = checkboxes.length;
+            if (total === 0) return 0;
+
+            const completed = Array.from(checkboxes).filter(cb => cb.checked).length;
+            return Math.round((completed / total) * 100);
+        }
+
+        // Update progress display
+        function updateProgressDisplay() {
+            const percentage = calculateProgress();
+            document.getElementById('progress-pct').textContent = percentage + '%';
+            document.getElementById('progress-bar').style.width = percentage + '%';
+
+            // Update completed class on items
+            document.querySelectorAll('.progress-item').forEach(item => {
+                const checkbox = item.querySelector('.progress-checkbox');
+                if (checkbox.checked) {
+                    item.classList.add('completed');
+                } else {
+                    item.classList.remove('completed');
+                }
+            });
+        }
+
+        // Toggle checkbox
+        function toggleCheckbox(sectionId) {
+            const checkbox = document.getElementById('cb-' + sectionId);
+            const progress = loadProgress();
+
+            progress[sectionId] = checkbox.checked;
+            saveProgress(progress);
+            updateProgressDisplay();
+        }
+
+        // Reset all progress
+        function resetProgress() {
+            if (confirm('Reset all progress for this page?')) {
+                localStorage.removeItem(STORAGE_KEY);
+                document.querySelectorAll('.progress-checkbox').forEach(cb => {
+                    cb.checked = false;
+                });
+                updateProgressDisplay();
+            }
+        }
+
+        // Toggle progress list visibility
+        function toggleProgressList() {
+            const list = document.getElementById('progress-items');
+            const btn = document.querySelector('.toggle-progress');
+
+            if (list.classList.contains('collapsed')) {
+                list.classList.remove('collapsed');
+                btn.textContent = '▼ Hide';
+            } else {
+                list.classList.add('collapsed');
+                btn.textContent = '▶ Show';
+            }
+        }
+
+        // Initialize progress tracker
+        function initProgressTracker() {
+            const sections = extractSections();
+            const progress = loadProgress();
+            const container = document.getElementById('progress-items');
+
+            if (sections.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No sections found</p>';
+                return;
+            }
+
+            sections.forEach(section => {
+                const item = document.createElement('div');
+                item.className = 'progress-item';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'progress-checkbox';
+                checkbox.id = 'cb-' + section.id;
+                checkbox.checked = progress[section.id] || false;
+                checkbox.onchange = () => toggleCheckbox(section.id);
+
+                const label = document.createElement('label');
+                label.className = 'progress-label';
+                label.htmlFor = 'cb-' + section.id;
+                label.textContent = section.text;
+                label.style.paddingLeft = section.level === 3 ? '20px' : '0';
+                label.onclick = () => {
+                    document.getElementById(section.id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+                };
+
+                item.appendChild(checkbox);
+                item.appendChild(label);
+                container.appendChild(item);
+            });
+
+            updateProgressDisplay();
+        }
+
+        // Run on page load
+        document.addEventListener('DOMContentLoaded', initProgressTracker);
+    </script>
+</body>
+</html>

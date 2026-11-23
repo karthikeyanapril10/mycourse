@@ -1,0 +1,2107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System_Design_Deep_Dive_Famous_Apps</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 60px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .metadata {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 16px 24px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #666;
+            border-left: 4px solid #667eea;
+        }
+
+        /* PROGRESS TRACKER STYLES */
+        .progress-tracker {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .progress-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-stats {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .progress-percentage {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #764ba2;
+        }
+
+        .progress-bar-container {
+            height: 12px;
+            background: #e9ecef;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+            border-radius: 20px;
+        }
+
+        .reset-btn {
+            padding: 8px 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+
+        .reset-btn:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+        }
+
+        .progress-items {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .progress-items::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .progress-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .progress-item:hover {
+            background: #f8f9fa;
+            transform: translateX(5px);
+        }
+
+        .progress-item.completed {
+            opacity: 0.7;
+        }
+
+        .progress-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .progress-label {
+            cursor: pointer;
+            font-size: 0.95em;
+            line-height: 1.5;
+            color: #495057;
+            flex-grow: 1;
+        }
+
+        .progress-item.completed .progress-label {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .toggle-progress {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .toggle-progress:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .progress-items.collapsed {
+            display: none;
+        }
+
+        /* CONTENT STYLES */
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 4px solid #667eea;
+            font-weight: 700;
+        }
+
+        h2 {
+            color: #764ba2;
+            font-size: 2em;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        h3 {
+            color: #495057;
+            font-size: 1.5em;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        h4 {
+            color: #666;
+            font-size: 1.25em;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        ul, ol {
+            margin: 20px 0;
+            padding-left: 40px;
+        }
+
+        li {
+            margin-bottom: 12px;
+            line-height: 1.7;
+        }
+
+        code {
+            background: #f4f5f7;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #c7254e;
+            border: 1px solid #e1e4e8;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 24px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 25px 0;
+            border: 1px solid #444;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            border: none;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        blockquote {
+            border-left: 5px solid #667eea;
+            padding: 15px 25px;
+            margin: 25px 0;
+            background: #f8f9fa;
+            border-radius: 0 8px 8px 0;
+            color: #495057;
+            font-style: italic;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 30px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 14px 18px;
+            text-align: left;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tr:hover {
+            background: #e9ecef;
+            transition: background 0.2s;
+        }
+
+        a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px solid transparent;
+            transition: border-bottom 0.2s;
+        }
+
+        a:hover {
+            border-bottom: 1px solid #667eea;
+        }
+
+        hr {
+            border: none;
+            border-top: 2px solid #e9ecef;
+            margin: 40px 0;
+        }
+
+        strong {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        em {
+            color: #495057;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 25px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.6em;
+            }
+
+            .progress-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .progress-stats {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../navigation.html" class="back-link">&larr; Back to Navigation</a>
+
+        <div class="metadata">
+            <strong>Source:</strong> dev/System_Design_Deep_Dive_Famous_Apps.md &nbsp;|&nbsp; <strong>Updated:</strong> 2026-11-18 19:44:58
+        </div>
+
+        <!-- PROGRESS TRACKER -->
+        <div class="progress-tracker">
+            <div class="progress-header">
+                <div class="progress-title">
+                    <span>📚</span>
+                    <span>Your Progress</span>
+                </div>
+                <div class="progress-stats">
+                    <span class="progress-percentage" id="progress-pct">0%</span>
+                    <button class="reset-btn" onclick="resetProgress()">Reset</button>
+                    <button class="toggle-progress" onclick="toggleProgressList()">▼ Hide</button>
+                </div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progress-bar" style="width: 0%"></div>
+            </div>
+            <div class="progress-items" id="progress-items">
+                <!-- Checkboxes will be generated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="content">
+<h1 id="system-design-deep-dive-5-famous-applications">System Design Deep Dive: 5 Famous Applications</h1>
+<blockquote>
+<p><strong>Master system design by understanding how the giants built their platforms</strong></p>
+</blockquote>
+<hr />
+<h2 id="table-of-contents">Table of Contents</h2>
+<ol>
+<li><a href="#1-email-notification-system">Email Notification System (Zero to Master)</a></li>
+<li><a href="#2-spotify-music-streaming">Spotify (Music Streaming)</a></li>
+<li><a href="#3-whatsapp-messaging">WhatsApp (Messaging)</a></li>
+<li><a href="#4-instagram-social-media">Instagram (Social Media)</a></li>
+<li><a href="#5-url-shortener">URL Shortener (bit.ly)</a></li>
+</ol>
+<hr />
+<h1 id="1-email-notification-system-zero-to-master">1. Email Notification System (Zero to Master)</h1>
+<h2 id="overview">Overview</h2>
+<p>Design a scalable email notification system that can handle <strong>10 million users</strong> sending <strong>100 million emails/day</strong>.</p>
+<hr />
+<h2 id="functional-requirements">Functional Requirements</h2>
+<ol>
+<li><strong>Send transactional emails</strong> (password reset, order confirmation, invoice delivery)</li>
+<li><strong>Send marketing emails</strong> (newsletters, promotions, campaigns)</li>
+<li><strong>Email templates</strong> (dynamic content, personalization)</li>
+<li><strong>Delivery tracking</strong> (sent, delivered, opened, clicked, bounced)</li>
+<li><strong>Retry logic</strong> (failed deliveries)</li>
+<li><strong>Unsubscribe management</strong></li>
+<li><strong>Priority queues</strong> (critical emails sent first)</li>
+</ol>
+<hr />
+<h2 id="non-functional-requirements">Non-Functional Requirements</h2>
+<ol>
+<li><strong>Throughput:</strong> 100M emails/day = <strong>1,157 emails/sec average</strong>, <strong>5,000 emails/sec peak</strong></li>
+<li><strong>Latency:</strong> Transactional emails sent within <strong>10 seconds</strong>, marketing emails within <strong>1 hour</strong></li>
+<li><strong>Availability:</strong> 99.9% uptime</li>
+<li><strong>Scalability:</strong> Handle 10x growth (1 billion emails/day)</li>
+<li><strong>Cost-effective:</strong> Minimize infrastructure costs</li>
+</ol>
+<hr />
+<h2 id="capacity-estimation">Capacity Estimation</h2>
+<p><strong>Emails per day:</strong> 100M<br />
+<strong>Average email size:</strong> 50 KB (HTML + images base64)<br />
+<strong>Storage per day:</strong> 100M * 50 KB = <strong>5 TB/day</strong><br />
+<strong>Storage per year:</strong> 5 TB * 365 = <strong>1.8 PB/year</strong> (need retention policy)</p>
+<p><strong>Bandwidth:</strong><br />
+- Outgoing: 1,157 emails/sec * 50 KB = <strong>58 MB/sec</strong> = <strong>464 Mbps</strong><br />
+- Peak: 5,000 emails/sec * 50 KB = <strong>250 MB/sec</strong> = <strong>2 Gbps</strong></p>
+<p><strong>Database:</strong><br />
+- Users: 10M records * 1 KB = <strong>10 GB</strong><br />
+- Email logs: 100M/day * 500 bytes = <strong>50 GB/day</strong> = <strong>18 TB/year</strong></p>
+<hr />
+<h2 id="api-design">API Design</h2>
+<h3 id="1-send-email">1. Send Email</h3>
+<div class="codehilite"><pre><span></span><code><span class="err">POST /api/v1/emails/send</span>
+<span class="err">Content-Type: application/json</span>
+
+<span class="err">{</span>
+<span class="err">  "to": ["user@example.com"],</span>
+<span class="err">  "cc": ["manager@example.com"],</span>
+<span class="err">  "bcc": ["admin@example.com"],</span>
+<span class="err">  "subject": "Your invoice is ready",</span>
+<span class="err">  "template_id": "invoice_ready_v2",</span>
+<span class="err">  "template_data": {</span>
+<span class="err">    "user_name": "John Doe",</span>
+<span class="err">    "invoice_number": "INV-12345",</span>
+<span class="err">    "amount": "$1,250.00"</span>
+<span class="err">  },</span>
+<span class="err">  "priority": "high",  // high, normal, low</span>
+<span class="err">  "scheduled_at": "2026-11-20T10:00:00Z",  // optional</span>
+<span class="err">  "attachments": [</span>
+<span class="err">    {</span>
+<span class="err">      "filename": "invoice.pdf",</span>
+<span class="err">      "content_base64": "JVBERi0xLjQK..."</span>
+<span class="err">    }</span>
+<span class="err">  ]</span>
+<span class="err">}</span>
+
+<span class="err">Response:</span>
+<span class="err">{</span>
+<span class="err">  "email_id": "eml_7x9k2m4p",</span>
+<span class="err">  "status": "queued",</span>
+<span class="err">  "estimated_delivery": "2026-11-20T09:45:12Z"</span>
+<span class="err">}</span>
+</code></pre></div>
+
+<h3 id="2-get-email-status">2. Get Email Status</h3>
+<div class="codehilite"><pre><span></span><code><span class="err">GET /api/v1/emails/{email_id}</span>
+
+<span class="err">Response:</span>
+<span class="err">{</span>
+<span class="err">  "email_id": "eml_7x9k2m4p",</span>
+<span class="err">  "status": "delivered",  // queued, sent, delivered, opened, clicked, bounced, failed</span>
+<span class="err">  "sent_at": "2026-11-20T09:45:12Z",</span>
+<span class="err">  "delivered_at": "2026-11-20T09:45:15Z",</span>
+<span class="err">  "opened_at": "2026-11-20T10:12:03Z",</span>
+<span class="err">  "clicked_at": null,</span>
+<span class="err">  "bounce_reason": null,</span>
+<span class="err">  "retry_count": 0</span>
+<span class="err">}</span>
+</code></pre></div>
+
+<h3 id="3-create-template">3. Create Template</h3>
+<div class="codehilite"><pre><span></span><code><span class="err">POST /api/v1/templates</span>
+<span class="err">Content-Type: application/json</span>
+
+<span class="err">{</span>
+<span class="err">  "name": "invoice_ready_v2",</span>
+<span class="err">  "subject": "Your invoice {{invoice_number}} is ready",</span>
+<span class="err">  "body_html": "&lt;html&gt;...&lt;/html&gt;",</span>
+<span class="err">  "body_text": "Plain text version..."</span>
+<span class="err">}</span>
+</code></pre></div>
+
+<h3 id="4-unsubscribe-user">4. Unsubscribe User</h3>
+<div class="codehilite"><pre><span></span><code><span class="err">POST /api/v1/unsubscribe</span>
+<span class="err">{</span>
+<span class="err">  "email": "user@example.com",</span>
+<span class="err">  "category": "marketing"  // marketing, transactional, all</span>
+<span class="err">}</span>
+</code></pre></div>
+
+<hr />
+<h2 id="database-schema">Database Schema</h2>
+<h3 id="users-table">Users Table</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">users</span><span class="w"> </span><span class="p">(</span>
+<span class="w">  </span><span class="n">user_id</span><span class="w"> </span><span class="nb">BIGINT</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span>
+<span class="w">  </span><span class="n">email</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">255</span><span class="p">)</span><span class="w"> </span><span class="k">UNIQUE</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span>
+<span class="w">  </span><span class="n">name</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">255</span><span class="p">),</span>
+<span class="w">  </span><span class="n">unsubscribed_marketing</span><span class="w"> </span><span class="nb">BOOLEAN</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="k">FALSE</span><span class="p">,</span>
+<span class="w">  </span><span class="n">unsubscribed_all</span><span class="w"> </span><span class="nb">BOOLEAN</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="k">FALSE</span><span class="p">,</span>
+<span class="w">  </span><span class="n">created_at</span><span class="w"> </span><span class="k">TIMESTAMP</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="k">CURRENT_TIMESTAMP</span><span class="p">,</span>
+<span class="w">  </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_email</span><span class="w"> </span><span class="p">(</span><span class="n">email</span><span class="p">)</span>
+<span class="p">);</span>
+</code></pre></div>
+
+<h3 id="email-templates-table">Email Templates Table</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">email_templates</span><span class="w"> </span><span class="p">(</span>
+<span class="w">  </span><span class="n">template_id</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span>
+<span class="w">  </span><span class="n">name</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">255</span><span class="p">)</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span>
+<span class="w">  </span><span class="n">subject</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">500</span><span class="p">),</span>
+<span class="w">  </span><span class="n">body_html</span><span class="w"> </span><span class="nb">TEXT</span><span class="p">,</span>
+<span class="w">  </span><span class="n">body_text</span><span class="w"> </span><span class="nb">TEXT</span><span class="p">,</span>
+<span class="w">  </span><span class="n">created_at</span><span class="w"> </span><span class="k">TIMESTAMP</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="k">CURRENT_TIMESTAMP</span><span class="p">,</span>
+<span class="w">  </span><span class="n">updated_at</span><span class="w"> </span><span class="k">TIMESTAMP</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="k">CURRENT_TIMESTAMP</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="k">UPDATE</span><span class="w"> </span><span class="k">CURRENT_TIMESTAMP</span>
+<span class="p">);</span>
+</code></pre></div>
+
+<h3 id="email-queue-table-transient-redisrabbitmq">Email Queue Table (Transient, Redis/RabbitMQ)</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">Key</span><span class="err">:</span><span class="w"> </span><span class="nl">email_queue</span><span class="p">:</span><span class="err">{</span><span class="n">priority</span><span class="err">}</span>
+<span class="k">Value</span><span class="err">:</span><span class="w"> </span><span class="err">{</span>
+<span class="w">  </span><span class="ss">"email_id"</span><span class="err">:</span><span class="w"> </span><span class="ss">"eml_7x9k2m4p"</span><span class="p">,</span>
+<span class="w">  </span><span class="ss">"to"</span><span class="err">:</span><span class="w"> </span><span class="o">[</span><span class="n">"user@example.com"</span><span class="o">]</span><span class="p">,</span>
+<span class="w">  </span><span class="ss">"subject"</span><span class="err">:</span><span class="w"> </span><span class="ss">"..."</span><span class="p">,</span>
+<span class="w">  </span><span class="ss">"body_html"</span><span class="err">:</span><span class="w"> </span><span class="ss">"..."</span><span class="p">,</span>
+<span class="w">  </span><span class="ss">"priority"</span><span class="err">:</span><span class="w"> </span><span class="ss">"high"</span><span class="p">,</span>
+<span class="w">  </span><span class="ss">"retry_count"</span><span class="err">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">  </span><span class="ss">"scheduled_at"</span><span class="err">:</span><span class="w"> </span><span class="ss">"2026-11-20T10:00:00Z"</span>
+<span class="err">}</span>
+</code></pre></div>
+
+<h3 id="email-logs-table-cassandramongodb">Email Logs Table (Cassandra/MongoDB)</h3>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="s2">"_id"</span><span class="o">:</span><span class="w"> </span><span class="s2">"eml_7x9k2m4p"</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"user_id"</span><span class="o">:</span><span class="w"> </span><span class="mf">12345</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"to"</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"user@example.com"</span><span class="p">],</span>
+<span class="w">  </span><span class="s2">"subject"</span><span class="o">:</span><span class="w"> </span><span class="s2">"Your invoice is ready"</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"template_id"</span><span class="o">:</span><span class="w"> </span><span class="s2">"invoice_ready_v2"</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"status"</span><span class="o">:</span><span class="w"> </span><span class="s2">"delivered"</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"priority"</span><span class="o">:</span><span class="w"> </span><span class="s2">"high"</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"sent_at"</span><span class="o">:</span><span class="w"> </span><span class="nx">ISODate</span><span class="p">(</span><span class="s2">"2026-11-20T09:45:12Z"</span><span class="p">),</span>
+<span class="w">  </span><span class="s2">"delivered_at"</span><span class="o">:</span><span class="w"> </span><span class="nx">ISODate</span><span class="p">(</span><span class="s2">"2026-11-20T09:45:15Z"</span><span class="p">),</span>
+<span class="w">  </span><span class="s2">"opened_at"</span><span class="o">:</span><span class="w"> </span><span class="nx">ISODate</span><span class="p">(</span><span class="s2">"2026-11-20T10:12:03Z"</span><span class="p">),</span>
+<span class="w">  </span><span class="s2">"clicked_at"</span><span class="o">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"bounce_reason"</span><span class="o">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"retry_count"</span><span class="o">:</span><span class="w"> </span><span class="mf">0</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"metadata"</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="s2">"campaign_id"</span><span class="o">:</span><span class="w"> </span><span class="s2">"spring_sale_2026"</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">"user_segment"</span><span class="o">:</span><span class="w"> </span><span class="s2">"premium"</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<hr />
+<h2 id="high-level-architecture">High-Level Architecture</h2>
+<div class="codehilite"><pre><span></span><code>┌─────────────┐
+│   Web App   │
+│  Mobile App │
+└──────┬──────┘
+       │ POST /emails/send
+       ▼
+┌─────────────────────────┐
+│   API Gateway           │
+│   (Rate Limiting)       │
+└──────┬──────────────────┘
+       │
+       ▼
+┌─────────────────────────┐
+│   Email Service         │
+│   (Validation, Template │
+│    Rendering)           │
+└──────┬──────────────────┘
+       │
+       ▼
+┌─────────────────────────┐       ┌──────────────┐
+│   RabbitMQ              │       │  Redis       │
+│   3 Queues:             │◄──────│  (Dedup)     │
+│   - high_priority       │       └──────────────┘
+│   - normal_priority     │
+│   - low_priority        │
+└──────┬──────────────────┘
+       │
+       ▼
+┌─────────────────────────┐
+│   Email Workers (20+)   │
+│   - Fetch from queue    │
+│   - Call SendGrid API   │
+│   - Log delivery status │
+└──────┬──────────────────┘
+       │
+       ├──────────► SendGrid/AWS SES/Twilio SendGrid
+       │
+       └──────────► Cassandra (Email Logs)
+</code></pre></div>
+
+<hr />
+<h2 id="deep-dive-components">Deep Dive: Components</h2>
+<h3 id="1-api-gateway">1. <strong>API Gateway</strong></h3>
+<ul>
+<li><strong>Rate limiting:</strong> 100 emails/sec per user (prevent spam)</li>
+<li><strong>Authentication:</strong> API key validation</li>
+<li><strong>Load balancing:</strong> Distribute across Email Service instances</li>
+</ul>
+<h3 id="2-email-service-stateless">2. <strong>Email Service (Stateless)</strong></h3>
+<ul>
+<li><strong>Validation:</strong></li>
+<li>Check email format (regex)</li>
+<li>Check unsubscribe list (Redis cache)</li>
+<li>Check spam score (Akismet API)</li>
+<li><strong>Template rendering:</strong></li>
+<li>Fetch template from MySQL</li>
+<li>Replace <code>{{variables}}</code> with user data</li>
+<li>Generate HTML + plain text versions</li>
+<li><strong>Deduplication:</strong></li>
+<li>Check Redis: <code>sent:{user_id}:{template_id}:{hash}</code> (TTL 24h)</li>
+<li>Prevent sending duplicate emails within 24 hours</li>
+<li><strong>Queue selection:</strong></li>
+<li><code>high</code> priority → <code>high_priority</code> queue</li>
+<li><code>normal</code> priority → <code>normal_priority</code> queue</li>
+<li><code>low</code> priority (marketing) → <code>low_priority</code> queue</li>
+</ul>
+<h3 id="3-rabbitmq-message-queue">3. <strong>RabbitMQ (Message Queue)</strong></h3>
+<ul>
+<li><strong>Why RabbitMQ?</strong></li>
+<li>At-least-once delivery (workers ack after sending)</li>
+<li>Priority queues (high-priority emails sent first)</li>
+<li>Dead Letter Queue (DLQ) for failed emails</li>
+<li><strong>Configuration:</strong></li>
+<li><code>prefetch_count=10</code> (each worker processes 10 emails concurrently)</li>
+<li><code>message_ttl=3600</code> (1 hour, discard old marketing emails)</li>
+<li><code>max_retries=3</code> (retry failed emails 3 times)</li>
+</ul>
+<h3 id="4-email-workers-kubernetes-hpa">4. <strong>Email Workers (Kubernetes HPA)</strong></h3>
+<ul>
+<li><strong>Scaling:</strong></li>
+<li>Start: 10 workers</li>
+<li>Auto-scale to 50 workers when queue depth &gt; 10,000</li>
+<li>Scale down to 10 when queue depth &lt; 1,000</li>
+<li>
+<p><strong>Worker logic:</strong><br />
+  ```python<br />
+  while True:<br />
+      email = rabbitmq.fetch_from_queue(queue='high_priority')</p>
+<p># Call SendGrid API<br />
+  response = sendgrid.send(<br />
+      to=email['to'],<br />
+      subject=email['subject'],<br />
+      html=email['body_html']<br />
+  )</p>
+<p># Log delivery<br />
+  cassandra.insert('email_logs', {<br />
+      'email_id': email['email_id'],<br />
+      'status': 'sent',<br />
+      'sent_at': now(),<br />
+      'sendgrid_message_id': response['message_id']<br />
+  })</p>
+<p># Ack message<br />
+  rabbitmq.ack(email)<br />
+  ```</p>
+</li>
+</ul>
+<h3 id="5-sendgridaws-ses-email-provider">5. <strong>SendGrid/AWS SES (Email Provider)</strong></h3>
+<ul>
+<li><strong>Why external provider?</strong></li>
+<li>Deliverability (IP reputation, SPF/DKIM setup)</li>
+<li>Bounce handling (they track bounces, not us)</li>
+<li>Cost-effective ($0.10 per 1,000 emails)</li>
+<li><strong>Webhooks:</strong></li>
+<li>SendGrid sends webhooks for: <code>delivered</code>, <code>opened</code>, <code>clicked</code>, <code>bounced</code></li>
+<li>We update Cassandra via webhook handler</li>
+</ul>
+<h3 id="6-cassandra-email-logs">6. <strong>Cassandra (Email Logs)</strong></h3>
+<ul>
+<li><strong>Why Cassandra?</strong></li>
+<li>Write-heavy (100M writes/day)</li>
+<li>Time-series data (query by date range)</li>
+<li>Horizontal scaling (add nodes easily)</li>
+<li><strong>Data model:</strong></li>
+<li>Partition key: <code>user_id</code> (all emails for a user in one partition)</li>
+<li>Clustering key: <code>sent_at DESC</code> (newest first)</li>
+<li>TTL: 90 days (auto-delete old logs)</li>
+</ul>
+<hr />
+<h2 id="bottlenecks-solutions">Bottlenecks &amp; Solutions</h2>
+<h3 id="bottleneck-1-sendgrid-rate-limit-5000-emailssec">Bottleneck 1: <strong>SendGrid Rate Limit (5,000 emails/sec)</strong></h3>
+<p><strong>Solution:</strong><br />
+- Use multiple email providers (SendGrid + AWS SES + Mailgun)<br />
+- Round-robin distribution<br />
+- Fallback if one provider is down</p>
+<h3 id="bottleneck-2-template-rendering-is-slow-cpu-intensive">Bottleneck 2: <strong>Template Rendering is Slow (CPU-intensive)</strong></h3>
+<p><strong>Solution:</strong><br />
+- Pre-render common templates and cache in Redis<br />
+- Use template engine with compiled templates (Jinja2)</p>
+<h3 id="bottleneck-3-database-writes-are-expensive-100m-logsday">Bottleneck 3: <strong>Database Writes are Expensive (100M logs/day)</strong></h3>
+<p><strong>Solution:</strong><br />
+- Batch writes (buffer 1,000 logs, write every 10 seconds)<br />
+- Use Cassandra's native batch insert</p>
+<h3 id="bottleneck-4-duplicate-emails-sent-race-condition">Bottleneck 4: <strong>Duplicate Emails Sent (Race Condition)</strong></h3>
+<p><strong>Solution:</strong><br />
+- Redis deduplication: <code>SET sent:{user}:{template}:{hash} 1 EX 86400 NX</code><br />
+- <code>NX</code> ensures only one worker sets the key</p>
+<hr />
+<h2 id="scaling-strategies">Scaling Strategies</h2>
+<h3 id="stage-1-mvp-10k-emailsday">Stage 1: <strong>MVP (10k emails/day)</strong></h3>
+<ul>
+<li>Single server (Flask + Celery + PostgreSQL)</li>
+<li>SendGrid for delivery</li>
+<li>Cost: $50/month</li>
+</ul>
+<h3 id="stage-2-growth-1m-emailsday">Stage 2: <strong>Growth (1M emails/day)</strong></h3>
+<ul>
+<li>Kubernetes (5 worker pods)</li>
+<li>RabbitMQ for queuing</li>
+<li>PostgreSQL for logs (partitioned by month)</li>
+<li>Cost: $500/month</li>
+</ul>
+<h3 id="stage-3-scale-100m-emailsday">Stage 3: <strong>Scale (100M emails/day)</strong></h3>
+<ul>
+<li>Kubernetes HPA (10-50 worker pods)</li>
+<li>Cassandra for logs (3-node cluster)</li>
+<li>Redis for caching + dedup</li>
+<li>Multi-provider (SendGrid + AWS SES)</li>
+<li>Cost: $5,000/month</li>
+</ul>
+<h3 id="stage-4-hyper-scale-1b-emailsday">Stage 4: <strong>Hyper-Scale (1B emails/day)</strong></h3>
+<ul>
+<li>Kafka instead of RabbitMQ (higher throughput)</li>
+<li>Cassandra (10-node cluster)</li>
+<li>Regional deployments (US, EU, Asia)</li>
+<li>Cost: $50,000/month</li>
+</ul>
+<hr />
+<h2 id="interview-2-minute-answer">Interview 2-Minute Answer</h2>
+<p><strong>Interviewer:</strong> "Design an email notification system for 100M emails/day."</p>
+<p><strong>Your Answer:</strong></p>
+<p>"I'd design a <strong>queue-based architecture</strong> with three main components:</p>
+<p><strong>1. API Layer:</strong><br />
+- API Gateway validates requests, checks rate limits, and routes to Email Service<br />
+- Email Service renders templates, deduplicates (Redis), and pushes to RabbitMQ</p>
+<p><strong>2. Queue Layer (RabbitMQ):</strong><br />
+- <strong>3 priority queues</strong>: high (transactional), normal, low (marketing)<br />
+- Workers auto-scale 10-50 pods based on queue depth via Kubernetes HPA<br />
+- At-least-once delivery with ack after sending</p>
+<p><strong>3. Email Providers:</strong><br />
+- SendGrid/AWS SES for actual delivery ($0.10 per 1,000 emails)<br />
+- Multiple providers for redundancy (round-robin)</p>
+<p><strong>4. Logging (Cassandra):</strong><br />
+- Write-heavy workload (100M logs/day)<br />
+- Time-series data (partition by user_id, cluster by sent_at DESC)<br />
+- 90-day TTL to auto-delete old logs</p>
+<p><strong>Scaling:</strong><br />
+- <strong>100M emails/day</strong> = 1,157/sec avg, 5,000/sec peak<br />
+- 10 workers handle 1,157/sec easily (each worker: 100 emails/sec)<br />
+- Auto-scale to 50 workers during peak</p>
+<p><strong>Key Design Choices:</strong><br />
+- RabbitMQ for priority queues (not Kafka, overkill for this throughput)<br />
+- Cassandra for logs (not MySQL, write-heavy)<br />
+- External providers (not SMTP server, deliverability issues)</p>
+<p><strong>Bottleneck:</strong> SendGrid rate limit (5,000/sec). Solution: Multi-provider.</p>
+<p>At Billtrust, we handle similar invoice delivery workflows using RabbitMQ + S3 + email workers, processing 100k invoices/month."</p>
+<hr />
+<h1 id="2-spotify-music-streaming">2. Spotify (Music Streaming)</h1>
+<h2 id="overview_1">Overview</h2>
+<p>Design Spotify: <strong>400M users</strong>, <strong>100M songs</strong>, <strong>10B streams/month</strong>.</p>
+<hr />
+<h2 id="functional-requirements_1">Functional Requirements</h2>
+<ol>
+<li><strong>User management</strong> (signup, login, profiles)</li>
+<li><strong>Music catalog</strong> (100M songs, metadata, albums, artists)</li>
+<li><strong>Search</strong> (songs, artists, albums, playlists)</li>
+<li><strong>Playlists</strong> (create, edit, follow, collaborative)</li>
+<li><strong>Audio streaming</strong> (adaptive bitrate, offline mode)</li>
+<li><strong>Recommendations</strong> (personalized playlists, Discover Weekly)</li>
+<li><strong>Social features</strong> (follow artists, share songs, collaborative playlists)</li>
+</ol>
+<hr />
+<h2 id="non-functional-requirements_1">Non-Functional Requirements</h2>
+<ol>
+<li><strong>Latency:</strong> Song starts playing within <strong>200ms</strong> of clicking play</li>
+<li><strong>Availability:</strong> 99.99% uptime (4 minutes downtime/month)</li>
+<li><strong>Scalability:</strong> Handle 10M concurrent streams</li>
+<li><strong>Storage:</strong> 100M songs * 10 MB = <strong>1 PB</strong> of audio files</li>
+<li><strong>Bandwidth:</strong> 10M streams * 320 kbps = <strong>3.2 Tbps</strong> = <strong>400 GB/sec</strong></li>
+</ol>
+<hr />
+<h2 id="capacity-estimation_1">Capacity Estimation</h2>
+<p><strong>Users:</strong> 400M<br />
+<strong>Active users:</strong> 200M (50%)<br />
+<strong>Daily active users (DAU):</strong> 100M (25%)</p>
+<p><strong>Songs:</strong> 100M<br />
+<strong>Average song size:</strong> 10 MB (320 kbps, 4 min)<br />
+<strong>Total storage:</strong> 100M * 10 MB = <strong>1 PB</strong></p>
+<p><strong>Streams per month:</strong> 10B<br />
+<strong>Streams per day:</strong> 10B / 30 = <strong>333M/day</strong><br />
+<strong>Concurrent streams:</strong> 333M / 86,400 sec = <strong>3,858/sec</strong> (average)<br />
+<strong>Peak concurrent streams:</strong> 10M (during popular album releases)</p>
+<p><strong>Bandwidth per stream:</strong> 320 kbps = <strong>40 KB/sec</strong><br />
+<strong>Total bandwidth:</strong> 10M streams * 40 KB/sec = <strong>400 GB/sec</strong> = <strong>3.2 Tbps</strong></p>
+<hr />
+<h2 id="api-design_1">API Design</h2>
+<h3 id="1-search-songs">1. Search Songs</h3>
+<div class="codehilite"><pre><span></span><code><span class="err">GET /api/v1/search?q=Shape+of+You&amp;type=song&amp;limit=20</span>
+
+<span class="err">Response:</span>
+<span class="err">{</span>
+<span class="err">  "songs": [</span>
+<span class="err">    {</span>
+<span class="err">      "song_id": "song_7x9k2m",</span>
+<span class="err">      "title": "Shape of You",</span>
+<span class="err">      "artist": "Ed Sheeran",</span>
+<span class="err">      "album": "÷ (Divide)",</span>
+<span class="err">      "duration_sec": 233,</span>
+<span class="err">      "cover_art_url": "https://cdn.spotify.com/covers/song_7x9k2m.jpg",</span>
+<span class="err">      "audio_url": "https://cdn.spotify.com/audio/song_7x9k2m_320kbps.mp3"</span>
+<span class="err">    }</span>
+<span class="err">  ],</span>
+<span class="err">  "total": 1,</span>
+<span class="err">  "offset": 0,</span>
+<span class="err">  "limit": 20</span>
+<span class="err">}</span>
+</code></pre></div>
+
+<h3 id="2-get-song-stream-url">2. Get Song Stream URL</h3>
+<div class="codehilite"><pre><span></span><code><span class="err">GET /api/v1/songs/{song_id}/stream?quality=high</span>
+
+<span class="err">Response:</span>
+<span class="err">{</span>
+<span class="err">  "stream_url": "https://cdn-us-west.spotify.com/audio/song_7x9k2m_320kbps.mp3?token=xyz",</span>
+<span class="err">  "expires_in": 3600,</span>
+<span class="err">  "bitrates": {</span>
+<span class="err">    "low": "96kbps",</span>
+<span class="err">    "normal": "160kbps",</span>
+<span class="err">    "high": "320kbps"</span>
+<span class="err">  }</span>
+<span class="err">}</span>
+</code></pre></div>
+
+<h3 id="3-create-playlist">3. Create Playlist</h3>
+<div class="codehilite"><pre><span></span><code><span class="err">POST /api/v1/playlists</span>
+<span class="err">{</span>
+<span class="err">  "name": "Workout Mix",</span>
+<span class="err">  "description": "High-energy songs for the gym",</span>
+<span class="err">  "public": true,</span>
+<span class="err">  "song_ids": ["song_7x9k2m", "song_abc123"]</span>
+<span class="err">}</span>
+
+<span class="err">Response:</span>
+<span class="err">{</span>
+<span class="err">  "playlist_id": "pl_xyz789",</span>
+<span class="err">  "name": "Workout Mix",</span>
+<span class="err">  "created_at": "2026-11-20T10:00:00Z"</span>
+<span class="err">}</span>
+</code></pre></div>
+
+<h3 id="4-get-recommendations">4. Get Recommendations</h3>
+<div class="codehilite"><pre><span></span><code><span class="err">GET /api/v1/recommendations?user_id=12345</span>
+
+<span class="err">Response:</span>
+<span class="err">{</span>
+<span class="err">  "playlists": [</span>
+<span class="err">    {</span>
+<span class="err">      "playlist_id": "discover_weekly_12345",</span>
+<span class="err">      "name": "Discover Weekly",</span>
+<span class="err">      "songs": [...]</span>
+<span class="err">    },</span>
+<span class="err">    {</span>
+<span class="err">      "playlist_id": "daily_mix_1_12345",</span>
+<span class="err">      "name": "Daily Mix 1",</span>
+<span class="err">      "songs": [...]</span>
+<span class="err">    }</span>
+<span class="err">  ]</span>
+<span class="err">}</span>
+</code></pre></div>
+
+<hr />
+<h2 id="database-schema_1">Database Schema</h2>
+<h3 id="users-table-postgresql">Users Table (PostgreSQL)</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">users</span><span class="w"> </span><span class="p">(</span>
+<span class="w">  </span><span class="n">user_id</span><span class="w"> </span><span class="nb">BIGINT</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span>
+<span class="w">  </span><span class="n">email</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">255</span><span class="p">)</span><span class="w"> </span><span class="k">UNIQUE</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span>
+<span class="w">  </span><span class="n">username</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span><span class="w"> </span><span class="k">UNIQUE</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span>
+<span class="w">  </span><span class="n">password_hash</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">255</span><span class="p">),</span>
+<span class="w">  </span><span class="n">subscription_type</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">20</span><span class="p">),</span><span class="w">  </span><span class="c1">-- free, premium</span>
+<span class="w">  </span><span class="n">created_at</span><span class="w"> </span><span class="k">TIMESTAMP</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="k">CURRENT_TIMESTAMP</span><span class="p">,</span>
+<span class="w">  </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_email</span><span class="w"> </span><span class="p">(</span><span class="n">email</span><span class="p">),</span>
+<span class="w">  </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_username</span><span class="w"> </span><span class="p">(</span><span class="n">username</span><span class="p">)</span>
+<span class="p">);</span>
+</code></pre></div>
+
+<h3 id="songs-table-postgresql">Songs Table (PostgreSQL)</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">songs</span><span class="w"> </span><span class="p">(</span>
+<span class="w">  </span><span class="n">song_id</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span>
+<span class="w">  </span><span class="n">title</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">500</span><span class="p">)</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span>
+<span class="w">  </span><span class="n">artist_id</span><span class="w"> </span><span class="nb">BIGINT</span><span class="p">,</span>
+<span class="w">  </span><span class="n">album_id</span><span class="w"> </span><span class="nb">BIGINT</span><span class="p">,</span>
+<span class="w">  </span><span class="n">duration_sec</span><span class="w"> </span><span class="nb">INT</span><span class="p">,</span>
+<span class="w">  </span><span class="n">release_date</span><span class="w"> </span><span class="nb">DATE</span><span class="p">,</span>
+<span class="w">  </span><span class="n">genre</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span>
+<span class="w">  </span><span class="n">cover_art_url</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">1000</span><span class="p">),</span>
+<span class="w">  </span><span class="n">audio_file_path</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">1000</span><span class="p">),</span>
+<span class="w">  </span><span class="n">created_at</span><span class="w"> </span><span class="k">TIMESTAMP</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="k">CURRENT_TIMESTAMP</span><span class="p">,</span>
+<span class="w">  </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_artist</span><span class="w"> </span><span class="p">(</span><span class="n">artist_id</span><span class="p">),</span>
+<span class="w">  </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_album</span><span class="w"> </span><span class="p">(</span><span class="n">album_id</span><span class="p">),</span>
+<span class="w">  </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_title</span><span class="w"> </span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+<span class="p">);</span>
+</code></pre></div>
+
+<h3 id="playlists-table-postgresql">Playlists Table (PostgreSQL)</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">playlists</span><span class="w"> </span><span class="p">(</span>
+<span class="w">  </span><span class="n">playlist_id</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span>
+<span class="w">  </span><span class="n">user_id</span><span class="w"> </span><span class="nb">BIGINT</span><span class="p">,</span>
+<span class="w">  </span><span class="n">name</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">500</span><span class="p">),</span>
+<span class="w">  </span><span class="n">description</span><span class="w"> </span><span class="nb">TEXT</span><span class="p">,</span>
+<span class="w">  </span><span class="k">public</span><span class="w"> </span><span class="nb">BOOLEAN</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="k">TRUE</span><span class="p">,</span>
+<span class="w">  </span><span class="n">created_at</span><span class="w"> </span><span class="k">TIMESTAMP</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="k">CURRENT_TIMESTAMP</span><span class="p">,</span>
+<span class="w">  </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_user</span><span class="w"> </span><span class="p">(</span><span class="n">user_id</span><span class="p">)</span>
+<span class="p">);</span>
+
+<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">playlist_songs</span><span class="w"> </span><span class="p">(</span>
+<span class="w">  </span><span class="n">playlist_id</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">50</span><span class="p">),</span>
+<span class="w">  </span><span class="n">song_id</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">50</span><span class="p">),</span>
+<span class="w">  </span><span class="k">position</span><span class="w"> </span><span class="nb">INT</span><span class="p">,</span>
+<span class="w">  </span><span class="n">added_at</span><span class="w"> </span><span class="k">TIMESTAMP</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="k">CURRENT_TIMESTAMP</span><span class="p">,</span>
+<span class="w">  </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">(</span><span class="n">playlist_id</span><span class="p">,</span><span class="w"> </span><span class="n">song_id</span><span class="p">),</span>
+<span class="w">  </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_playlist</span><span class="w"> </span><span class="p">(</span><span class="n">playlist_id</span><span class="p">)</span>
+<span class="p">);</span>
+</code></pre></div>
+
+<h3 id="listening-history-cassandra">Listening History (Cassandra)</h3>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="s2">"_id"</span><span class="o">:</span><span class="w"> </span><span class="s2">"listen_xyz123"</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"user_id"</span><span class="o">:</span><span class="w"> </span><span class="mf">12345</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"song_id"</span><span class="o">:</span><span class="w"> </span><span class="s2">"song_7x9k2m"</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"played_at"</span><span class="o">:</span><span class="w"> </span><span class="nx">ISODate</span><span class="p">(</span><span class="s2">"2026-11-20T10:12:03Z"</span><span class="p">),</span>
+<span class="w">  </span><span class="s2">"duration_played_sec"</span><span class="o">:</span><span class="w"> </span><span class="mf">180</span><span class="p">,</span><span class="w">  </span><span class="c1">// listened for 3 min out of 4 min song</span>
+<span class="w">  </span><span class="s2">"skipped"</span><span class="o">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"device"</span><span class="o">:</span><span class="w"> </span><span class="s2">"mobile_ios"</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<hr />
+<h2 id="high-level-architecture_1">High-Level Architecture</h2>
+<div class="codehilite"><pre><span></span><code>┌─────────────┐
+│   Mobile    │
+│   Web App   │
+└──────┬──────┘
+       │
+       ▼
+┌─────────────────────────┐
+│   API Gateway           │
+│   (Auth, Rate Limiting) │
+└──────┬──────────────────┘
+       │
+       ├──► Search Service (Elasticsearch)
+       │
+       ├──► Metadata Service (PostgreSQL: songs, artists, albums)
+       │
+       ├──► Playlist Service (PostgreSQL)
+       │
+       ├──► Recommendation Service (ML models, Cassandra listening history)
+       │
+       └──► Stream Service (generates CDN URLs)
+                │
+                ▼
+         ┌──────────────────┐
+         │   CDN (Akamai)   │
+         │   - Audio files  │
+         │   - 1 PB storage │
+         └──────────────────┘
+</code></pre></div>
+
+<hr />
+<h2 id="deep-dive-streaming">Deep Dive: Streaming</h2>
+<h3 id="challenge-10m-concurrent-streams-40-kbsec-400-gbsec-bandwidth">Challenge: <strong>10M concurrent streams * 40 KB/sec = 400 GB/sec bandwidth</strong></h3>
+<h3 id="solution-multi-cdn-adaptive-bitrate">Solution: <strong>Multi-CDN + Adaptive Bitrate</strong></h3>
+<p><strong>1. Audio Storage (S3):</strong><br />
+- Original: 320 kbps FLAC files (master quality)<br />
+- Transcoded: 320 kbps MP3, 160 kbps MP3, 96 kbps MP3<br />
+- Stored in S3 (US, EU, Asia regions)</p>
+<p><strong>2. CDN (Akamai/CloudFront):</strong><br />
+- Push audio files to CDN edge servers (1,000+ locations worldwide)<br />
+- User requests nearest CDN server (latency &lt; 50ms)</p>
+<p><strong>3. Adaptive Bitrate (HLS/DASH):</strong><br />
+- Monitor user's bandwidth<br />
+- Start with 96 kbps (loads fast)<br />
+- Upgrade to 320 kbps if bandwidth allows<br />
+- Downgrade if buffering occurs</p>
+<p><strong>4. Pre-caching Popular Songs:</strong><br />
+- Top 10,000 songs (10% of streams) cached on all CDN nodes<br />
+- Long tail (remaining 100M songs) cached on-demand</p>
+<hr />
+<h2 id="deep-dive-recommendations">Deep Dive: Recommendations</h2>
+<h3 id="challenge-personalize-playlists-for-400m-users">Challenge: <strong>Personalize playlists for 400M users</strong></h3>
+<h3 id="solution-collaborative-filtering-ml">Solution: <strong>Collaborative Filtering + ML</strong></h3>
+<p><strong>1. Listening History (Cassandra):</strong><br />
+- Store every stream: <code>{user_id, song_id, played_at, duration_played}</code><br />
+- Query: "What did user 12345 listen to in the last 30 days?"</p>
+<p><strong>2. Collaborative Filtering:</strong><br />
+- Find users similar to you (based on listening overlap)<br />
+- Recommend songs they liked but you haven't heard</p>
+<p><strong>3. ML Models (TensorFlow):</strong><br />
+- <strong>Input:</strong> User's listening history (last 1,000 songs)<br />
+- <strong>Output:</strong> 100 recommended songs<br />
+- <strong>Training:</strong> Nightly batch job (Spark on 10B streams/month data)</p>
+<p><strong>4. Discover Weekly:</strong><br />
+- Generated every Monday<br />
+- Pre-computed and stored in Redis (fast access)<br />
+- Expires after 7 days</p>
+<hr />
+<h2 id="bottlenecks-solutions_1">Bottlenecks &amp; Solutions</h2>
+<h3 id="bottleneck-1-search-is-slow-100m-songs">Bottleneck 1: <strong>Search is Slow (100M songs)</strong></h3>
+<p><strong>Solution:</strong><br />
+- Elasticsearch cluster (10 nodes)<br />
+- Index songs by title, artist, album, genre<br />
+- Query time: &lt; 50ms</p>
+<h3 id="bottleneck-2-recommendation-computation-is-expensive">Bottleneck 2: <strong>Recommendation Computation is Expensive</strong></h3>
+<p><strong>Solution:</strong><br />
+- Pre-compute recommendations nightly (Spark job)<br />
+- Store in Redis (key: <code>user_id</code>, value: [song_ids])<br />
+- Serve from cache (no real-time computation)</p>
+<h3 id="bottleneck-3-cdn-costs-008-per-gb-transferred">Bottleneck 3: <strong>CDN Costs ($0.08 per GB transferred)</strong></h3>
+<p><strong>Solution:</strong><br />
+- 10M streams * 10 MB/stream = 100 TB/day = $8,000/day = $240k/month<br />
+- Negotiate bulk pricing with CDN provider ($0.02 per GB)</p>
+<hr />
+<h2 id="interview-2-minute-answer_1">Interview 2-Minute Answer</h2>
+<p>"Spotify is a <strong>metadata-heavy + CDN-heavy</strong> architecture.</p>
+<p><strong>Core components:</strong></p>
+<p><strong>1. Metadata (PostgreSQL):</strong><br />
+- Songs, artists, albums, playlists<br />
+- 100M songs, indexed by title/artist for search</p>
+<p><strong>2. Search (Elasticsearch):</strong><br />
+- 10-node cluster, 100M songs indexed<br />
+- Query time &lt; 50ms</p>
+<p><strong>3. Streaming (Multi-CDN):</strong><br />
+- Audio stored in S3 (1 PB), transcoded to 320/160/96 kbps<br />
+- CDN (Akamai) serves from 1,000+ edge servers worldwide<br />
+- Adaptive bitrate (start 96 kbps, upgrade to 320 kbps)<br />
+- Pre-cache top 10k songs on all nodes</p>
+<p><strong>4. Recommendations (ML):</strong><br />
+- Listening history in Cassandra (10B streams/month)<br />
+- Nightly Spark job trains TensorFlow model<br />
+- Discover Weekly pre-computed, stored in Redis</p>
+<p><strong>Scaling:</strong><br />
+- <strong>10M concurrent streams:</strong> CDN handles bandwidth (400 GB/sec)<br />
+- <strong>Search:</strong> Elasticsearch scales horizontally<br />
+- <strong>Metadata:</strong> PostgreSQL read replicas (10 replicas)</p>
+<p><strong>Key design choice:</strong> CDN for streaming (not origin servers). Without CDN, 400 GB/sec bandwidth would cost $1M/month. With CDN: $60k/month."</p>
+<hr />
+<h1 id="3-whatsapp-messaging">3. WhatsApp (Messaging)</h1>
+<h2 id="overview_2">Overview</h2>
+<p>Design WhatsApp: <strong>2 billion users</strong>, <strong>100 billion messages/day</strong>.</p>
+<hr />
+<h2 id="functional-requirements_2">Functional Requirements</h2>
+<ol>
+<li><strong>1-on-1 messaging</strong> (text, images, videos, voice notes)</li>
+<li><strong>Group messaging</strong> (up to 256 members)</li>
+<li><strong>Online/offline status</strong> (last seen)</li>
+<li><strong>Message delivery receipts</strong> (sent, delivered, read)</li>
+<li><strong>End-to-end encryption</strong> (Signal Protocol)</li>
+<li><strong>Media sharing</strong> (images, videos, documents)</li>
+<li><strong>Voice/video calls</strong></li>
+</ol>
+<hr />
+<h2 id="non-functional-requirements_2">Non-Functional Requirements</h2>
+<ol>
+<li><strong>Latency:</strong> Message delivered within <strong>100ms</strong></li>
+<li><strong>Availability:</strong> 99.99% uptime</li>
+<li><strong>Consistency:</strong> Eventual consistency OK (messages may arrive out of order)</li>
+<li><strong>Scalability:</strong> Handle 2B users, 100B messages/day</li>
+<li><strong>Storage:</strong> 100B messages/day * 1 KB = <strong>100 TB/day</strong> = <strong>36 PB/year</strong></li>
+</ol>
+<hr />
+<h2 id="capacity-estimation_2">Capacity Estimation</h2>
+<p><strong>Users:</strong> 2B<br />
+<strong>Daily active users:</strong> 1B<br />
+<strong>Messages per day:</strong> 100B<br />
+<strong>Messages per second:</strong> 100B / 86,400 = <strong>1.16M messages/sec</strong> (average)<br />
+<strong>Peak:</strong> 5M messages/sec</p>
+<p><strong>Message size:</strong> 1 KB (text + metadata)<br />
+<strong>Storage per day:</strong> 100B * 1 KB = <strong>100 TB/day</strong><br />
+<strong>Storage per year:</strong> 36 PB (need retention policy)</p>
+<p><strong>Media messages:</strong> 20% of messages<br />
+<strong>Average media size:</strong> 500 KB<br />
+<strong>Media storage per day:</strong> 20B * 500 KB = <strong>10 PB/day</strong></p>
+<hr />
+<h2 id="api-design_2">API Design</h2>
+<h3 id="1-send-message">1. Send Message</h3>
+<div class="codehilite"><pre><span></span><code><span class="err">POST /api/v1/messages/send</span>
+<span class="err">{</span>
+<span class="err">  "from_user_id": 12345,</span>
+<span class="err">  "to_user_id": 67890,</span>
+<span class="err">  "message_type": "text",  // text, image, video, voice</span>
+<span class="err">  "content": "Hello!",</span>
+<span class="err">  "encrypted_content": "base64_encrypted_payload",</span>
+<span class="err">  "timestamp": "2026-11-20T10:00:00Z"</span>
+<span class="err">}</span>
+
+<span class="err">Response:</span>
+<span class="err">{</span>
+<span class="err">  "message_id": "msg_xyz123",</span>
+<span class="err">  "status": "sent",</span>
+<span class="err">  "timestamp": "2026-11-20T10:00:00.123Z"</span>
+<span class="err">}</span>
+</code></pre></div>
+
+<h3 id="2-receive-messages-websocket">2. Receive Messages (WebSocket)</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1">// Client maintains persistent WebSocket connection</span>
+<span class="nx">ws</span><span class="p">.</span><span class="nx">onmessage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="nx">event</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">message</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="s2">"message_id"</span><span class="o">:</span><span class="w"> </span><span class="s2">"msg_xyz123"</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">"from_user_id"</span><span class="o">:</span><span class="w"> </span><span class="mf">67890</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">"to_user_id"</span><span class="o">:</span><span class="w"> </span><span class="mf">12345</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">"message_type"</span><span class="o">:</span><span class="w"> </span><span class="s2">"text"</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">"encrypted_content"</span><span class="o">:</span><span class="w"> </span><span class="s2">"base64_encrypted_payload"</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">"timestamp"</span><span class="o">:</span><span class="w"> </span><span class="s2">"2026-11-20T10:00:01Z"</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c1">// Decrypt locally</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">plaintext</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">decrypt</span><span class="p">(</span><span class="nx">message</span><span class="p">.</span><span class="nx">encrypted_content</span><span class="p">,</span><span class="w"> </span><span class="nx">private_key</span><span class="p">);</span>
+<span class="w">  </span><span class="nx">displayMessage</span><span class="p">(</span><span class="nx">plaintext</span><span class="p">);</span>
+
+<span class="w">  </span><span class="c1">// Send delivery receipt</span>
+<span class="w">  </span><span class="nx">ws</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nb">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">({</span>
+<span class="w">    </span><span class="nx">type</span><span class="o">:</span><span class="w"> </span><span class="s2">"delivery_receipt"</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">message_id</span><span class="o">:</span><span class="w"> </span><span class="nx">message</span><span class="p">.</span><span class="nx">message_id</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">status</span><span class="o">:</span><span class="w"> </span><span class="s2">"delivered"</span>
+<span class="w">  </span><span class="p">}));</span>
+<span class="p">};</span>
+</code></pre></div>
+
+<h3 id="3-upload-media">3. Upload Media</h3>
+<div class="codehilite"><pre><span></span><code><span class="err">POST /api/v1/media/upload</span>
+<span class="err">Content-Type: multipart/form-data</span>
+
+<span class="err">file: image.jpg (5 MB)</span>
+
+<span class="err">Response:</span>
+<span class="err">{</span>
+<span class="err">  "media_id": "media_abc123",</span>
+<span class="err">  "media_url": "https://cdn.whatsapp.com/media/media_abc123.jpg",</span>
+<span class="err">  "thumbnail_url": "https://cdn.whatsapp.com/media/media_abc123_thumb.jpg"</span>
+<span class="err">}</span>
+</code></pre></div>
+
+<hr />
+<h2 id="database-schema_2">Database Schema</h2>
+<h3 id="users-table-cassandra">Users Table (Cassandra)</h3>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="s2">"user_id"</span><span class="o">:</span><span class="w"> </span><span class="mf">12345</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"phone_number"</span><span class="o">:</span><span class="w"> </span><span class="s2">"+1234567890"</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"username"</span><span class="o">:</span><span class="w"> </span><span class="s2">"John Doe"</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"profile_pic_url"</span><span class="o">:</span><span class="w"> </span><span class="s2">"https://cdn.whatsapp.com/profiles/12345.jpg"</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"status"</span><span class="o">:</span><span class="w"> </span><span class="s2">"Hey there! I am using WhatsApp"</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"last_seen"</span><span class="o">:</span><span class="w"> </span><span class="nx">ISODate</span><span class="p">(</span><span class="s2">"2026-11-20T10:12:03Z"</span><span class="p">),</span>
+<span class="w">  </span><span class="s2">"online"</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"created_at"</span><span class="o">:</span><span class="w"> </span><span class="nx">ISODate</span><span class="p">(</span><span class="s2">"2020-01-15T10:00:00Z"</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="messages-table-cassandra">Messages Table (Cassandra)</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1">// Partition key: conversation_id (sorted by timestamp)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="s2">"message_id"</span><span class="o">:</span><span class="w"> </span><span class="s2">"msg_xyz123"</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"conversation_id"</span><span class="o">:</span><span class="w"> </span><span class="s2">"conv_12345_67890"</span><span class="p">,</span><span class="w">  </span><span class="c1">// sorted pair: min(user1, user2)_max(user1, user2)</span>
+<span class="w">  </span><span class="s2">"from_user_id"</span><span class="o">:</span><span class="w"> </span><span class="mf">12345</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"to_user_id"</span><span class="o">:</span><span class="w"> </span><span class="mf">67890</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"message_type"</span><span class="o">:</span><span class="w"> </span><span class="s2">"text"</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"encrypted_content"</span><span class="o">:</span><span class="w"> </span><span class="s2">"base64_encrypted_payload"</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"timestamp"</span><span class="o">:</span><span class="w"> </span><span class="nx">ISODate</span><span class="p">(</span><span class="s2">"2026-11-20T10:00:00Z"</span><span class="p">),</span>
+<span class="w">  </span><span class="s2">"status"</span><span class="o">:</span><span class="w"> </span><span class="s2">"delivered"</span><span class="p">,</span><span class="w">  </span><span class="c1">// sent, delivered, read</span>
+<span class="w">  </span><span class="s2">"read_at"</span><span class="o">:</span><span class="w"> </span><span class="nx">ISODate</span><span class="p">(</span><span class="s2">"2026-11-20T10:05:00Z"</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="group-chats-table-cassandra">Group Chats Table (Cassandra)</h3>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="s2">"group_id"</span><span class="o">:</span><span class="w"> </span><span class="s2">"grp_abc123"</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"name"</span><span class="o">:</span><span class="w"> </span><span class="s2">"Family Group"</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"admin_user_ids"</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="mf">12345</span><span class="p">],</span>
+<span class="w">  </span><span class="s2">"member_user_ids"</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="mf">12345</span><span class="p">,</span><span class="w"> </span><span class="mf">67890</span><span class="p">,</span><span class="w"> </span><span class="mf">11111</span><span class="p">],</span>
+<span class="w">  </span><span class="s2">"created_at"</span><span class="o">:</span><span class="w"> </span><span class="nx">ISODate</span><span class="p">(</span><span class="s2">"2025-06-10T10:00:00Z"</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<hr />
+<h2 id="high-level-architecture_2">High-Level Architecture</h2>
+<div class="codehilite"><pre><span></span><code>┌─────────────┐
+│   Mobile    │
+│   App       │
+└──────┬──────┘
+       │ WebSocket (persistent connection)
+       ▼
+┌─────────────────────────┐
+│   API Gateway           │
+│   (WebSocket Manager)   │
+└──────┬──────────────────┘
+       │
+       ▼
+┌─────────────────────────┐       ┌──────────────┐
+│   Chat Service          │◄──────│  Redis       │
+│   - Route messages      │       │  (Online     │
+│   - Delivery receipts   │       │   Users)     │
+└──────┬──────────────────┘       └──────────────┘
+       │
+       ├──► Message Queue (Kafka)
+       │
+       ▼
+┌─────────────────────────┐
+│   Message Storage       │
+│   (Cassandra)           │
+│   - 36 PB/year          │
+└─────────────────────────┘
+</code></pre></div>
+
+<hr />
+<h2 id="deep-dive-real-time-messaging">Deep Dive: Real-Time Messaging</h2>
+<h3 id="challenge-116m-messagessec-delivered-within-100ms">Challenge: <strong>1.16M messages/sec, delivered within 100ms</strong></h3>
+<h3 id="solution-websocket-kafka-cassandra">Solution: <strong>WebSocket + Kafka + Cassandra</strong></h3>
+<p><strong>1. WebSocket Connection:</strong><br />
+- Each user maintains persistent WebSocket to nearest Chat Server<br />
+- 2B users / 100k connections per server = <strong>20,000 Chat Servers</strong></p>
+<p><strong>2. Message Flow:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nv">User</span><span class="w"> </span><span class="nv">A</span><span class="w"> </span><span class="nv">sends</span><span class="w"> </span><span class="nv">message</span>:
+<span class="w">  </span><span class="mi">1</span>.<span class="w"> </span><span class="nv">App</span><span class="w"> </span><span class="nv">encrypts</span><span class="w"> </span><span class="nv">message</span><span class="w"> </span><span class="nv">locally</span><span class="w"> </span><span class="ss">(</span><span class="k">end</span><span class="o">-</span><span class="nv">to</span><span class="o">-</span><span class="k">end</span><span class="w"> </span><span class="nv">encryption</span><span class="ss">)</span>
+<span class="w">  </span><span class="mi">2</span>.<span class="w"> </span><span class="nv">Sends</span><span class="w"> </span><span class="nv">via</span><span class="w"> </span><span class="nv">WebSocket</span><span class="w"> </span><span class="nv">to</span><span class="w"> </span><span class="nv">Chat</span><span class="w"> </span><span class="nv">Server</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">  </span><span class="mi">3</span>.<span class="w"> </span><span class="nv">Chat</span><span class="w"> </span><span class="nv">Server</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="nv">checks</span><span class="w"> </span><span class="nv">Redis</span>:<span class="w"> </span><span class="nv">Is</span><span class="w"> </span><span class="nv">User</span><span class="w"> </span><span class="nv">B</span><span class="w"> </span><span class="nv">online</span>?
+<span class="w">     </span><span class="o">-</span><span class="w"> </span><span class="nv">YES</span>:<span class="w"> </span><span class="nv">Forward</span><span class="w"> </span><span class="nv">directly</span><span class="w"> </span><span class="nv">to</span><span class="w"> </span><span class="nv">Chat</span><span class="w"> </span><span class="nv">Server</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="ss">(</span><span class="nv">where</span><span class="w"> </span><span class="nv">User</span><span class="w"> </span><span class="nv">B</span><span class="w"> </span><span class="nv">is</span><span class="w"> </span><span class="nv">connected</span><span class="ss">)</span>
+<span class="w">     </span><span class="o">-</span><span class="w"> </span><span class="nv">NO</span>:<span class="w"> </span><span class="nv">Push</span><span class="w"> </span><span class="nv">to</span><span class="w"> </span><span class="nv">Kafka</span><span class="w"> </span><span class="ss">(</span><span class="nv">User</span><span class="w"> </span><span class="nv">B</span><span class="w"> </span><span class="nv">will</span><span class="w"> </span><span class="nv">fetch</span><span class="w"> </span><span class="nv">when</span><span class="w"> </span><span class="nv">online</span><span class="ss">)</span>
+<span class="w">  </span><span class="mi">4</span>.<span class="w"> </span><span class="nv">Chat</span><span class="w"> </span><span class="nv">Server</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="nv">delivers</span><span class="w"> </span><span class="nv">to</span><span class="w"> </span><span class="nv">User</span><span class="w"> </span><span class="nv">B</span><span class="w"> </span><span class="nv">via</span><span class="w"> </span><span class="nv">WebSocket</span>
+<span class="w">  </span><span class="mi">5</span>.<span class="w"> </span><span class="nv">User</span><span class="w"> </span><span class="nv">B</span><span class="w"> </span><span class="nv">sends</span><span class="w"> </span><span class="s2">"delivered"</span><span class="w"> </span><span class="nv">receipt</span><span class="w"> </span>→<span class="w"> </span><span class="nv">Chat</span><span class="w"> </span><span class="nv">Server</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span>→<span class="w"> </span><span class="nv">Chat</span><span class="w"> </span><span class="nv">Server</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span>→<span class="w"> </span><span class="nv">User</span><span class="w"> </span><span class="nv">A</span>
+<span class="w">  </span><span class="mi">6</span>.<span class="w"> </span><span class="nv">Total</span><span class="w"> </span><span class="nv">time</span>:<span class="w"> </span><span class="mi">50</span><span class="o">-</span><span class="mi">100</span><span class="nv">ms</span>
+</code></pre></div>
+
+<p><strong>3. Offline Message Storage (Kafka):</strong><br />
+- If User B is offline, message stays in Kafka queue<br />
+- When User B comes online, Chat Server fetches undelivered messages<br />
+- Kafka retains messages for 7 days (then deleted)</p>
+<p><strong>4. Persistent Storage (Cassandra):</strong><br />
+- All messages written to Cassandra (asynchronously)<br />
+- Partition key: <code>conversation_id</code> (all messages for a conversation in one partition)<br />
+- Clustering key: <code>timestamp DESC</code> (newest first)<br />
+- TTL: 90 days (auto-delete old messages)</p>
+<hr />
+<h2 id="deep-dive-end-to-end-encryption">Deep Dive: End-to-End Encryption</h2>
+<h3 id="challenge-whatsapp-servers-cannot-read-message-content">Challenge: <strong>WhatsApp servers cannot read message content</strong></h3>
+<h3 id="solution-signal-protocol">Solution: <strong>Signal Protocol</strong></h3>
+<p><strong>1. Key Exchange (Initial Setup):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">User</span><span class="w"> </span><span class="n">A</span><span class="w"> </span><span class="n">generates</span><span class="p">:</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="n">Identity</span><span class="w"> </span><span class="n">Key</span><span class="w"> </span><span class="n">Pair</span><span class="w"> </span><span class="p">(</span><span class="n">long</span><span class="o">-</span><span class="n">term</span><span class="p">)</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="n">Signed</span><span class="w"> </span><span class="n">Pre</span><span class="o">-</span><span class="n">Key</span><span class="w"> </span><span class="p">(</span><span class="n">rotated</span><span class="w"> </span><span class="n">weekly</span><span class="p">)</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="n">One</span><span class="o">-</span><span class="n">Time</span><span class="w"> </span><span class="n">Pre</span><span class="o">-</span><span class="n">Keys</span><span class="w"> </span><span class="p">(</span><span class="mi">100</span><span class="w"> </span><span class="n">keys</span><span class="p">,</span><span class="w"> </span><span class="n">used</span><span class="w"> </span><span class="n">once</span><span class="p">)</span>
+
+<span class="n">User</span><span class="w"> </span><span class="n">A</span><span class="w"> </span><span class="n">uploads</span><span class="w"> </span><span class="n">Public</span><span class="w"> </span><span class="n">Keys</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">WhatsApp</span><span class="w"> </span><span class="n">Server</span>
+
+<span class="n">User</span><span class="w"> </span><span class="n">B</span><span class="w"> </span><span class="n">wants</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">message</span><span class="w"> </span><span class="n">User</span><span class="w"> </span><span class="n">A</span><span class="p">:</span>
+<span class="w">  </span><span class="mf">1.</span><span class="w"> </span><span class="n">Fetches</span><span class="w"> </span><span class="n">User</span><span class="w"> </span><span class="n">A</span><span class="s1">'s public keys from server</span>
+<span class="w">  </span><span class="mf">2.</span><span class="w"> </span><span class="n">Generates</span><span class="w"> </span><span class="n">session</span><span class="w"> </span><span class="n">key</span><span class="w"> </span><span class="n">using</span><span class="w"> </span><span class="n">Diffie</span><span class="o">-</span><span class="n">Hellman</span>
+<span class="w">  </span><span class="mf">3.</span><span class="w"> </span><span class="n">Encrypts</span><span class="w"> </span><span class="n">message</span><span class="w"> </span><span class="n">with</span><span class="w"> </span><span class="n">session</span><span class="w"> </span><span class="n">key</span>
+<span class="w">  </span><span class="mf">4.</span><span class="w"> </span><span class="n">Sends</span><span class="w"> </span><span class="n">encrypted</span><span class="w"> </span><span class="n">message</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">signature</span>
+</code></pre></div>
+
+<p><strong>2. Message Encryption:</strong></p>
+<div class="codehilite"><pre><span></span><code>Plaintext: "Hello!"
+↓
+Encrypted with AES-256 (session key)
+↓
+Encrypted Content: "xK9mP2n..."
+↓
+Sent to server
+</code></pre></div>
+
+<p><strong>3. Server's Role:</strong><br />
+- <strong>Cannot decrypt</strong> (no private keys)<br />
+- Only routes encrypted payload<br />
+- Metadata visible: sender, receiver, timestamp (but not content)</p>
+<hr />
+<h2 id="bottlenecks-solutions_2">Bottlenecks &amp; Solutions</h2>
+<h3 id="bottleneck-1-20k-chat-servers-each-maintaining-100k-websocket-connections">Bottleneck 1: <strong>20k Chat Servers, Each Maintaining 100k WebSocket Connections</strong></h3>
+<p><strong>Solution:</strong><br />
+- Use Erlang (WhatsApp's original choice) or Go (handles 1M connections/server)<br />
+- Reduce to 2,000 servers (each handling 1M connections)</p>
+<h3 id="bottleneck-2-finding-which-server-a-user-is-connected-to">Bottleneck 2: <strong>Finding Which Server a User is Connected To</strong></h3>
+<p><strong>Solution:</strong><br />
+- Redis: <code>user_id → server_id</code> mapping<br />
+- When User A sends message to User B:<br />
+  1. Check Redis: Which server is User B on?<br />
+  2. Forward message to that server</p>
+<h3 id="bottleneck-3-100-tbday-cassandra-writes">Bottleneck 3: <strong>100 TB/day Cassandra Writes</strong></h3>
+<p><strong>Solution:</strong><br />
+- Cassandra is write-optimized (append-only logs)<br />
+- 100-node Cassandra cluster handles 1.16M writes/sec easily</p>
+<hr />
+<h2 id="interview-2-minute-answer_2">Interview 2-Minute Answer</h2>
+<p>"WhatsApp is a <strong>WebSocket-based real-time messaging system</strong> with end-to-end encryption.</p>
+<p><strong>Core components:</strong></p>
+<p><strong>1. WebSocket Servers (2,000 servers):</strong><br />
+- Each server handles 1M persistent connections<br />
+- User A sends message → Chat Server 1 checks Redis for User B's server → forwards to Chat Server 2 → User B receives</p>
+<p><strong>2. Redis (Online Users):</strong><br />
+- Stores <code>user_id → server_id</code> mapping<br />
+- Fast lookup (&lt; 1ms) to route messages</p>
+<p><strong>3. Kafka (Offline Queue):</strong><br />
+- If User B is offline, message stays in Kafka<br />
+- When User B comes online, fetch undelivered messages<br />
+- Retains messages for 7 days</p>
+<p><strong>4. Cassandra (Persistent Storage):</strong><br />
+- 100B messages/day = 100 TB/day<br />
+- Partition key: <code>conversation_id</code>, clustering: <code>timestamp DESC</code><br />
+- 90-day TTL (auto-delete old messages)</p>
+<p><strong>5. End-to-End Encryption (Signal Protocol):</strong><br />
+- Messages encrypted on sender's device, decrypted on receiver's device<br />
+- WhatsApp servers only route encrypted payload (cannot read content)</p>
+<p><strong>Scaling:</strong><br />
+- <strong>1.16M messages/sec:</strong> Kafka handles writes, Cassandra persists<br />
+- <strong>2B users:</strong> 2,000 servers * 1M connections each<br />
+- <strong>100 TB/day storage:</strong> Cassandra's strength (write-heavy, horizontal scaling)</p>
+<p><strong>Key design choice:</strong> WebSocket (not HTTP polling). Polling would require 2B users polling every second = 2B requests/sec. WebSocket: persistent connection, messages pushed instantly."</p>
+<hr />
+<h1 id="4-instagram-social-media">4. Instagram (Social Media)</h1>
+<h2 id="overview_3">Overview</h2>
+<p>Design Instagram: <strong>1 billion users</strong>, <strong>500M daily active users (DAU)</strong>, <strong>95M photos/day</strong>.</p>
+<hr />
+<h2 id="functional-requirements_3">Functional Requirements</h2>
+<ol>
+<li><strong>User profiles</strong> (signup, login, bio, profile pic)</li>
+<li><strong>Photo/video upload</strong> (max 10 photos per post, 60-sec videos)</li>
+<li><strong>Feed generation</strong> (chronological + algorithmic)</li>
+<li><strong>Follow/unfollow</strong> users</li>
+<li><strong>Like/comment</strong> on posts</li>
+<li><strong>Stories</strong> (24-hour expiry)</li>
+<li><strong>Explore page</strong> (trending posts)</li>
+<li><strong>Hashtags &amp; search</strong></li>
+</ol>
+<hr />
+<h2 id="non-functional-requirements_3">Non-Functional Requirements</h2>
+<ol>
+<li><strong>Latency:</strong> Feed loads within <strong>500ms</strong></li>
+<li><strong>Availability:</strong> 99.99% uptime</li>
+<li><strong>Scalability:</strong> Handle 500M DAU, 95M photos/day</li>
+<li><strong>Storage:</strong> 95M photos/day * 2 MB = <strong>190 TB/day</strong> = <strong>70 PB/year</strong></li>
+</ol>
+<hr />
+<h2 id="capacity-estimation_3">Capacity Estimation</h2>
+<p><strong>Users:</strong> 1B<br />
+<strong>DAU:</strong> 500M<br />
+<strong>Posts per day:</strong> 95M<br />
+<strong>Average photo size:</strong> 2 MB<br />
+<strong>Storage per day:</strong> 95M * 2 MB = <strong>190 TB/day</strong></p>
+<p><strong>Feed reads:</strong> 500M users * 10 feed loads/day = <strong>5B feed loads/day</strong><br />
+<strong>Feed reads per second:</strong> 5B / 86,400 = <strong>57,870/sec</strong></p>
+<hr />
+<h2 id="api-design_3">API Design</h2>
+<h3 id="1-upload-photo">1. Upload Photo</h3>
+<div class="codehilite"><pre><span></span><code><span class="err">POST /api/v1/posts</span>
+<span class="err">Content-Type: multipart/form-data</span>
+
+<span class="err">photos: [image1.jpg, image2.jpg]</span>
+<span class="err">caption: "Beautiful sunset 🌅"</span>
+<span class="err">hashtags: ["#sunset", "#nature"]</span>
+
+<span class="err">Response:</span>
+<span class="err">{</span>
+<span class="err">  "post_id": "post_xyz123",</span>
+<span class="err">  "photo_urls": [</span>
+<span class="err">    "https://cdn.instagram.com/photos/post_xyz123_1.jpg",</span>
+<span class="err">    "https://cdn.instagram.com/photos/post_xyz123_2.jpg"</span>
+<span class="err">  ],</span>
+<span class="err">  "created_at": "2026-11-20T18:30:00Z"</span>
+<span class="err">}</span>
+</code></pre></div>
+
+<h3 id="2-get-feed">2. Get Feed</h3>
+<div class="codehilite"><pre><span></span><code><span class="err">GET /api/v1/feed?user_id=12345&amp;offset=0&amp;limit=20</span>
+
+<span class="err">Response:</span>
+<span class="err">{</span>
+<span class="err">  "posts": [</span>
+<span class="err">    {</span>
+<span class="err">      "post_id": "post_xyz123",</span>
+<span class="err">      "user_id": 67890,</span>
+<span class="err">      "username": "john_doe",</span>
+<span class="err">      "profile_pic": "https://cdn.instagram.com/profiles/67890.jpg",</span>
+<span class="err">      "photo_urls": ["https://cdn.instagram.com/photos/post_xyz123_1.jpg"],</span>
+<span class="err">      "caption": "Beautiful sunset 🌅",</span>
+<span class="err">      "likes_count": 1234,</span>
+<span class="err">      "comments_count": 56,</span>
+<span class="err">      "created_at": "2026-11-20T18:30:00Z"</span>
+<span class="err">    }</span>
+<span class="err">  ],</span>
+<span class="err">  "next_offset": 20</span>
+<span class="err">}</span>
+</code></pre></div>
+
+<h3 id="3-like-post">3. Like Post</h3>
+<div class="codehilite"><pre><span></span><code><span class="err">POST /api/v1/posts/{post_id}/like</span>
+<span class="err">{</span>
+<span class="err">  "user_id": 12345</span>
+<span class="err">}</span>
+
+<span class="err">Response:</span>
+<span class="err">{</span>
+<span class="err">  "liked": true,</span>
+<span class="err">  "likes_count": 1235</span>
+<span class="err">}</span>
+</code></pre></div>
+
+<h3 id="4-add-comment">4. Add Comment</h3>
+<div class="codehilite"><pre><span></span><code><span class="err">POST /api/v1/posts/{post_id}/comments</span>
+<span class="err">{</span>
+<span class="err">  "user_id": 12345,</span>
+<span class="err">  "text": "Amazing photo!"</span>
+<span class="err">}</span>
+
+<span class="err">Response:</span>
+<span class="err">{</span>
+<span class="err">  "comment_id": "cmt_abc123",</span>
+<span class="err">  "created_at": "2026-11-20T18:32:00Z"</span>
+<span class="err">}</span>
+</code></pre></div>
+
+<hr />
+<h2 id="database-schema_3">Database Schema</h2>
+<h3 id="users-table-postgresql_1">Users Table (PostgreSQL)</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">users</span><span class="w"> </span><span class="p">(</span>
+<span class="w">  </span><span class="n">user_id</span><span class="w"> </span><span class="nb">BIGINT</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span>
+<span class="w">  </span><span class="n">username</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span><span class="w"> </span><span class="k">UNIQUE</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span>
+<span class="w">  </span><span class="n">email</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">255</span><span class="p">)</span><span class="w"> </span><span class="k">UNIQUE</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span>
+<span class="w">  </span><span class="n">password_hash</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">255</span><span class="p">),</span>
+<span class="w">  </span><span class="n">full_name</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">255</span><span class="p">),</span>
+<span class="w">  </span><span class="n">bio</span><span class="w"> </span><span class="nb">TEXT</span><span class="p">,</span>
+<span class="w">  </span><span class="n">profile_pic_url</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">1000</span><span class="p">),</span>
+<span class="w">  </span><span class="n">followers_count</span><span class="w"> </span><span class="nb">INT</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">  </span><span class="n">following_count</span><span class="w"> </span><span class="nb">INT</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">  </span><span class="n">created_at</span><span class="w"> </span><span class="k">TIMESTAMP</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="k">CURRENT_TIMESTAMP</span><span class="p">,</span>
+<span class="w">  </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_username</span><span class="w"> </span><span class="p">(</span><span class="n">username</span><span class="p">)</span>
+<span class="p">);</span>
+</code></pre></div>
+
+<h3 id="posts-table-postgresql">Posts Table (PostgreSQL)</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">posts</span><span class="w"> </span><span class="p">(</span>
+<span class="w">  </span><span class="n">post_id</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span>
+<span class="w">  </span><span class="n">user_id</span><span class="w"> </span><span class="nb">BIGINT</span><span class="p">,</span>
+<span class="w">  </span><span class="n">caption</span><span class="w"> </span><span class="nb">TEXT</span><span class="p">,</span>
+<span class="w">  </span><span class="n">photo_urls</span><span class="w"> </span><span class="n">JSON</span><span class="p">,</span><span class="w">  </span><span class="c1">-- Array of photo URLs</span>
+<span class="w">  </span><span class="n">likes_count</span><span class="w"> </span><span class="nb">INT</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">  </span><span class="n">comments_count</span><span class="w"> </span><span class="nb">INT</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">  </span><span class="n">created_at</span><span class="w"> </span><span class="k">TIMESTAMP</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="k">CURRENT_TIMESTAMP</span><span class="p">,</span>
+<span class="w">  </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_user_created</span><span class="w"> </span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span><span class="w"> </span><span class="n">created_at</span><span class="w"> </span><span class="k">DESC</span><span class="p">)</span>
+<span class="p">);</span>
+</code></pre></div>
+
+<h3 id="follows-table-postgresql">Follows Table (PostgreSQL)</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">follows</span><span class="w"> </span><span class="p">(</span>
+<span class="w">  </span><span class="n">follower_user_id</span><span class="w"> </span><span class="nb">BIGINT</span><span class="p">,</span>
+<span class="w">  </span><span class="n">followee_user_id</span><span class="w"> </span><span class="nb">BIGINT</span><span class="p">,</span>
+<span class="w">  </span><span class="n">created_at</span><span class="w"> </span><span class="k">TIMESTAMP</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="k">CURRENT_TIMESTAMP</span><span class="p">,</span>
+<span class="w">  </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">(</span><span class="n">follower_user_id</span><span class="p">,</span><span class="w"> </span><span class="n">followee_user_id</span><span class="p">),</span>
+<span class="w">  </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_follower</span><span class="w"> </span><span class="p">(</span><span class="n">follower_user_id</span><span class="p">),</span>
+<span class="w">  </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_followee</span><span class="w"> </span><span class="p">(</span><span class="n">followee_user_id</span><span class="p">)</span>
+<span class="p">);</span>
+</code></pre></div>
+
+<h3 id="likes-table-cassandra">Likes Table (Cassandra)</h3>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="s2">"post_id"</span><span class="o">:</span><span class="w"> </span><span class="s2">"post_xyz123"</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"user_id"</span><span class="o">:</span><span class="w"> </span><span class="mf">12345</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"created_at"</span><span class="o">:</span><span class="w"> </span><span class="nx">ISODate</span><span class="p">(</span><span class="s2">"2026-11-20T18:32:00Z"</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="c1">// Partition key: post_id</span>
+<span class="c1">// Clustering key: user_id</span>
+</code></pre></div>
+
+<h3 id="feed-cache-redis">Feed Cache (Redis)</h3>
+<div class="codehilite"><pre><span></span><code>Key: feed:12345
+Value: ["post_xyz123", "post_abc456", "post_def789", ...]
+TTL: 5 minutes
+</code></pre></div>
+
+<hr />
+<h2 id="high-level-architecture_3">High-Level Architecture</h2>
+<div class="codehilite"><pre><span></span><code><span class="err">┌─────────────┐</span>
+<span class="err">│</span><span class="w">   </span><span class="n">Mobile</span><span class="w">    </span><span class="err">│</span>
+<span class="err">│</span><span class="w">   </span><span class="n">Web</span><span class="w"> </span><span class="n">App</span><span class="w">   </span><span class="err">│</span>
+<span class="err">└──────┬──────┘</span>
+<span class="w">       </span><span class="err">│</span>
+<span class="w">       </span><span class="err">▼</span>
+<span class="err">┌─────────────────────────┐</span>
+<span class="err">│</span><span class="w">   </span><span class="n">API</span><span class="w"> </span><span class="n">Gateway</span><span class="w">           </span><span class="err">│</span>
+<span class="err">└──────┬──────────────────┘</span>
+<span class="w">       </span><span class="err">│</span>
+<span class="w">       </span><span class="err">├──►</span><span class="w"> </span><span class="n">Photo</span><span class="w"> </span><span class="n">Upload</span><span class="w"> </span><span class="n">Service</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">S3</span><span class="w"> </span><span class="p">(</span><span class="mi">70</span><span class="w"> </span><span class="n">PB</span><span class="p">)</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">CDN</span>
+<span class="w">       </span><span class="err">│</span>
+<span class="w">       </span><span class="err">├──►</span><span class="w"> </span><span class="n">Feed</span><span class="w"> </span><span class="n">Generation</span><span class="w"> </span><span class="n">Service</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">Redis</span><span class="w"> </span><span class="p">(</span><span class="n">feed</span><span class="w"> </span><span class="n">cache</span><span class="p">)</span>
+<span class="w">       </span><span class="err">│</span>
+<span class="w">       </span><span class="err">├──►</span><span class="w"> </span><span class="n">Graph</span><span class="w"> </span><span class="n">Service</span><span class="w"> </span><span class="p">(</span><span class="n">follows</span><span class="p">)</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">PostgreSQL</span>
+<span class="w">       </span><span class="err">│</span>
+<span class="w">       </span><span class="err">└──►</span><span class="w"> </span><span class="n">Timeline</span><span class="w"> </span><span class="n">Service</span><span class="w"> </span><span class="p">(</span><span class="n">posts</span><span class="p">)</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">PostgreSQL</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Cassandra</span><span class="w"> </span><span class="p">(</span><span class="n">likes</span><span class="p">)</span>
+</code></pre></div>
+
+<hr />
+<h2 id="deep-dive-feed-generation">Deep Dive: Feed Generation</h2>
+<h3 id="challenge-57870-feed-loadssec-must-load-within-500ms">Challenge: <strong>57,870 feed loads/sec, must load within 500ms</strong></h3>
+<h3 id="solution-fan-out-on-write-redis-cache">Solution: <strong>Fan-Out on Write + Redis Cache</strong></h3>
+<p><strong>Two Approaches:</strong></p>
+<h3 id="approach-1-fan-out-on-read-bad-for-instagram">Approach 1: <strong>Fan-Out on Read</strong> (Bad for Instagram)</h3>
+<div class="codehilite"><pre><span></span><code><span class="n">User</span><span class="w"> </span><span class="n">A</span><span class="w"> </span><span class="n">requests</span><span class="w"> </span><span class="n">feed</span><span class="p">:</span>
+<span class="w">  </span><span class="mf">1.</span><span class="w"> </span><span class="n">Find</span><span class="w"> </span><span class="n">all</span><span class="w"> </span><span class="n">users</span><span class="w"> </span><span class="n">A</span><span class="w"> </span><span class="n">follows</span><span class="w"> </span><span class="p">(</span><span class="mi">100</span><span class="w"> </span><span class="n">users</span><span class="p">)</span>
+<span class="w">  </span><span class="mf">2.</span><span class="w"> </span><span class="n">Fetch</span><span class="w"> </span><span class="n">recent</span><span class="w"> </span><span class="n">posts</span><span class="w"> </span><span class="n">from</span><span class="w"> </span><span class="n">each</span><span class="w"> </span><span class="p">(</span><span class="mi">100</span><span class="w"> </span><span class="n">queries</span><span class="p">)</span>
+<span class="w">  </span><span class="mf">3.</span><span class="w"> </span><span class="n">Merge</span><span class="w"> </span><span class="ow">and</span><span class="w"> </span><span class="n">sort</span><span class="w"> </span><span class="n">by</span><span class="w"> </span><span class="n">timestamp</span>
+<span class="w">  </span><span class="mf">4.</span><span class="w"> </span><span class="n">Return</span><span class="w"> </span><span class="n">top</span><span class="w"> </span><span class="mi">20</span>
+
+<span class="n">Problem</span><span class="p">:</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="n">queries</span><span class="w"> </span><span class="n">per</span><span class="w"> </span><span class="n">feed</span><span class="w"> </span><span class="nb">load</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">too</span><span class="w"> </span><span class="n">slow</span><span class="w"> </span><span class="p">(</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">second</span><span class="p">)</span>
+</code></pre></div>
+
+<h3 id="approach-2-fan-out-on-write-instagrams-choice">Approach 2: <strong>Fan-Out on Write</strong> (Instagram's Choice)</h3>
+<div class="codehilite"><pre><span></span><code>User B posts a photo:
+  1. Find all of B's followers (1M followers)
+  2. For each follower, add post_id to their feed cache (Redis)
+  3. Redis: LPUSH feed:follower_id post_xyz123
+
+User A requests feed:
+  1. Redis: LRANGE feed:12345 0 19 (20 posts)
+  2. Fetch post metadata (20 queries, can batch)
+  3. Total time: &lt; 100ms
+
+Problem: If User B has 1M followers, need 1M Redis writes
+Solution: Async workers (Celery) write to Redis in background
+</code></pre></div>
+
+<h3 id="hybrid-approach-for-celebrities">Hybrid Approach (For Celebrities):</h3>
+<ul>
+<li><strong>Regular users</strong> (&lt; 10k followers): Fan-out on write</li>
+<li><strong>Celebrities</strong> (&gt; 10k followers): Fan-out on read (don't cache their feeds)</li>
+</ul>
+<hr />
+<h2 id="deep-dive-photo-storage">Deep Dive: Photo Storage</h2>
+<h3 id="challenge-95m-photosday-2-mb-190-tbday">Challenge: <strong>95M photos/day * 2 MB = 190 TB/day</strong></h3>
+<h3 id="solution-s3-cdn-image-optimization">Solution: <strong>S3 + CDN + Image Optimization</strong></h3>
+<p><strong>1. Upload:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">User</span><span class="w"> </span><span class="n">uploads</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="n">MB</span><span class="w"> </span><span class="n">photo</span><span class="p">:</span>
+<span class="w">  </span><span class="mf">1.</span><span class="w"> </span><span class="n">API</span><span class="w"> </span><span class="n">receives</span><span class="w"> </span><span class="n">photo</span>
+<span class="w">  </span><span class="mf">2.</span><span class="w"> </span><span class="n">Generate</span><span class="w"> </span><span class="mi">5</span><span class="w"> </span><span class="n">versions</span><span class="p">:</span>
+<span class="w">     </span><span class="o">-</span><span class="w"> </span><span class="n">Original</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="n">MB</span>
+<span class="w">     </span><span class="o">-</span><span class="w"> </span><span class="n">Large</span><span class="p">:</span><span class="w"> </span><span class="mi">1080</span><span class="n">px</span><span class="p">,</span><span class="w"> </span><span class="mi">500</span><span class="w"> </span><span class="n">KB</span>
+<span class="w">     </span><span class="o">-</span><span class="w"> </span><span class="n">Medium</span><span class="p">:</span><span class="w"> </span><span class="mi">640</span><span class="n">px</span><span class="p">,</span><span class="w"> </span><span class="mi">150</span><span class="w"> </span><span class="n">KB</span>
+<span class="w">     </span><span class="o">-</span><span class="w"> </span><span class="n">Small</span><span class="p">:</span><span class="w"> </span><span class="mi">320</span><span class="n">px</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="w"> </span><span class="n">KB</span>
+<span class="w">     </span><span class="o">-</span><span class="w"> </span><span class="n">Thumbnail</span><span class="p">:</span><span class="w"> </span><span class="mi">150</span><span class="n">px</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">KB</span>
+<span class="w">  </span><span class="mf">3.</span><span class="w"> </span><span class="n">Upload</span><span class="w"> </span><span class="n">all</span><span class="w"> </span><span class="mi">5</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">S3</span><span class="w"> </span><span class="p">(</span><span class="mi">3</span><span class="w"> </span><span class="n">MB</span><span class="w"> </span><span class="n">total</span><span class="w"> </span><span class="n">per</span><span class="w"> </span><span class="n">photo</span><span class="p">)</span>
+<span class="w">  </span><span class="mf">4.</span><span class="w"> </span><span class="n">Return</span><span class="w"> </span><span class="n">CDN</span><span class="w"> </span><span class="n">URLs</span>
+</code></pre></div>
+
+<p><strong>2. Storage:</strong><br />
+- S3: 95M photos/day * 3 MB = <strong>285 TB/day</strong> = <strong>104 PB/year</strong><br />
+- S3 cost: $0.023 per GB = $2,392/TB = $248k/month</p>
+<p><strong>3. CDN (CloudFront):</strong><br />
+- Push images to CDN (1,000+ edge servers)<br />
+- User requests thumbnail → served from nearest CDN (&lt; 50ms)</p>
+<hr />
+<h2 id="bottlenecks-solutions_3">Bottlenecks &amp; Solutions</h2>
+<h3 id="bottleneck-1-feed-generation-for-celebrities-10m-followers">Bottleneck 1: <strong>Feed Generation for Celebrities (10M followers)</strong></h3>
+<p><strong>Solution:</strong><br />
+- Don't fan-out on write for celebrities<br />
+- When User A (following a celebrity) requests feed:<br />
+  - Fetch A's cached feed (regular users)<br />
+  - Fetch celebrity's recent posts (on-demand)<br />
+  - Merge and return</p>
+<h3 id="bottleneck-2-likes-counter-is-a-hot-spot-viral-post-with-10m-likes">Bottleneck 2: <strong>Likes Counter is a Hot Spot (Viral Post with 10M likes)</strong></h3>
+<p><strong>Solution:</strong><br />
+- Don't increment <code>likes_count</code> in real-time<br />
+- Write likes to Cassandra (append-only)<br />
+- Background job aggregates likes every 10 seconds<br />
+- Display approximate count ("10M likes" not "10,234,567 likes")</p>
+<h3 id="bottleneck-3-photo-storage-costs-104-pbyear">Bottleneck 3: <strong>Photo Storage Costs (104 PB/year)</strong></h3>
+<p><strong>Solution:</strong><br />
+- Compress old photos (&gt; 1 year old)<br />
+- Move to Glacier (10x cheaper than S3)<br />
+- Delete original version (keep only large/medium/small)</p>
+<hr />
+<h2 id="interview-2-minute-answer_3">Interview 2-Minute Answer</h2>
+<p>"Instagram is a <strong>fan-out on write</strong> architecture for feed generation.</p>
+<p><strong>Core components:</strong></p>
+<p><strong>1. Photo Upload:</strong><br />
+- User uploads 2 MB photo → API generates 5 versions (original, large, medium, small, thumbnail)<br />
+- Upload to S3 (104 PB/year) → push to CDN (CloudFront)</p>
+<p><strong>2. Feed Generation (Fan-Out on Write):</strong><br />
+- When User B posts, async workers add <code>post_id</code> to all followers' feed caches (Redis)<br />
+- 1M followers = 1M Redis writes (background job, doesn't block user)<br />
+- When User A requests feed: <code>LRANGE feed:12345 0 19</code> (20 posts) → &lt; 100ms</p>
+<p><strong>3. Hybrid for Celebrities:</strong><br />
+- Regular users (&lt; 10k followers): Fan-out on write<br />
+- Celebrities (&gt; 10k followers): Fan-out on read (fetch on-demand)</p>
+<p><strong>4. Graph Service (Follows):</strong><br />
+- PostgreSQL stores <code>follows</code> table<br />
+- Indexed by <code>follower_user_id</code> and <code>followee_user_id</code></p>
+<p><strong>5. Likes/Comments (Cassandra):</strong><br />
+- Write-heavy (1M likes/sec on viral posts)<br />
+- Cassandra: append-only, horizontal scaling</p>
+<p><strong>Scaling:</strong><br />
+- <strong>57,870 feed loads/sec:</strong> Redis handles (each load = 1 LRANGE command)<br />
+- <strong>95M photos/day:</strong> S3 + CDN<br />
+- <strong>Hot posts (10M likes):</strong> Approximate counts, background aggregation</p>
+<p><strong>Key design choice:</strong> Fan-out on write (not fan-out on read). Pre-compute feeds, serve from cache. Trade-off: Higher write cost (1M Redis writes per celebrity post) but lightning-fast feed loads (&lt; 100ms)."</p>
+<hr />
+<h1 id="5-url-shortener-bitly">5. URL Shortener (bit.ly)</h1>
+<h2 id="overview_4">Overview</h2>
+<p>Design bit.ly: <strong>Shorten 1 billion URLs</strong>, handle <strong>10 billion clicks/month</strong>.</p>
+<hr />
+<h2 id="functional-requirements_4">Functional Requirements</h2>
+<ol>
+<li><strong>Shorten URL</strong> (long URL → short URL)</li>
+<li><strong>Redirect</strong> (short URL → original URL)</li>
+<li><strong>Analytics</strong> (click count, geographic distribution, referrers)</li>
+<li><strong>Custom short URLs</strong> (optional)</li>
+<li><strong>Expiration</strong> (optional, e.g., 30 days)</li>
+</ol>
+<hr />
+<h2 id="non-functional-requirements_4">Non-Functional Requirements</h2>
+<ol>
+<li><strong>Latency:</strong> Redirect within <strong>50ms</strong></li>
+<li><strong>Availability:</strong> 99.99% uptime</li>
+<li><strong>Scalability:</strong> 1B URLs, 10B clicks/month</li>
+<li><strong>Short URL length:</strong> 7 characters max (e.g., <code>bit.ly/abc123</code>)</li>
+</ol>
+<hr />
+<h2 id="capacity-estimation_4">Capacity Estimation</h2>
+<p><strong>URLs shortened per month:</strong> 100M<br />
+<strong>URLs per second:</strong> 100M / (30 * 86,400) = <strong>38/sec</strong></p>
+<p><strong>Clicks per month:</strong> 10B<br />
+<strong>Clicks per second:</strong> 10B / (30 * 86,400) = <strong>3,858/sec</strong></p>
+<p><strong>Read:Write ratio:</strong> 3,858 / 38 = <strong>100:1</strong> (read-heavy)</p>
+<p><strong>Storage:</strong><br />
+- URL table: 1B URLs * 500 bytes = <strong>500 GB</strong><br />
+- Click logs: 10B clicks/month * 200 bytes = <strong>2 TB/month</strong> = <strong>24 TB/year</strong></p>
+<hr />
+<h2 id="api-design_4">API Design</h2>
+<h3 id="1-shorten-url">1. Shorten URL</h3>
+<div class="codehilite"><pre><span></span><code><span class="err">POST /api/v1/shorten</span>
+<span class="err">{</span>
+<span class="err">  "long_url": "https://example.com/very/long/article?id=12345",</span>
+<span class="err">  "custom_short_code": "my-article",  // optional</span>
+<span class="err">  "expires_in_days": 30  // optional</span>
+<span class="err">}</span>
+
+<span class="err">Response:</span>
+<span class="err">{</span>
+<span class="err">  "short_url": "https://bit.ly/abc123",</span>
+<span class="err">  "long_url": "https://example.com/very/long/article?id=12345",</span>
+<span class="err">  "created_at": "2026-11-20T10:00:00Z",</span>
+<span class="err">  "expires_at": "2026-12-20T10:00:00Z"</span>
+<span class="err">}</span>
+</code></pre></div>
+
+<h3 id="2-redirect">2. Redirect</h3>
+<div class="codehilite"><pre><span></span><code><span class="err">GET /abc123</span>
+
+<span class="err">Response: HTTP 302 Redirect</span>
+<span class="err">Location: https://example.com/very/long/article?id=12345</span>
+</code></pre></div>
+
+<h3 id="3-get-analytics">3. Get Analytics</h3>
+<div class="codehilite"><pre><span></span><code><span class="err">GET /api/v1/analytics/abc123</span>
+
+<span class="err">Response:</span>
+<span class="err">{</span>
+<span class="err">  "short_code": "abc123",</span>
+<span class="err">  "long_url": "https://example.com/...",</span>
+<span class="err">  "total_clicks": 1234567,</span>
+<span class="err">  "clicks_by_country": {</span>
+<span class="err">    "US": 500000,</span>
+<span class="err">    "IN": 300000,</span>
+<span class="err">    "UK": 200000</span>
+<span class="err">  },</span>
+<span class="err">  "clicks_by_referrer": {</span>
+<span class="err">    "twitter.com": 400000,</span>
+<span class="err">    "facebook.com": 300000,</span>
+<span class="err">    "direct": 200000</span>
+<span class="err">  },</span>
+<span class="err">  "clicks_over_time": [</span>
+<span class="err">    {"date": "2026-11-20", "clicks": 10000},</span>
+<span class="err">    {"date": "2026-11-21", "clicks": 12000}</span>
+<span class="err">  ]</span>
+<span class="err">}</span>
+</code></pre></div>
+
+<hr />
+<h2 id="database-schema_4">Database Schema</h2>
+<h3 id="urls-table-postgresql">URLs Table (PostgreSQL)</h3>
+<div class="codehilite"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">urls</span><span class="w"> </span><span class="p">(</span>
+<span class="w">  </span><span class="n">id</span><span class="w"> </span><span class="nb">BIGINT</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="n">AUTO_INCREMENT</span><span class="p">,</span>
+<span class="w">  </span><span class="n">short_code</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="w"> </span><span class="k">UNIQUE</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span>
+<span class="w">  </span><span class="n">long_url</span><span class="w"> </span><span class="nb">TEXT</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span>
+<span class="w">  </span><span class="n">user_id</span><span class="w"> </span><span class="nb">BIGINT</span><span class="p">,</span>
+<span class="w">  </span><span class="n">created_at</span><span class="w"> </span><span class="k">TIMESTAMP</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="k">CURRENT_TIMESTAMP</span><span class="p">,</span>
+<span class="w">  </span><span class="n">expires_at</span><span class="w"> </span><span class="k">TIMESTAMP</span><span class="p">,</span>
+<span class="w">  </span><span class="n">total_clicks</span><span class="w"> </span><span class="nb">BIGINT</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">  </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_short_code</span><span class="w"> </span><span class="p">(</span><span class="n">short_code</span><span class="p">)</span>
+<span class="p">);</span>
+</code></pre></div>
+
+<h3 id="clicks-table-cassandra">Clicks Table (Cassandra)</h3>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="s2">"click_id"</span><span class="o">:</span><span class="w"> </span><span class="s2">"click_xyz123"</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"short_code"</span><span class="o">:</span><span class="w"> </span><span class="s2">"abc123"</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"clicked_at"</span><span class="o">:</span><span class="w"> </span><span class="nx">ISODate</span><span class="p">(</span><span class="s2">"2026-11-20T10:12:03Z"</span><span class="p">),</span>
+<span class="w">  </span><span class="s2">"ip_address"</span><span class="o">:</span><span class="w"> </span><span class="s2">"203.0.113.42"</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"country"</span><span class="o">:</span><span class="w"> </span><span class="s2">"US"</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"referrer"</span><span class="o">:</span><span class="w"> </span><span class="s2">"https://twitter.com"</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"user_agent"</span><span class="o">:</span><span class="w"> </span><span class="s2">"Mozilla/5.0..."</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<hr />
+<h2 id="high-level-architecture_4">High-Level Architecture</h2>
+<div class="codehilite"><pre><span></span><code>┌─────────────┐
+│   Browser   │
+└──────┬──────┘
+       │ GET /abc123
+       ▼
+┌─────────────────────────┐
+│   API Gateway           │
+└──────┬──────────────────┘
+       │
+       ▼
+┌─────────────────────────┐       ┌──────────────┐
+│   Redirect Service      │◄──────│  Redis       │
+│   (Fetch long_url)      │       │  (Cache)     │
+└──────┬──────────────────┘       └──────────────┘
+       │
+       ├──► PostgreSQL (URLs table)
+       │
+       └──► Kafka (Click events) → Cassandra (Click logs)
+</code></pre></div>
+
+<hr />
+<h2 id="deep-dive-short-code-generation">Deep Dive: Short Code Generation</h2>
+<h3 id="challenge-generate-unique-7-character-short-codes-for-1b-urls">Challenge: <strong>Generate unique 7-character short codes for 1B URLs</strong></h3>
+<h3 id="options">Options:</h3>
+<h3 id="option-1-hash-md5sha256">Option 1: <strong>Hash (MD5/SHA256)</strong></h3>
+<div class="codehilite"><pre><span></span><code>long_url = "https://example.com/..."
+hash = md5(long_url) = "5d41402abc4b2a76b9719d911017c592"
+short_code = hash[:7] = "5d41402"
+
+Problem: Collisions (two URLs hash to same short_code)
+Solution: If collision, increment: "5d41402" → "5d41403"
+</code></pre></div>
+
+<h3 id="option-2-base62-encoding-instagrams-approach">Option 2: <strong>Base62 Encoding (Instagram's Approach)</strong></h3>
+<div class="codehilite"><pre><span></span><code>Database auto-increment ID: 123456789
+Convert to Base62: "8M0kX"
+
+Base62 characters: [a-zA-Z0-9] = 62 characters
+7 characters = 62^7 = 3.5 trillion unique codes
+
+Formula:
+  ID 1 → "b"
+  ID 62 → "10"
+  ID 123456789 → "8M0kX"
+</code></pre></div>
+
+<p><strong>Instagram's Choice:</strong> Base62 encoding (no collisions, deterministic)</p>
+<hr />
+<h2 id="deep-dive-redirect-performance">Deep Dive: Redirect Performance</h2>
+<h3 id="challenge-3858-redirectssec-must-respond-within-50ms">Challenge: <strong>3,858 redirects/sec, must respond within 50ms</strong></h3>
+<h3 id="solution-redis-cache">Solution: <strong>Redis Cache</strong></h3>
+<p><strong>Flow:</strong></p>
+<div class="codehilite"><pre><span></span><code>User clicks bit.ly/abc123:
+  1. Check Redis: GET short_code:abc123
+     <span class="k">-</span> HIT: Return long_url (10ms)
+     <span class="k">-</span> MISS: Query PostgreSQL → Cache in Redis (TTL 24h) → Return (50ms)
+  2. Send 302 Redirect to browser
+  3. Async: Kafka.publish({short_code: "abc123", clicked_at: now(), ip: "..."})
+</code></pre></div>
+
+<p><strong>Cache hit ratio:</strong> 95% (popular links clicked repeatedly)<br />
+<strong>Redis throughput:</strong> 100k reads/sec per node (3,858/sec is trivial)</p>
+<hr />
+<h2 id="deep-dive-analytics">Deep Dive: Analytics</h2>
+<h3 id="challenge-track-10b-clicksmonth-without-slowing-down-redirects">Challenge: <strong>Track 10B clicks/month without slowing down redirects</strong></h3>
+<h3 id="solution-kafka-cassandra-async">Solution: <strong>Kafka + Cassandra (Async)</strong></h3>
+<p><strong>Flow:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">Redirect</span><span class="w"> </span><span class="nl">Service:</span>
+<span class="w">  </span><span class="mf">1.</span><span class="w"> </span><span class="n">Fetch</span><span class="w"> </span><span class="n">long_url</span><span class="w"> </span><span class="p">(</span><span class="n">from</span><span class="w"> </span><span class="n">Redis</span><span class="o">/</span><span class="n">PostgreSQL</span><span class="p">)</span>
+<span class="w">  </span><span class="mf">2.</span><span class="w"> </span><span class="n">Send</span><span class="w"> </span><span class="mh">302</span><span class="w"> </span><span class="n">Redirect</span><span class="w"> </span><span class="p">(</span><span class="n">don</span><span class="p">'</span><span class="n">t</span><span class="w"> </span><span class="k">wait</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">analytics</span><span class="p">)</span>
+<span class="w">  </span><span class="mf">3.</span><span class="w"> </span><span class="n">Kafka</span><span class="p">.</span><span class="n">publish</span><span class="p">(</span><span class="n">click_event</span><span class="p">)</span><span class="w">  </span><span class="err">←</span><span class="w"> </span><span class="n">Fire</span><span class="o">-</span><span class="k">and</span><span class="o">-</span><span class="n">forget</span>
+
+<span class="n">Background</span><span class="w"> </span><span class="nl">Workers:</span>
+<span class="w">  </span><span class="mf">1.</span><span class="w"> </span><span class="n">Consume</span><span class="w"> </span><span class="n">from</span><span class="w"> </span><span class="n">Kafka</span>
+<span class="w">  </span><span class="mf">2.</span><span class="w"> </span><span class="n">Write</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">Cassandra</span><span class="w"> </span><span class="p">(</span><span class="n">clicks</span><span class="w"> </span><span class="k">table</span><span class="p">)</span>
+<span class="w">  </span><span class="mf">3.</span><span class="w"> </span><span class="n">Aggregate</span><span class="w"> </span><span class="n">every</span><span class="w"> </span><span class="mh">10</span><span class="w"> </span><span class="nl">minutes:</span>
+<span class="w">     </span><span class="o">-</span><span class="w"> </span><span class="n">Total</span><span class="w"> </span><span class="n">clicks</span><span class="w"> </span><span class="n">per</span><span class="w"> </span><span class="n">short_code</span>
+<span class="w">     </span><span class="o">-</span><span class="w"> </span><span class="n">Clicks</span><span class="w"> </span><span class="n">by</span><span class="w"> </span><span class="n">country</span>
+<span class="w">     </span><span class="o">-</span><span class="w"> </span><span class="n">Clicks</span><span class="w"> </span><span class="n">by</span><span class="w"> </span><span class="n">referrer</span>
+<span class="w">  </span><span class="mf">4.</span><span class="w"> </span><span class="n">Update</span><span class="w"> </span><span class="nl">PostgreSQL:</span><span class="w"> </span><span class="n">urls</span><span class="p">.</span><span class="n">total_clicks</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">N</span>
+</code></pre></div>
+
+<p><strong>Why Cassandra?</strong><br />
+- Write-heavy (10B writes/month)<br />
+- Time-series data (partition by <code>short_code</code>, cluster by <code>clicked_at</code>)</p>
+<hr />
+<h2 id="bottlenecks-solutions_4">Bottlenecks &amp; Solutions</h2>
+<h3 id="bottleneck-1-hot-short-urls-viral-tweet-with-10m-clickshour">Bottleneck 1: <strong>Hot Short URLs (Viral Tweet with 10M clicks/hour)</strong></h3>
+<p><strong>Solution:</strong><br />
+- Redis cache handles 100k reads/sec (10M clicks/hour = 2,778/sec → trivial)<br />
+- Multiple Redis replicas (read from replicas)</p>
+<h3 id="bottleneck-2-short-code-exhaustion-7-characters">Bottleneck 2: <strong>Short Code Exhaustion (7 characters)</strong></h3>
+<p><strong>Solution:</strong><br />
+- 62^7 = 3.5 trillion codes<br />
+- 1B URLs = 0.03% utilization (not a problem)<br />
+- If we ever reach 1 trillion URLs, increase to 8 characters (62^8 = 218 trillion)</p>
+<h3 id="bottleneck-3-postgresql-writes-38-urlssec">Bottleneck 3: <strong>PostgreSQL Writes (38 URLs/sec)</strong></h3>
+<p><strong>Solution:</strong><br />
+- Batch writes (buffer 100 URLs, write every 3 seconds)<br />
+- PostgreSQL easily handles 38/sec</p>
+<hr />
+<h2 id="interview-2-minute-answer_4">Interview 2-Minute Answer</h2>
+<p>"URL Shortener is a <strong>read-heavy, cache-first</strong> architecture.</p>
+<p><strong>Core components:</strong></p>
+<p><strong>1. Short Code Generation (Base62):</strong><br />
+- PostgreSQL auto-increment ID: 123456789<br />
+- Convert to Base62: "8M0kX"<br />
+- 7 characters = 62^7 = 3.5 trillion unique codes</p>
+<p><strong>2. Redirect Service:</strong><br />
+- User clicks <code>bit.ly/abc123</code><br />
+- Check Redis: <code>GET short_code:abc123</code><br />
+  - HIT (95%): Return long_url (10ms)<br />
+  - MISS (5%): Query PostgreSQL → cache in Redis (TTL 24h) → return (50ms)<br />
+- Send 302 Redirect<br />
+- Async: Publish click event to Kafka</p>
+<p><strong>3. Analytics (Kafka + Cassandra):</strong><br />
+- Click events published to Kafka (fire-and-forget, doesn't block redirect)<br />
+- Background workers consume from Kafka<br />
+- Write to Cassandra (10B clicks/month)<br />
+- Aggregate every 10 minutes (total clicks, by country, by referrer)</p>
+<p><strong>4. Database:</strong><br />
+- <strong>PostgreSQL:</strong> URLs table (1B rows, 500 GB)<br />
+- <strong>Redis:</strong> Cache (95% hit ratio, 10ms latency)<br />
+- <strong>Cassandra:</strong> Click logs (10B clicks/month, 24 TB/year)</p>
+<p><strong>Scaling:</strong><br />
+- <strong>3,858 redirects/sec:</strong> Redis cache handles 100k reads/sec<br />
+- <strong>10B clicks/month:</strong> Cassandra (write-heavy, horizontal scaling)<br />
+- <strong>1B URLs:</strong> 7-char Base62 supports 3.5 trillion (plenty of headroom)</p>
+<p><strong>Key design choice:</strong> Redis cache-first (not database-first). 95% of redirects served from cache (10ms). Without cache, every redirect would hit PostgreSQL (50ms)."</p>
+<hr />
+<h1 id="summary-key-takeaways">Summary: Key Takeaways</h1>
+<table>
+<thead>
+<tr>
+<th>System</th>
+<th>Architecture Pattern</th>
+<th>Key Technology Choices</th>
+<th>Bottleneck Solved</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Email Notification</strong></td>
+<td>Queue-based</td>
+<td>RabbitMQ (priority queues), Cassandra (logs), SendGrid (delivery)</td>
+<td>SendGrid rate limit → Multi-provider</td>
+</tr>
+<tr>
+<td><strong>Spotify</strong></td>
+<td>CDN-heavy + ML</td>
+<td>Multi-CDN (Akamai), Elasticsearch (search), TensorFlow (recommendations)</td>
+<td>Bandwidth (400 GB/sec) → CDN</td>
+</tr>
+<tr>
+<td><strong>WhatsApp</strong></td>
+<td>WebSocket + Real-time</td>
+<td>WebSocket (persistent connections), Kafka (offline queue), Cassandra (storage)</td>
+<td>1.16M messages/sec → Kafka + Cassandra</td>
+</tr>
+<tr>
+<td><strong>Instagram</strong></td>
+<td>Fan-out on write</td>
+<td>Redis (feed cache), S3 (photo storage), Cassandra (likes)</td>
+<td>57k feed loads/sec → Redis cache</td>
+</tr>
+<tr>
+<td><strong>URL Shortener</strong></td>
+<td>Cache-first</td>
+<td>Redis (cache), PostgreSQL (URLs), Cassandra (click logs)</td>
+<td>3.9k redirects/sec → Redis cache</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="interview-prep-checklist">Interview Prep Checklist</h2>
+<p>✅ Memorize <strong>2-minute answers</strong> for each system<br />
+✅ Know <strong>capacity estimation</strong> formulas (bandwidth, storage, QPS)<br />
+✅ Understand <strong>when to use</strong> each technology:<br />
+- RabbitMQ vs Kafka (task queue vs event stream)<br />
+- PostgreSQL vs Cassandra (relational vs write-heavy)<br />
+- Redis (cache) vs Memcached (simpler cache)<br />
+- CDN (static content) vs origin servers<br />
+✅ Practice drawing <strong>high-level architecture diagrams</strong> on whiteboard<br />
+✅ Know <strong>3 bottlenecks + solutions</strong> for each system<br />
+✅ Be ready to <strong>deep-dive</strong> into any component  </p>
+<p><strong>You're ready for Staff Engineer system design interviews!</strong> 🎯</p>
+        </div>
+    </div>
+
+    <script>
+        // Progress Tracker JavaScript
+        const STORAGE_KEY = 'course_progress_system_design_deep_dive_famous_apps';
+
+        // Extract all H2 and H3 headings from content
+        function extractSections() {
+            const content = document.querySelector('.content');
+            const headings = content.querySelectorAll('h2, h3');
+            const sections = [];
+
+            headings.forEach((heading, index) => {
+                const level = heading.tagName === 'H2' ? 2 : 3;
+                const text = heading.textContent.trim();
+                const id = `section-${index}`;
+
+                // Add ID to heading for linking
+                heading.id = id;
+
+                sections.push({
+                    id: id,
+                    text: text,
+                    level: level
+                });
+            });
+
+            return sections;
+        }
+
+        // Load saved progress from localStorage
+        function loadProgress() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            return saved ? JSON.parse(saved) : {};
+        }
+
+        // Save progress to localStorage
+        function saveProgress(progress) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+        }
+
+        // Calculate progress percentage
+        function calculateProgress() {
+            const checkboxes = document.querySelectorAll('.progress-checkbox');
+            const total = checkboxes.length;
+            if (total === 0) return 0;
+
+            const completed = Array.from(checkboxes).filter(cb => cb.checked).length;
+            return Math.round((completed / total) * 100);
+        }
+
+        // Update progress display
+        function updateProgressDisplay() {
+            const percentage = calculateProgress();
+            document.getElementById('progress-pct').textContent = percentage + '%';
+            document.getElementById('progress-bar').style.width = percentage + '%';
+
+            // Update completed class on items
+            document.querySelectorAll('.progress-item').forEach(item => {
+                const checkbox = item.querySelector('.progress-checkbox');
+                if (checkbox.checked) {
+                    item.classList.add('completed');
+                } else {
+                    item.classList.remove('completed');
+                }
+            });
+        }
+
+        // Toggle checkbox
+        function toggleCheckbox(sectionId) {
+            const checkbox = document.getElementById('cb-' + sectionId);
+            const progress = loadProgress();
+
+            progress[sectionId] = checkbox.checked;
+            saveProgress(progress);
+            updateProgressDisplay();
+        }
+
+        // Reset all progress
+        function resetProgress() {
+            if (confirm('Reset all progress for this page?')) {
+                localStorage.removeItem(STORAGE_KEY);
+                document.querySelectorAll('.progress-checkbox').forEach(cb => {
+                    cb.checked = false;
+                });
+                updateProgressDisplay();
+            }
+        }
+
+        // Toggle progress list visibility
+        function toggleProgressList() {
+            const list = document.getElementById('progress-items');
+            const btn = document.querySelector('.toggle-progress');
+
+            if (list.classList.contains('collapsed')) {
+                list.classList.remove('collapsed');
+                btn.textContent = '▼ Hide';
+            } else {
+                list.classList.add('collapsed');
+                btn.textContent = '▶ Show';
+            }
+        }
+
+        // Initialize progress tracker
+        function initProgressTracker() {
+            const sections = extractSections();
+            const progress = loadProgress();
+            const container = document.getElementById('progress-items');
+
+            if (sections.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No sections found</p>';
+                return;
+            }
+
+            sections.forEach(section => {
+                const item = document.createElement('div');
+                item.className = 'progress-item';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'progress-checkbox';
+                checkbox.id = 'cb-' + section.id;
+                checkbox.checked = progress[section.id] || false;
+                checkbox.onchange = () => toggleCheckbox(section.id);
+
+                const label = document.createElement('label');
+                label.className = 'progress-label';
+                label.htmlFor = 'cb-' + section.id;
+                label.textContent = section.text;
+                label.style.paddingLeft = section.level === 3 ? '20px' : '0';
+                label.onclick = () => {
+                    document.getElementById(section.id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+                };
+
+                item.appendChild(checkbox);
+                item.appendChild(label);
+                container.appendChild(item);
+            });
+
+            updateProgressDisplay();
+        }
+
+        // Run on page load
+        document.addEventListener('DOMContentLoaded', initProgressTracker);
+    </script>
+</body>
+</html>

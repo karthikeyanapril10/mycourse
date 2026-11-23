@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>README_Interview_Prep</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 60px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .metadata {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 16px 24px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #666;
+            border-left: 4px solid #667eea;
+        }
+
+        /* PROGRESS TRACKER STYLES */
+        .progress-tracker {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .progress-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-stats {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .progress-percentage {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #764ba2;
+        }
+
+        .progress-bar-container {
+            height: 12px;
+            background: #e9ecef;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+            border-radius: 20px;
+        }
+
+        .reset-btn {
+            padding: 8px 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+
+        .reset-btn:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+        }
+
+        .progress-items {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .progress-items::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .progress-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .progress-item:hover {
+            background: #f8f9fa;
+            transform: translateX(5px);
+        }
+
+        .progress-item.completed {
+            opacity: 0.7;
+        }
+
+        .progress-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .progress-label {
+            cursor: pointer;
+            font-size: 0.95em;
+            line-height: 1.5;
+            color: #495057;
+            flex-grow: 1;
+        }
+
+        .progress-item.completed .progress-label {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .toggle-progress {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .toggle-progress:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .progress-items.collapsed {
+            display: none;
+        }
+
+        /* CONTENT STYLES */
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 4px solid #667eea;
+            font-weight: 700;
+        }
+
+        h2 {
+            color: #764ba2;
+            font-size: 2em;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        h3 {
+            color: #495057;
+            font-size: 1.5em;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        h4 {
+            color: #666;
+            font-size: 1.25em;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        ul, ol {
+            margin: 20px 0;
+            padding-left: 40px;
+        }
+
+        li {
+            margin-bottom: 12px;
+            line-height: 1.7;
+        }
+
+        code {
+            background: #f4f5f7;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #c7254e;
+            border: 1px solid #e1e4e8;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 24px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 25px 0;
+            border: 1px solid #444;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            border: none;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        blockquote {
+            border-left: 5px solid #667eea;
+            padding: 15px 25px;
+            margin: 25px 0;
+            background: #f8f9fa;
+            border-radius: 0 8px 8px 0;
+            color: #495057;
+            font-style: italic;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 30px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 14px 18px;
+            text-align: left;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tr:hover {
+            background: #e9ecef;
+            transition: background 0.2s;
+        }
+
+        a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px solid transparent;
+            transition: border-bottom 0.2s;
+        }
+
+        a:hover {
+            border-bottom: 1px solid #667eea;
+        }
+
+        hr {
+            border: none;
+            border-top: 2px solid #e9ecef;
+            margin: 40px 0;
+        }
+
+        strong {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        em {
+            color: #495057;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 25px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.6em;
+            }
+
+            .progress-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .progress-stats {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../navigation.html" class="back-link">&larr; Back to Navigation</a>
+
+        <div class="metadata">
+            <strong>Source:</strong> dev/README_Interview_Prep.md &nbsp;|&nbsp; <strong>Updated:</strong> 2026-11-18 19:44:57
+        </div>
+
+        <!-- PROGRESS TRACKER -->
+        <div class="progress-tracker">
+            <div class="progress-header">
+                <div class="progress-title">
+                    <span>📚</span>
+                    <span>Your Progress</span>
+                </div>
+                <div class="progress-stats">
+                    <span class="progress-percentage" id="progress-pct">0%</span>
+                    <button class="reset-btn" onclick="resetProgress()">Reset</button>
+                    <button class="toggle-progress" onclick="toggleProgressList()">▼ Hide</button>
+                </div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progress-bar" style="width: 0%"></div>
+            </div>
+            <div class="progress-items" id="progress-items">
+                <!-- Checkboxes will be generated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="content">
+<h1 id="interview-preparation-package-readme">Interview Preparation Package - README</h1>
+<h2 id="files-created">📁 Files Created</h2>
+<p>I've prepared a complete interview preparation package for you with 8 documents:</p>
+<h3 id="1-karthikeyan_sekar_resumemd-comprehensive-version">1. <strong>Karthikeyan_Sekar_Resume.md</strong> (Comprehensive Version)</h3>
+<p><strong>Purpose:</strong> Full 3-page resume with detailed experience<br />
+<strong>Use when:</strong> Applying to senior/lead positions that want extensive detail<br />
+<strong>Contains:</strong><br />
+- Complete professional summary<br />
+- Detailed technical skills breakdown<br />
+- Full project descriptions with STAR format<br />
+- All technologies and achievements<br />
+- Education and certifications</p>
+<p><strong>Action items:</strong><br />
+- [ ] Add your actual university name and graduation year<br />
+- [ ] Add any certifications you have (AWS, etc.)<br />
+- [ ] Customize projects section if needed<br />
+- [ ] Convert to PDF or Word format for submission</p>
+<hr />
+<h3 id="2-karthikeyan_sekar_resume_onepagemd-concise-version">2. <strong>Karthikeyan_Sekar_Resume_OnePage.md</strong> (Concise Version)</h3>
+<p><strong>Purpose:</strong> Quick-scan 1-page resume<br />
+<strong>Use when:</strong> <br />
+- Applying to startups or fast-moving companies<br />
+- Recruiters ask for "brief resume"<br />
+- Job application has file size/length limits<br />
+- Initial screening rounds</p>
+<p><strong>Contains:</strong><br />
+- Condensed summary<br />
+- Key skills<br />
+- Highlights of major achievements<br />
+- Most impactful metrics</p>
+<p><strong>Action items:</strong><br />
+- [ ] Ensure it fits on one page when formatted<br />
+- [ ] Use this for LinkedIn "Featured" section<br />
+- [ ] Great for recruiter cold outreach</p>
+<hr />
+<h3 id="3-interview_preparation_guidemd-main-study-guide">3. <strong>Interview_Preparation_Guide.md</strong> (Main Study Guide)</h3>
+<p><strong>Purpose:</strong> Your complete interview prep reference<br />
+<strong>Use when:</strong> Preparing for upcoming interviews</p>
+<p><strong>Contains:</strong><br />
+- Your 2-minute elevator pitch<br />
+- Key accomplishments in STAR format<br />
+- Behavioral question answers<br />
+- Technical deep-dive topics to review<br />
+- Questions to ask interviewers<br />
+- Technical exercise prep<br />
+- Your unique strengths<br />
+- Red flags to avoid<br />
+- Salary negotiation tips<br />
+- Day-before checklist</p>
+<p><strong>Study plan:</strong><br />
+- Week 1: Read through entirely, familiarize yourself with all sections<br />
+- Week 2: Practice your STAR answers out loud<br />
+- Week 3: Deep-dive technical topics, practice coding exercises<br />
+- Day before: Review quick reference sections</p>
+<hr />
+<h3 id="4-cover_letter_templatemd-customizable-template">4. <strong>Cover_Letter_Template.md</strong> (Customizable Template)</h3>
+<p><strong>Purpose:</strong> Professional cover letter framework<br />
+<strong>Use when:</strong> Applying to positions that accept/require cover letters</p>
+<p><strong>Contains:</strong><br />
+- Professional template structure<br />
+- Placeholders for customization<br />
+- Examples for different company types (startup vs enterprise)<br />
+- Customization checklist<br />
+- Multiple pre-written examples</p>
+<p><strong>How to use:</strong><br />
+1. Copy the template<br />
+2. Research the specific company thoroughly<br />
+3. Replace ALL [bracketed placeholders]<br />
+4. Use customization examples for inspiration<br />
+5. Follow the checklist before sending<br />
+6. Save as PDF: <code>KarthikeyanSekar_CoverLetter_[CompanyName].pdf</code></p>
+<p><strong>Pro tip:</strong> Spend 30-60 minutes researching each company before customizing</p>
+<hr />
+<h3 id="5-technical_interview_qamd-quick-reference">5. <strong>Technical_Interview_QA.md</strong> (Quick Reference)</h3>
+<p><strong>Purpose:</strong> Technical question prep with ready answers<br />
+<strong>Use when:</strong> Studying for technical interviews, practicing with friends</p>
+<p><strong>Contains:</strong><br />
+- PHP &amp; Laravel questions with code examples<br />
+- Database &amp; SQL scenarios<br />
+- Security questions (OWASP, PCI, HIPAA)<br />
+- System design questions<br />
+- Architecture patterns (AC vs UC, multi-tenant)<br />
+- Testing strategies<br />
+- Problem-solving scenarios with your actual approach<br />
+- Communication framework for non-technical stakeholders</p>
+<p><strong>Study approach:</strong><br />
+- Review all questions<br />
+- Practice explaining answers out loud<br />
+- Be ready to write code examples<br />
+- Use the debugging scenarios as mental walkthroughs</p>
+<hr />
+<h3 id="6-system_design_interview_guidemd-complete-system-design-guide">6. <strong>System_Design_Interview_Guide.md</strong> (Complete System Design Guide)</h3>
+<p><strong>Purpose:</strong> Master system design interviews with comprehensive framework and real examples<br />
+<strong>Use when:</strong> Preparing for senior/staff engineer interviews with system design rounds</p>
+<p><strong>Contains:</strong><br />
+- <strong>7-Step Interview Framework</strong> (45-60 min approach)<br />
+- <strong>10 Key Concepts:</strong> Load balancing, caching, database scaling, microservices, message queues, CAP theorem, consistent hashing, rate limiting, CDN, indexing<br />
+- <strong>Scalability Deep Dive:</strong> Scaling from 1M to 100M users<br />
+- <strong>Database Design:</strong> Normalization, SQL vs NoSQL, sharding strategies<br />
+- <strong>5 Common Problems with Full Solutions:</strong><br />
+  - URL Shortener (bit.ly)<br />
+  - Rate Limiter<br />
+  - Notification System<br />
+  - News Feed (Facebook/Twitter)<br />
+  - Distributed Cache<br />
+- <strong>Real-world examples from Production work:</strong><br />
+  - Multi-tenant SaaS billing platform design<br />
+  - Payment processing system with retries<br />
+  - Report generation optimization (100M+ rows)<br />
+- <strong>Evaluation criteria</strong> interviewers use<br />
+- <strong>Practice problems</strong> (beginner → advanced)</p>
+<p><strong>Study plan:</strong><br />
+- Week 1: Read key concepts, understand patterns<br />
+- Week 2: Work through the 5 common problems, draw diagrams<br />
+- Week 3: Practice with timer (45 min per problem)<br />
+- Week 4: Mock interviews with friends<br />
+- Before interview: Review 7-step framework</p>
+<p><strong>Pro tips:</strong><br />
+- Draw diagrams (boxes, arrows, data flow)<br />
+- Think out loud - explain your reasoning<br />
+- Start simple, then scale up<br />
+- Discuss trade-offs (pros/cons of each decision)<br />
+- Ask clarifying questions at the start<br />
+- Use real numbers (estimate scale)</p>
+<hr />
+<h3 id="7-ai_agentic_workflows_interview_guidemd-cutting-edge-differentiator">7. <strong>AI_Agentic_Workflows_Interview_Guide.md</strong> (Cutting-Edge Differentiator)</h3>
+<p><strong>Purpose:</strong> Deep-dive talking points for your AI expertise<br />
+<strong>Use when:</strong> Interviewer asks about your AI experience (they will - it's on your resume!)</p>
+<p><strong>Contains:</strong><br />
+- <strong>Why this makes you stand out</strong> (top 1% of engineers with this hands-on experience)<br />
+- <strong>What are AI agentic workflows</strong> (simple + technical explanations)<br />
+- <strong>Your actual implementation details:</strong><br />
+  - Multi-agent orchestration architecture<br />
+  - Tools each agent can access<br />
+  - Verification protocols (code proof + data proof)<br />
+- <strong>3 detailed real-world systems you built:</strong><br />
+  1. Incident Triage Agent System (40% faster resolution)<br />
+  2. Automated Code Review Agent (60% more security findings)<br />
+  3. Database DML/DDL Validation Agent (200+ changes, 100% success)<br />
+- <strong>Technical deep-dive Q&amp;A:</strong><br />
+  - How do you handle hallucinations?<br />
+  - Prompt engineering approach<br />
+  - Multi-agent orchestration patterns<br />
+  - Cost management strategies<br />
+  - Success metrics<br />
+- <strong>Your 2-minute AI elevator pitch</strong><br />
+- <strong>Future vision</strong> (shows forward thinking)<br />
+- <strong>Technical terms glossary</strong><br />
+- <strong>Questions to ask about their AI strategy</strong></p>
+<p><strong>Study approach:</strong><br />
+- Memorize the 2-minute elevator pitch<br />
+- Practice explaining each of the 3 systems<br />
+- Be ready to draw the multi-agent architecture diagram<br />
+- Know your metrics cold (40% faster, 60% more findings, 100% success rate)</p>
+<p><strong>This is your secret weapon:</strong> Most candidates have "used ChatGPT for coding." You've <strong>built multi-agent orchestration systems</strong>. This separates you from 99% of applicants.</p>
+<hr />
+<h2 id="action-plan-what-to-do-next">📋 Action Plan - What to Do Next</h2>
+<h3 id="week-1-prepare-materials">Week 1: Prepare Materials</h3>
+<ul>
+<li>[ ] Review and customize the comprehensive resume</li>
+<li>[ ] Add missing details (university, certifications, phone number)</li>
+<li>[ ] Convert both resumes to professional PDF format</li>
+<li>[ ] Update LinkedIn profile to match resume</li>
+<li>[ ] Create 3-5 customized cover letters for target companies</li>
+</ul>
+<h3 id="week-2-study-practice">Week 2: Study &amp; Practice</h3>
+<ul>
+<li>[ ] Read Interview Preparation Guide cover to cover</li>
+<li>[ ] Practice your 2-minute pitch (record yourself!)</li>
+<li>[ ] Practice STAR answers with a friend</li>
+<li>[ ] Review Technical Q&amp;A guide</li>
+<li>[ ] Prepare 5 questions to ask each interviewer</li>
+</ul>
+<h3 id="week-3-technical-prep">Week 3: Technical Prep</h3>
+<ul>
+<li>[ ] Review all code examples in Technical Q&amp;A</li>
+<li>[ ] Practice writing code by hand (whiteboard style)</li>
+<li>[ ] Review database optimization techniques</li>
+<li>[ ] Study system design patterns</li>
+<li>[ ] Practice explaining technical concepts to non-technical audience</li>
+</ul>
+<h3 id="application-phase">Application Phase</h3>
+<ul>
+<li>[ ] Research target companies thoroughly</li>
+<li>[ ] Customize cover letter for each application</li>
+<li>[ ] Use comprehensive resume for senior roles, one-page for others</li>
+<li>[ ] Apply to 10-15 positions per week</li>
+<li>[ ] Track applications in a spreadsheet</li>
+</ul>
+<h3 id="interview-phase">Interview Phase</h3>
+<ul>
+<li>[ ] Review company-specific research night before</li>
+<li>[ ] Re-read Interview Preparation Guide</li>
+<li>[ ] Prepare 3-5 questions specific to that company</li>
+<li>[ ] Test tech setup (camera, mic, internet) for remote interviews</li>
+<li>[ ] Get good sleep, dress professionally</li>
+</ul>
+<hr />
+<h2 id="pro-tips">💡 Pro Tips</h2>
+<h3 id="resume-customization">Resume Customization</h3>
+<ul>
+<li><strong>Use keywords from job description</strong> - ATS (Applicant Tracking Systems) scan for these</li>
+<li><strong>Quantify everything</strong> - "Reduced MTTR by 40%" is better than "Improved response time"</li>
+<li><strong>Action verbs</strong> - Led, Designed, Implemented, Optimized, Reduced, Achieved</li>
+<li><strong>Tailor for each role</strong> - Emphasize different projects based on what they need</li>
+</ul>
+<h3 id="cover-letter-success">Cover Letter Success</h3>
+<ul>
+<li><strong>First paragraph</strong> - Why you're writing, the role, brief credibility</li>
+<li><strong>Middle paragraphs</strong> - Match your experience to their needs (use their language)</li>
+<li><strong>Final paragraph</strong> - Enthusiasm + call to action</li>
+<li><strong>Keep it to 1 page</strong> - Hiring managers spend 30 seconds max</li>
+<li><strong>Proofread 3 times</strong> - Typos kill applications</li>
+</ul>
+<h3 id="interview-strategy">Interview Strategy</h3>
+<ul>
+<li><strong>The first answer sets the tone</strong> - Start strong with confidence</li>
+<li><strong>STAR format for behavioral</strong> - Situation, Task, Action, Result (always include Result!)</li>
+<li><strong>Ask clarifying questions</strong> - Shows you think before coding/answering</li>
+<li><strong>Think out loud</strong> - In technical exercises, explain your thought process</li>
+<li><strong>It's okay to say "I don't know"</strong> - Follow with "but here's how I'd find out"</li>
+<li><strong>Ask questions</strong> - Interviews are two-way; you're evaluating them too</li>
+</ul>
+<h3 id="common-mistakes-to-avoid">Common Mistakes to Avoid</h3>
+<ul>
+<li>❌ Badmouthing current/former employers</li>
+<li>❌ Memorizing answers word-for-word (sounds robotic)</li>
+<li>❌ Not preparing questions to ask them</li>
+<li>❌ Failing to research the company</li>
+<li>❌ Not following up after interview</li>
+<li>❌ Accepting first offer without negotiating</li>
+<li>❌ Lying or exaggerating (always gets caught)</li>
+</ul>
+<hr />
+<h2 id="target-companies-suggestions">🎯 Target Companies (Suggestions)</h2>
+<p>Based on your skillset, consider:</p>
+<p><strong>For PHP/Laravel expertise:</strong><br />
+- Companies using Laravel at scale<br />
+- SaaS companies with complex multi-tenant needs<br />
+- FinTech/PayTech companies (similar domain to Enterprise SaaS Company)</p>
+<p><strong>For security focus:</strong><br />
+- Companies in regulated industries (healthcare, finance, government)<br />
+- Security-focused startups<br />
+- Compliance-heavy SaaS platforms</p>
+<p><strong>For database optimization:</strong><br />
+- Data-intensive applications<br />
+- Analytics platforms<br />
+- High-volume transaction systems</p>
+<p><strong>For technical leadership:</strong><br />
+- Growing engineering teams that need senior/staff engineers<br />
+- Companies establishing code quality practices<br />
+- Startups transitioning from startup to scale-up</p>
+<hr />
+<h2 id="next-steps-after-getting-interest">📞 Next Steps After Getting Interest</h2>
+<ol>
+<li>
+<p><strong>Recruiter Call</strong> (15-30 min)<br />
+   - Verify role details, compensation range, process<br />
+   - Ask timeline and next steps<br />
+   - Confirm your interest level</p>
+</li>
+<li>
+<p><strong>Technical Screen</strong> (45-60 min)<br />
+   - Usually coding + system design<br />
+   - Review Technical Q&amp;A guide beforehand<br />
+   - Have your development environment ready</p>
+</li>
+<li>
+<p><strong>On-site/Virtual On-site</strong> (4-6 hours)<br />
+   - Multiple rounds: coding, system design, behavioral, culture fit<br />
+   - Review all materials the night before<br />
+   - Bring questions for each interviewer</p>
+</li>
+<li>
+<p><strong>Offer Stage</strong><br />
+   - Review total compensation (base, bonus, equity, benefits)<br />
+   - Don't accept immediately - take 24-48 hours<br />
+   - Negotiate if below market rate<br />
+   - Get everything in writing</p>
+</li>
+</ol>
+<hr />
+<h2 id="additional-resources">📚 Additional Resources</h2>
+<p><strong>For salary research:</strong><br />
+- Levels.fyi (tech compensation data)<br />
+- Glassdoor (company reviews + salaries)<br />
+- Blind (anonymous tech worker discussions)<br />
+- PayScale (general salary data)</p>
+<p><strong>For interview prep:</strong><br />
+- LeetCode (coding practice)<br />
+- System Design Primer (GitHub repo)<br />
+- Cracking the Coding Interview (book)<br />
+- OWASP Top 10 (security knowledge)</p>
+<p><strong>For company research:</strong><br />
+- Company blog/engineering blog<br />
+- GitHub repositories (if open source)<br />
+- LinkedIn (employee backgrounds, recent hires)<br />
+- Crunchbase (funding, growth)<br />
+- Glassdoor (employee reviews)</p>
+<hr />
+<h2 id="final-checklist-before-applying">✅ Final Checklist Before Applying</h2>
+<ul>
+<li>[ ] Resume is error-free and formatted professionally</li>
+<li>[ ] Cover letter is customized for this specific company</li>
+<li>[ ] LinkedIn profile is updated and matches resume</li>
+<li>[ ] You've researched the company and role thoroughly</li>
+<li>[ ] You have 3-5 questions prepared for them</li>
+<li>[ ] You can explain why you want THIS job at THIS company</li>
+<li>[ ] Your elevator pitch is practiced and natural</li>
+<li>[ ] All contact information is current and professional</li>
+<li>[ ] References are lined up (if needed)</li>
+<li>[ ] Portfolio/GitHub is clean and presentable</li>
+</ul>
+<hr />
+<p>Good luck with your job search! You have strong experience, great technical skills, and a proven track record. Present yourself confidently and you'll do great. 🚀</p>
+<p><strong>Remember:</strong> The right opportunity is out there. Focus on quality applications over quantity, and prepare thoroughly for each interview. You've got this!</p>
+        </div>
+    </div>
+
+    <script>
+        // Progress Tracker JavaScript
+        const STORAGE_KEY = 'course_progress_readme_interview_prep';
+
+        // Extract all H2 and H3 headings from content
+        function extractSections() {
+            const content = document.querySelector('.content');
+            const headings = content.querySelectorAll('h2, h3');
+            const sections = [];
+
+            headings.forEach((heading, index) => {
+                const level = heading.tagName === 'H2' ? 2 : 3;
+                const text = heading.textContent.trim();
+                const id = `section-${index}`;
+
+                // Add ID to heading for linking
+                heading.id = id;
+
+                sections.push({
+                    id: id,
+                    text: text,
+                    level: level
+                });
+            });
+
+            return sections;
+        }
+
+        // Load saved progress from localStorage
+        function loadProgress() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            return saved ? JSON.parse(saved) : {};
+        }
+
+        // Save progress to localStorage
+        function saveProgress(progress) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+        }
+
+        // Calculate progress percentage
+        function calculateProgress() {
+            const checkboxes = document.querySelectorAll('.progress-checkbox');
+            const total = checkboxes.length;
+            if (total === 0) return 0;
+
+            const completed = Array.from(checkboxes).filter(cb => cb.checked).length;
+            return Math.round((completed / total) * 100);
+        }
+
+        // Update progress display
+        function updateProgressDisplay() {
+            const percentage = calculateProgress();
+            document.getElementById('progress-pct').textContent = percentage + '%';
+            document.getElementById('progress-bar').style.width = percentage + '%';
+
+            // Update completed class on items
+            document.querySelectorAll('.progress-item').forEach(item => {
+                const checkbox = item.querySelector('.progress-checkbox');
+                if (checkbox.checked) {
+                    item.classList.add('completed');
+                } else {
+                    item.classList.remove('completed');
+                }
+            });
+        }
+
+        // Toggle checkbox
+        function toggleCheckbox(sectionId) {
+            const checkbox = document.getElementById('cb-' + sectionId);
+            const progress = loadProgress();
+
+            progress[sectionId] = checkbox.checked;
+            saveProgress(progress);
+            updateProgressDisplay();
+        }
+
+        // Reset all progress
+        function resetProgress() {
+            if (confirm('Reset all progress for this page?')) {
+                localStorage.removeItem(STORAGE_KEY);
+                document.querySelectorAll('.progress-checkbox').forEach(cb => {
+                    cb.checked = false;
+                });
+                updateProgressDisplay();
+            }
+        }
+
+        // Toggle progress list visibility
+        function toggleProgressList() {
+            const list = document.getElementById('progress-items');
+            const btn = document.querySelector('.toggle-progress');
+
+            if (list.classList.contains('collapsed')) {
+                list.classList.remove('collapsed');
+                btn.textContent = '▼ Hide';
+            } else {
+                list.classList.add('collapsed');
+                btn.textContent = '▶ Show';
+            }
+        }
+
+        // Initialize progress tracker
+        function initProgressTracker() {
+            const sections = extractSections();
+            const progress = loadProgress();
+            const container = document.getElementById('progress-items');
+
+            if (sections.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No sections found</p>';
+                return;
+            }
+
+            sections.forEach(section => {
+                const item = document.createElement('div');
+                item.className = 'progress-item';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'progress-checkbox';
+                checkbox.id = 'cb-' + section.id;
+                checkbox.checked = progress[section.id] || false;
+                checkbox.onchange = () => toggleCheckbox(section.id);
+
+                const label = document.createElement('label');
+                label.className = 'progress-label';
+                label.htmlFor = 'cb-' + section.id;
+                label.textContent = section.text;
+                label.style.paddingLeft = section.level === 3 ? '20px' : '0';
+                label.onclick = () => {
+                    document.getElementById(section.id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+                };
+
+                item.appendChild(checkbox);
+                item.appendChild(label);
+                container.appendChild(item);
+            });
+
+            updateProgressDisplay();
+        }
+
+        // Run on page load
+        document.addEventListener('DOMContentLoaded', initProgressTracker);
+    </script>
+</body>
+</html>

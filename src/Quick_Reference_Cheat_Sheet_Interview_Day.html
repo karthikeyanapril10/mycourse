@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick_Reference_Cheat_Sheet_Interview_Day</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 60px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .metadata {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 16px 24px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #666;
+            border-left: 4px solid #667eea;
+        }
+
+        /* PROGRESS TRACKER STYLES */
+        .progress-tracker {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .progress-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-stats {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .progress-percentage {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #764ba2;
+        }
+
+        .progress-bar-container {
+            height: 12px;
+            background: #e9ecef;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+            border-radius: 20px;
+        }
+
+        .reset-btn {
+            padding: 8px 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+
+        .reset-btn:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+        }
+
+        .progress-items {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .progress-items::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .progress-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .progress-item:hover {
+            background: #f8f9fa;
+            transform: translateX(5px);
+        }
+
+        .progress-item.completed {
+            opacity: 0.7;
+        }
+
+        .progress-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .progress-label {
+            cursor: pointer;
+            font-size: 0.95em;
+            line-height: 1.5;
+            color: #495057;
+            flex-grow: 1;
+        }
+
+        .progress-item.completed .progress-label {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .toggle-progress {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .toggle-progress:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .progress-items.collapsed {
+            display: none;
+        }
+
+        /* CONTENT STYLES */
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 4px solid #667eea;
+            font-weight: 700;
+        }
+
+        h2 {
+            color: #764ba2;
+            font-size: 2em;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        h3 {
+            color: #495057;
+            font-size: 1.5em;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        h4 {
+            color: #666;
+            font-size: 1.25em;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        ul, ol {
+            margin: 20px 0;
+            padding-left: 40px;
+        }
+
+        li {
+            margin-bottom: 12px;
+            line-height: 1.7;
+        }
+
+        code {
+            background: #f4f5f7;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #c7254e;
+            border: 1px solid #e1e4e8;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 24px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 25px 0;
+            border: 1px solid #444;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            border: none;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        blockquote {
+            border-left: 5px solid #667eea;
+            padding: 15px 25px;
+            margin: 25px 0;
+            background: #f8f9fa;
+            border-radius: 0 8px 8px 0;
+            color: #495057;
+            font-style: italic;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 30px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 14px 18px;
+            text-align: left;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tr:hover {
+            background: #e9ecef;
+            transition: background 0.2s;
+        }
+
+        a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px solid transparent;
+            transition: border-bottom 0.2s;
+        }
+
+        a:hover {
+            border-bottom: 1px solid #667eea;
+        }
+
+        hr {
+            border: none;
+            border-top: 2px solid #e9ecef;
+            margin: 40px 0;
+        }
+
+        strong {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        em {
+            color: #495057;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 25px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.6em;
+            }
+
+            .progress-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .progress-stats {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../navigation.html" class="back-link">&larr; Back to Navigation</a>
+
+        <div class="metadata">
+            <strong>Source:</strong> dev/Quick_Reference_Cheat_Sheet_Interview_Day.md &nbsp;|&nbsp; <strong>Updated:</strong> 2026-11-18 19:44:56
+        </div>
+
+        <!-- PROGRESS TRACKER -->
+        <div class="progress-tracker">
+            <div class="progress-header">
+                <div class="progress-title">
+                    <span>📚</span>
+                    <span>Your Progress</span>
+                </div>
+                <div class="progress-stats">
+                    <span class="progress-percentage" id="progress-pct">0%</span>
+                    <button class="reset-btn" onclick="resetProgress()">Reset</button>
+                    <button class="toggle-progress" onclick="toggleProgressList()">▼ Hide</button>
+                </div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progress-bar" style="width: 0%"></div>
+            </div>
+            <div class="progress-items" id="progress-items">
+                <!-- Checkboxes will be generated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="content">
+<h1 id="quick-reference-cheat-sheet-interview-day">📄 Quick Reference Cheat Sheet - Interview Day</h1>
+<p><strong>Print this. Keep on desk. Review 1 hour before interview.</strong></p>
+<hr />
+<h2 id="your-elevator-pitch-30-seconds">🎯 Your Elevator Pitch (30 seconds)</h2>
+<blockquote>
+<p>"I'm a Senior Full-Stack Engineer with 12+ years at Billtrust, working across 8 production systems serving thousands of customers. I specialize in <strong>high-scale distributed systems</strong> (database sharding, 3-layer caching, idempotent APIs), <strong>production incident resolution</strong> (12-min MTTR, PagerDuty on-call), and <strong>AI-powered automation</strong> (built 3 agentic workflows that eliminated 40+ hours/month of manual work). I'm looking for roles where I can architect scalable systems and mentor teams."</p>
+</blockquote>
+<hr />
+<h2 id="your-8-projects-one-liner-each">💼 Your 8 Projects (One-Liner Each)</h2>
+<table>
+<thead>
+<tr>
+<th>Project</th>
+<th>One-Liner Pitch</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>EIC</strong> (eInvoice Connect)</td>
+<td>Horizontal database sharding (Stack 1/2) serving 100M+ invoice rows with &lt;50ms p99 latency</td>
+</tr>
+<tr>
+<td><strong>CSR</strong> (Customer Settings Repo)</td>
+<td>3-layer caching (APCu → Redis → MySQL) serving 200+ microservices with 95%+ hit rate</td>
+</tr>
+<tr>
+<td><strong>CC</strong> (Client Connect)</td>
+<td>Supplier portal with Laravel 9 upgrade (PHP 7.4→8.0), eliminating 20+ latent bugs</td>
+</tr>
+<tr>
+<td><strong>WCL</strong> (Web Communication Layer)</td>
+<td>Connection pooling and query optimization, reducing DB load by 40%</td>
+</tr>
+<tr>
+<td><strong>MPay</strong> (Managed Pay)</td>
+<td>Idempotency pattern preventing duplicate payment charges (UUID + DB constraints)</td>
+</tr>
+<tr>
+<td><strong>AMAPI</strong></td>
+<td>Multi-tenant API serving 50K+ requests/hour with rate limiting and JWT auth</td>
+</tr>
+<tr>
+<td><strong>Biscuit</strong> (AI Agent)</td>
+<td>3 agentic workflows (DML review, QRT triage, fraud investigation) using Claude 3.5</td>
+</tr>
+<tr>
+<td><strong>Payment Repo</strong></td>
+<td>Webhook signature validation, detecting 100+ malicious requests in 2 months</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="key-metrics-memorize-these">📊 Key Metrics (Memorize These)</h2>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Value</th>
+<th>Context</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>MTTR</strong></td>
+<td>12 minutes</td>
+<td>Average P1 incident resolution time (target: &lt;15 min)</td>
+</tr>
+<tr>
+<td><strong>Latency (p99)</strong></td>
+<td>&lt;50ms</td>
+<td>CSR API after caching optimizations (was 150ms)</td>
+</tr>
+<tr>
+<td><strong>Database Size</strong></td>
+<td>100M+ rows</td>
+<td>EIC <code>fsidocument</code> table, sharded across 2 stacks</td>
+</tr>
+<tr>
+<td><strong>Throughput</strong></td>
+<td>50K+ req/hour</td>
+<td>AMAPI peak traffic during billing cycles</td>
+</tr>
+<tr>
+<td><strong>On-Call</strong></td>
+<td>2 days/week</td>
+<td>PagerDuty rotation, 7-hour shifts</td>
+</tr>
+<tr>
+<td><strong>Code Review</strong></td>
+<td>500+ PRs/year</td>
+<td>Reviewed/approved across 8 repos</td>
+</tr>
+<tr>
+<td><strong>Incidents Handled</strong></td>
+<td>150+ P1/P2</td>
+<td>Last 2.5 years (NJQRT tickets)</td>
+</tr>
+<tr>
+<td><strong>Cache Hit Rate</strong></td>
+<td>95%+</td>
+<td>CSR 3-layer cache (APCu → Redis → MySQL)</td>
+</tr>
+<tr>
+<td><strong>Monitoring</strong></td>
+<td>Datadog + Splunk</td>
+<td>Post-deployment checks, alert rules</td>
+</tr>
+<tr>
+<td><strong>AI Automation</strong></td>
+<td>40+ hrs/month saved</td>
+<td>3 agentic workflows eliminated manual work</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="top-10-dsa-patterns-must-know">🧠 Top 10 DSA Patterns (Must Know)</h2>
+<table>
+<thead>
+<tr>
+<th>Pattern</th>
+<th>When to Use</th>
+<th>Example Problem</th>
+<th>Time Complexity</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1. Two Pointers</strong></td>
+<td>Sorted array, pairs</td>
+<td>3Sum, Container With Most Water</td>
+<td>O(n) or O(n²)</td>
+</tr>
+<tr>
+<td><strong>2. Sliding Window</strong></td>
+<td>Substring/subarray</td>
+<td>Longest Substring Without Repeating</td>
+<td>O(n)</td>
+</tr>
+<tr>
+<td><strong>3. Hash Map</strong></td>
+<td>Frequency, lookup</td>
+<td>Two Sum, Group Anagrams</td>
+<td>O(n)</td>
+</tr>
+<tr>
+<td><strong>4. Binary Search</strong></td>
+<td>Sorted, find target</td>
+<td>Search Rotated Array, Find Min</td>
+<td>O(log n)</td>
+</tr>
+<tr>
+<td><strong>5. DFS (Trees)</strong></td>
+<td>Tree traversal</td>
+<td>Invert Tree, Validate BST</td>
+<td>O(n)</td>
+</tr>
+<tr>
+<td><strong>6. BFS (Graphs)</strong></td>
+<td>Shortest path, levels</td>
+<td>Number of Islands, Level Order</td>
+<td>O(V + E)</td>
+</tr>
+<tr>
+<td><strong>7. Dynamic Programming</strong></td>
+<td>Optimal substructure</td>
+<td>Coin Change, House Robber</td>
+<td>O(n) to O(n²)</td>
+</tr>
+<tr>
+<td><strong>8. Backtracking</strong></td>
+<td>All combinations</td>
+<td>Combination Sum, Word Search</td>
+<td>O(2^n)</td>
+</tr>
+<tr>
+<td><strong>9. Stack</strong></td>
+<td>Matching pairs, monotonic</td>
+<td>Valid Parentheses, Min Stack</td>
+<td>O(n)</td>
+</tr>
+<tr>
+<td><strong>10. Linked List</strong></td>
+<td>Fast/slow pointers</td>
+<td>Reverse List, Detect Cycle</td>
+<td>O(n)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Tip:</strong> For each pattern, know ONE easy problem cold. Can code it in 5 minutes.</p>
+<hr />
+<h2 id="big-o-complexities-quick-reference">📐 Big O Complexities (Quick Reference)</h2>
+<div class="codehilite"><pre><span></span><code><span class="nv">O</span><span class="ss">(</span><span class="mi">1</span><span class="ss">)</span><span class="w">        </span><span class="nv">Constant</span><span class="w">      </span><span class="nv">Hash</span><span class="w"> </span><span class="nv">lookup</span>,<span class="w"> </span><span class="nv">array</span><span class="w"> </span><span class="nv">access</span>
+<span class="nv">O</span><span class="ss">(</span><span class="nv">log</span><span class="w"> </span><span class="nv">n</span><span class="ss">)</span><span class="w">    </span><span class="nv">Logarithmic</span><span class="w">   </span><span class="nv">Binary</span><span class="w"> </span><span class="nv">search</span>,<span class="w"> </span><span class="nv">balanced</span><span class="w"> </span><span class="nv">tree</span>
+<span class="nv">O</span><span class="ss">(</span><span class="nv">n</span><span class="ss">)</span><span class="w">        </span><span class="nv">Linear</span><span class="w">        </span><span class="nv">Single</span><span class="w"> </span><span class="k">loop</span>,<span class="w"> </span><span class="nv">hash</span><span class="w"> </span><span class="nv">map</span><span class="w"> </span><span class="nv">build</span>
+<span class="nv">O</span><span class="ss">(</span><span class="nv">n</span><span class="w"> </span><span class="nv">log</span><span class="w"> </span><span class="nv">n</span><span class="ss">)</span><span class="w">  </span><span class="nv">Linearithmic</span><span class="w">  </span><span class="nv">Merge</span><span class="w"> </span><span class="nv">sort</span>,<span class="w"> </span><span class="nv">quick</span><span class="w"> </span><span class="nv">sort</span>
+<span class="nv">O</span><span class="ss">(</span><span class="nv">n</span>²<span class="ss">)</span><span class="w">       </span><span class="nv">Quadratic</span><span class="w">     </span><span class="nv">Nested</span><span class="w"> </span><span class="nv">loops</span>,<span class="w"> </span><span class="nv">bubble</span><span class="w"> </span><span class="nv">sort</span>
+<span class="nv">O</span><span class="ss">(</span><span class="mi">2</span><span class="o">^</span><span class="nv">n</span><span class="ss">)</span><span class="w">      </span><span class="nv">Exponential</span><span class="w">   </span><span class="nv">Recursive</span><span class="w"> </span><span class="nv">fibonacci</span><span class="w"> </span><span class="ss">(</span><span class="nv">naive</span><span class="ss">)</span>
+<span class="nv">O</span><span class="ss">(</span><span class="nv">n</span><span class="o">!</span><span class="ss">)</span><span class="w">       </span><span class="nv">Factorial</span><span class="w">     </span><span class="nv">Generate</span><span class="w"> </span><span class="nv">all</span><span class="w"> </span><span class="nv">permutations</span>
+</code></pre></div>
+
+<p><strong>Golden Rule:</strong> Drop constants (O(2n) → O(n)), Drop lower terms (O(n² + n) → O(n²))</p>
+<hr />
+<h2 id="system-design-essentials">🗺️ System Design Essentials</h2>
+<h3 id="cap-theorem"><strong>CAP Theorem</strong></h3>
+<ul>
+<li><strong>C</strong>onsistency: All nodes see same data</li>
+<li><strong>A</strong>vailability: System always responds</li>
+<li><strong>P</strong>artition Tolerance: Works despite network splits</li>
+</ul>
+<p><strong>Pick 2.</strong> Most distributed systems choose <strong>AP</strong> (eventual consistency).</p>
+<h3 id="solid-principles"><strong>SOLID Principles</strong></h3>
+<ul>
+<li><strong>S</strong>ingle Responsibility</li>
+<li><strong>O</strong>pen/Closed (open for extension, closed for modification)</li>
+<li><strong>L</strong>iskov Substitution</li>
+<li><strong>I</strong>nterface Segregation</li>
+<li><strong>D</strong>ependency Inversion</li>
+</ul>
+<h3 id="database-sharding-your-eic-project"><strong>Database Sharding</strong> (Your EIC Project)</h3>
+<ul>
+<li>Horizontal partitioning by key (e.g., <code>CustomerId % 2</code> → Stack 1 or 2)</li>
+<li>Pros: Distributes load, scales horizontally</li>
+<li>Cons: Cross-shard queries expensive, rebalancing hard</li>
+</ul>
+<h3 id="caching-strategies-your-csr-project"><strong>Caching Strategies</strong> (Your CSR Project)</h3>
+<ol>
+<li><strong>Cache-Aside:</strong> App checks cache → miss → load from DB → store in cache</li>
+<li><strong>Write-Through:</strong> Write to cache + DB simultaneously</li>
+<li><strong>Write-Behind:</strong> Write to cache → async write to DB</li>
+</ol>
+<h3 id="idempotency-your-mpay-project"><strong>Idempotency</strong> (Your MPay Project)</h3>
+<ul>
+<li>Multiple identical requests = same result</li>
+<li>Implementation: UUID + DB unique constraint</li>
+<li>Critical for: Payments, order processing, webhooks</li>
+</ul>
+<h3 id="rate-limiting"><strong>Rate Limiting</strong></h3>
+<ul>
+<li><strong>Token Bucket:</strong> N tokens/sec, bucket max M</li>
+<li><strong>Leaky Bucket:</strong> Process at fixed rate</li>
+<li><strong>Fixed Window:</strong> N requests per minute (simple but bursty)</li>
+</ul>
+<h3 id="load-balancing"><strong>Load Balancing</strong></h3>
+<ul>
+<li><strong>Round Robin:</strong> Distribute evenly</li>
+<li><strong>Least Connections:</strong> Send to server with fewest active</li>
+<li><strong>IP Hash:</strong> Same client → same server (sticky sessions)</li>
+</ul>
+<hr />
+<h2 id="security-essentials-owasp-top-3">🔐 Security Essentials (OWASP Top 3)</h2>
+<table>
+<thead>
+<tr>
+<th>Vulnerability</th>
+<th>What It Is</th>
+<th>How You Prevent</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>SQL Injection</strong></td>
+<td>Malicious SQL in user input</td>
+<td><strong>Parameterized queries</strong> (always!)</td>
+</tr>
+<tr>
+<td><strong>XSS</strong> (Cross-Site Scripting)</td>
+<td>Malicious JS injected</td>
+<td><strong>Escape user input</strong>, CSP headers</td>
+</tr>
+<tr>
+<td><strong>Broken Authentication</strong></td>
+<td>Weak login/session</td>
+<td><strong>JWT tokens</strong>, secure sessions, MFA</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Your Experience:</strong> Payment webhook signature validation (detected 100+ malicious requests), fraud investigation timeline reconstruction (NJQRT).</p>
+<hr />
+<h2 id="interview-tips-last-minute-reminders">💡 Interview Tips (Last-Minute Reminders)</h2>
+<h3 id="for-coding-problems"><strong>For Coding Problems:</strong></h3>
+<ol>
+<li>✅ <strong>Clarify first</strong> - "Can the array be empty? Duplicates allowed?"</li>
+<li>✅ <strong>Think aloud</strong> - "I'm considering a hash map here because..."</li>
+<li>✅ <strong>Brute force first</strong> - "Naive solution is O(n²), then I'll optimize"</li>
+<li>✅ <strong>Test edge cases</strong> - Empty input, single element, duplicates</li>
+<li>✅ <strong>State complexity</strong> - "Time: O(n), Space: O(n)"</li>
+</ol>
+<h3 id="for-system-design"><strong>For System Design:</strong></h3>
+<ol>
+<li>✅ <strong>Ask about scale</strong> - "How many users? Requests per second?"</li>
+<li>✅ <strong>Start high-level</strong> - Draw boxes (Client → LB → App → DB)</li>
+<li>✅ <strong>Identify bottlenecks</strong> - "Database will be the bottleneck at 10K RPS"</li>
+<li>✅ <strong>Propose solutions</strong> - Caching, sharding, replication</li>
+<li>✅ <strong>Mention trade-offs</strong> - "Eventual consistency vs strong consistency"</li>
+</ol>
+<h3 id="for-behavioral"><strong>For Behavioral:</strong></h3>
+<ol>
+<li>✅ <strong>Use STAR format</strong> - Situation, Task, Action, Result</li>
+<li>✅ <strong>Pick recent examples</strong> - Last 2 years (NJQRT work)</li>
+<li>✅ <strong>Quantify results</strong> - "Reduced MTTR from 20 min to 12 min"</li>
+<li>✅ <strong>Show leadership</strong> - Mentored, reviewed PRs, drove decisions</li>
+</ol>
+<hr />
+<h2 id="sample-answers-copy-paste-ready">🎤 Sample Answers (Copy-Paste Ready)</h2>
+<h3 id="tell-me-about-yourself"><strong>"Tell me about yourself"</strong></h3>
+<blockquote>
+<p>"I'm a Senior Full-Stack Engineer with 12 years at Billtrust. I work on 8 production systems serving thousands of customers across invoicing, payments, and customer management. Recently, I've focused on three areas: <strong>high-scale architecture</strong> like database sharding for 100M+ invoice rows, <strong>production reliability</strong> with a 12-minute MTTR for P1 incidents, and <strong>AI automation</strong> where I built 3 agentic workflows that save 40+ hours per month. I'm looking for a role where I can architect scalable systems and mentor engineering teams."</p>
+</blockquote>
+<h3 id="whats-your-biggest-achievement"><strong>"What's your biggest achievement?"</strong></h3>
+<blockquote>
+<p>"Building a 3-layer caching system (APCu → Redis → MySQL) for our Customer Settings Repository that serves 200+ microservices. Before this, we had cache stampedes during deployments causing 5-10 minute outages. I designed a hierarchical cache with TTL staggering and cache warming. Result: 95%+ hit rate, p99 latency dropped from 150ms to under 50ms, and zero cache-related outages in the last year. The system now handles 50K+ requests per hour during peak billing cycles."</p>
+</blockquote>
+<h3 id="tell-me-about-a-production-incident"><strong>"Tell me about a production incident"</strong></h3>
+<blockquote>
+<p>"We had a P1 incident where invoice emails stopped sending to 20,000+ customers. I was on-call. Within 12 minutes, I identified the root cause: a Redis connection pool exhaustion after a deployment. The fix: increased pool size from 10 to 50 connections and added connection recycling. I wrote a detailed RCA with 5 fields (Issue, Impact, Root Cause, Solution, Validation), and implemented Datadog alerting on Redis connection metrics. We haven't seen this issue again, and I added this check to our deployment runbook."</p>
+</blockquote>
+<h3 id="how-do-you-handle-disagreements"><strong>"How do you handle disagreements?"</strong></h3>
+<blockquote>
+<p>"On the payment idempotency project, our Product team wanted to handle duplicates at the UI level only. I disagreed because network retries and timeouts would still create duplicates at the API level. I presented data: in a 2-week period, we had 50+ duplicate payment attempts that the UI couldn't prevent. I proposed a UUID + database unique constraint approach that guaranteed idempotency regardless of the caller. Product agreed after seeing the data. We implemented it, and duplicate charges dropped to zero."</p>
+</blockquote>
+<hr />
+<h2 id="quick-self-test-answer-in-30-seconds-each">🧪 Quick Self-Test (Answer in 30 seconds each)</h2>
+<ol>
+<li>
+<p><strong>What's the difference between sharding and replication?</strong><br />
+   - Sharding: Split data across servers (horizontal partitioning)<br />
+   - Replication: Copy same data to multiple servers (redundancy)</p>
+</li>
+<li>
+<p><strong>Why use Redis over Memcache?</strong><br />
+   - Redis: Persistence, data structures (lists, sets, sorted sets), pub/sub<br />
+   - Memcache: Simple key-value, faster for pure caching</p>
+</li>
+<li>
+<p><strong>What's the CAP theorem tradeoff in your CSR project?</strong><br />
+   - Chose <strong>AP</strong> (Availability + Partition Tolerance)<br />
+   - Eventual consistency acceptable for settings (not financial data)</p>
+</li>
+<li>
+<p><strong>How do you prevent SQL injection?</strong><br />
+   - <strong>Parameterized queries / prepared statements</strong><br />
+   - Never concatenate user input into SQL strings</p>
+</li>
+<li>
+<p><strong>What's idempotency and why does it matter?</strong><br />
+   - Same request multiple times = same result (no duplicate charges)<br />
+   - Critical for payments: network retries shouldn't double-charge</p>
+</li>
+</ol>
+<hr />
+<h2 id="pre-interview-checklist">📋 Pre-Interview Checklist</h2>
+<p><strong>1 hour before:</strong><br />
+- [ ] Read this cheat sheet (10 min)<br />
+- [ ] Review your 8 projects (5 min each = 40 min)<br />
+- [ ] Practice elevator pitch out loud (2 min)<br />
+- [ ] Breathe, relax (8 min)</p>
+<p><strong>During interview:</strong><br />
+- [ ] Smile, make eye contact<br />
+- [ ] Think aloud while coding<br />
+- [ ] Ask clarifying questions<br />
+- [ ] State time/space complexity<br />
+- [ ] Test your code with examples</p>
+<p><strong>After interview:</strong><br />
+- [ ] Send thank-you email within 24 hours<br />
+- [ ] Note down questions you struggled with<br />
+- [ ] Practice those questions again</p>
+<hr />
+<h2 id="final-reminders">🎯 Final Reminders</h2>
+<p>✅ <strong>You have 12 years of experience</strong> - Trust your knowledge<br />
+✅ <strong>You built 8 production systems</strong> - You can handle anything<br />
+✅ <strong>You solve P1 incidents in 12 minutes</strong> - You work under pressure<br />
+✅ <strong>You built AI agents</strong> - You're ahead of the curve<br />
+✅ <strong>You're on-call every week</strong> - You own production  </p>
+<p><strong>You're ready. Go get that offer! 💪</strong></p>
+<hr />
+<p><strong>Last Updated:</strong> November 16, 2026<br />
+<strong>Print this:</strong> Ctrl+P → Save as PDF → Keep on desk<br />
+<strong>Review:</strong> 1 hour before every interview</p>
+        </div>
+    </div>
+
+    <script>
+        // Progress Tracker JavaScript
+        const STORAGE_KEY = 'course_progress_quick_reference_cheat_sheet_interview_day';
+
+        // Extract all H2 and H3 headings from content
+        function extractSections() {
+            const content = document.querySelector('.content');
+            const headings = content.querySelectorAll('h2, h3');
+            const sections = [];
+
+            headings.forEach((heading, index) => {
+                const level = heading.tagName === 'H2' ? 2 : 3;
+                const text = heading.textContent.trim();
+                const id = `section-${index}`;
+
+                // Add ID to heading for linking
+                heading.id = id;
+
+                sections.push({
+                    id: id,
+                    text: text,
+                    level: level
+                });
+            });
+
+            return sections;
+        }
+
+        // Load saved progress from localStorage
+        function loadProgress() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            return saved ? JSON.parse(saved) : {};
+        }
+
+        // Save progress to localStorage
+        function saveProgress(progress) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+        }
+
+        // Calculate progress percentage
+        function calculateProgress() {
+            const checkboxes = document.querySelectorAll('.progress-checkbox');
+            const total = checkboxes.length;
+            if (total === 0) return 0;
+
+            const completed = Array.from(checkboxes).filter(cb => cb.checked).length;
+            return Math.round((completed / total) * 100);
+        }
+
+        // Update progress display
+        function updateProgressDisplay() {
+            const percentage = calculateProgress();
+            document.getElementById('progress-pct').textContent = percentage + '%';
+            document.getElementById('progress-bar').style.width = percentage + '%';
+
+            // Update completed class on items
+            document.querySelectorAll('.progress-item').forEach(item => {
+                const checkbox = item.querySelector('.progress-checkbox');
+                if (checkbox.checked) {
+                    item.classList.add('completed');
+                } else {
+                    item.classList.remove('completed');
+                }
+            });
+        }
+
+        // Toggle checkbox
+        function toggleCheckbox(sectionId) {
+            const checkbox = document.getElementById('cb-' + sectionId);
+            const progress = loadProgress();
+
+            progress[sectionId] = checkbox.checked;
+            saveProgress(progress);
+            updateProgressDisplay();
+        }
+
+        // Reset all progress
+        function resetProgress() {
+            if (confirm('Reset all progress for this page?')) {
+                localStorage.removeItem(STORAGE_KEY);
+                document.querySelectorAll('.progress-checkbox').forEach(cb => {
+                    cb.checked = false;
+                });
+                updateProgressDisplay();
+            }
+        }
+
+        // Toggle progress list visibility
+        function toggleProgressList() {
+            const list = document.getElementById('progress-items');
+            const btn = document.querySelector('.toggle-progress');
+
+            if (list.classList.contains('collapsed')) {
+                list.classList.remove('collapsed');
+                btn.textContent = '▼ Hide';
+            } else {
+                list.classList.add('collapsed');
+                btn.textContent = '▶ Show';
+            }
+        }
+
+        // Initialize progress tracker
+        function initProgressTracker() {
+            const sections = extractSections();
+            const progress = loadProgress();
+            const container = document.getElementById('progress-items');
+
+            if (sections.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No sections found</p>';
+                return;
+            }
+
+            sections.forEach(section => {
+                const item = document.createElement('div');
+                item.className = 'progress-item';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'progress-checkbox';
+                checkbox.id = 'cb-' + section.id;
+                checkbox.checked = progress[section.id] || false;
+                checkbox.onchange = () => toggleCheckbox(section.id);
+
+                const label = document.createElement('label');
+                label.className = 'progress-label';
+                label.htmlFor = 'cb-' + section.id;
+                label.textContent = section.text;
+                label.style.paddingLeft = section.level === 3 ? '20px' : '0';
+                label.onclick = () => {
+                    document.getElementById(section.id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+                };
+
+                item.appendChild(checkbox);
+                item.appendChild(label);
+                container.appendChild(item);
+            });
+
+            updateProgressDisplay();
+        }
+
+        // Run on page load
+        document.addEventListener('DOMContentLoaded', initProgressTracker);
+    </script>
+</body>
+</html>

@@ -1,0 +1,3243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Technical_Interview_QA_Resume_Projects</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 60px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .metadata {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 16px 24px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #666;
+            border-left: 4px solid #667eea;
+        }
+
+        /* PROGRESS TRACKER STYLES */
+        .progress-tracker {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .progress-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-stats {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .progress-percentage {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #764ba2;
+        }
+
+        .progress-bar-container {
+            height: 12px;
+            background: #e9ecef;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+            border-radius: 20px;
+        }
+
+        .reset-btn {
+            padding: 8px 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+
+        .reset-btn:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+        }
+
+        .progress-items {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .progress-items::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .progress-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .progress-item:hover {
+            background: #f8f9fa;
+            transform: translateX(5px);
+        }
+
+        .progress-item.completed {
+            opacity: 0.7;
+        }
+
+        .progress-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .progress-label {
+            cursor: pointer;
+            font-size: 0.95em;
+            line-height: 1.5;
+            color: #495057;
+            flex-grow: 1;
+        }
+
+        .progress-item.completed .progress-label {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .toggle-progress {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .toggle-progress:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .progress-items.collapsed {
+            display: none;
+        }
+
+        /* CONTENT STYLES */
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 4px solid #667eea;
+            font-weight: 700;
+        }
+
+        h2 {
+            color: #764ba2;
+            font-size: 2em;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        h3 {
+            color: #495057;
+            font-size: 1.5em;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        h4 {
+            color: #666;
+            font-size: 1.25em;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        ul, ol {
+            margin: 20px 0;
+            padding-left: 40px;
+        }
+
+        li {
+            margin-bottom: 12px;
+            line-height: 1.7;
+        }
+
+        code {
+            background: #f4f5f7;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #c7254e;
+            border: 1px solid #e1e4e8;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 24px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 25px 0;
+            border: 1px solid #444;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            border: none;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        blockquote {
+            border-left: 5px solid #667eea;
+            padding: 15px 25px;
+            margin: 25px 0;
+            background: #f8f9fa;
+            border-radius: 0 8px 8px 0;
+            color: #495057;
+            font-style: italic;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 30px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 14px 18px;
+            text-align: left;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tr:hover {
+            background: #e9ecef;
+            transition: background 0.2s;
+        }
+
+        a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px solid transparent;
+            transition: border-bottom 0.2s;
+        }
+
+        a:hover {
+            border-bottom: 1px solid #667eea;
+        }
+
+        hr {
+            border: none;
+            border-top: 2px solid #e9ecef;
+            margin: 40px 0;
+        }
+
+        strong {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        em {
+            color: #495057;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 25px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.6em;
+            }
+
+            .progress-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .progress-stats {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../navigation.html" class="back-link">&larr; Back to Navigation</a>
+
+        <div class="metadata">
+            <strong>Source:</strong> dev/Technical_Interview_QA_Resume_Projects.md &nbsp;|&nbsp; <strong>Updated:</strong> 2026-11-18 19:44:59
+        </div>
+
+        <!-- PROGRESS TRACKER -->
+        <div class="progress-tracker">
+            <div class="progress-header">
+                <div class="progress-title">
+                    <span>📚</span>
+                    <span>Your Progress</span>
+                </div>
+                <div class="progress-stats">
+                    <span class="progress-percentage" id="progress-pct">0%</span>
+                    <button class="reset-btn" onclick="resetProgress()">Reset</button>
+                    <button class="toggle-progress" onclick="toggleProgressList()">▼ Hide</button>
+                </div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progress-bar" style="width: 0%"></div>
+            </div>
+            <div class="progress-items" id="progress-items">
+                <!-- Checkboxes will be generated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="content">
+<h1 id="technical-interview-qa-resume-projects-12-years-experience">Technical Interview Q&amp;A - Resume Projects (12+ Years Experience)</h1>
+<p><strong>Deep-Dive Questions &amp; Answers for Your 8 Projects</strong></p>
+<hr />
+<h2 id="table-of-contents">📋 TABLE OF CONTENTS</h2>
+<ol>
+<li><a href="#1-einvoice-connect-eic">eInvoice Connect (EIC)</a></li>
+<li><a href="#2-client-connect-cc">Client Connect (CC)</a></li>
+<li><a href="#3-customer-settings-repository-csr">Customer Settings Repository (CSR)</a></li>
+<li><a href="#4-web-communication-layer-wcl">Web Communication Layer (WCL)</a></li>
+<li><a href="#5-managed-pay-mpay">Managed Pay (MPay)</a></li>
+<li><a href="#6-account-management-api-amapi">Account Management API (AMAPI)</a></li>
+<li><a href="#7-multi-domain-whitelabel-platform">Multi-Domain Whitelabel Platform</a></li>
+<li><a href="#8-incident-remediation--rca-tracker">Incident Remediation &amp; RCA Tracker</a></li>
+<li><a href="#9-cross-project-architecture-questions">Cross-Project Architecture Questions</a></li>
+<li><a href="#10-performance--scalability">Performance &amp; Scalability</a></li>
+<li><a href="#11-security--compliance">Security &amp; Compliance</a></li>
+<li><a href="#12-database-design--optimization">Database Design &amp; Optimization</a></li>
+<li><a href="#13-leadership--decision-making">Leadership &amp; Decision Making</a></li>
+<li><a href="#14-debugging--production-issues">Debugging &amp; Production Issues</a></li>
+</ol>
+<hr />
+<h2 id="1-einvoice-connect-eic">1. eInvoice Connect (EIC)</h2>
+<h3 id="q11-explain-the-database-sharding-strategy-stack1stack2-why-did-you-choose-this-approach">Q1.1: Explain the database sharding strategy (Stack1/Stack2). Why did you choose this approach?</h3>
+<p><strong>Answer:</strong></p>
+<p><strong>What is Stack1/Stack2:</strong><br />
+- We implemented horizontal sharding to distribute customer data across two separate MySQL databases<br />
+- <strong>Stack1:</strong> Customers with CustomerId % 2 == 0<br />
+- <strong>Stack2:</strong> Customers with CustomerId % 2 == 1</p>
+<p><strong>Why we chose this:</strong><br />
+1. <strong>Performance:</strong> Single database was hitting 100M+ rows, causing slow queries<br />
+2. <strong>Write throughput:</strong> Split write load across two separate RDS instances<br />
+3. <strong>Blast radius:</strong> Database failure only affects 50% of customers, not all<br />
+4. <strong>Maintenance:</strong> Can upgrade/patch one stack while other serves traffic</p>
+<p><strong>How routing works:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Simplified routing logic</span>
+<span class="x">function getDbConnection($customerId) {</span>
+<span class="x">    $stack = ($customerId % 2 == 0) ? 'stack1' : 'stack2';</span>
+<span class="x">    return WCL::getConnection($stack);</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>Trade-offs:</strong><br />
+- ✅ Better performance, reduced blast radius<br />
+- ❌ Cross-stack queries impossible (can't JOIN between Stack1 and Stack2)<br />
+- ❌ Rebalancing customers between stacks is complex</p>
+<p><strong>Alternative considered:</strong> Vertical sharding (separate tables), but rejected because all tables needed to scale together.</p>
+<hr />
+<h3 id="q12-how-does-the-authenticated-email-workflow-with-10-minute-activation-work-what-happens-after-10-minutes">Q1.2: How does the authenticated email workflow with 10-minute activation work? What happens after 10 minutes?</h3>
+<p><strong>Answer:</strong></p>
+<p><strong>Flow:</strong><br />
+1. User requests email (forgot password, verify email, etc.)<br />
+2. System generates random 6-digit code<br />
+3. Code stored in <code>email_verification_codes</code> table with:<br />
+   - <code>code</code> (hashed with bcrypt)<br />
+   - <code>email</code><br />
+   - <code>expires_at</code> (NOW() + 10 minutes)<br />
+   - <code>created_at</code><br />
+4. Email sent with code via WCL microservice<br />
+5. User enters code on verification page<br />
+6. System checks:<br />
+<code>php
+   WHERE email = ? 
+   AND expires_at &gt; NOW() 
+   AND attempts &lt; 3</code><br />
+7. If valid → Mark as verified, delete code<br />
+8. If expired → Show "Code expired, request new one"</p>
+<p><strong>After 10 minutes:</strong><br />
+- Code is still in DB but <code>expires_at &lt; NOW()</code> so validation fails<br />
+- Background cron job deletes expired codes every 15 minutes<br />
+- User must request new code</p>
+<p><strong>Security measures:</strong><br />
+- Bcrypt hashed codes (not plain text)<br />
+- Max 3 attempts per code<br />
+- Rate limiting: 1 request per email per 60 seconds<br />
+- IP-based rate limiting (10 requests/minute)</p>
+<p><strong>Why 10 minutes:</strong><br />
+- Balance between security (short window) and UX (enough time for user to check email)<br />
+- Industry standard for email verification</p>
+<hr />
+<h3 id="q13-you-support-12-languages-how-is-multi-language-handled-technically-whats-the-performance-impact">Q1.3: You support 12+ languages. How is multi-language handled technically? What's the performance impact?</h3>
+<p><strong>Answer:</strong></p>
+<p><strong>Architecture:</strong></p>
+<p><strong>1. Translation Storage:</strong></p>
+<div class="codehilite"><pre><span></span><code>Table: fsi_translations
+<span class="k">-</span> translation_id (PK)
+<span class="k">-</span> language_code (en, es, fr, de, etc.)
+<span class="k">-</span> translation_key (invoice.total, payment.success, etc.)
+<span class="k">-</span> translated_text (actual translation)
+<span class="k">-</span> last_updated
+</code></pre></div>
+
+<p><strong>2. Loading Strategy:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// On first request, load all translations for user's language</span>
+<span class="x">$language = $user-&gt;getPreferredLanguage(); // from CSR settings</span>
+<span class="x">$translations = Cache::remember("translations:{$language}", 3600, function() use ($language) {</span>
+<span class="x">    return DB::table('fsi_translations')</span>
+<span class="x">        -&gt;where('language_code', $language)</span>
+<span class="x">        -&gt;pluck('translated_text', 'translation_key')</span>
+<span class="x">        -&gt;toArray();</span>
+<span class="x">});</span>
+</code></pre></div>
+
+<p><strong>3. Usage in code:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Instead of hardcoded strings:</span>
+<span class="x">echo __('invoice.total'); // Looks up translation from cache</span>
+</code></pre></div>
+
+<p><strong>Performance optimization:</strong><br />
+- <strong>Redis cache:</strong> Translations cached for 1 hour, eliminates DB hits<br />
+- <strong>Lazy loading:</strong> Only load language user requested (not all 12)<br />
+- <strong>CDN:</strong> Static translated content served from CloudFront<br />
+- <strong>Impact:</strong> ~5ms overhead for cache lookup vs 50-100ms for DB query</p>
+<p><strong>Challenges solved:</strong><br />
+- <strong>RTL languages:</strong> Arabic/Hebrew need CSS direction changes<br />
+- <strong>Date formats:</strong> Different locales (MM/DD/YYYY vs DD/MM/YYYY)<br />
+- <strong>Currency:</strong> $1,000.00 vs 1.000,00€<br />
+- <strong>Pluralization:</strong> "1 invoice" vs "2 invoices"</p>
+<p><strong>Fallback strategy:</strong><br />
+If translation missing → Fall back to English → Log missing key for translator</p>
+<hr />
+<h3 id="q14-how-does-sub-user-delegation-work-what-permissions-can-be-delegated">Q1.4: How does sub-user delegation work? What permissions can be delegated?</h3>
+<p><strong>Answer:</strong></p>
+<p><strong>Architecture:</strong></p>
+<p><strong>1. User Hierarchy:</strong></p>
+<div class="codehilite"><pre><span></span><code>Primary User (Account Owner)
+└── Sub-User 1 (View Only)
+└── Sub-User 2 (View + Pay)
+└── Sub-User 3 (Full Access)
+</code></pre></div>
+
+<p><strong>2. Database Schema:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">fsi_sub_users</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="n">sub_user_id</span><span class="w"> </span><span class="nb">INT</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span>
+<span class="w">    </span><span class="n">primary_user_id</span><span class="w"> </span><span class="nb">INT</span><span class="p">,</span><span class="w"> </span><span class="c1">-- Links to parent</span>
+<span class="w">    </span><span class="n">email</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">255</span><span class="p">),</span>
+<span class="w">    </span><span class="n">permission_level</span><span class="w"> </span><span class="n">ENUM</span><span class="p">(</span><span class="s1">'view'</span><span class="p">,</span><span class="w"> </span><span class="s1">'view_pay'</span><span class="p">,</span><span class="w"> </span><span class="s1">'full'</span><span class="p">),</span>
+<span class="w">    </span><span class="n">can_view_invoices</span><span class="w"> </span><span class="nb">BOOLEAN</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">    </span><span class="n">can_make_payments</span><span class="w"> </span><span class="nb">BOOLEAN</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="n">can_manage_autopay</span><span class="w"> </span><span class="nb">BOOLEAN</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="n">can_manage_sub_users</span><span class="w"> </span><span class="nb">BOOLEAN</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="n">created_by</span><span class="w"> </span><span class="nb">INT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">created_at</span><span class="w"> </span><span class="k">TIMESTAMP</span>
+<span class="p">);</span>
+</code></pre></div>
+
+<p><strong>3. Permission Check (Middleware):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">class SubUserPermission {</span>
+<span class="x">    public function checkPermission($subUser, $action) {</span>
+<span class="x">        $permissions = [</span>
+<span class="x">            'view_invoices' =&gt; $subUser-&gt;can_view_invoices,</span>
+<span class="x">            'make_payment' =&gt; $subUser-&gt;can_make_payments,</span>
+<span class="x">            'manage_autopay' =&gt; $subUser-&gt;can_manage_autopay,</span>
+<span class="x">            'manage_sub_users' =&gt; $subUser-&gt;can_manage_sub_users,</span>
+<span class="x">        ];</span>
+
+<span class="x">        if (!$permissions[$action]) {</span>
+<span class="x">            throw new UnauthorizedException("Sub-user lacks permission: {$action}");</span>
+<span class="x">        }</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>4. Audit Trail:</strong><br />
+Every action logs:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">fsi_audit_log</span><span class="w"> </span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span><span class="w"> </span><span class="n">sub_user_id</span><span class="p">,</span><span class="w"> </span><span class="n">action</span><span class="p">,</span><span class="w"> </span><span class="n">ip_address</span><span class="p">,</span><span class="w"> </span><span class="k">timestamp</span><span class="p">)</span>
+<span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="mi">123</span><span class="p">,</span><span class="w"> </span><span class="mi">456</span><span class="p">,</span><span class="w"> </span><span class="s1">'payment_made'</span><span class="p">,</span><span class="w"> </span><span class="s1">'192.168.1.1'</span><span class="p">,</span><span class="w"> </span><span class="n">NOW</span><span class="p">());</span>
+</code></pre></div>
+
+<p><strong>Permission Levels:</strong><br />
+- <strong>View Only:</strong> See invoices, payment history (no actions)<br />
+- <strong>View + Pay:</strong> Can make one-time payments<br />
+- <strong>Full Access:</strong> Everything except delete primary account</p>
+<p><strong>Use cases:</strong><br />
+- Accountant views invoices but can't pay (View Only)<br />
+- AP clerk makes payments (View + Pay)<br />
+- CFO has full access (Full Access)</p>
+<p><strong>Security:</strong><br />
+- Sub-users can't elevate their own permissions<br />
+- Only primary user can delete sub-users<br />
+- Email verification required for new sub-users<br />
+- 2FA can be enforced per sub-user</p>
+<hr />
+<h3 id="q15-whats-the-autopay-threshold-logic-walk-through-the-payment-decision-flow">Q1.5: What's the AutoPay threshold logic? Walk through the payment decision flow.</h3>
+<p><strong>Answer:</strong></p>
+<p><strong>Configuration:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">AutoPay Settings (stored in fsi_autopay_config):</span>
+<span class="x">- autopay_enabled: true</span>
+<span class="x">- threshold_amount: $500</span>
+<span class="x">- payment_account_id: 789 (which bank account to use)</span>
+<span class="x">- autopay_day: 5 (days before due date)</span>
+</code></pre></div>
+
+<p><strong>Decision Flow (runs daily cron):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// 1. Find all invoices eligible for AutoPay</span>
+<span class="x">$invoices = DB::table('fsi_invoices')</span>
+<span class="x">    -&gt;join('fsi_autopay_config', 'fsi_invoices.customer_id', '=', 'fsi_autopay_config.customer_id')</span>
+<span class="x">    -&gt;where('fsi_autopay_config.autopay_enabled', true)</span>
+<span class="x">    -&gt;where('fsi_invoices.status', 'unpaid')</span>
+<span class="x">    -&gt;where('fsi_invoices.due_date', '&lt;=', DB::raw('DATE_ADD(NOW(), INTERVAL fsi_autopay_config.autopay_day DAY)'))</span>
+<span class="x">    -&gt;get();</span>
+
+<span class="x">// 2. For each invoice, check threshold</span>
+<span class="x">foreach ($invoices as $invoice) {</span>
+<span class="x">    $autopayConfig = getAutopayConfig($invoice-&gt;customer_id);</span>
+
+<span class="x">    // Apply threshold logic</span>
+<span class="x">    if ($invoice-&gt;total_amount &lt;= $autopayConfig-&gt;threshold_amount) {</span>
+<span class="x">        // Amount is UNDER threshold → Process payment automatically</span>
+<span class="x">        processAutoPayment($invoice, $autopayConfig-&gt;payment_account_id);</span>
+<span class="x">    } else {</span>
+<span class="x">        // Amount is OVER threshold → Send notification, don't pay</span>
+<span class="x">        sendThresholdExceededNotification($invoice, $autopayConfig-&gt;threshold_amount);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>Example Scenarios:</strong></p>
+<p><strong>Scenario 1: Invoice $300, Threshold $500</strong><br />
+- Invoice total &lt; threshold → ✅ Auto-pay<br />
+- Payment processed 5 days before due date<br />
+- Confirmation email sent</p>
+<p><strong>Scenario 2: Invoice $800, Threshold $500</strong><br />
+- Invoice total &gt; threshold → ❌ Don't auto-pay<br />
+- Email sent: "Invoice $800 exceeds your AutoPay threshold of $500. Manual payment required."<br />
+- Invoice remains unpaid until manual action</p>
+<p><strong>Why threshold exists:</strong><br />
+- Prevent large unexpected charges<br />
+- Customer controls maximum auto-payment amount<br />
+- Compliance: Prevents disputes on large amounts</p>
+<p><strong>Retry logic:</strong><br />
+If payment fails:</p>
+<div class="codehilite"><pre><span></span><code><span class="x">Retry Schedule:</span>
+<span class="x">- Attempt 1: Immediate</span>
+<span class="x">- Attempt 2: +6 hours</span>
+<span class="x">- Attempt 3: +24 hours</span>
+<span class="x">- After 3 failures: Disable AutoPay, send alert</span>
+</code></pre></div>
+
+<p><strong>Edge cases handled:</strong><br />
+- Payment account expired → Disable AutoPay, alert customer<br />
+- Insufficient funds → Retry with exponential backoff<br />
+- Duplicate prevention → Idempotency key per invoice</p>
+<hr />
+<h2 id="2-client-connect-cc">2. Client Connect (CC)</h2>
+<h3 id="q21-this-is-a-supplier-admin-portal-explain-the-difference-in-architecture-between-cc-and-eic">Q2.1: This is a supplier admin portal. Explain the difference in architecture between CC and EIC.</h3>
+<p><strong>Answer:</strong></p>
+<p><strong>Key Differences:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>EIC (Customer Portal)</th>
+<th>CC (Supplier Portal)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>User Base</strong></td>
+<td>End customers (1000s)</td>
+<td>Supplier admins (10-50 per supplier)</td>
+</tr>
+<tr>
+<td><strong>Auth</strong></td>
+<td>Email/password, SSO</td>
+<td>Email/password, MFA required</td>
+</tr>
+<tr>
+<td><strong>Data Scope</strong></td>
+<td>Single customer's invoices/payments</td>
+<td>ALL customers under supplier</td>
+</tr>
+<tr>
+<td><strong>Caching</strong></td>
+<td>Per-customer cache</td>
+<td>Aggregated cache (reports)</td>
+</tr>
+<tr>
+<td><strong>Writes</strong></td>
+<td>High (payments, settings)</td>
+<td>Low (config changes)</td>
+</tr>
+<tr>
+<td><strong>Reads</strong></td>
+<td>Moderate (view invoices)</td>
+<td>Very high (reports, monitoring)</td>
+</tr>
+<tr>
+<td><strong>Performance</strong></td>
+<td>&lt;300ms page load</td>
+<td>&lt;1s for dashboards (acceptable)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Architecture Differences:</strong></p>
+<p><strong>EIC (Customer-Focused):</strong></p>
+<div class="codehilite"><pre><span></span><code>User Login → Stack Routing (Stack1 or Stack2 based on CustomerId) 
+         → Redis Cache (customer-specific) 
+         → Display invoices/payments
+</code></pre></div>
+
+<p><strong>CC (Supplier-Focused):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">Admin</span><span class="w"> </span><span class="n">Login</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">Query</span><span class="w"> </span><span class="n">ALL</span><span class="w"> </span><span class="n">stacks</span><span class="w"> </span><span class="p">(</span><span class="n">Stack1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Stack2</span><span class="p">)</span><span class="w"> </span>
+<span class="w">          </span><span class="err">→</span><span class="w"> </span><span class="n">Aggregate</span><span class="w"> </span><span class="n">data</span><span class="w"> </span>
+<span class="w">          </span><span class="err">→</span><span class="w"> </span><span class="n">Redis</span><span class="w"> </span><span class="n">Cache</span><span class="w"> </span><span class="p">(</span><span class="n">report</span><span class="o">-</span><span class="n">level</span><span class="p">,</span><span class="w"> </span><span class="k">not</span><span class="w"> </span><span class="n">per</span><span class="o">-</span><span class="n">customer</span><span class="p">)</span><span class="w"> </span>
+<span class="w">          </span><span class="err">→</span><span class="w"> </span><span class="n">Display</span><span class="w"> </span><span class="n">consolidated</span><span class="w"> </span><span class="n">reports</span>
+</code></pre></div>
+
+<p><strong>Example Query Difference:</strong></p>
+<p><strong>EIC (single customer):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Fast - single customer, single stack</span>
+<span class="x">$invoices = DB::connection($stack)</span>
+<span class="x">    -&gt;table('fsi_invoices')</span>
+<span class="x">    -&gt;where('customer_id', $customerId)</span>
+<span class="x">    -&gt;get();</span>
+</code></pre></div>
+
+<p><strong>CC (all customers):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Slower - must query both stacks and merge</span>
+<span class="x">$stack1Invoices = DB::connection('stack1')</span>
+<span class="x">    -&gt;table('fsi_invoices')</span>
+<span class="x">    -&gt;whereBetween('invoice_date', [$startDate, $endDate])</span>
+<span class="x">    -&gt;get();</span>
+
+<span class="x">$stack2Invoices = DB::connection('stack2')</span>
+<span class="x">    -&gt;table('fsi_invoices')</span>
+<span class="x">    -&gt;whereBetween('invoice_date', [$startDate, $endDate])</span>
+<span class="x">    -&gt;get();</span>
+
+<span class="x">$allInvoices = $stack1Invoices-&gt;merge($stack2Invoices);</span>
+</code></pre></div>
+
+<p><strong>Why separate applications:</strong><br />
+- Different UX (customer-friendly vs admin-heavy)<br />
+- Different performance requirements<br />
+- Different security models (MFA mandatory for CC)<br />
+- Separate deployment cycles (EIC changes don't affect CC)</p>
+<hr />
+<h3 id="q22-how-does-payment-on-behalf-of-customer-work-what-are-the-security-considerations">Q2.2: How does "payment on behalf of customer" work? What are the security considerations?</h3>
+<p><strong>Answer:</strong></p>
+<p><strong>Use Case:</strong><br />
+Supplier admin needs to process payment for customer who's having issues (e.g., technical problem, urgent payment needed).</p>
+<p><strong>Workflow:</strong></p>
+<p><strong>1. Authorization Check:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Admin must have 'make_payment_on_behalf' permission</span>
+<span class="x">if (!$admin-&gt;hasPermission('make_payment_on_behalf')) {</span>
+<span class="x">    throw new UnauthorizedException("Admin lacks permission to pay on behalf");</span>
+<span class="x">}</span>
+
+<span class="x">// Admin must belong to same supplier as customer</span>
+<span class="x">if ($customer-&gt;supplier_id !== $admin-&gt;supplier_id) {</span>
+<span class="x">    throw new UnauthorizedException("Cross-supplier payment not allowed");</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>2. Payment Flow:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">function makePaymentOnBehalf($adminId, $customerId, $invoiceId, $amount, $reason) {</span>
+<span class="x">    // 1. Create audit record BEFORE payment</span>
+<span class="x">    DB::table('fsi_admin_actions')-&gt;insert([</span>
+<span class="x">        'admin_id' =&gt; $adminId,</span>
+<span class="x">        'customer_id' =&gt; $customerId,</span>
+<span class="x">        'action_type' =&gt; 'payment_on_behalf',</span>
+<span class="x">        'invoice_id' =&gt; $invoiceId,</span>
+<span class="x">        'amount' =&gt; $amount,</span>
+<span class="x">        'reason' =&gt; $reason, // Required field</span>
+<span class="x">        'ip_address' =&gt; request()-&gt;ip(),</span>
+<span class="x">        'timestamp' =&gt; now(),</span>
+<span class="x">    ]);</span>
+
+<span class="x">    // 2. Process payment using customer's default payment account</span>
+<span class="x">    $paymentAccount = getCustomerDefaultPaymentAccount($customerId);</span>
+<span class="x">    $result = processPayment($paymentAccount, $amount, $invoiceId);</span>
+
+<span class="x">    // 3. Send notification to customer</span>
+<span class="x">    sendEmail($customer-&gt;email, [</span>
+<span class="x">        'subject' =&gt; 'Payment Processed on Your Behalf',</span>
+<span class="x">        'body' =&gt; "Admin {$admin-&gt;name} processed payment of ${$amount} for invoice #{$invoiceId}. Reason: {$reason}",</span>
+<span class="x">    ]);</span>
+
+<span class="x">    // 4. Log in both systems</span>
+<span class="x">    logToDatadog('payment_on_behalf', [</span>
+<span class="x">        'admin' =&gt; $adminId,</span>
+<span class="x">        'customer' =&gt; $customerId,</span>
+<span class="x">        'amount' =&gt; $amount,</span>
+<span class="x">    ]);</span>
+
+<span class="x">    return $result;</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>Security Measures:</strong></p>
+<p><strong>1. Multi-Factor Authentication:</strong><br />
+- Admin must re-authenticate with MFA before each "on behalf" payment<br />
+- MFA token expires after 10 minutes</p>
+<p><strong>2. Approval Workflow (for large amounts):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">if ($amount &gt; 10000) {</span>
+<span class="x">    // Requires second admin approval</span>
+<span class="x">    createApprovalRequest($adminId, $customerId, $amount);</span>
+<span class="x">    sendApprovalEmail($supervisorAdmins);</span>
+<span class="x">    return "Pending approval from supervisor";</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>3. Daily Limits:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">$dailyTotal = DB::table('fsi_admin_actions')</span>
+<span class="x">    -&gt;where('admin_id', $adminId)</span>
+<span class="x">    -&gt;where('action_type', 'payment_on_behalf')</span>
+<span class="x">    -&gt;whereDate('timestamp', today())</span>
+<span class="x">    -&gt;sum('amount');</span>
+
+<span class="x">if ($dailyTotal + $amount &gt; 50000) {</span>
+<span class="x">    throw new LimitExceededException("Daily limit of $50,000 exceeded");</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>4. Customer Consent (optional):</strong><br />
+- Some customers enable "admin can pay on behalf" flag<br />
+- If disabled, admin payment is blocked</p>
+<p><strong>Audit Trail:</strong><br />
+Every "on behalf" payment creates:<br />
+- Entry in <code>fsi_admin_actions</code> table<br />
+- Datadog event for monitoring<br />
+- Email to customer (transparency)<br />
+- Monthly report to compliance team</p>
+<p><strong>Why this feature exists:</strong><br />
+- Customer's payment portal down → Admin can process payment to avoid late fee<br />
+- Customer out of office → Admin can pay urgent invoice<br />
+- Technical issue on customer side → Admin bypass as workaround</p>
+<hr />
+<h3 id="q23-explain-the-bulk-user-onboarding-via-amapi-integration-whats-the-error-handling-strategy">Q2.3: Explain the bulk user onboarding via AMAPI integration. What's the error handling strategy?</h3>
+<p><strong>Answer:</strong></p>
+<p><strong>Flow:</strong></p>
+<p><strong>1. Admin uploads CSV file (via CC):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">email</span><span class="p">,</span><span class="n">first_name</span><span class="p">,</span><span class="n">last_name</span><span class="p">,</span><span class="k">role</span><span class="p">,</span><span class="n">customer_id</span>
+<span class="n">john</span><span class="nv">@example</span><span class="p">.</span><span class="n">com</span><span class="p">,</span><span class="n">John</span><span class="p">,</span><span class="n">Doe</span><span class="p">,</span><span class="n">view_only</span><span class="p">,</span><span class="mi">12345</span>
+<span class="n">jane</span><span class="nv">@example</span><span class="p">.</span><span class="n">com</span><span class="p">,</span><span class="n">Jane</span><span class="p">,</span><span class="n">Smith</span><span class="p">,</span><span class="n">view_pay</span><span class="p">,</span><span class="mi">12345</span>
+</code></pre></div>
+
+<p><strong>2. CC validates CSV:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">function validateCsv($file) {</span>
+<span class="x">    $errors = [];</span>
+
+<span class="x">    foreach ($file-&gt;rows as $index =&gt; $row) {</span>
+<span class="x">        // Email validation</span>
+<span class="x">        if (!filter_var($row['email'], FILTER_VALIDATE_EMAIL)) {</span>
+<span class="x">            $errors[] = "Row {$index}: Invalid email '{$row['email']}'";</span>
+<span class="x">        }</span>
+
+<span class="x">        // Role validation</span>
+<span class="x">        $validRoles = ['view_only', 'view_pay', 'full_access'];</span>
+<span class="x">        if (!in_array($row['role'], $validRoles)) {</span>
+<span class="x">            $errors[] = "Row {$index}: Invalid role '{$row['role']}'";</span>
+<span class="x">        }</span>
+
+<span class="x">        // Customer ID existence check</span>
+<span class="x">        if (!customerExists($row['customer_id'])) {</span>
+<span class="x">            $errors[] = "Row {$index}: Customer {$row['customer_id']} not found";</span>
+<span class="x">        }</span>
+<span class="x">    }</span>
+
+<span class="x">    if (!empty($errors)) {</span>
+<span class="x">        return ['success' =&gt; false, 'errors' =&gt; $errors];</span>
+<span class="x">    }</span>
+
+<span class="x">    return ['success' =&gt; true];</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>3. CC calls AMAPI (bulk endpoint):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">$response = Http::post('https://amapi.internal/api/v1/bulk-enroll', [</span>
+<span class="x">    'users' =&gt; $validatedRows,</span>
+<span class="x">    'created_by' =&gt; $admin-&gt;id,</span>
+<span class="x">    'idempotency_key' =&gt; uniqid('bulk_', true), // Prevent duplicate processing</span>
+<span class="x">]);</span>
+</code></pre></div>
+
+<p><strong>4. AMAPI processes in background (queue):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// AMAPI side - Queue job</span>
+<span class="x">dispatch(new BulkEnrollUsers($users, $idempotencyKey));</span>
+
+<span class="x">// Job processor</span>
+<span class="x">class BulkEnrollUsers {</span>
+<span class="x">    public function handle() {</span>
+<span class="x">        $results = [];</span>
+
+<span class="x">        foreach ($this-&gt;users as $user) {</span>
+<span class="x">            try {</span>
+<span class="x">                // Create user account</span>
+<span class="x">                $account = createAccount($user);</span>
+
+<span class="x">                // Send welcome email</span>
+<span class="x">                sendWelcomeEmail($user['email'], $account);</span>
+
+<span class="x">                $results[] = ['email' =&gt; $user['email'], 'status' =&gt; 'success', 'account_id' =&gt; $account-&gt;id];</span>
+<span class="x">            } catch (Exception $e) {</span>
+<span class="x">                // Log error but continue processing others</span>
+<span class="x">                $results[] = ['email' =&gt; $user['email'], 'status' =&gt; 'failed', 'error' =&gt; $e-&gt;getMessage()];</span>
+
+<span class="x">                Log::error("Bulk enroll failed for {$user['email']}", ['exception' =&gt; $e]);</span>
+<span class="x">            }</span>
+<span class="x">        }</span>
+
+<span class="x">        // Store results for admin to review</span>
+<span class="x">        storeResults($this-&gt;idempotencyKey, $results);</span>
+
+<span class="x">        // Notify admin when done</span>
+<span class="x">        sendCompletionEmail($admin, $results);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>5. CC polls AMAPI for results:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Every 5 seconds, check status</span>
+<span class="x">$status = Http::get("https://amapi.internal/api/v1/bulk-status/{$idempotencyKey}");</span>
+
+<span class="x">if ($status['completed']) {</span>
+<span class="x">    // Show results to admin</span>
+<span class="x">    return view('bulk-results', [</span>
+<span class="x">        'success_count' =&gt; $status['success_count'],</span>
+<span class="x">        'failed_count' =&gt; $status['failed_count'],</span>
+<span class="x">        'failed_rows' =&gt; $status['failed_rows'],</span>
+<span class="x">    ]);</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>Error Handling Strategy:</strong></p>
+<p><strong>1. Partial Success Model:</strong><br />
+- If 100 users uploaded, 95 succeed, 5 fail → Still consider it success<br />
+- Failed rows returned to admin with specific error messages</p>
+<p><strong>2. Idempotency:</strong><br />
+- Same CSV uploaded twice → AMAPI detects via idempotency key<br />
+- Returns cached results instead of re-processing</p>
+<p><strong>3. Retry Logic:</strong><br />
+- Transient errors (DB connection timeout) → Retry up to 3 times<br />
+- Permanent errors (invalid email format) → No retry, report to admin</p>
+<p><strong>4. Rollback (not implemented):</strong><br />
+- We DON'T rollback successful users if later ones fail<br />
+- Reason: Users already received welcome emails, partial success is acceptable</p>
+<p><strong>5. Admin Notification:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">Subject</span><span class="p">:</span><span class="w"> </span><span class="n">Bulk</span><span class="w"> </span><span class="n">User</span><span class="w"> </span><span class="n">Upload</span><span class="w"> </span><span class="n">Complete</span>
+
+<span class="err">✅</span><span class="w"> </span><span class="n">Successfully</span><span class="w"> </span><span class="n">created</span><span class="p">:</span><span class="w"> </span><span class="mi">95</span><span class="w"> </span><span class="n">users</span>
+<span class="err">❌</span><span class="w"> </span><span class="n">Failed</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="w"> </span><span class="n">users</span>
+
+<span class="n">Failed</span><span class="w"> </span><span class="n">rows</span><span class="p">:</span>
+<span class="o">-</span><span class="w"> </span><span class="n">Row</span><span class="w"> </span><span class="mi">23</span><span class="p">:</span><span class="w"> </span><span class="n">Email</span><span class="w"> </span><span class="s1">'invalid@'</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="n">invalid</span>
+<span class="o">-</span><span class="w"> </span><span class="n">Row</span><span class="w"> </span><span class="mi">45</span><span class="p">:</span><span class="w"> </span><span class="n">Customer</span><span class="w"> </span><span class="mi">99999</span><span class="w"> </span><span class="n">does</span><span class="w"> </span><span class="ow">not</span><span class="w"> </span><span class="n">exist</span>
+<span class="o">-</span><span class="w"> </span><span class="n">Row</span><span class="w"> </span><span class="mi">78</span><span class="p">:</span><span class="w"> </span><span class="n">User</span><span class="w"> </span><span class="s1">'john@example.com'</span><span class="w"> </span><span class="n">already</span><span class="w"> </span><span class="n">exists</span>
+
+<span class="n">Download</span><span class="w"> </span><span class="n">failed</span><span class="w"> </span><span class="n">rows</span><span class="w"> </span><span class="n">CSV</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">fix</span><span class="w"> </span><span class="ow">and</span><span class="w"> </span><span class="n">re</span><span class="o">-</span><span class="n">upload</span><span class="o">.</span>
+</code></pre></div>
+
+<p><strong>Performance:</strong><br />
+- 1,000 users → ~2-3 minutes (async processing)<br />
+- Real-time progress updates via WebSocket (not polling)</p>
+<hr />
+<h2 id="3-customer-settings-repository-csr">3. Customer Settings Repository (CSR)</h2>
+<h3 id="q31-csr-serves-200-microservices-how-do-you-ensure-50ms-lookup-time-explain-the-caching-strategy">Q3.1: CSR serves 200+ microservices. How do you ensure &lt;50ms lookup time? Explain the caching strategy.</h3>
+<p><strong>Answer:</strong></p>
+<p><strong>Challenge:</strong><br />
+200+ microservices making thousands of requests/second → CSR would be bottleneck if every request hit database.</p>
+<p><strong>Solution: 3-Layer Caching</strong></p>
+<p><strong>Layer 1: Application-Level Cache (Redis)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">function getSetting($customerId, $settingKey) {</span>
+<span class="x">    $cacheKey = "settings:{$customerId}:{$settingKey}";</span>
+
+<span class="x">    // Check Redis first</span>
+<span class="x">    $cachedValue = Redis::get($cacheKey);</span>
+<span class="x">    if ($cachedValue !== null) {</span>
+<span class="x">        // Cache hit - return in ~5ms</span>
+<span class="x">        return json_decode($cachedValue, true);</span>
+<span class="x">    }</span>
+
+<span class="x">    // Cache miss - query database</span>
+<span class="x">    $setting = DB::table('csr_settings')</span>
+<span class="x">        -&gt;where('customer_id', $customerId)</span>
+<span class="x">        -&gt;where('setting_key', $settingKey)</span>
+<span class="x">        -&gt;first();</span>
+
+<span class="x">    // Store in Redis with TTL</span>
+<span class="x">    Redis::setex($cacheKey, 3600, json_encode($setting)); // 1 hour TTL</span>
+
+<span class="x">    return $setting;</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>Layer 2: Local In-Memory Cache (OPcache + APCu)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Even faster - stored in PHP process memory (no network call)</span>
+<span class="x">function getSettingWithLocalCache($customerId, $settingKey) {</span>
+<span class="x">    $localCacheKey = "{$customerId}:{$settingKey}";</span>
+
+<span class="x">    // Check APCu (local to this PHP process)</span>
+<span class="x">    $local = apcu_fetch($localCacheKey, $success);</span>
+<span class="x">    if ($success) {</span>
+<span class="x">        return $local; // &lt;1ms response</span>
+<span class="x">    }</span>
+
+<span class="x">    // Fall back to Redis (Layer 1)</span>
+<span class="x">    $value = getSetting($customerId, $settingKey);</span>
+
+<span class="x">    // Store locally for 5 minutes</span>
+<span class="x">    apcu_store($localCacheKey, $value, 300);</span>
+
+<span class="x">    return $value;</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>Layer 3: CDN Edge Cache (CloudFront)</strong><br />
+For static settings (rarely change):</p>
+<div class="codehilite"><pre><span></span><code><span class="nv">Request</span><span class="w"> </span>→<span class="w"> </span><span class="nv">CloudFront</span><span class="w"> </span><span class="nv">Edge</span><span class="w"> </span><span class="ss">(</span><span class="nv">cached</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="nv">hour</span><span class="ss">)</span><span class="w"> </span>→<span class="w"> </span><span class="nv">CSR</span><span class="w"> </span><span class="nv">API</span>
+</code></pre></div>
+
+<p><strong>Cache Invalidation Strategy:</strong></p>
+<p><strong>1. When setting is updated:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">function updateSetting($customerId, $settingKey, $newValue) {</span>
+<span class="x">    // 1. Update database</span>
+<span class="x">    DB::table('csr_settings')</span>
+<span class="x">        -&gt;where('customer_id', $customerId)</span>
+<span class="x">        -&gt;where('setting_key', $settingKey)</span>
+<span class="x">        -&gt;update(['setting_value' =&gt; $newValue]);</span>
+
+<span class="x">    // 2. Invalidate Redis cache</span>
+<span class="x">    Redis::del("settings:{$customerId}:{$settingKey}");</span>
+
+<span class="x">    // 3. Publish invalidation event (for APCu across servers)</span>
+<span class="x">    Redis::publish('cache:invalidate', json_encode([</span>
+<span class="x">        'customer_id' =&gt; $customerId,</span>
+<span class="x">        'setting_key' =&gt; $settingKey,</span>
+<span class="x">    ]));</span>
+
+<span class="x">    // 4. Invalidate CloudFront (if static)</span>
+<span class="x">    if (isStaticSetting($settingKey)) {</span>
+<span class="x">        CloudFront::invalidate("/settings/{$customerId}/{$settingKey}");</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">// Each server subscribes to invalidation channel</span>
+<span class="x">Redis::subscribe(['cache:invalidate'], function ($message) {</span>
+<span class="x">    $data = json_decode($message, true);</span>
+<span class="x">    apcu_delete("{$data['customer_id']}:{$data['setting_key']}");</span>
+<span class="x">});</span>
+</code></pre></div>
+
+<p><strong>Performance Breakdown:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Cache Layer</th>
+<th>Hit Rate</th>
+<th>Latency</th>
+<th>When Used</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>APCu (local)</td>
+<td>60%</td>
+<td>&lt;1ms</td>
+<td>Same server, recent request</td>
+</tr>
+<tr>
+<td>Redis (network)</td>
+<td>35%</td>
+<td>~5ms</td>
+<td>Different server or cold APCu</td>
+</tr>
+<tr>
+<td>MySQL (database)</td>
+<td>5%</td>
+<td>~20-30ms</td>
+<td>Cache miss on new setting</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Result:</strong> Average: ~8ms, P95: &lt;50ms</p>
+<p><strong>Why 3 layers:</strong><br />
+- APCu: Eliminates network latency for hot paths<br />
+- Redis: Shared cache across servers (consistency)<br />
+- Database: Source of truth</p>
+<p><strong>Monitoring:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">Datadog::histogram('csr.lookup.latency', $latency, [</span>
+<span class="x">    'cache_layer' =&gt; $cacheLayer, // 'apcu', 'redis', 'mysql'</span>
+<span class="x">    'customer_id' =&gt; $customerId,</span>
+<span class="x">]);</span>
+</code></pre></div>
+
+<hr />
+<h3 id="q32-whats-the-versioned-settings-with-rollback-capability-how-is-it-implemented">Q3.2: What's the versioned settings with rollback capability? How is it implemented?</h3>
+<p><strong>Answer:</strong></p>
+<p><strong>Problem:</strong><br />
+Admin updates setting → Breaks customer's integration → Need to rollback to previous value.</p>
+<p><strong>Solution: Version Control for Settings</strong></p>
+<p><strong>Database Schema:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">csr_settings_versions</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="n">version_id</span><span class="w"> </span><span class="nb">INT</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="n">AUTO_INCREMENT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">customer_id</span><span class="w"> </span><span class="nb">INT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">setting_key</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">255</span><span class="p">),</span>
+<span class="w">    </span><span class="n">setting_value</span><span class="w"> </span><span class="nb">TEXT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">version_number</span><span class="w"> </span><span class="nb">INT</span><span class="p">,</span><span class="w"> </span><span class="c1">-- Auto-increment per customer+key</span>
+<span class="w">    </span><span class="n">changed_by</span><span class="w"> </span><span class="nb">INT</span><span class="p">,</span><span class="w"> </span><span class="c1">-- Admin who made change</span>
+<span class="w">    </span><span class="n">change_reason</span><span class="w"> </span><span class="nb">TEXT</span><span class="p">,</span><span class="w"> </span><span class="c1">-- Why was this changed?</span>
+<span class="w">    </span><span class="n">is_active</span><span class="w"> </span><span class="nb">BOOLEAN</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="c1">-- Only 1 active version per customer+key</span>
+<span class="w">    </span><span class="n">created_at</span><span class="w"> </span><span class="k">TIMESTAMP</span><span class="p">,</span>
+<span class="w">    </span><span class="k">INDEX</span><span class="w"> </span><span class="p">(</span><span class="n">customer_id</span><span class="p">,</span><span class="w"> </span><span class="n">setting_key</span><span class="p">,</span><span class="w"> </span><span class="n">version_number</span><span class="p">)</span>
+<span class="p">);</span>
+</code></pre></div>
+
+<p><strong>How it works:</strong></p>
+<p><strong>1. Getting current setting (always latest active version):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">function getCurrentSetting($customerId, $settingKey) {</span>
+<span class="x">    return DB::table('csr_settings_versions')</span>
+<span class="x">        -&gt;where('customer_id', $customerId)</span>
+<span class="x">        -&gt;where('setting_key', $settingKey)</span>
+<span class="x">        -&gt;where('is_active', 1)</span>
+<span class="x">        -&gt;first();</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>2. Updating setting (creates new version):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">function updateSetting($customerId, $settingKey, $newValue, $changedBy, $reason) {</span>
+<span class="x">    DB::transaction(function() use ($customerId, $settingKey, $newValue, $changedBy, $reason) {</span>
+<span class="x">        // 1. Mark current version as inactive</span>
+<span class="x">        DB::table('csr_settings_versions')</span>
+<span class="x">            -&gt;where('customer_id', $customerId)</span>
+<span class="x">            -&gt;where('setting_key', $settingKey)</span>
+<span class="x">            -&gt;where('is_active', 1)</span>
+<span class="x">            -&gt;update(['is_active' =&gt; 0]);</span>
+
+<span class="x">        // 2. Get next version number</span>
+<span class="x">        $nextVersion = DB::table('csr_settings_versions')</span>
+<span class="x">            -&gt;where('customer_id', $customerId)</span>
+<span class="x">            -&gt;where('setting_key', $settingKey)</span>
+<span class="x">            -&gt;max('version_number') + 1;</span>
+
+<span class="x">        // 3. Insert new version</span>
+<span class="x">        DB::table('csr_settings_versions')-&gt;insert([</span>
+<span class="x">            'customer_id' =&gt; $customerId,</span>
+<span class="x">            'setting_key' =&gt; $settingKey,</span>
+<span class="x">            'setting_value' =&gt; $newValue,</span>
+<span class="x">            'version_number' =&gt; $nextVersion,</span>
+<span class="x">            'changed_by' =&gt; $changedBy,</span>
+<span class="x">            'change_reason' =&gt; $reason,</span>
+<span class="x">            'is_active' =&gt; 1,</span>
+<span class="x">            'created_at' =&gt; now(),</span>
+<span class="x">        ]);</span>
+
+<span class="x">        // 4. Invalidate cache</span>
+<span class="x">        Redis::del("settings:{$customerId}:{$settingKey}");</span>
+<span class="x">    });</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>3. Viewing version history:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">function getSettingHistory($customerId, $settingKey) {</span>
+<span class="x">    return DB::table('csr_settings_versions')</span>
+<span class="x">        -&gt;where('customer_id', $customerId)</span>
+<span class="x">        -&gt;where('setting_key', $settingKey)</span>
+<span class="x">        -&gt;orderBy('version_number', 'desc')</span>
+<span class="x">        -&gt;get();</span>
+<span class="x">}</span>
+
+<span class="x">// Returns:</span>
+<span class="x">// Version 5 (active): "new_value" - Changed by Admin123 - 2026-11-16 10:00</span>
+<span class="x">// Version 4: "old_value" - Changed by Admin456 - 2026-11-15 14:30</span>
+<span class="x">// Version 3: "older_value" - Changed by Admin123 - 2026-11-10 09:00</span>
+</code></pre></div>
+
+<p><strong>4. Rollback to previous version:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">function rollbackSetting($customerId, $settingKey, $targetVersion, $rolledBackBy, $reason) {</span>
+<span class="x">    // 1. Verify target version exists</span>
+<span class="x">    $targetSetting = DB::table('csr_settings_versions')</span>
+<span class="x">        -&gt;where('customer_id', $customerId)</span>
+<span class="x">        -&gt;where('setting_key', $settingKey)</span>
+<span class="x">        -&gt;where('version_number', $targetVersion)</span>
+<span class="x">        -&gt;first();</span>
+
+<span class="x">    if (!$targetSetting) {</span>
+<span class="x">        throw new Exception("Version {$targetVersion} not found");</span>
+<span class="x">    }</span>
+
+<span class="x">    // 2. Create NEW version with old value (don't just reactivate old one)</span>
+<span class="x">    $nextVersion = DB::table('csr_settings_versions')</span>
+<span class="x">        -&gt;where('customer_id', $customerId)</span>
+<span class="x">        -&gt;where('setting_key', $settingKey)</span>
+<span class="x">        -&gt;max('version_number') + 1;</span>
+
+<span class="x">    DB::transaction(function() use ($customerId, $settingKey, $targetSetting, $nextVersion, $rolledBackBy, $reason) {</span>
+<span class="x">        // Mark current as inactive</span>
+<span class="x">        DB::table('csr_settings_versions')</span>
+<span class="x">            -&gt;where('customer_id', $customerId)</span>
+<span class="x">            -&gt;where('setting_key', $settingKey)</span>
+<span class="x">            -&gt;where('is_active', 1)</span>
+<span class="x">            -&gt;update(['is_active' =&gt; 0]);</span>
+
+<span class="x">        // Insert new version (with old value)</span>
+<span class="x">        DB::table('csr_settings_versions')-&gt;insert([</span>
+<span class="x">            'customer_id' =&gt; $customerId,</span>
+<span class="x">            'setting_key' =&gt; $settingKey,</span>
+<span class="x">            'setting_value' =&gt; $targetSetting-&gt;setting_value, // Value from old version</span>
+<span class="x">            'version_number' =&gt; $nextVersion,</span>
+<span class="x">            'changed_by' =&gt; $rolledBackBy,</span>
+<span class="x">            'change_reason' =&gt; "Rollback to version {$targetSetting-&gt;version_number}: {$reason}",</span>
+<span class="x">            'is_active' =&gt; 1,</span>
+<span class="x">            'created_at' =&gt; now(),</span>
+<span class="x">        ]);</span>
+
+<span class="x">        // Invalidate cache</span>
+<span class="x">        Redis::del("settings:{$customerId}:{$settingKey}");</span>
+<span class="x">    });</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>Example Timeline:</strong></p>
+<div class="codehilite"><pre><span></span><code>Version 1: "feature_enabled = false" (Nov 1)
+Version 2: "feature_enabled = true" (Nov 10) ← Admin enables feature
+Version 3: "feature_enabled = false" (Nov 11) ← Rollback! Customer complained
+</code></pre></div>
+
+<p><strong>Why this reduces errors by 90%:</strong><br />
+- <strong>Before:</strong> Admin changed setting → Broke customer → Manual DB query to fix<br />
+- <strong>After:</strong> Admin changed setting → Broke customer → 1-click rollback via UI<br />
+- <strong>Confidence:</strong> Admins more willing to test changes (easy rollback)</p>
+<p><strong>Audit Benefits:</strong><br />
+- Full history of who changed what and why<br />
+- Compliance requirement (SOC 2)<br />
+- Debugging: "When did this setting change?"</p>
+<hr />
+<h2 id="4-web-communication-layer-wcl">4. Web Communication Layer (WCL)</h2>
+<h3 id="q41-wcl-provides-db-connections-dynamically-how-does-connection-pooling-work-what-about-connection-leaks">Q4.1: WCL provides DB connections dynamically. How does connection pooling work? What about connection leaks?</h3>
+<p><strong>Answer:</strong></p>
+<p><strong>Challenge:</strong><br />
+200+ microservices each opening DB connections → Exhaust MySQL max_connections (default 151).</p>
+<p><strong>Solution: Connection Pooling in WCL</strong></p>
+<p><strong>Architecture:</strong></p>
+<div class="codehilite"><pre><span></span><code>Microservice A ──┐
+Microservice B ──┼──&gt; WCL (Connection Pool Manager) ──&gt; MySQL (Stack1)
+Microservice C ──┘                                   └──&gt; MySQL (Stack2)
+</code></pre></div>
+
+<p><strong>Implementation:</strong></p>
+<p><strong>1. Pool Configuration:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// WCL maintains pool per database</span>
+<span class="x">$poolConfig = [</span>
+<span class="x">    'stack1' =&gt; [</span>
+<span class="x">        'min_connections' =&gt; 10,  // Always keep 10 open</span>
+<span class="x">        'max_connections' =&gt; 50,  // Never exceed 50</span>
+<span class="x">        'max_idle_time' =&gt; 300,   // Close idle connections after 5 min</span>
+<span class="x">        'connection_timeout' =&gt; 5, // Wait max 5 sec for available connection</span>
+<span class="x">    ],</span>
+<span class="x">    'stack2' =&gt; [</span>
+<span class="x">        'min_connections' =&gt; 10,</span>
+<span class="x">        'max_connections' =&gt; 50,</span>
+<span class="x">        'max_idle_time' =&gt; 300,</span>
+<span class="x">        'connection_timeout' =&gt; 5,</span>
+<span class="x">    ],</span>
+<span class="x">];</span>
+</code></pre></div>
+
+<p><strong>2. Getting Connection (from pool):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">function getConnection($stack, $customerId) {</span>
+<span class="x">    $pool = ConnectionPool::getInstance($stack);</span>
+
+<span class="x">    // Try to get available connection from pool</span>
+<span class="x">    $connection = $pool-&gt;acquire();</span>
+
+<span class="x">    if ($connection) {</span>
+<span class="x">        // Reuse existing connection</span>
+<span class="x">        return $connection;</span>
+<span class="x">    }</span>
+
+<span class="x">    // Pool exhausted, check if we can create new one</span>
+<span class="x">    if ($pool-&gt;currentSize() &lt; $poolConfig[$stack]['max_connections']) {</span>
+<span class="x">        // Create new connection</span>
+<span class="x">        $connection = new PDO("mysql:host={$dbHost};dbname={$dbName}", $user, $pass, [</span>
+<span class="x">            PDO::ATTR_PERSISTENT =&gt; true, // Persistent connection</span>
+<span class="x">            PDO::ATTR_ERRMODE =&gt; PDO::ERRMODE_EXCEPTION,</span>
+<span class="x">        ]);</span>
+
+<span class="x">        $pool-&gt;add($connection);</span>
+<span class="x">        return $connection;</span>
+<span class="x">    }</span>
+
+<span class="x">    // Wait for connection to become available (with timeout)</span>
+<span class="x">    $connection = $pool-&gt;waitForConnection($poolConfig[$stack]['connection_timeout']);</span>
+
+<span class="x">    if (!$connection) {</span>
+<span class="x">        throw new ConnectionPoolExhaustedException("No connections available after {$timeout}s");</span>
+<span class="x">    }</span>
+
+<span class="x">    return $connection;</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>3. Releasing Connection (back to pool):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// After query completes</span>
+<span class="x">function releaseConnection($connection, $stack) {</span>
+<span class="x">    $pool = ConnectionPool::getInstance($stack);</span>
+
+<span class="x">    // Reset connection state (important!)</span>
+<span class="x">    $connection-&gt;exec('ROLLBACK'); // Rollback any uncommitted transactions</span>
+<span class="x">    $connection-&gt;exec('SET SESSION sql_mode = DEFAULT'); // Reset session variables</span>
+
+<span class="x">    // Mark as available in pool</span>
+<span class="x">    $pool-&gt;release($connection);</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>4. Connection Leak Detection:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Every 60 seconds, check for leaked connections</span>
+<span class="x">Scheduler::everyMinute(function() {</span>
+<span class="x">    foreach (['stack1', 'stack2'] as $stack) {</span>
+<span class="x">        $pool = ConnectionPool::getInstance($stack);</span>
+
+<span class="x">        $leakedConnections = $pool-&gt;getConnectionsOlderThan(600); // 10 minutes</span>
+
+<span class="x">        foreach ($leakedConnections as $conn) {</span>
+<span class="x">            Log::warning("Connection leak detected", [</span>
+<span class="x">                'stack' =&gt; $stack,</span>
+<span class="x">                'connection_id' =&gt; $conn-&gt;id,</span>
+<span class="x">                'acquired_at' =&gt; $conn-&gt;acquired_at,</span>
+<span class="x">                'acquired_by' =&gt; $conn-&gt;acquired_by_service, // Which microservice?</span>
+<span class="x">            ]);</span>
+
+<span class="x">            // Force close leaked connection</span>
+<span class="x">            $pool-&gt;forceClose($conn);</span>
+
+<span class="x">            // Alert on-call engineer</span>
+<span class="x">            PagerDuty::trigger("Connection leak from {$conn-&gt;acquired_by_service}");</span>
+<span class="x">        }</span>
+<span class="x">    }</span>
+<span class="x">});</span>
+</code></pre></div>
+
+<p><strong>5. Monitoring:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Expose metrics to Datadog</span>
+<span class="x">Datadog::gauge('wcl.connection_pool.size', $pool-&gt;currentSize(), ['stack' =&gt; $stack]);</span>
+<span class="x">Datadog::gauge('wcl.connection_pool.available', $pool-&gt;availableCount(), ['stack' =&gt; $stack]);</span>
+<span class="x">Datadog::gauge('wcl.connection_pool.in_use', $pool-&gt;inUseCount(), ['stack' =&gt; $stack]);</span>
+
+<span class="x">// Alert if pool near exhaustion</span>
+<span class="x">if ($pool-&gt;availableCount() &lt; 5) {</span>
+<span class="x">    Datadog::event('Connection pool nearly exhausted', "Only {$available} connections left in {$stack}");</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>How it prevents leaks:</strong><br />
+- <strong>Timeout:</strong> Connections held &gt;10 min are force-closed<br />
+- <strong>Try-finally:</strong> Microservices use try-finally to ensure release</p>
+<div class="codehilite"><pre><span></span><code><span class="x">$conn = WCL::getConnection('stack1', $customerId);</span>
+<span class="x">try {</span>
+<span class="x">    $result = $conn-&gt;query("SELECT...");</span>
+<span class="x">} finally {</span>
+<span class="x">    WCL::releaseConnection($conn, 'stack1'); // Always released even if exception</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<ul>
+<li><strong>Health checks:</strong> Every 5 min, test connection validity, close stale ones</li>
+</ul>
+<p><strong>Performance Impact:</strong><br />
+- <strong>Without pooling:</strong> 50ms to open new connection per request<br />
+- <strong>With pooling:</strong> &lt;1ms to acquire from pool<br />
+- <strong>Result:</strong> 50x faster connection acquisition</p>
+<hr />
+<h3 id="q42-encrypted-key-authentication-how-does-each-application-get-a-unique-key-key-rotation-strategy">Q4.2: Encrypted key authentication - how does each application get a unique key? Key rotation strategy?</h3>
+<p><strong>Answer:</strong></p>
+<p><strong>Problem:</strong><br />
+Can't use username/password for service-to-service auth (too easy to leak).</p>
+<p><strong>Solution: API Key Authentication with Encryption</strong></p>
+<p><strong>Architecture:</strong></p>
+<p><strong>1. Key Generation (when new microservice onboards):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">function generateApiKey($serviceName) {</span>
+<span class="x">    // 1. Generate random 256-bit key</span>
+<span class="x">    $rawKey = random_bytes(32); // 32 bytes = 256 bits</span>
+<span class="x">    $apiKey = base64_encode($rawKey);</span>
+
+<span class="x">    // 2. Hash for storage (never store plain key!)</span>
+<span class="x">    $hashedKey = hash('sha256', $rawKey);</span>
+
+<span class="x">    // 3. Store in database</span>
+<span class="x">    DB::table('wcl_api_keys')-&gt;insert([</span>
+<span class="x">        'service_name' =&gt; $serviceName,</span>
+<span class="x">        'key_hash' =&gt; $hashedKey,</span>
+<span class="x">        'key_prefix' =&gt; substr($apiKey, 0, 8), // For identification</span>
+<span class="x">        'created_at' =&gt; now(),</span>
+<span class="x">        'expires_at' =&gt; now()-&gt;addYear(), // Keys expire after 1 year</span>
+<span class="x">        'is_active' =&gt; true,</span>
+<span class="x">    ]);</span>
+
+<span class="x">    // 4. Return plain key ONCE (send to service owner via secure channel)</span>
+<span class="x">    return $apiKey;</span>
+<span class="x">}</span>
+
+<span class="x">// Example generated key:</span>
+<span class="x">// "wkl_live_a8f3e9c2b1d4f7a6e5c8b2d9f1a4e7c3b6d8f2a5e9c1b4d7f3a6e8c2b5d9f1a4"</span>
+</code></pre></div>
+
+<p><strong>2. Key Usage (microservice makes request to WCL):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Microservice A (EIC) calls WCL</span>
+<span class="x">$response = Http::withHeaders([</span>
+<span class="x">    'X-WCL-API-Key' =&gt; env('WCL_API_KEY'), // Stored in .env</span>
+<span class="x">    'X-WCL-Service' =&gt; 'eic',</span>
+<span class="x">])-&gt;get('https://wcl.internal/api/settings/12345/theme_color');</span>
+</code></pre></div>
+
+<p><strong>3. Key Verification (WCL receives request):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">class WclAuthMiddleware {</span>
+<span class="x">    public function handle($request, $next) {</span>
+<span class="x">        $providedKey = $request-&gt;header('X-WCL-API-Key');</span>
+
+<span class="x">        if (!$providedKey) {</span>
+<span class="x">            return response()-&gt;json(['error' =&gt; 'Missing API key'], 401);</span>
+<span class="x">        }</span>
+
+<span class="x">        // Hash the provided key</span>
+<span class="x">        $hashedKey = hash('sha256', base64_decode($providedKey));</span>
+
+<span class="x">        // Look up in database</span>
+<span class="x">        $apiKey = DB::table('wcl_api_keys')</span>
+<span class="x">            -&gt;where('key_hash', $hashedKey)</span>
+<span class="x">            -&gt;where('is_active', true)</span>
+<span class="x">            -&gt;where('expires_at', '&gt;', now())</span>
+<span class="x">            -&gt;first();</span>
+
+<span class="x">        if (!$apiKey) {</span>
+<span class="x">            Log::warning('Invalid API key attempted', [</span>
+<span class="x">                'ip' =&gt; $request-&gt;ip(),</span>
+<span class="x">                'service' =&gt; $request-&gt;header('X-WCL-Service'),</span>
+<span class="x">            ]);</span>
+<span class="x">            return response()-&gt;json(['error' =&gt; 'Invalid API key'], 401);</span>
+<span class="x">        }</span>
+
+<span class="x">        // Attach service identity to request</span>
+<span class="x">        $request-&gt;attributes-&gt;set('authenticated_service', $apiKey-&gt;service_name);</span>
+
+<span class="x">        // Rate limiting per service</span>
+<span class="x">        $this-&gt;checkRateLimit($apiKey-&gt;service_name);</span>
+
+<span class="x">        return $next($request);</span>
+<span class="x">    }</span>
+
+<span class="x">    private function checkRateLimit($service) {</span>
+<span class="x">        $key = "wcl:ratelimit:{$service}";</span>
+<span class="x">        $requests = Redis::incr($key);</span>
+
+<span class="x">        if ($requests == 1) {</span>
+<span class="x">            Redis::expire($key, 60); // 1-minute window</span>
+<span class="x">        }</span>
+
+<span class="x">        if ($requests &gt; 1000) { // 1000 requests/min limit</span>
+<span class="x">            throw new RateLimitExceededException("Service {$service} exceeded 1000 req/min");</span>
+<span class="x">        }</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>4. Key Rotation Strategy:</strong></p>
+<p><strong>Automatic Rotation (every 90 days):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Cron job runs daily</span>
+<span class="x">Scheduler::daily(function() {</span>
+<span class="x">    $keysNearExpiry = DB::table('wcl_api_keys')</span>
+<span class="x">        -&gt;where('expires_at', '&lt;', now()-&gt;addDays(30))</span>
+<span class="x">        -&gt;where('is_active', true)</span>
+<span class="x">        -&gt;get();</span>
+
+<span class="x">    foreach ($keysNearExpiry as $key) {</span>
+<span class="x">        // 1. Generate new key</span>
+<span class="x">        $newKey = generateApiKey($key-&gt;service_name);</span>
+
+<span class="x">        // 2. Email service owner</span>
+<span class="x">        Mail::to($key-&gt;owner_email)-&gt;send(new ApiKeyRotation($newKey, $key-&gt;expires_at));</span>
+
+<span class="x">        // 3. Keep OLD key active for 30-day grace period (dual keys)</span>
+<span class="x">        // This allows service to update without downtime</span>
+<span class="x">    }</span>
+<span class="x">});</span>
+
+<span class="x">// After 30 days, disable old key</span>
+<span class="x">Scheduler::daily(function() {</span>
+<span class="x">    DB::table('wcl_api_keys')</span>
+<span class="x">        -&gt;where('expires_at', '&lt;', now())</span>
+<span class="x">        -&gt;update(['is_active' =&gt; false]);</span>
+<span class="x">});</span>
+</code></pre></div>
+
+<p><strong>Manual Rotation (emergency - key compromised):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">function rotateKeyImmediately($serviceName, $reason) {</span>
+<span class="x">    DB::transaction(function() use ($serviceName, $reason) {</span>
+<span class="x">        // 1. Revoke ALL keys for service</span>
+<span class="x">        DB::table('wcl_api_keys')</span>
+<span class="x">            -&gt;where('service_name', $serviceName)</span>
+<span class="x">            -&gt;update(['is_active' =&gt; false, 'revoked_reason' =&gt; $reason]);</span>
+
+<span class="x">        // 2. Generate new key</span>
+<span class="x">        $newKey = generateApiKey($serviceName);</span>
+
+<span class="x">        // 3. Alert service owner (critical!)</span>
+<span class="x">        PagerDuty::trigger("API key rotated for {$serviceName}. Update immediately: {$newKey}");</span>
+
+<span class="x">        // 4. Log incident</span>
+<span class="x">        Log::critical("Emergency key rotation", [</span>
+<span class="x">            'service' =&gt; $serviceName,</span>
+<span class="x">            'reason' =&gt; $reason,</span>
+<span class="x">        ]);</span>
+<span class="x">    });</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>Security Best Practices:</strong></p>
+<p><strong>1. Never log full keys:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// BAD:</span>
+<span class="x">Log::info("Request from key: {$apiKey}");</span>
+
+<span class="x">// GOOD:</span>
+<span class="x">Log::info("Request from key: {$keyPrefix}***"); // wkl_live_a8f3e9c2***</span>
+</code></pre></div>
+
+<p><strong>2. Encrypt keys at rest:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// In .env file, keys are encrypted</span>
+<span class="x">WCL_API_KEY=encrypted:AES256:a8f3e9c2b1d4f7a6e5c8b2d9f1a4e7c3</span>
+
+<span class="x">// Application decrypts on boot</span>
+<span class="x">$apiKey = decrypt(env('WCL_API_KEY'));</span>
+</code></pre></div>
+
+<p><strong>3. Separate keys per environment:</strong></p>
+<div class="codehilite"><pre><span></span><code>dev: wkl_dev_...
+stage: wkl_stage_...
+prod: wkl_live_...
+</code></pre></div>
+
+<p><strong>Benefits:</strong><br />
+- Each service isolated (compromised key affects 1 service, not all)<br />
+- Auditability (know which service made which call)<br />
+- Revocable (disable misbehaving service)<br />
+- Rate limiting per service</p>
+<hr />
+<h2 id="5-managed-pay-mpay">5. Managed Pay (MPay)</h2>
+<h3 id="q51-how-do-you-ensure-idempotency-to-prevent-duplicate-charges-walk-through-the-implementation">Q5.1: How do you ensure idempotency to prevent duplicate charges? Walk through the implementation.</h3>
+<p><strong>Answer:</strong></p>
+<p><strong>Problem:</strong><br />
+Network timeout → Customer retries payment → Charged twice.</p>
+<p><strong>Solution: Idempotency Keys</strong></p>
+<p><strong>Flow:</strong></p>
+<p><strong>1. Client generates idempotency key (before first request):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">// Frontend (EIC or CC)</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">idempotencyKey</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sb">`payment_</span><span class="si">${</span><span class="nx">customerId</span><span class="si">}</span><span class="sb">_</span><span class="si">${</span><span class="nx">invoiceId</span><span class="si">}</span><span class="sb">_</span><span class="si">${</span><span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">()</span><span class="si">}</span><span class="sb">`</span><span class="p">;</span>
+
+<span class="nx">axios</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="s1">'/api/mpay/create-autopay'</span><span class="p">,</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">customer_id</span><span class="o">:</span><span class="w"> </span><span class="mf">12345</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">invoice_id</span><span class="o">:</span><span class="w"> </span><span class="mf">67890</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">amount</span><span class="o">:</span><span class="w"> </span><span class="mf">500.00</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">payment_account_id</span><span class="o">:</span><span class="w"> </span><span class="mf">789</span><span class="p">,</span>
+<span class="p">},</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">headers</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="s1">'X-Idempotency-Key'</span><span class="o">:</span><span class="w"> </span><span class="nx">idempotencyKey</span><span class="p">,</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="p">});</span>
+</code></pre></div>
+
+<p><strong>2. MPay receives request and checks idempotency:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">class IdempotencyMiddleware {</span>
+<span class="x">    public function handle($request, $next) {</span>
+<span class="x">        $idempotencyKey = $request-&gt;header('X-Idempotency-Key');</span>
+
+<span class="x">        if (!$idempotencyKey) {</span>
+<span class="x">            return response()-&gt;json(['error' =&gt; 'Idempotency key required'], 400);</span>
+<span class="x">        }</span>
+
+<span class="x">        // Check if we've seen this key before</span>
+<span class="x">        $cached = Redis::get("idempotency:{$idempotencyKey}");</span>
+
+<span class="x">        if ($cached) {</span>
+<span class="x">            // Return cached response (duplicate request detected)</span>
+<span class="x">            Log::info("Duplicate request detected", ['key' =&gt; $idempotencyKey]);</span>
+
+<span class="x">            return response()-&gt;json(json_decode($cached, true), 200);</span>
+<span class="x">        }</span>
+
+<span class="x">        // Lock the key (prevent race condition)</span>
+<span class="x">        $lock = Redis::lock("idempotency:lock:{$idempotencyKey}", 30);</span>
+
+<span class="x">        if (!$lock-&gt;get()) {</span>
+<span class="x">            // Another request with same key is processing</span>
+<span class="x">            return response()-&gt;json(['error' =&gt; 'Duplicate request in progress'], 409);</span>
+<span class="x">        }</span>
+
+<span class="x">        try {</span>
+<span class="x">            // Process request</span>
+<span class="x">            $response = $next($request);</span>
+
+<span class="x">            // Cache the response for 24 hours</span>
+<span class="x">            Redis::setex(</span>
+<span class="x">                "idempotency:{$idempotencyKey}",</span>
+<span class="x">                86400,</span>
+<span class="x">                json_encode($response-&gt;getData())</span>
+<span class="x">            );</span>
+
+<span class="x">            return $response;</span>
+<span class="x">        } finally {</span>
+<span class="x">            $lock-&gt;release();</span>
+<span class="x">        }</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>3. AutoPay creation (with database idempotency check):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">function createAutoPay($customerId, $invoiceId, $amount, $paymentAccountId, $idempotencyKey) {</span>
+<span class="x">    // Double-check in database (Redis could be flushed)</span>
+<span class="x">    $existing = DB::table('mpay_autopay_configs')</span>
+<span class="x">        -&gt;where('idempotency_key', $idempotencyKey)</span>
+<span class="x">        -&gt;first();</span>
+
+<span class="x">    if ($existing) {</span>
+<span class="x">        // Already processed</span>
+<span class="x">        return ['status' =&gt; 'duplicate', 'autopay_id' =&gt; $existing-&gt;id];</span>
+<span class="x">    }</span>
+
+<span class="x">    // Create AutoPay</span>
+<span class="x">    $autopayId = DB::table('mpay_autopay_configs')-&gt;insertGetId([</span>
+<span class="x">        'customer_id' =&gt; $customerId,</span>
+<span class="x">        'invoice_id' =&gt; $invoiceId,</span>
+<span class="x">        'amount' =&gt; $amount,</span>
+<span class="x">        'payment_account_id' =&gt; $paymentAccountId,</span>
+<span class="x">        'idempotency_key' =&gt; $idempotencyKey, // Store for future checks</span>
+<span class="x">        'status' =&gt; 'pending',</span>
+<span class="x">        'created_at' =&gt; now(),</span>
+<span class="x">    ]);</span>
+
+<span class="x">    // Process payment</span>
+<span class="x">    $result = processPayment($paymentAccountId, $amount, $invoiceId);</span>
+
+<span class="x">    // Update status</span>
+<span class="x">    DB::table('mpay_autopay_configs')</span>
+<span class="x">        -&gt;where('id', $autopayId)</span>
+<span class="x">        -&gt;update(['status' =&gt; $result['status']]);</span>
+
+<span class="x">    return ['status' =&gt; 'success', 'autopay_id' =&gt; $autopayId];</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>4. Actual payment processing (also idempotent):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">function processPayment($paymentAccountId, $amount, $invoiceId) {</span>
+<span class="x">    // Payment gateway call with idempotency</span>
+<span class="x">    $paymentGatewayKey = "pay_{$paymentAccountId}_{$invoiceId}_{$amount}";</span>
+
+<span class="x">    $response = Http::post('https://payment-gateway.com/charge', [</span>
+<span class="x">        'account_id' =&gt; $paymentAccountId,</span>
+<span class="x">        'amount' =&gt; $amount,</span>
+<span class="x">        'idempotency_key' =&gt; $paymentGatewayKey, // Gateway also supports idempotency</span>
+<span class="x">    ]);</span>
+
+<span class="x">    if ($response['status'] == 'duplicate') {</span>
+<span class="x">        // Gateway already processed this</span>
+<span class="x">        return ['status' =&gt; 'completed', 'transaction_id' =&gt; $response['original_transaction_id']];</span>
+<span class="x">    }</span>
+
+<span class="x">    return ['status' =&gt; 'completed', 'transaction_id' =&gt; $response['transaction_id']];</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>Example Scenarios:</strong></p>
+<p><strong>Scenario 1: Normal flow</strong></p>
+<div class="codehilite"><pre><span></span><code>Request 1: idempotency-key-123 → Process → Success → Cache response
+</code></pre></div>
+
+<p><strong>Scenario 2: Duplicate request (network retry)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nv">Request</span><span class="w"> </span><span class="mi">1</span>:<span class="w"> </span><span class="nv">idempotency</span><span class="o">-</span><span class="nv">key</span><span class="o">-</span><span class="mi">123</span><span class="w"> </span>→<span class="w"> </span><span class="nv">Processing</span>...
+<span class="nv">Request</span><span class="w"> </span><span class="mi">2</span>:<span class="w"> </span><span class="nv">idempotency</span><span class="o">-</span><span class="nv">key</span><span class="o">-</span><span class="mi">123</span><span class="w"> </span>→<span class="w"> </span><span class="nv">Redis</span><span class="w"> </span><span class="nv">lock</span><span class="w"> </span><span class="nv">acquired</span><span class="w"> </span><span class="nv">by</span><span class="w"> </span><span class="nv">Request</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span>→<span class="w"> </span><span class="k">Return</span><span class="w"> </span><span class="mi">409</span><span class="w"> </span><span class="nv">Conflict</span>
+<span class="nv">Request</span><span class="w"> </span><span class="mi">1</span>:<span class="w"> </span><span class="nv">Completes</span><span class="w"> </span>→<span class="w"> </span><span class="nv">Cache</span><span class="w"> </span><span class="nv">response</span>
+<span class="nv">Request</span><span class="w"> </span><span class="mi">3</span>:<span class="w"> </span><span class="nv">idempotency</span><span class="o">-</span><span class="nv">key</span><span class="o">-</span><span class="mi">123</span><span class="w"> </span>→<span class="w"> </span><span class="k">Return</span><span class="w"> </span><span class="nv">cached</span><span class="w"> </span><span class="nv">response</span><span class="w"> </span><span class="nv">from</span><span class="w"> </span><span class="nv">Request</span><span class="w"> </span><span class="mi">1</span>
+</code></pre></div>
+
+<p><strong>Scenario 3: Redis flush (cache lost)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nv">Request</span><span class="w"> </span><span class="mi">1</span>:<span class="w"> </span><span class="nv">idempotency</span><span class="o">-</span><span class="nv">key</span><span class="o">-</span><span class="mi">123</span><span class="w"> </span>→<span class="w"> </span><span class="nv">Success</span><span class="w"> </span>→<span class="w"> </span><span class="nv">Cached</span><span class="w"> </span><span class="nv">in</span><span class="w"> </span><span class="nv">Redis</span>
+<span class="nv">Redis</span><span class="w"> </span><span class="nv">flush</span><span class="w"> </span><span class="ss">(</span><span class="nv">all</span><span class="w"> </span><span class="nv">cache</span><span class="w"> </span><span class="nv">lost</span><span class="ss">)</span>
+<span class="nv">Request</span><span class="w"> </span><span class="mi">2</span>:<span class="w"> </span><span class="nv">idempotency</span><span class="o">-</span><span class="nv">key</span><span class="o">-</span><span class="mi">123</span><span class="w"> </span>→<span class="w"> </span><span class="nv">Redis</span><span class="w"> </span><span class="nv">cache</span><span class="w"> </span><span class="nv">miss</span><span class="w"> </span>→<span class="w"> </span><span class="nv">Check</span><span class="w"> </span><span class="nv">database</span><span class="w"> </span>→<span class="w"> </span><span class="nv">Find</span><span class="w"> </span><span class="nv">existing</span><span class="w"> </span><span class="nv">record</span><span class="w"> </span>→<span class="w"> </span><span class="k">Return</span><span class="w"> </span><span class="nv">duplicate</span>
+</code></pre></div>
+
+<p><strong>Key Design Decisions:</strong></p>
+<p><strong>1. Idempotency key format:</strong></p>
+<div class="codehilite"><pre><span></span><code>payment_{customer_id}_{invoice_id}_{timestamp}
+</code></pre></div>
+
+<ul>
+<li>Must be unique per intent</li>
+<li>Same invoice paid by same customer → Different timestamp → Different key</li>
+</ul>
+<p><strong>2. TTL (Time To Live):</strong><br />
+- Redis cache: 24 hours (long enough for retries)<br />
+- Database: Forever (permanent audit trail)</p>
+<p><strong>3. Response caching:</strong><br />
+- Cache entire response (not just success/failure)<br />
+- Includes transaction ID, timestamps, etc.</p>
+<p><strong>Result: 80% dispute reduction</strong><br />
+- Before: Customers charged twice → Dispute → Refund manually<br />
+- After: Duplicate charges prevented → No disputes</p>
+<hr />
+<h2 id="6-account-management-api-amapi">6. Account Management API (AMAPI)</h2>
+<h3 id="q61-how-do-you-achieve-100ms-response-time-for-50000-accountsmonth-whats-the-caching-strategy">Q6.1: How do you achieve &lt;100ms response time for 50,000 accounts/month? What's the caching strategy?</h3>
+<p><strong>Answer:</strong></p>
+<p><strong>Challenge:</strong><br />
+Bulk enrollment API called frequently → Must be fast even at scale.</p>
+<p><strong>Optimization Strategies:</strong></p>
+<p><strong>1. Redis Caching (Duplicate Detection):</strong></p>
+<p><strong>Problem:</strong> Check if account already exists (expensive DB query).</p>
+<div class="codehilite"><pre><span></span><code><span class="x">// SLOW (100-200ms):</span>
+<span class="x">$exists = DB::table('fsi_accounts')</span>
+<span class="x">    -&gt;where('email', $email)</span>
+<span class="x">    -&gt;exists(); // Full table scan if no index</span>
+</code></pre></div>
+
+<p><strong>Solution: Redis Bloom Filter</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// FAST (&lt;5ms):</span>
+<span class="x">function accountExists($email) {</span>
+<span class="x">    // Bloom filter: Probabilistic data structure</span>
+<span class="x">    // False positive possible, false negative impossible</span>
+<span class="x">    $bloomKey = 'accounts:bloom';</span>
+
+<span class="x">    $mightExist = Redis::command('BF.EXISTS', [$bloomKey, $email]);</span>
+
+<span class="x">    if (!$mightExist) {</span>
+<span class="x">        // Definitely doesn't exist</span>
+<span class="x">        return false;</span>
+<span class="x">    }</span>
+
+<span class="x">    // Might exist → Confirm with DB (only on potential match)</span>
+<span class="x">    return DB::table('fsi_accounts')-&gt;where('email', $email)-&gt;exists();</span>
+<span class="x">}</span>
+
+<span class="x">// When account created:</span>
+<span class="x">function createAccount($email, $name, $customerId) {</span>
+<span class="x">    $accountId = DB::table('fsi_accounts')-&gt;insertGetId([...]);</span>
+
+<span class="x">    // Add to Bloom filter</span>
+<span class="x">    Redis::command('BF.ADD', ['accounts:bloom', $email]);</span>
+
+<span class="x">    return $accountId;</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>Result:</strong><br />
+- 95% of checks return in &lt;5ms (Bloom filter)<br />
+- 5% confirm with DB in ~20ms<br />
+- <strong>Average: ~8ms</strong> (vs 100ms before)</p>
+<p><strong>2. Database Indexing:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Email index (critical!)</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_email</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">fsi_accounts</span><span class="p">(</span><span class="n">email</span><span class="p">);</span>
+
+<span class="c1">-- Composite index for common query</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_customer_email</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">fsi_accounts</span><span class="p">(</span><span class="n">customer_id</span><span class="p">,</span><span class="w"> </span><span class="n">email</span><span class="p">);</span>
+
+<span class="c1">-- Result: 100ms → 5ms query time</span>
+</code></pre></div>
+
+<p><strong>3. Batch Processing (for bulk operations):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// BAD (N queries):</span>
+<span class="x">foreach ($users as $user) {</span>
+<span class="x">    DB::table('fsi_accounts')-&gt;insert([</span>
+<span class="x">        'email' =&gt; $user['email'],</span>
+<span class="x">        'customer_id' =&gt; $user['customer_id'],</span>
+<span class="x">    ]); // 1000 users = 1000 INSERT queries = 10+ seconds</span>
+<span class="x">}</span>
+
+<span class="x">// GOOD (1 query):</span>
+<span class="x">$records = [];</span>
+<span class="x">foreach ($users as $user) {</span>
+<span class="x">    $records[] = [</span>
+<span class="x">        'email' =&gt; $user['email'],</span>
+<span class="x">        'customer_id' =&gt; $user['customer_id'],</span>
+<span class="x">        'created_at' =&gt; now(),</span>
+<span class="x">    ];</span>
+<span class="x">}</span>
+
+<span class="x">DB::table('fsi_accounts')-&gt;insert($records); // 1 INSERT with 1000 rows = 200ms</span>
+</code></pre></div>
+
+<p><strong>4. Connection Pooling (via WCL):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Reuse DB connection across requests</span>
+<span class="x">$conn = WCL::getConnection('stack1', $customerId);</span>
+<span class="x">// No connection overhead (50ms saved)</span>
+</code></pre></div>
+
+<p><strong>5. Async Processing (for non-critical tasks):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">function createAccount($email, $name, $customerId) {</span>
+<span class="x">    // 1. Create account synchronously (must return ID immediately)</span>
+<span class="x">    $accountId = DB::table('fsi_accounts')-&gt;insertGetId([...]);</span>
+
+<span class="x">    // 2. Send welcome email asynchronously (don't block response)</span>
+<span class="x">    dispatch(new SendWelcomeEmail($accountId, $email))-&gt;onQueue('emails');</span>
+
+<span class="x">    // 3. Return immediately</span>
+<span class="x">    return $accountId; // &lt;100ms response</span>
+<span class="x">}</span>
+
+<span class="x">// Email sent in background (doesn't affect response time)</span>
+<span class="x">class SendWelcomeEmail {</span>
+<span class="x">    public function handle() {</span>
+<span class="x">        Mail::to($this-&gt;email)-&gt;send(new WelcomeEmail());</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>6. Response Compression:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Gzip response (reduce transfer time)</span>
+<span class="x">return response()-&gt;json($data, 200, [</span>
+<span class="x">    'Content-Encoding' =&gt; 'gzip',</span>
+<span class="x">]); // 500KB → 50KB response</span>
+</code></pre></div>
+
+<p><strong>Performance Breakdown:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Operation</th>
+<th>Before</th>
+<th>After</th>
+<th>Optimization</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Duplicate check</td>
+<td>100ms</td>
+<td>5ms</td>
+<td>Bloom filter</td>
+</tr>
+<tr>
+<td>Account insert</td>
+<td>50ms</td>
+<td>10ms</td>
+<td>Batch insert</td>
+</tr>
+<tr>
+<td>DB connection</td>
+<td>50ms</td>
+<td>1ms</td>
+<td>Connection pooling</td>
+</tr>
+<tr>
+<td>Email sending</td>
+<td>200ms</td>
+<td>0ms (async)</td>
+<td>Background queue</td>
+</tr>
+<tr>
+<td>Response transfer</td>
+<td>50ms</td>
+<td>10ms</td>
+<td>Gzip compression</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>450ms</strong></td>
+<td><strong>26ms</strong></td>
+<td><strong>17x faster</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Result: &lt;100ms P95 latency</strong> (avg ~30ms)</p>
+<hr />
+<h2 id="7-multi-domain-whitelabel-platform">7. Multi-Domain Whitelabel Platform</h2>
+<h3 id="q71-how-is-the-dynamic-rbac-role-based-access-control-implemented-how-do-custom-role-names-work">Q7.1: How is the dynamic RBAC (role-based access control) implemented? How do custom role names work?</h3>
+<p><strong>Answer:</strong></p>
+<p><strong>Challenge:</strong><br />
+Different customers want different role names:<br />
+- School: "Teacher" / "Student"<br />
+- Gym: "Trainer" / "Member"<br />
+- Hospital: "Doctor" / "Patient"</p>
+<p><strong>Solution: Permission-Based RBAC (not hardcoded roles)</strong></p>
+<p><strong>Database Schema:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- 1. Permissions (fixed - what CAN be done)</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">rbac_permissions</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="n">permission_id</span><span class="w"> </span><span class="nb">INT</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span>
+<span class="w">    </span><span class="n">permission_key</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span><span class="w"> </span><span class="k">UNIQUE</span><span class="p">,</span><span class="w"> </span><span class="c1">-- 'create_content', 'view_content', 'delete_users'</span>
+<span class="w">    </span><span class="n">description</span><span class="w"> </span><span class="nb">TEXT</span>
+<span class="p">);</span>
+
+<span class="c1">-- 2. Roles (dynamic - customer-defined names)</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">rbac_roles</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="n">role_id</span><span class="w"> </span><span class="nb">INT</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span>
+<span class="w">    </span><span class="n">customer_id</span><span class="w"> </span><span class="nb">INT</span><span class="p">,</span><span class="w"> </span><span class="c1">-- Each customer has own roles</span>
+<span class="w">    </span><span class="n">role_name</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span><span class="w"> </span><span class="c1">-- Customer chooses name: "Teacher", "Trainer", etc.</span>
+<span class="w">    </span><span class="n">role_key</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span><span class="w"> </span><span class="c1">-- Internal: 'instructor', 'learner'</span>
+<span class="w">    </span><span class="n">created_at</span><span class="w"> </span><span class="k">TIMESTAMP</span><span class="p">,</span>
+<span class="w">    </span><span class="k">UNIQUE</span><span class="p">(</span><span class="n">customer_id</span><span class="p">,</span><span class="w"> </span><span class="n">role_key</span><span class="p">)</span><span class="w"> </span><span class="c1">-- Prevent duplicate roles per customer</span>
+<span class="p">);</span>
+
+<span class="c1">-- 3. Role-Permission Mapping</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">rbac_role_permissions</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="n">role_id</span><span class="w"> </span><span class="nb">INT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">permission_id</span><span class="w"> </span><span class="nb">INT</span><span class="p">,</span>
+<span class="w">    </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">(</span><span class="n">role_id</span><span class="p">,</span><span class="w"> </span><span class="n">permission_id</span><span class="p">)</span>
+<span class="p">);</span>
+
+<span class="c1">-- 4. User-Role Assignment</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">rbac_user_roles</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="n">user_id</span><span class="w"> </span><span class="nb">INT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">role_id</span><span class="w"> </span><span class="nb">INT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">customer_id</span><span class="w"> </span><span class="nb">INT</span><span class="p">,</span>
+<span class="w">    </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span><span class="w"> </span><span class="n">customer_id</span><span class="p">)</span>
+<span class="p">);</span>
+</code></pre></div>
+
+<p><strong>Implementation:</strong></p>
+<p><strong>1. Customer sets up roles (admin portal):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">function createCustomRole($customerId, $roleName, $roleKey, $permissions) {</span>
+<span class="x">    // 1. Create role</span>
+<span class="x">    $roleId = DB::table('rbac_roles')-&gt;insertGetId([</span>
+<span class="x">        'customer_id' =&gt; $customerId,</span>
+<span class="x">        'role_name' =&gt; $roleName, // "Yoga Instructor"</span>
+<span class="x">        'role_key' =&gt; $roleKey,   // 'instructor' (internal mapping)</span>
+<span class="x">        'created_at' =&gt; now(),</span>
+<span class="x">    ]);</span>
+
+<span class="x">    // 2. Assign permissions</span>
+<span class="x">    $permissionRecords = [];</span>
+<span class="x">    foreach ($permissions as $permissionKey) {</span>
+<span class="x">        $permissionId = DB::table('rbac_permissions')</span>
+<span class="x">            -&gt;where('permission_key', $permissionKey)</span>
+<span class="x">            -&gt;value('permission_id');</span>
+
+<span class="x">        $permissionRecords[] = [</span>
+<span class="x">            'role_id' =&gt; $roleId,</span>
+<span class="x">            'permission_id' =&gt; $permissionId,</span>
+<span class="x">        ];</span>
+<span class="x">    }</span>
+
+<span class="x">    DB::table('rbac_role_permissions')-&gt;insert($permissionRecords);</span>
+
+<span class="x">    return $roleId;</span>
+<span class="x">}</span>
+
+<span class="x">// Example usage:</span>
+<span class="x">createCustomRole(</span>
+<span class="x">    customerId: 123,</span>
+<span class="x">    roleName: "Yoga Instructor", // Customer-facing name</span>
+<span class="x">    roleKey: "instructor",       // Maps to template</span>
+<span class="x">    permissions: ['create_content', 'edit_content', 'view_students']</span>
+<span class="x">);</span>
+
+<span class="x">createCustomRole(</span>
+<span class="x">    customerId: 456,</span>
+<span class="x">    roleName: "Personal Trainer", // Different customer, different name</span>
+<span class="x">    roleKey: "instructor",         // Same internal key!</span>
+<span class="x">    permissions: ['create_content', 'edit_content', 'view_students']</span>
+<span class="x">);</span>
+</code></pre></div>
+
+<p><strong>2. Permission check (at runtime):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">class RbacMiddleware {</span>
+<span class="x">    public function handle($request, $next, $requiredPermission) {</span>
+<span class="x">        $user = $request-&gt;user();</span>
+
+<span class="x">        // 1. Get user's role</span>
+<span class="x">        $role = DB::table('rbac_user_roles')</span>
+<span class="x">            -&gt;join('rbac_roles', 'rbac_user_roles.role_id', '=', 'rbac_roles.role_id')</span>
+<span class="x">            -&gt;where('rbac_user_roles.user_id', $user-&gt;id)</span>
+<span class="x">            -&gt;where('rbac_user_roles.customer_id', $user-&gt;customer_id)</span>
+<span class="x">            -&gt;first();</span>
+
+<span class="x">        if (!$role) {</span>
+<span class="x">            return response()-&gt;json(['error' =&gt; 'No role assigned'], 403);</span>
+<span class="x">        }</span>
+
+<span class="x">        // 2. Check if role has required permission</span>
+<span class="x">        $hasPermission = DB::table('rbac_role_permissions')</span>
+<span class="x">            -&gt;join('rbac_permissions', 'rbac_role_permissions.permission_id', '=', 'rbac_permissions.permission_id')</span>
+<span class="x">            -&gt;where('rbac_role_permissions.role_id', $role-&gt;role_id)</span>
+<span class="x">            -&gt;where('rbac_permissions.permission_key', $requiredPermission)</span>
+<span class="x">            -&gt;exists();</span>
+
+<span class="x">        if (!$hasPermission) {</span>
+<span class="x">            Log::warning("Permission denied", [</span>
+<span class="x">                'user' =&gt; $user-&gt;id,</span>
+<span class="x">                'role' =&gt; $role-&gt;role_name, // "Yoga Instructor"</span>
+<span class="x">                'permission' =&gt; $requiredPermission,</span>
+<span class="x">            ]);</span>
+
+<span class="x">            return response()-&gt;json(['error' =&gt; 'Insufficient permissions'], 403);</span>
+<span class="x">        }</span>
+
+<span class="x">        return $next($request);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">// Route usage:</span>
+<span class="x">Route::post('/content/create', [ContentController::class, 'create'])</span>
+<span class="x">    -&gt;middleware('rbac:create_content'); // Check permission</span>
+</code></pre></div>
+
+<p><strong>3. UI Customization (shows custom role name):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">function getDashboard($user) {</span>
+<span class="x">    $role = $user-&gt;getRole();</span>
+
+<span class="x">    return view('dashboard', [</span>
+<span class="x">        'role_name' =&gt; $role-&gt;role_name, // "Yoga Instructor" (not "instructor")</span>
+<span class="x">        'permissions' =&gt; $role-&gt;getPermissions(),</span>
+<span class="x">    ]);</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>Example for 3 Customers:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Customer</th>
+<th>Role Key</th>
+<th>Customer's Name</th>
+<th>Permissions</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Yoga Studio</td>
+<td><code>instructor</code></td>
+<td>"Yoga Instructor"</td>
+<td>create_content, view_students</td>
+</tr>
+<tr>
+<td>Gym</td>
+<td><code>instructor</code></td>
+<td>"Personal Trainer"</td>
+<td>create_content, view_students</td>
+</tr>
+<tr>
+<td>School</td>
+<td><code>instructor</code></td>
+<td>"Teacher"</td>
+<td>create_content, view_students, grade_assignments</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Benefits:</strong><br />
+- <strong>Flexibility:</strong> Customer chooses role name<br />
+- <strong>Consistency:</strong> Permissions are standardized<br />
+- <strong>Scalability:</strong> Add new permission without changing code<br />
+- <strong>Auditability:</strong> Know exactly what each role can do</p>
+<p><strong>Caching:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Cache permissions per user (avoid DB hit on every request)</span>
+<span class="x">$permissions = Cache::remember("user:{$userId}:permissions", 3600, function() use ($userId) {</span>
+<span class="x">    return getUserPermissions($userId);</span>
+<span class="x">});</span>
+</code></pre></div>
+
+<hr />
+<h2 id="8-incident-remediation-rca-tracker">8. Incident Remediation &amp; RCA Tracker</h2>
+<h3 id="q81-how-do-you-handle-100-features-across-1000-customers-whats-the-data-model-for-tracking-issues">Q8.1: How do you handle 100+ features across 1000+ customers? What's the data model for tracking issues?</h3>
+<p><strong>Answer:</strong></p>
+<p><strong>Challenge:</strong><br />
+- 100 features × 1000 customers = 100,000 possible combinations<br />
+- Need to track which customer has which issue on which feature</p>
+<p><strong>Database Schema:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- 1. Features (the 100+ features)</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">features</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="n">feature_id</span><span class="w"> </span><span class="nb">INT</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span>
+<span class="w">    </span><span class="n">feature_key</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span><span class="w"> </span><span class="k">UNIQUE</span><span class="p">,</span><span class="w"> </span><span class="c1">-- 'invoice_pdf', 'autopay', 'email_notifications'</span>
+<span class="w">    </span><span class="n">feature_name</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">255</span><span class="p">),</span><span class="w">       </span><span class="c1">-- Display name</span>
+<span class="w">    </span><span class="n">owning_team</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span><span class="w">        </span><span class="c1">-- 'billing_team', 'payments_team'</span>
+<span class="w">    </span><span class="n">created_at</span><span class="w"> </span><span class="k">TIMESTAMP</span>
+<span class="p">);</span>
+
+<span class="c1">-- 2. Customers (the 1000+ customers)</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">customers</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="n">customer_id</span><span class="w"> </span><span class="nb">INT</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span>
+<span class="w">    </span><span class="n">customer_name</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">255</span><span class="p">),</span>
+<span class="w">    </span><span class="n">tier</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">50</span><span class="p">),</span><span class="w"> </span><span class="c1">-- 'enterprise', 'standard', 'free'</span>
+<span class="w">    </span><span class="n">created_at</span><span class="w"> </span><span class="k">TIMESTAMP</span>
+<span class="p">);</span>
+
+<span class="c1">-- 3. Incidents (the actual issues)</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">incidents</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="n">incident_id</span><span class="w"> </span><span class="nb">INT</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="n">AUTO_INCREMENT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">incident_key</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span><span class="w"> </span><span class="k">UNIQUE</span><span class="p">,</span><span class="w"> </span><span class="c1">-- 'INC-2026-11-16-001'</span>
+<span class="w">    </span><span class="n">feature_id</span><span class="w"> </span><span class="nb">INT</span><span class="p">,</span><span class="w">                  </span><span class="c1">-- Which feature is broken</span>
+<span class="w">    </span><span class="n">customer_id</span><span class="w"> </span><span class="nb">INT</span><span class="p">,</span><span class="w">                 </span><span class="c1">-- Which customer reported it</span>
+<span class="w">    </span><span class="n">severity</span><span class="w"> </span><span class="n">ENUM</span><span class="p">(</span><span class="s1">'critical'</span><span class="p">,</span><span class="w"> </span><span class="s1">'high'</span><span class="p">,</span><span class="w"> </span><span class="s1">'medium'</span><span class="p">,</span><span class="w"> </span><span class="s1">'low'</span><span class="p">),</span>
+<span class="w">    </span><span class="n">category</span><span class="w"> </span><span class="n">ENUM</span><span class="p">(</span><span class="s1">'data_issue'</span><span class="p">,</span><span class="w"> </span><span class="s1">'settings_issue'</span><span class="p">,</span><span class="w"> </span><span class="s1">'edge_case'</span><span class="p">,</span><span class="w"> </span><span class="s1">'dependency'</span><span class="p">),</span>
+<span class="w">    </span><span class="n">title</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">500</span><span class="p">),</span>
+<span class="w">    </span><span class="n">description</span><span class="w"> </span><span class="nb">TEXT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">root_cause</span><span class="w"> </span><span class="nb">TEXT</span><span class="p">,</span><span class="w">                 </span><span class="c1">-- Filled after triage</span>
+<span class="w">    </span><span class="n">slo_deadline</span><span class="w"> </span><span class="k">TIMESTAMP</span><span class="p">,</span><span class="w">          </span><span class="c1">-- When must be fixed (based on severity)</span>
+<span class="w">    </span><span class="n">status</span><span class="w"> </span><span class="n">ENUM</span><span class="p">(</span><span class="s1">'new'</span><span class="p">,</span><span class="w"> </span><span class="s1">'triaging'</span><span class="p">,</span><span class="w"> </span><span class="s1">'rca_found'</span><span class="p">,</span><span class="w"> </span><span class="s1">'fixing'</span><span class="p">,</span><span class="w"> </span><span class="s1">'testing'</span><span class="p">,</span><span class="w"> </span><span class="s1">'deployed'</span><span class="p">,</span><span class="w"> </span><span class="s1">'closed'</span><span class="p">),</span>
+<span class="w">    </span><span class="n">assignee_id</span><span class="w"> </span><span class="nb">INT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">reporter_id</span><span class="w"> </span><span class="nb">INT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">created_at</span><span class="w"> </span><span class="k">TIMESTAMP</span><span class="p">,</span>
+<span class="w">    </span><span class="n">resolved_at</span><span class="w"> </span><span class="k">TIMESTAMP</span><span class="p">,</span>
+<span class="w">    </span><span class="k">INDEX</span><span class="w"> </span><span class="p">(</span><span class="n">feature_id</span><span class="p">,</span><span class="w"> </span><span class="n">customer_id</span><span class="p">),</span>
+<span class="w">    </span><span class="k">INDEX</span><span class="w"> </span><span class="p">(</span><span class="n">severity</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">),</span>
+<span class="w">    </span><span class="k">INDEX</span><span class="w"> </span><span class="p">(</span><span class="n">slo_deadline</span><span class="p">)</span>
+<span class="p">);</span>
+
+<span class="c1">-- 4. Release Notes (tracking what was fixed when)</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">release_notes</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="n">release_id</span><span class="w"> </span><span class="nb">INT</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span>
+<span class="w">    </span><span class="n">release_version</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">50</span><span class="p">),</span><span class="w">     </span><span class="c1">-- 'v2.5.3'</span>
+<span class="w">    </span><span class="n">release_date</span><span class="w"> </span><span class="nb">DATE</span><span class="p">,</span>
+<span class="w">    </span><span class="n">notes</span><span class="w"> </span><span class="nb">TEXT</span>
+<span class="p">);</span>
+
+<span class="c1">-- 5. Incident-Release Mapping</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">incident_releases</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="n">incident_id</span><span class="w"> </span><span class="nb">INT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">release_id</span><span class="w"> </span><span class="nb">INT</span><span class="p">,</span>
+<span class="w">    </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">(</span><span class="n">incident_id</span><span class="p">,</span><span class="w"> </span><span class="n">release_id</span><span class="p">)</span>
+<span class="p">);</span>
+
+<span class="c1">-- 6. RCA Search Index (for finding similar issues)</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">rca_search_index</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="n">incident_id</span><span class="w"> </span><span class="nb">INT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">search_tokens</span><span class="w"> </span><span class="nb">TEXT</span><span class="p">,</span><span class="w"> </span><span class="c1">-- Tokenized version of RCA for full-text search</span>
+<span class="w">    </span><span class="n">FULLTEXT</span><span class="p">(</span><span class="n">search_tokens</span><span class="p">)</span>
+<span class="p">);</span>
+</code></pre></div>
+
+<p><strong>Key Workflows:</strong></p>
+<p><strong>1. Creating Incident:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">function createIncident($featureKey, $customerId, $severity, $title, $description, $category) {</span>
+<span class="x">    // 1. Generate incident key</span>
+<span class="x">    $incidentKey = 'INC-' . date('Y-m-d') . '-' . str_pad(getNextIncidentNumber(), 3, '0', STR_PAD_LEFT);</span>
+
+<span class="x">    // 2. Calculate SLO deadline based on severity</span>
+<span class="x">    $sloDeadlines = [</span>
+<span class="x">        'critical' =&gt; now()-&gt;addHours(4),   // 4 hours</span>
+<span class="x">        'high'     =&gt; now()-&gt;addHours(24),  // 1 day</span>
+<span class="x">        'medium'   =&gt; now()-&gt;addDays(7),    // 1 week</span>
+<span class="x">        'low'      =&gt; now()-&gt;addDays(30),   // 1 month</span>
+<span class="x">    ];</span>
+
+<span class="x">    // 3. Auto-assign based on feature ownership</span>
+<span class="x">    $feature = DB::table('features')-&gt;where('feature_key', $featureKey)-&gt;first();</span>
+<span class="x">    $assignee = getTeamLead($feature-&gt;owning_team);</span>
+
+<span class="x">    // 4. Insert incident</span>
+<span class="x">    $incidentId = DB::table('incidents')-&gt;insertGetId([</span>
+<span class="x">        'incident_key' =&gt; $incidentKey,</span>
+<span class="x">        'feature_id' =&gt; $feature-&gt;feature_id,</span>
+<span class="x">        'customer_id' =&gt; $customerId,</span>
+<span class="x">        'severity' =&gt; $severity,</span>
+<span class="x">        'category' =&gt; $category,</span>
+<span class="x">        'title' =&gt; $title,</span>
+<span class="x">        'description' =&gt; $description,</span>
+<span class="x">        'slo_deadline' =&gt; $sloDeadlines[$severity],</span>
+<span class="x">        'status' =&gt; 'new',</span>
+<span class="x">        'assignee_id' =&gt; $assignee-&gt;id,</span>
+<span class="x">        'reporter_id' =&gt; auth()-&gt;id(),</span>
+<span class="x">        'created_at' =&gt; now(),</span>
+<span class="x">    ]);</span>
+
+<span class="x">    // 5. Alert assignee</span>
+<span class="x">    notify($assignee)-&gt;about(new IncidentAssigned($incidentId, $severity));</span>
+
+<span class="x">    return $incidentId;</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>2. Finding Similar Past Incidents (historical RCA search):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">function findSimilarIncidents($currentIncidentId) {</span>
+<span class="x">    $incident = DB::table('incidents')-&gt;find($currentIncidentId);</span>
+
+<span class="x">    // 1. Search by feature + category (exact match)</span>
+<span class="x">    $exactMatches = DB::table('incidents')</span>
+<span class="x">        -&gt;where('feature_id', $incident-&gt;feature_id)</span>
+<span class="x">        -&gt;where('category', $incident-&gt;category)</span>
+<span class="x">        -&gt;where('status', 'closed')</span>
+<span class="x">        -&gt;where('root_cause', '!=', null)</span>
+<span class="x">        -&gt;get();</span>
+
+<span class="x">    // 2. Full-text search on RCA (fuzzy match)</span>
+<span class="x">    $keywords = extractKeywords($incident-&gt;description);</span>
+<span class="x">    $fuzzyMatches = DB::table('incidents')</span>
+<span class="x">        -&gt;join('rca_search_index', 'incidents.incident_id', '=', 'rca_search_index.incident_id')</span>
+<span class="x">        -&gt;whereRaw("MATCH(search_tokens) AGAINST(? IN BOOLEAN MODE)", [implode(' ', $keywords)])</span>
+<span class="x">        -&gt;where('incidents.status', 'closed')</span>
+<span class="x">        -&gt;get();</span>
+
+<span class="x">    return [</span>
+<span class="x">        'exact_matches' =&gt; $exactMatches,</span>
+<span class="x">        'fuzzy_matches' =&gt; $fuzzyMatches,</span>
+<span class="x">    ];</span>
+<span class="x">}</span>
+
+<span class="x">// Example usage:</span>
+<span class="x">$similar = findSimilarIncidents(INC-2026-11-16-001);</span>
+<span class="x">// Returns:</span>
+<span class="x">// - 3 exact matches: Same feature (autopay) + category (edge_case)</span>
+<span class="x">// - 7 fuzzy matches: Similar keywords in RCA ("threshold", "decimal", "rounding")</span>
+</code></pre></div>
+
+<p><strong>3. SLO Monitoring (alerts for missed deadlines):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Cron runs every hour</span>
+<span class="x">Scheduler::hourly(function() {</span>
+<span class="x">    $overdueCritical = DB::table('incidents')</span>
+<span class="x">        -&gt;where('severity', 'critical')</span>
+<span class="x">        -&gt;where('slo_deadline', '&lt;', now())</span>
+<span class="x">        -&gt;where('status', '!=', 'closed')</span>
+<span class="x">        -&gt;get();</span>
+
+<span class="x">    foreach ($overdueCritical as $incident) {</span>
+<span class="x">        // Page on-call engineer</span>
+<span class="x">        PagerDuty::trigger("Critical incident {$incident-&gt;incident_key} SLO MISSED", [</span>
+<span class="x">            'incident_id' =&gt; $incident-&gt;incident_id,</span>
+<span class="x">            'customer' =&gt; $incident-&gt;customer_id,</span>
+<span class="x">            'overdue_by' =&gt; now()-&gt;diffInHours($incident-&gt;slo_deadline),</span>
+<span class="x">        ]);</span>
+
+<span class="x">        // Escalate to manager</span>
+<span class="x">        notify($incident-&gt;assignee-&gt;manager)-&gt;about(new SloMissed($incident));</span>
+<span class="x">    }</span>
+<span class="x">});</span>
+</code></pre></div>
+
+<p><strong>4. Categorization (Critical/High/Medium/Low):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">function calculateSeverity($customerId, $featureKey, $impactedUsers) {</span>
+<span class="x">    $customer = DB::table('customers')-&gt;find($customerId);</span>
+
+<span class="x">    // Auto-calculate severity based on:</span>
+<span class="x">    // 1. Customer tier</span>
+<span class="x">    // 2. Feature criticality</span>
+<span class="x">    // 3. Number of users impacted</span>
+
+<span class="x">    if ($customer-&gt;tier == 'enterprise' &amp;&amp; $impactedUsers &gt; 100) {</span>
+<span class="x">        return 'critical'; // Enterprise customer, many users</span>
+<span class="x">    }</span>
+
+<span class="x">    if (in_array($featureKey, ['payment_processing', 'invoice_generation'])) {</span>
+<span class="x">        return 'high'; // Critical feature regardless of customer</span>
+<span class="x">    }</span>
+
+<span class="x">    if ($impactedUsers &gt; 50) {</span>
+<span class="x">        return 'medium'; // Moderate user impact</span>
+<span class="x">    }</span>
+
+<span class="x">    return 'low';</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>5. Release Notes Generation:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">function generateReleaseNotes($releaseVersion, $releaseDate) {</span>
+<span class="x">    // Find all incidents fixed in this release</span>
+<span class="x">    $incidents = DB::table('incidents')</span>
+<span class="x">        -&gt;join('incident_releases', 'incidents.incident_id', '=', 'incident_releases.incident_id')</span>
+<span class="x">        -&gt;join('releases', 'incident_releases.release_id', '=', 'releases.release_id')</span>
+<span class="x">        -&gt;where('releases.release_version', $releaseVersion)</span>
+<span class="x">        -&gt;get();</span>
+
+<span class="x">    $notes = "## Release {$releaseVersion} - {$releaseDate}\n\n";</span>
+
+<span class="x">    foreach (['critical', 'high', 'medium', 'low'] as $severity) {</span>
+<span class="x">        $filtered = $incidents-&gt;where('severity', $severity);</span>
+
+<span class="x">        if ($filtered-&gt;count() &gt; 0) {</span>
+<span class="x">            $notes .= "### {$severity} Fixes\n";</span>
+
+<span class="x">            foreach ($filtered as $incident) {</span>
+<span class="x">                $notes .= "- **{$incident-&gt;incident_key}**: {$incident-&gt;title}\n";</span>
+<span class="x">            }</span>
+
+<span class="x">            $notes .= "\n";</span>
+<span class="x">        }</span>
+<span class="x">    }</span>
+
+<span class="x">    return $notes;</span>
+<span class="x">}</span>
+
+<span class="x">// Output:</span>
+<span class="x">// ## Release v2.5.3 - 2026-11-16</span>
+<span class="x">//</span>
+<span class="x">// ### Critical Fixes</span>
+<span class="x">// - **INC-2026-11-15-001**: Payment processing timeout for enterprise customers</span>
+<span class="x">//</span>
+<span class="x">// ### High Fixes</span>
+<span class="x">// - **INC-2026-11-14-003**: AutoPay threshold not applying correctly</span>
+<span class="x">// - **INC-2026-11-13-007**: Email notifications delayed by 24 hours</span>
+</code></pre></div>
+
+<p><strong>Scale Management:</strong><br />
+- <strong>100 features</strong> → Indexed by <code>feature_id</code><br />
+- <strong>1000 customers</strong> → Indexed by <code>customer_id</code><br />
+- <strong>10,000+ incidents</strong> → Full-text search on RCA<br />
+- <strong>Query performance:</strong> &lt;100ms (indexed lookups)</p>
+<hr />
+<h2 id="9-cross-project-architecture-questions">9. Cross-Project Architecture Questions</h2>
+<h3 id="q91-explain-the-microservices-communication-pattern-how-do-eic-cc-csr-wcl-and-mpay-talk-to-each-other">Q9.1: Explain the microservices communication pattern. How do EIC, CC, CSR, WCL, and MPay talk to each other?</h3>
+<p><strong>Answer:</strong></p>
+<p><strong>Architecture Overview:</strong></p>
+<div class="codehilite"><pre><span></span><code>┌─────────┐     ┌─────────┐     ┌─────────┐
+│   EIC   │     │   CC    │     │  AMAPI  │
+│(Customer│     │(Supplier│     │  (Bulk  │
+│ Portal) │     │ Portal) │     │ Enroll) │
+└────┬────┘     └────┬────┘     └────┬────┘
+     │               │               │
+     ├───────────────┼───────────────┤
+     │               │               │
+     ▼               ▼               ▼
+┌────────────────────────────────────────┐
+│          WCL (Web Communication Layer) │
+│  - Customer settings                   │
+│  - DB connections (Stack1/Stack2)      │
+│  - Encrypted auth                      │
+└────────────────────────────────────────┘
+     │               │               │
+     ▼               ▼               ▼
+┌─────────┐     ┌─────────┐     ┌─────────┐
+│   CSR   │     │  MPay   │     │ MySQL   │
+│(Settings│     │(AutoPay │     │Stack1/2 │
+│  Repo)  │     │ Service)│     │         │
+└─────────┘     └─────────┘     └─────────┘
+</code></pre></div>
+
+<p><strong>Communication Patterns:</strong></p>
+<p><strong>1. Synchronous REST API (most common):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// EIC needs customer theme color from CSR</span>
+<span class="x">$response = Http::withHeaders([</span>
+<span class="x">    'X-WCL-API-Key' =&gt; env('WCL_API_KEY'),</span>
+<span class="x">    'X-Service-Name' =&gt; 'eic',</span>
+<span class="x">])-&gt;get('https://wcl.internal/api/settings/12345/theme_color');</span>
+
+<span class="x">$themeColor = $response-&gt;json()['value'];</span>
+</code></pre></div>
+
+<p><strong>2. Service-to-Service via WCL (settings lookup):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// All apps go through WCL for settings (not direct to CSR)</span>
+<span class="x">// Why? WCL caches + provides consistent interface</span>
+
+<span class="x">// EIC → WCL → CSR</span>
+<span class="x">$settings = WCL::getSettings($customerId, ['theme_color', 'language', 'logo_url']);</span>
+
+<span class="x">// Behind the scenes, WCL:</span>
+<span class="x">// 1. Checks Redis cache</span>
+<span class="x">// 2. If miss, calls CSR REST API</span>
+<span class="x">// 3. Caches result</span>
+<span class="x">// 4. Returns to EIC</span>
+</code></pre></div>
+
+<p><strong>3. Event-Driven (asynchronous):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// When MPay config changes, notify EIC and CC</span>
+<span class="x">class MPayConfigUpdated implements ShouldQueue {</span>
+<span class="x">    public function handle() {</span>
+<span class="x">        // Publish event to Redis pub/sub</span>
+<span class="x">        Redis::publish('mpay:config:updated', json_encode([</span>
+<span class="x">            'customer_id' =&gt; $this-&gt;customerId,</span>
+<span class="x">            'mpay_enabled' =&gt; $this-&gt;enabled,</span>
+<span class="x">        ]));</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">// EIC subscribes to events</span>
+<span class="x">Redis::subscribe(['mpay:config:updated'], function ($message) {</span>
+<span class="x">    $data = json_decode($message, true);</span>
+
+<span class="x">    // Invalidate local cache</span>
+<span class="x">    Cache::forget("mpay:status:{$data['customer_id']}");</span>
+<span class="x">});</span>
+</code></pre></div>
+
+<p><strong>4. Database Sharing (avoided!):</strong></p>
+<div class="codehilite"><pre><span></span><code>❌ BAD: EIC reads directly from MPay's database table
+✅ GOOD: EIC calls MPay REST API
+</code></pre></div>
+
+<p><strong>Why?</strong> Each service owns its data. Direct DB access creates tight coupling.</p>
+<p><strong>Communication Matrix:</strong></p>
+<table>
+<thead>
+<tr>
+<th>From → To</th>
+<th>Protocol</th>
+<th>Purpose</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>EIC → WCL</td>
+<td>REST (sync)</td>
+<td>Get settings, DB connection</td>
+<td><code>GET /api/settings/:id/:key</code></td>
+</tr>
+<tr>
+<td>CC → WCL</td>
+<td>REST (sync)</td>
+<td>Get settings, DB connection</td>
+<td><code>GET /api/settings/:id/:key</code></td>
+</tr>
+<tr>
+<td>CC → AMAPI</td>
+<td>REST (sync)</td>
+<td>Bulk enroll users</td>
+<td><code>POST /api/bulk-enroll</code></td>
+</tr>
+<tr>
+<td>CC → MPay</td>
+<td>REST (sync)</td>
+<td>Enable MPay for customer</td>
+<td><code>POST /api/mpay/enable</code></td>
+</tr>
+<tr>
+<td>EIC → MPay</td>
+<td>REST (sync)</td>
+<td>Activate AutoPay</td>
+<td><code>POST /api/mpay/activate</code></td>
+</tr>
+<tr>
+<td>MPay → EIC</td>
+<td>Event (async)</td>
+<td>Notify payment completed</td>
+<td>Redis pub/sub</td>
+</tr>
+<tr>
+<td>CSR → All</td>
+<td>Event (async)</td>
+<td>Notify setting changed</td>
+<td>Redis pub/sub</td>
+</tr>
+<tr>
+<td>All → CSR</td>
+<td>None</td>
+<td>Settings managed via WCL</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Failure Handling:</strong></p>
+<p><strong>1. Circuit Breaker (prevent cascade failure):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">class WclClient {</span>
+<span class="x">    private $circuitBreaker;</span>
+
+<span class="x">    public function getSettings($customerId, $keys) {</span>
+<span class="x">        if ($this-&gt;circuitBreaker-&gt;isOpen()) {</span>
+<span class="x">            // WCL is down, return cached/default values</span>
+<span class="x">            return $this-&gt;getFallbackSettings($keys);</span>
+<span class="x">        }</span>
+
+<span class="x">        try {</span>
+<span class="x">            $response = Http::timeout(5)-&gt;get("https://wcl.internal/api/settings/{$customerId}");</span>
+
+<span class="x">            $this-&gt;circuitBreaker-&gt;recordSuccess();</span>
+<span class="x">            return $response-&gt;json();</span>
+<span class="x">        } catch (TimeoutException $e) {</span>
+<span class="x">            $this-&gt;circuitBreaker-&gt;recordFailure();</span>
+
+<span class="x">            if ($this-&gt;circuitBreaker-&gt;shouldOpen()) {</span>
+<span class="x">                // Too many failures, open circuit</span>
+<span class="x">                $this-&gt;circuitBreaker-&gt;open();</span>
+<span class="x">            }</span>
+
+<span class="x">            return $this-&gt;getFallbackSettings($keys);</span>
+<span class="x">        }</span>
+<span class="x">    }</span>
+
+<span class="x">    private function getFallbackSettings($keys) {</span>
+<span class="x">        // Return default values when WCL down</span>
+<span class="x">        return [</span>
+<span class="x">            'theme_color' =&gt; '#0000FF',</span>
+<span class="x">            'language' =&gt; 'en',</span>
+<span class="x">            'logo_url' =&gt; '/default-logo.png',</span>
+<span class="x">        ];</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>2. Retry with Exponential Backoff:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">$response = retry(3, function () use ($customerId) {</span>
+<span class="x">    return Http::timeout(5)-&gt;get("https://wcl.internal/api/settings/{$customerId}");</span>
+<span class="x">}, 100); // Wait 100ms, then 200ms, then 400ms between retries</span>
+</code></pre></div>
+
+<p><strong>3. Timeout (don't wait forever):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// All service calls have 5-second timeout</span>
+<span class="x">Http::timeout(5)-&gt;get(...);</span>
+
+<span class="x">// If WCL takes &gt;5s, fail fast and use fallback</span>
+</code></pre></div>
+
+<p><strong>Service Discovery (how services find each other):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="gh">#</span> .env file (each service)
+WCL_URL=https://wcl.internal
+CSR_URL=https://csr.internal
+MPAY_URL=https://mpay.internal
+
+<span class="gh">#</span> In production, use DNS or service mesh (e.g., Kubernetes Service)
+</code></pre></div>
+
+<p><strong>Monitoring:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Track inter-service calls</span>
+<span class="x">Datadog::increment('service.call', 1, [</span>
+<span class="x">    'from' =&gt; 'eic',</span>
+<span class="x">    'to' =&gt; 'wcl',</span>
+<span class="x">    'endpoint' =&gt; '/api/settings',</span>
+<span class="x">    'status' =&gt; $response-&gt;status(),</span>
+<span class="x">]);</span>
+</code></pre></div>
+
+<hr />
+<h3 id="q92-how-would-you-design-a-new-microservice-walk-through-your-decision-making-process">Q9.2: How would you design a new microservice? Walk through your decision-making process.</h3>
+<p><strong>Answer:</strong></p>
+<p><strong>Scenario:</strong> Need to build a "Notification Preferences" service (users control which emails/SMS they receive).</p>
+<p><strong>Decision Framework:</strong></p>
+<p><strong>1. Should this be a microservice or part of existing service?</strong></p>
+<p><strong>Microservice criteria (YES if 2+ are true):</strong><br />
+- ✅ <strong>Independent domain:</strong> Notification preferences are separate from payments/billing<br />
+- ✅ <strong>Different scaling needs:</strong> Notifications scale with user actions (high read/write), not invoices<br />
+- ✅ <strong>Independent deployment:</strong> Can deploy notification changes without touching billing code<br />
+- ✅ <strong>Team ownership:</strong> Could have dedicated team managing notifications<br />
+- ❌ <strong>Data isolation:</strong> Could share <code>users</code> table with EIC<br />
+- ✅ <strong>Technology choice:</strong> Might want different stack (Node.js for real-time?)</p>
+<p><strong>Decision: YES, build as microservice</strong></p>
+<p><strong>2. What data does it own?</strong></p>
+<p><strong>Tables owned by Notification Preferences service:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- This service owns:</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">notification_preferences</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="n">user_id</span><span class="w"> </span><span class="nb">INT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">channel</span><span class="w"> </span><span class="n">ENUM</span><span class="p">(</span><span class="s1">'email'</span><span class="p">,</span><span class="w"> </span><span class="s1">'sms'</span><span class="p">,</span><span class="w"> </span><span class="s1">'push'</span><span class="p">),</span>
+<span class="w">    </span><span class="n">preference_key</span><span class="w"> </span><span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span><span class="w"> </span><span class="c1">-- 'invoice_arrival', 'payment_reminder'</span>
+<span class="w">    </span><span class="n">enabled</span><span class="w"> </span><span class="nb">BOOLEAN</span><span class="p">,</span>
+<span class="w">    </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span><span class="w"> </span><span class="n">channel</span><span class="p">,</span><span class="w"> </span><span class="n">preference_key</span><span class="p">)</span>
+<span class="p">);</span>
+
+<span class="c1">-- NOT owned by this service (owned by EIC):</span>
+<span class="n">users</span><span class="w"> </span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span><span class="w"> </span><span class="n">email</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="p">)</span><span class="w"> </span><span class="err">←</span><span class="w"> </span><span class="n">Don</span><span class="err">'</span><span class="n">t</span><span class="w"> </span><span class="n">duplicate</span><span class="o">!</span>
+</code></pre></div>
+
+<p><strong>3. API Design:</strong></p>
+<p><strong>REST endpoints:</strong></p>
+<div class="codehilite"><pre><span></span><code>GET    /api/v1/preferences/:user_id
+POST   /api/v1/preferences/:user_id
+PUT    /api/v1/preferences/:user_id/:key
+DELETE /api/v1/preferences/:user_id/:key
+
+<span class="gh">#</span> Examples:
+GET /api/v1/preferences/12345
+→ { "email": { "invoice_arrival": true, "payment_reminder": false }, ... }
+
+PUT /api/v1/preferences/12345/invoice_arrival
+{ "channel": "email", "enabled": false }
+→ 200 OK
+</code></pre></div>
+
+<p><strong>4. How does it integrate with existing services?</strong></p>
+<p><strong>Integration points:</strong></p>
+<p><strong>A. EIC calls Notification Preferences:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// When user updates preferences in EIC portal</span>
+<span class="x">function updateEmailPreference($userId, $preference, $enabled) {</span>
+<span class="x">    // EIC → Notification Preferences service</span>
+<span class="x">    $response = Http::put("https://notif-prefs.internal/api/v1/preferences/{$userId}/{$preference}", [</span>
+<span class="x">        'channel' =&gt; 'email',</span>
+<span class="x">        'enabled' =&gt; $enabled,</span>
+<span class="x">    ]);</span>
+
+<span class="x">    // Invalidate WCL cache</span>
+<span class="x">    WCL::invalidateCache("user:{$userId}:prefs");</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>B. WCL (or other services) check preferences before sending:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Before sending email, check if user wants it</span>
+<span class="x">function shouldSendEmail($userId, $emailType) {</span>
+<span class="x">    // Check via WCL (cached)</span>
+<span class="x">    $prefs = WCL::getSettings($userId, ['notification_prefs']);</span>
+
+<span class="x">    return $prefs['notification_prefs'][$emailType] ?? true; // Default: enabled</span>
+<span class="x">}</span>
+
+<span class="x">if (shouldSendEmail($userId, 'invoice_arrival')) {</span>
+<span class="x">    sendEmail($userId, 'invoice_arrival', $invoiceData);</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>C. Event-driven updates:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// When preference changes, notify other services</span>
+<span class="x">Redis::publish('user:prefs:updated', json_encode([</span>
+<span class="x">    'user_id' =&gt; $userId,</span>
+<span class="x">    'preference' =&gt; $preference,</span>
+<span class="x">    'enabled' =&gt; $enabled,</span>
+<span class="x">]));</span>
+
+<span class="x">// WCL subscribes and invalidates cache</span>
+</code></pre></div>
+
+<p><strong>5. Tech Stack Decision:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Concern</th>
+<th>Decision</th>
+<th>Reasoning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Language</td>
+<td><strong>PHP</strong> (Laravel)</td>
+<td>Consistency with EIC/CC/CSR</td>
+</tr>
+<tr>
+<td>Database</td>
+<td><strong>MySQL</strong></td>
+<td>Small data, ACID needed</td>
+</tr>
+<tr>
+<td>Cache</td>
+<td><strong>Redis</strong></td>
+<td>Consistency with other services</td>
+</tr>
+<tr>
+<td>Deployment</td>
+<td><strong>Kubernetes</strong></td>
+<td>Same infrastructure</td>
+</tr>
+<tr>
+<td>Auth</td>
+<td><strong>WCL API keys</strong></td>
+<td>Reuse existing auth</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Alternative considered:</strong><br />
+- Node.js for real-time → Rejected (adds complexity, PHP is fast enough)</p>
+<p><strong>6. Performance Requirements:</strong></p>
+<p><strong>SLA:</strong><br />
+- <strong>Latency:</strong> &lt;100ms P95 (non-blocking)<br />
+- <strong>Availability:</strong> 99.5% (less critical than payments)<br />
+- <strong>Throughput:</strong> 1000 req/sec peak</p>
+<p><strong>How to achieve:</strong><br />
+- Redis caching (preferences change rarely)<br />
+- Read replicas (99% reads, 1% writes)<br />
+- Async writes (eventual consistency OK)</p>
+<p><strong>7. Failure Modes:</strong></p>
+<p><strong>Q: What if Notification Preferences service is down?</strong></p>
+<p><strong>A: Default to "allow" (send notifications):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">try {</span>
+<span class="x">    $allowed = Http::timeout(2)-&gt;get("https://notif-prefs.internal/api/v1/check/{$userId}/{$type}");</span>
+<span class="x">    return $allowed-&gt;json()['enabled'];</span>
+<span class="x">} catch (Exception $e) {</span>
+<span class="x">    // Service down → Fail open (send notification)</span>
+<span class="x">    Log::warning("Notif Prefs service down, defaulting to allow");</span>
+<span class="x">    return true;</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>Why fail open?</strong><br />
+- Missing a notification is worse than getting unwanted one<br />
+- User can unsubscribe via email link</p>
+<p><strong>8. Deployment Strategy:</strong></p>
+<p><strong>Phase 1: Soft Launch (read-only)</strong><br />
+- Deploy service<br />
+- Migrate existing preferences from EIC DB<br />
+- EIC reads from new service (but still writes to old DB)<br />
+- Monitor for discrepancies</p>
+<p><strong>Phase 2: Dual Write</strong><br />
+- EIC writes to BOTH old DB and new service<br />
+- Compare writes (ensure consistency)</p>
+<p><strong>Phase 3: Full Cutover</strong><br />
+- EIC stops reading from old DB<br />
+- Only reads/writes to new service<br />
+- Old table archived (not deleted yet)</p>
+<p><strong>Phase 4: Cleanup</strong><br />
+- After 30 days, drop old table</p>
+<p><strong>9. Monitoring &amp; Alerting:</strong></p>
+<p><strong>Metrics:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">Datadog::increment('notif_prefs.preference.updated');</span>
+<span class="x">Datadog::histogram('notif_prefs.api.latency', $latency);</span>
+<span class="x">Datadog::gauge('notif_prefs.db.connections', $dbConnections);</span>
+</code></pre></div>
+
+<p><strong>Alerts:</strong><br />
+- P95 latency &gt;200ms for 5 minutes → Page on-call<br />
+- Error rate &gt;1% for 10 minutes → Page on-call<br />
+- 5xx errors → Slack #engineering</p>
+<p><strong>10. Documentation:</strong></p>
+<p><strong>What to document:</strong><br />
+- API spec (OpenAPI/Swagger)<br />
+- Data model (ERD)<br />
+- Integration guide (how to call from EIC/CC)<br />
+- Runbook (how to debug issues)</p>
+<hr />
+<h2 id="10-performance-scalability">10. Performance &amp; Scalability</h2>
+<h3 id="q101-one-of-your-apis-is-slow-500ms-walk-through-your-debugging-process">Q10.1: One of your APIs is slow (500ms). Walk through your debugging process.</h3>
+<p><strong>Answer:</strong></p>
+<p><strong>Step-by-Step Debug Process:</strong></p>
+<p><strong>1. Reproduce &amp; Measure (get baseline):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Test API locally</span>
+curl<span class="w"> </span>-w<span class="w"> </span><span class="s2">"@curl-format.txt"</span><span class="w"> </span>https://api.internal/invoices/12345
+
+<span class="c1"># curl-format.txt:</span>
+<span class="c1"># time_total: %{time_total}s</span>
+<span class="c1"># time_connect: %{time_connect}s</span>
+<span class="c1"># time_starttransfer: %{time_starttransfer}s</span>
+
+<span class="c1"># Output:</span>
+<span class="c1"># time_total: 0.523s ← Confirmed slow</span>
+<span class="c1"># time_connect: 0.002s ← Network is fast</span>
+<span class="c1"># time_starttransfer: 0.520s ← Server processing is slow</span>
+</code></pre></div>
+
+<p><strong>2. Check Application Performance Monitoring (Datadog APM):</strong></p>
+<div class="codehilite"><pre><span></span><code>Datadog → APM → Traces → Filter: /invoices/:id
+Sort by: Duration (desc)
+
+Trace breakdown:
+├─ Total: 523ms
+├─ Middleware: 5ms
+├─ Controller: 3ms
+├─ Database Queries: 480ms ← BOTTLENECK!
+│  ├─ Query 1 (invoices table): 450ms ← Culprit!
+│  └─ Query 2 (payments table): 30ms
+└─ Response formatting: 35ms
+</code></pre></div>
+
+<p><strong>3. Identify Slow Query:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Datadog shows this query is slow:</span>
+<span class="x">SELECT * FROM fsi_invoices WHERE customer_id = 12345 ORDER BY invoice_date DESC</span>
+<span class="x">// 450ms execution time</span>
+
+<span class="x">// Enable MySQL slow query log to confirm:</span>
+<span class="x">// /var/log/mysql/slow.log:</span>
+<span class="x"># Time: 2026-11-16T10:00:00.000Z</span>
+<span class="x"># Query_time: 0.450</span>
+<span class="x">SELECT * FROM fsi_invoices WHERE customer_id = 12345 ORDER BY invoice_date DESC;</span>
+</code></pre></div>
+
+<p><strong>4. Analyze Query with EXPLAIN:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">EXPLAIN</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">fsi_invoices</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">customer_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">12345</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">invoice_date</span><span class="w"> </span><span class="k">DESC</span><span class="p">;</span>
+
+<span class="o">+</span><span class="c1">----+-------------+---------------+------+---------------+------+</span>
+<span class="o">|</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">select_type</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="k">table</span><span class="w">         </span><span class="o">|</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">possible_keys</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="k">key</span><span class="w">  </span><span class="o">|</span>
+<span class="o">+</span><span class="c1">----+-------------+---------------+------+---------------+------+</span>
+<span class="o">|</span><span class="w">  </span><span class="mi">1</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="k">SIMPLE</span><span class="w">      </span><span class="o">|</span><span class="w"> </span><span class="n">fsi_invoices</span><span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="k">ALL</span><span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="k">NULL</span><span class="w">          </span><span class="o">|</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="o">|</span>
+<span class="o">+</span><span class="c1">----+-------------+---------------+------+---------------+------+</span>
+
+<span class="o">#</span><span class="w"> </span><span class="k">type</span><span class="p">:</span><span class="w"> </span><span class="k">ALL</span><span class="w"> </span><span class="err">←</span><span class="w"> </span><span class="k">Full</span><span class="w"> </span><span class="k">table</span><span class="w"> </span><span class="n">scan</span><span class="o">!</span><span class="w"> </span><span class="k">No</span><span class="w"> </span><span class="k">index</span><span class="w"> </span><span class="n">used</span><span class="p">.</span>
+<span class="o">#</span><span class="w"> </span><span class="k">rows</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="mi">000</span><span class="p">,</span><span class="mi">000</span><span class="w"> </span><span class="err">←</span><span class="w"> </span><span class="n">Scanning</span><span class="w"> </span><span class="mi">5</span><span class="n">M</span><span class="w"> </span><span class="k">rows</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">find</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">this</span><span class="w"> </span><span class="n">customer</span>
+</code></pre></div>
+
+<p><strong>5. Root Cause: Missing Index</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Check existing indexes</span>
+<span class="k">SHOW</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">fsi_invoices</span><span class="p">;</span>
+
+<span class="o">#</span><span class="w"> </span><span class="k">Result</span><span class="p">:</span><span class="w"> </span><span class="k">Only</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">(</span><span class="n">invoice_id</span><span class="p">),</span><span class="w"> </span><span class="k">no</span><span class="w"> </span><span class="k">index</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="n">customer_id</span><span class="o">!</span>
+</code></pre></div>
+
+<p><strong>6. Solution: Add Composite Index</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1">-- Create index on (customer_id, invoice_date)</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">idx_customer_date</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">fsi_invoices</span><span class="p">(</span><span class="n">customer_id</span><span class="p">,</span><span class="w"> </span><span class="n">invoice_date</span><span class="w"> </span><span class="k">DESC</span><span class="p">);</span>
+
+<span class="c1">-- Why composite?</span>
+<span class="c1">-- 1. Filter by customer_id (WHERE clause)</span>
+<span class="c1">-- 2. Sort by invoice_date (ORDER BY clause)</span>
+<span class="c1">-- Index covers both operations → No additional sort needed</span>
+</code></pre></div>
+
+<p><strong>7. Test After Index:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">EXPLAIN</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">fsi_invoices</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">customer_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">12345</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">invoice_date</span><span class="w"> </span><span class="k">DESC</span><span class="p">;</span>
+
+<span class="o">+</span><span class="c1">----+-------------+---------------+-------+----------------------+---------------------+</span>
+<span class="o">|</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">select_type</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="k">table</span><span class="w">         </span><span class="o">|</span><span class="w"> </span><span class="k">type</span><span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="n">possible_keys</span><span class="w">        </span><span class="o">|</span><span class="w"> </span><span class="k">key</span><span class="w">                 </span><span class="o">|</span>
+<span class="o">+</span><span class="c1">----+-------------+---------------+-------+----------------------+---------------------+</span>
+<span class="o">|</span><span class="w">  </span><span class="mi">1</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="k">SIMPLE</span><span class="w">      </span><span class="o">|</span><span class="w"> </span><span class="n">fsi_invoices</span><span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="n">range</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">idx_customer_date</span><span class="w">    </span><span class="o">|</span><span class="w"> </span><span class="n">idx_customer_date</span><span class="w">   </span><span class="o">|</span>
+<span class="o">+</span><span class="c1">----+-------------+---------------+-------+----------------------+---------------------+</span>
+
+<span class="o">#</span><span class="w"> </span><span class="k">type</span><span class="p">:</span><span class="w"> </span><span class="n">range</span><span class="w"> </span><span class="err">←</span><span class="w"> </span><span class="k">Using</span><span class="w"> </span><span class="k">index</span><span class="o">!</span>
+<span class="o">#</span><span class="w"> </span><span class="k">rows</span><span class="p">:</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="err">←</span><span class="w"> </span><span class="k">Only</span><span class="w"> </span><span class="n">scanning</span><span class="w"> </span><span class="n">relevant</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="k">rows</span><span class="w"> </span><span class="p">(</span><span class="k">not</span><span class="w"> </span><span class="mi">5</span><span class="n">M</span><span class="p">)</span>
+<span class="o">#</span><span class="w"> </span><span class="k">Using</span><span class="w"> </span><span class="k">index</span><span class="w"> </span><span class="err">←</span><span class="w"> </span><span class="n">Covered</span><span class="w"> </span><span class="k">index</span><span class="w"> </span><span class="p">(</span><span class="k">no</span><span class="w"> </span><span class="k">table</span><span class="w"> </span><span class="k">access</span><span class="w"> </span><span class="n">needed</span><span class="p">)</span>
+
+<span class="o">#</span><span class="w"> </span><span class="k">New</span><span class="w"> </span><span class="n">execution</span><span class="w"> </span><span class="k">time</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="n">ms</span><span class="w"> </span><span class="p">(</span><span class="n">vs</span><span class="w"> </span><span class="mi">450</span><span class="n">ms</span><span class="w"> </span><span class="k">before</span><span class="p">)</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="mi">56</span><span class="n">x</span><span class="w"> </span><span class="n">faster</span><span class="o">!</span>
+</code></pre></div>
+
+<p><strong>8. Verify End-to-End Improvement:</strong></p>
+<div class="codehilite"><pre><span></span><code>curl<span class="w"> </span>-w<span class="w"> </span><span class="s2">"@curl-format.txt"</span><span class="w"> </span>https://api.internal/invoices/12345
+
+<span class="c1"># Output:</span>
+<span class="c1"># time_total: 0.045s ← Down from 523ms! (11.6x faster)</span>
+</code></pre></div>
+
+<p><strong>9. Additional Optimizations (if still slow):</strong></p>
+<p><strong>A. Add Redis Caching:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">function getInvoices($customerId) {</span>
+<span class="x">    $cacheKey = "invoices:{$customerId}";</span>
+
+<span class="x">    return Cache::remember($cacheKey, 300, function() use ($customerId) {</span>
+<span class="x">        return DB::table('fsi_invoices')</span>
+<span class="x">            -&gt;where('customer_id', $customerId)</span>
+<span class="x">            -&gt;orderBy('invoice_date', 'desc')</span>
+<span class="x">            -&gt;get();</span>
+<span class="x">    }); // Now: 5ms (cache hit), 45ms (cache miss)</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>B. Pagination (don't return all invoices):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Before: Return ALL invoices for customer (could be 1000s)</span>
+<span class="x">$invoices = DB::table('fsi_invoices')-&gt;where('customer_id', $customerId)-&gt;get();</span>
+
+<span class="x">// After: Return 20 per page</span>
+<span class="x">$invoices = DB::table('fsi_invoices')</span>
+<span class="x">    -&gt;where('customer_id', $customerId)</span>
+<span class="x">    -&gt;paginate(20); // Much faster</span>
+</code></pre></div>
+
+<p><strong>C. Lazy Loading vs Eager Loading:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Before (N+1 problem):</span>
+<span class="x">$invoices = Invoice::where('customer_id', $customerId)-&gt;get();</span>
+<span class="x">foreach ($invoices as $invoice) {</span>
+<span class="x">    echo $invoice-&gt;customer-&gt;name; // Separate query per invoice!</span>
+<span class="x">}</span>
+<span class="x">// 1 query for invoices + 100 queries for customers = 101 queries</span>
+
+<span class="x">// After (eager loading):</span>
+<span class="x">$invoices = Invoice::with('customer')-&gt;where('customer_id', $customerId)-&gt;get();</span>
+<span class="x">foreach ($invoices as $invoice) {</span>
+<span class="x">    echo $invoice-&gt;customer-&gt;name; // Data already loaded</span>
+<span class="x">}</span>
+<span class="x">// 1 query for invoices + 1 query for customers = 2 queries</span>
+</code></pre></div>
+
+<p><strong>10. Document &amp; Monitor:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Add monitoring alert</span>
+<span class="x">Datadog::histogram('api.invoices.latency', $latency, ['customer_id' =&gt; $customerId]);</span>
+
+<span class="x">// Alert if P95 &gt; 100ms</span>
+<span class="x">if ($latency &gt; 100) {</span>
+<span class="x">    Datadog::event('API slow', "Invoice API took {$latency}ms for customer {$customerId}");</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>Summary of Debug Process:</strong><br />
+1. ✅ Reproduce (curl)<br />
+2. ✅ Check APM (Datadog traces)<br />
+3. ✅ Identify slow query<br />
+4. ✅ Analyze with EXPLAIN<br />
+5. ✅ Root cause (missing index)<br />
+6. ✅ Fix (add index)<br />
+7. ✅ Verify improvement<br />
+8. ✅ Consider additional optimizations<br />
+9. ✅ Monitor ongoing</p>
+<p><strong>Result: 523ms → 45ms (11.6x faster)</strong></p>
+<hr />
+<h2 id="11-security-compliance">11. Security &amp; Compliance</h2>
+<h3 id="q111-how-do-you-ensure-pci-dss-compliance-when-handling-payment-data">Q11.1: How do you ensure PCI-DSS compliance when handling payment data?</h3>
+<p><strong>Answer:</strong></p>
+<p><strong>PCI-DSS Requirements We Must Meet:</strong></p>
+<p><strong>1. Never Store Sensitive Card Data:</strong></p>
+<p><strong>❌ NEVER store:</strong><br />
+- Full PAN (Primary Account Number / card number)<br />
+- CVV/CVC (3-digit security code)<br />
+- Track data (magnetic stripe)</p>
+<p><strong>✅ CAN store (if encrypted):</strong><br />
+- Cardholder name<br />
+- Expiration date<br />
+- Last 4 digits of card (for display)</p>
+<p><strong>Implementation:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// When customer enters card for AutoPay</span>
+<span class="x">function savePaymentMethod($customerId, $cardNumber, $cvv, $expiry, $name) {</span>
+<span class="x">    // 1. NEVER store full card number or CVV in our DB</span>
+
+<span class="x">    // 2. Send to payment gateway for tokenization</span>
+<span class="x">    $response = Http::post('https://payment-gateway.com/tokenize', [</span>
+<span class="x">        'card_number' =&gt; $cardNumber,     // Send once, never store</span>
+<span class="x">        'cvv' =&gt; $cvv,                    // Send once, never store</span>
+<span class="x">        'expiry' =&gt; $expiry,</span>
+<span class="x">        'cardholder_name' =&gt; $name,</span>
+<span class="x">    ]);</span>
+
+<span class="x">    $token = $response['token']; // e.g., "tok_a8f3e9c2b1d4"</span>
+
+<span class="x">    // 3. Store ONLY the token (not actual card data)</span>
+<span class="x">    DB::table('payment_accounts')-&gt;insert([</span>
+<span class="x">        'customer_id' =&gt; $customerId,</span>
+<span class="x">        'payment_token' =&gt; $token,         // Safe to store</span>
+<span class="x">        'last_4_digits' =&gt; substr($cardNumber, -4), // For display: "****1234"</span>
+<span class="x">        'expiry_month' =&gt; substr($expiry, 0, 2),</span>
+<span class="x">        'expiry_year' =&gt; substr($expiry, 2, 2),</span>
+<span class="x">        'cardholder_name' =&gt; encrypt($name), // Encrypted</span>
+<span class="x">        'created_at' =&gt; now(),</span>
+<span class="x">    ]);</span>
+
+<span class="x">    // 4. Discard actual card number (never logged, never stored)</span>
+<span class="x">    unset($cardNumber, $cvv);</span>
+
+<span class="x">    return ['token' =&gt; $token, 'last_4' =&gt; substr($cardNumber, -4)];</span>
+<span class="x">}</span>
+
+<span class="x">// When processing payment:</span>
+<span class="x">function chargeCard($paymentAccountId, $amount) {</span>
+<span class="x">    $account = DB::table('payment_accounts')-&gt;find($paymentAccountId);</span>
+
+<span class="x">    // Use token (not actual card number)</span>
+<span class="x">    $response = Http::post('https://payment-gateway.com/charge', [</span>
+<span class="x">        'token' =&gt; $account-&gt;payment_token, // Gateway knows real card number</span>
+<span class="x">        'amount' =&gt; $amount,</span>
+<span class="x">    ]);</span>
+
+<span class="x">    return $response;</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>2. Encrypt Data in Transit (HTTPS everywhere):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Nginx config</span>
+<span class="k">server</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kn">listen</span><span class="w"> </span><span class="mi">443</span><span class="w"> </span><span class="s">ssl</span><span class="w"> </span><span class="s">http2</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1"># TLS 1.2+ only (PCI requirement)</span>
+<span class="w">    </span><span class="kn">ssl_protocols</span><span class="w"> </span><span class="s">TLSv1.2</span><span class="w"> </span><span class="s">TLSv1.3</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">ssl_ciphers</span><span class="w"> </span><span class="s">'ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256'</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1"># HSTS (force HTTPS)</span>
+<span class="w">    </span><span class="kn">add_header</span><span class="w"> </span><span class="s">Strict-Transport-Security</span><span class="w"> </span><span class="s">"max-age=31536000</span><span class="p">;</span><span class="w"> </span><span class="kn">includeSubDomains"</span><span class="w"> </span><span class="s">always</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1"># Disable weak ciphers</span>
+<span class="w">    </span><span class="kn">ssl_prefer_server_ciphers</span><span class="w"> </span><span class="no">on</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1"># Reject HTTP requests</span>
+<span class="k">server</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kn">listen</span><span class="w"> </span><span class="mi">80</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">return</span><span class="w"> </span><span class="mi">301</span><span class="w"> </span><span class="s">https://</span><span class="nv">$host$request_uri</span><span class="p">;</span><span class="w"> </span><span class="c1"># Force redirect to HTTPS</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong>3. Encrypt Data at Rest:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Laravel automatic encryption for sensitive fields</span>
+<span class="x">class PaymentAccount extends Model {</span>
+<span class="x">    protected $casts = [</span>
+<span class="x">        'cardholder_name' =&gt; 'encrypted',  // Auto encrypt/decrypt</span>
+<span class="x">        'billing_address' =&gt; 'encrypted',</span>
+<span class="x">    ];</span>
+<span class="x">}</span>
+
+<span class="x">// MySQL database encryption (AWS RDS)</span>
+<span class="x"># RDS instance encrypted with KMS key</span>
+<span class="x"># All backups also encrypted</span>
+<span class="x"># Snapshots encrypted</span>
+</code></pre></div>
+
+<p><strong>4. Access Control (who can see payment data):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Only specific admins can view payment accounts</span>
+<span class="x">Route::get('/payment-accounts/{id}', function($id) {</span>
+<span class="x">    // Check permission</span>
+<span class="x">    if (!auth()-&gt;user()-&gt;hasPermission('view_payment_data')) {</span>
+<span class="x">        abort(403, 'Insufficient permissions');</span>
+<span class="x">    }</span>
+
+<span class="x">    // Log access (audit trail)</span>
+<span class="x">    DB::table('audit_log')-&gt;insert([</span>
+<span class="x">        'user_id' =&gt; auth()-&gt;id(),</span>
+<span class="x">        'action' =&gt; 'view_payment_account',</span>
+<span class="x">        'resource_id' =&gt; $id,</span>
+<span class="x">        'ip_address' =&gt; request()-&gt;ip(),</span>
+<span class="x">        'timestamp' =&gt; now(),</span>
+<span class="x">    ]);</span>
+
+<span class="x">    // Return masked data (even for admins)</span>
+<span class="x">    $account = PaymentAccount::find($id);</span>
+<span class="x">    return [</span>
+<span class="x">        'last_4' =&gt; $account-&gt;last_4_digits,  // "1234"</span>
+<span class="x">        'expiry' =&gt; $account-&gt;expiry,         // "12/25"</span>
+<span class="x">        'name' =&gt; decrypt($account-&gt;cardholder_name), // Decrypted on-the-fly</span>
+<span class="x">        'token' =&gt; null, // NEVER expose token</span>
+<span class="x">    ];</span>
+<span class="x">});</span>
+</code></pre></div>
+
+<p><strong>5. Logging &amp; Monitoring (but NEVER log card data):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// BAD - logs card number:</span>
+<span class="x">Log::info("Processing payment", ['card' =&gt; $cardNumber]); // ❌ PCI violation!</span>
+
+<span class="x">// GOOD - logs safe info only:</span>
+<span class="x">Log::info("Processing payment", [</span>
+<span class="x">    'customer_id' =&gt; $customerId,</span>
+<span class="x">    'last_4' =&gt; $last4,          // Safe to log</span>
+<span class="x">    'amount' =&gt; $amount,</span>
+<span class="x">    'payment_account_id' =&gt; $id,</span>
+<span class="x">]);</span>
+
+<span class="x">// Scrub logs (ensure no accidental leaks)</span>
+<span class="x">function scrubLog($message) {</span>
+<span class="x">    // Remove any 16-digit sequences (card numbers)</span>
+<span class="x">    $message = preg_replace('/\b\d{13,16}\b/', '****', $message);</span>
+
+<span class="x">    // Remove CVV patterns</span>
+<span class="x">    $message = preg_replace('/\bcvv[:\s]*\d{3,4}\b/i', 'cvv:***', $message);</span>
+
+<span class="x">    return $message;</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>6. Network Segmentation:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">Internet</span>
+<span class="w">   </span><span class="err">↓</span>
+<span class="p">[</span><span class="n">WAF</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">Web</span><span class="w"> </span><span class="n">Application</span><span class="w"> </span><span class="n">Firewall</span><span class="p">]</span>
+<span class="w">   </span><span class="err">↓</span>
+<span class="p">[</span><span class="n">Public</span><span class="w"> </span><span class="n">Subnet</span><span class="o">:</span><span class="w"> </span><span class="n">EIC</span><span class="p">,</span><span class="w"> </span><span class="n">CC</span><span class="p">]</span><span class="w"> </span><span class="err">←</span><span class="w"> </span><span class="n">No</span><span class="w"> </span><span class="n">card</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="n">stored</span><span class="w"> </span><span class="n">here</span>
+<span class="w">   </span><span class="err">↓</span>
+<span class="p">[</span><span class="n">Private</span><span class="w"> </span><span class="n">Subnet</span><span class="o">:</span><span class="w"> </span><span class="n">MPay</span><span class="p">]</span><span class="w"> </span><span class="err">←</span><span class="w"> </span><span class="n">Tokenized</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="n">only</span>
+<span class="w">   </span><span class="err">↓</span>
+<span class="p">[</span><span class="n">Payment</span><span class="w"> </span><span class="n">Gateway</span><span class="w"> </span><span class="p">(</span><span class="n">external</span><span class="p">)]</span><span class="w"> </span><span class="err">←</span><span class="w"> </span><span class="n">Actual</span><span class="w"> </span><span class="n">card</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="n">lives</span><span class="w"> </span><span class="n">here</span><span class="w"> </span><span class="p">(</span><span class="n">PCI</span><span class="w"> </span><span class="n">Level</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div>
+
+<p><strong>7. Quarterly Vulnerability Scans:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Automated scans with approved scanning vendor (ASV)</span>
+<span class="c1"># - Every 3 months</span>
+<span class="c1"># - Checks for known vulnerabilities</span>
+<span class="c1"># - SSL/TLS configuration</span>
+<span class="c1"># - Open ports</span>
+<span class="c1"># - Default passwords</span>
+
+<span class="c1"># Example findings:</span>
+<span class="c1"># ✅ PASS: TLS 1.2+ enabled</span>
+<span class="c1"># ✅ PASS: No default credentials</span>
+<span class="c1"># ❌ FAIL: Port 22 (SSH) open to public → Must restrict to VPN only</span>
+</code></pre></div>
+
+<p><strong>8. Annual PCI Audit (Self-Assessment Questionnaire):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nv">SAQ</span><span class="w"> </span><span class="nv">A</span><span class="o">-</span><span class="nv">EP</span><span class="w"> </span><span class="ss">(</span><span class="k">for</span><span class="w"> </span><span class="nv">e</span><span class="o">-</span><span class="nv">commerce</span><span class="w"> </span><span class="nv">using</span><span class="w"> </span><span class="nv">payment</span><span class="w"> </span><span class="nv">gateway</span><span class="ss">)</span>
+
+✅<span class="w"> </span><span class="nv">Requirement</span><span class="w"> </span><span class="mi">1</span>:<span class="w"> </span><span class="nv">Firewall</span><span class="w"> </span><span class="nv">configured</span>
+✅<span class="w"> </span><span class="nv">Requirement</span><span class="w"> </span><span class="mi">2</span>:<span class="w"> </span><span class="nv">Default</span><span class="w"> </span><span class="nv">passwords</span><span class="w"> </span><span class="nv">changed</span>
+✅<span class="w"> </span><span class="nv">Requirement</span><span class="w"> </span><span class="mi">3</span>:<span class="w"> </span><span class="nv">Cardholder</span><span class="w"> </span><span class="nv">data</span><span class="w"> </span><span class="nv">encrypted</span>
+✅<span class="w"> </span><span class="nv">Requirement</span><span class="w"> </span><span class="mi">4</span>:<span class="w"> </span><span class="nv">Data</span><span class="w"> </span><span class="nv">encrypted</span><span class="w"> </span><span class="nv">in</span><span class="w"> </span><span class="nv">transit</span><span class="w"> </span><span class="ss">(</span><span class="nv">HTTPS</span><span class="ss">)</span>
+✅<span class="w"> </span><span class="nv">Requirement</span><span class="w"> </span><span class="mi">5</span>:<span class="w"> </span><span class="nv">Anti</span><span class="o">-</span><span class="nv">virus</span><span class="w"> </span><span class="nv">installed</span>
+✅<span class="w"> </span><span class="nv">Requirement</span><span class="w"> </span><span class="mi">6</span>:<span class="w"> </span><span class="nv">Systems</span><span class="w"> </span><span class="nv">patched</span>
+✅<span class="w"> </span><span class="nv">Requirement</span><span class="w"> </span><span class="mi">7</span>:<span class="w"> </span><span class="nv">Access</span><span class="w"> </span><span class="nv">restricted</span><span class="w"> </span><span class="ss">(</span><span class="nv">need</span><span class="o">-</span><span class="nv">to</span><span class="o">-</span><span class="nv">know</span><span class="ss">)</span>
+✅<span class="w"> </span><span class="nv">Requirement</span><span class="w"> </span><span class="mi">8</span>:<span class="w"> </span><span class="nv">Unique</span><span class="w"> </span><span class="nv">user</span><span class="w"> </span><span class="nv">IDs</span>
+✅<span class="w"> </span><span class="nv">Requirement</span><span class="w"> </span><span class="mi">9</span>:<span class="w"> </span><span class="nv">Physical</span><span class="w"> </span><span class="nv">access</span><span class="w"> </span><span class="nv">controlled</span><span class="w"> </span><span class="ss">(</span><span class="nv">AWS</span><span class="w"> </span><span class="nv">datacenter</span><span class="ss">)</span>
+✅<span class="w"> </span><span class="nv">Requirement</span><span class="w"> </span><span class="mi">10</span>:<span class="w"> </span><span class="nv">Logs</span><span class="w"> </span><span class="nv">monitored</span><span class="w"> </span><span class="ss">(</span><span class="nv">Datadog</span><span class="ss">)</span>
+✅<span class="w"> </span><span class="nv">Requirement</span><span class="w"> </span><span class="mi">11</span>:<span class="w"> </span><span class="nv">Quarterly</span><span class="w"> </span><span class="nv">scans</span>
+✅<span class="w"> </span><span class="nv">Requirement</span><span class="w"> </span><span class="mi">12</span>:<span class="w"> </span><span class="nv">Security</span><span class="w"> </span><span class="nv">policy</span><span class="w"> </span><span class="nv">documented</span>
+
+<span class="nb">Result</span>:<span class="w"> </span><span class="nv">COMPLIANT</span>
+</code></pre></div>
+
+<p><strong>9. Incident Response Plan:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="k">IF</span><span class="w"> </span><span class="nv">card</span><span class="w"> </span><span class="nv">data</span><span class="w"> </span><span class="nv">leak</span><span class="w"> </span><span class="nv">suspected</span>:
+<span class="mi">1</span>.<span class="w"> </span><span class="nv">Isolate</span><span class="w"> </span><span class="nv">affected</span><span class="w"> </span><span class="nv">systems</span><span class="w"> </span><span class="ss">(</span><span class="nv">within</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="nv">hour</span><span class="ss">)</span>
+<span class="mi">2</span>.<span class="w"> </span><span class="nv">Notify</span><span class="w"> </span><span class="nv">payment</span><span class="w"> </span><span class="nv">gateway</span><span class="w"> </span><span class="ss">(</span><span class="nv">immediately</span><span class="ss">)</span>
+<span class="mi">3</span>.<span class="w"> </span><span class="nv">Notify</span><span class="w"> </span><span class="nv">affected</span><span class="w"> </span><span class="nv">customers</span><span class="w"> </span><span class="ss">(</span><span class="nv">within</span><span class="w"> </span><span class="mi">24</span><span class="w"> </span><span class="nv">hours</span><span class="ss">)</span>
+<span class="mi">4</span>.<span class="w"> </span><span class="nv">Notify</span><span class="w"> </span><span class="nv">card</span><span class="w"> </span><span class="nv">brands</span><span class="w"> </span><span class="ss">(</span><span class="nv">Visa</span><span class="o">/</span><span class="nv">Mastercard</span><span class="ss">)</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="o">&gt;</span><span class="mi">1000</span><span class="w"> </span><span class="nv">cards</span>
+<span class="mi">5</span>.<span class="w"> </span><span class="nv">Forensic</span><span class="w"> </span><span class="nv">investigation</span>
+<span class="mi">6</span>.<span class="w"> </span><span class="nv">File</span><span class="w"> </span><span class="nv">breach</span><span class="w"> </span><span class="nv">report</span>
+</code></pre></div>
+
+<p><strong>10. Developer Training:</strong></p>
+<div class="codehilite"><pre><span></span><code># All developers complete PCI training annually:
+- Never log card numbers
+- Never store CVV
+- Always use tokens
+- HTTPS everywhere
+- Report suspected breaches immediately
+
+# Code review checklist:
+✅ No card numbers in logs
+✅ No card numbers in database
+✅ All payment data encrypted
+✅ Access properly restricted
+</code></pre></div>
+
+<p><strong>Our PCI Level: SAQ A-EP</strong> (payment page redirects to gateway, but we handle payment data transiently)</p>
+<p><strong>Result: Zero PCI violations since implementation</strong></p>
+<hr />
+<p><em>This is Part 1 of 2. The guide continues with more Q&amp;A sections...</em></p>
+<p><strong>Total Questions So Far: 50+</strong></p>
+<p>Would you like me to continue with the remaining sections:<br />
+- Database Design &amp; Optimization (10 questions)<br />
+- Leadership &amp; Decision Making (8 questions)<br />
+- Debugging &amp; Production Issues (12 questions)<br />
+- Scenario-Based Questions (15 questions)</p>
+<p>This will bring the total to <strong>95+ comprehensive interview questions</strong> for 12+ years experience level.</p>
+        </div>
+    </div>
+
+    <script>
+        // Progress Tracker JavaScript
+        const STORAGE_KEY = 'course_progress_technical_interview_qa_resume_projects';
+
+        // Extract all H2 and H3 headings from content
+        function extractSections() {
+            const content = document.querySelector('.content');
+            const headings = content.querySelectorAll('h2, h3');
+            const sections = [];
+
+            headings.forEach((heading, index) => {
+                const level = heading.tagName === 'H2' ? 2 : 3;
+                const text = heading.textContent.trim();
+                const id = `section-${index}`;
+
+                // Add ID to heading for linking
+                heading.id = id;
+
+                sections.push({
+                    id: id,
+                    text: text,
+                    level: level
+                });
+            });
+
+            return sections;
+        }
+
+        // Load saved progress from localStorage
+        function loadProgress() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            return saved ? JSON.parse(saved) : {};
+        }
+
+        // Save progress to localStorage
+        function saveProgress(progress) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+        }
+
+        // Calculate progress percentage
+        function calculateProgress() {
+            const checkboxes = document.querySelectorAll('.progress-checkbox');
+            const total = checkboxes.length;
+            if (total === 0) return 0;
+
+            const completed = Array.from(checkboxes).filter(cb => cb.checked).length;
+            return Math.round((completed / total) * 100);
+        }
+
+        // Update progress display
+        function updateProgressDisplay() {
+            const percentage = calculateProgress();
+            document.getElementById('progress-pct').textContent = percentage + '%';
+            document.getElementById('progress-bar').style.width = percentage + '%';
+
+            // Update completed class on items
+            document.querySelectorAll('.progress-item').forEach(item => {
+                const checkbox = item.querySelector('.progress-checkbox');
+                if (checkbox.checked) {
+                    item.classList.add('completed');
+                } else {
+                    item.classList.remove('completed');
+                }
+            });
+        }
+
+        // Toggle checkbox
+        function toggleCheckbox(sectionId) {
+            const checkbox = document.getElementById('cb-' + sectionId);
+            const progress = loadProgress();
+
+            progress[sectionId] = checkbox.checked;
+            saveProgress(progress);
+            updateProgressDisplay();
+        }
+
+        // Reset all progress
+        function resetProgress() {
+            if (confirm('Reset all progress for this page?')) {
+                localStorage.removeItem(STORAGE_KEY);
+                document.querySelectorAll('.progress-checkbox').forEach(cb => {
+                    cb.checked = false;
+                });
+                updateProgressDisplay();
+            }
+        }
+
+        // Toggle progress list visibility
+        function toggleProgressList() {
+            const list = document.getElementById('progress-items');
+            const btn = document.querySelector('.toggle-progress');
+
+            if (list.classList.contains('collapsed')) {
+                list.classList.remove('collapsed');
+                btn.textContent = '▼ Hide';
+            } else {
+                list.classList.add('collapsed');
+                btn.textContent = '▶ Show';
+            }
+        }
+
+        // Initialize progress tracker
+        function initProgressTracker() {
+            const sections = extractSections();
+            const progress = loadProgress();
+            const container = document.getElementById('progress-items');
+
+            if (sections.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No sections found</p>';
+                return;
+            }
+
+            sections.forEach(section => {
+                const item = document.createElement('div');
+                item.className = 'progress-item';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'progress-checkbox';
+                checkbox.id = 'cb-' + section.id;
+                checkbox.checked = progress[section.id] || false;
+                checkbox.onchange = () => toggleCheckbox(section.id);
+
+                const label = document.createElement('label');
+                label.className = 'progress-label';
+                label.htmlFor = 'cb-' + section.id;
+                label.textContent = section.text;
+                label.style.paddingLeft = section.level === 3 ? '20px' : '0';
+                label.onclick = () => {
+                    document.getElementById(section.id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+                };
+
+                item.appendChild(checkbox);
+                item.appendChild(label);
+                container.appendChild(item);
+            });
+
+            updateProgressDisplay();
+        }
+
+        // Run on page load
+        document.addEventListener('DOMContentLoaded', initProgressTracker);
+    </script>
+</body>
+</html>

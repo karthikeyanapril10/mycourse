@@ -1,0 +1,2265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OOP_Concepts_and_Design_Patterns</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 60px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .metadata {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 16px 24px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #666;
+            border-left: 4px solid #667eea;
+        }
+
+        /* PROGRESS TRACKER STYLES */
+        .progress-tracker {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .progress-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-stats {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .progress-percentage {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #764ba2;
+        }
+
+        .progress-bar-container {
+            height: 12px;
+            background: #e9ecef;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+            border-radius: 20px;
+        }
+
+        .reset-btn {
+            padding: 8px 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+
+        .reset-btn:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+        }
+
+        .progress-items {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .progress-items::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .progress-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .progress-item:hover {
+            background: #f8f9fa;
+            transform: translateX(5px);
+        }
+
+        .progress-item.completed {
+            opacity: 0.7;
+        }
+
+        .progress-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .progress-label {
+            cursor: pointer;
+            font-size: 0.95em;
+            line-height: 1.5;
+            color: #495057;
+            flex-grow: 1;
+        }
+
+        .progress-item.completed .progress-label {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .toggle-progress {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .toggle-progress:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .progress-items.collapsed {
+            display: none;
+        }
+
+        /* CONTENT STYLES */
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 4px solid #667eea;
+            font-weight: 700;
+        }
+
+        h2 {
+            color: #764ba2;
+            font-size: 2em;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        h3 {
+            color: #495057;
+            font-size: 1.5em;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        h4 {
+            color: #666;
+            font-size: 1.25em;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        ul, ol {
+            margin: 20px 0;
+            padding-left: 40px;
+        }
+
+        li {
+            margin-bottom: 12px;
+            line-height: 1.7;
+        }
+
+        code {
+            background: #f4f5f7;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #c7254e;
+            border: 1px solid #e1e4e8;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 24px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 25px 0;
+            border: 1px solid #444;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            border: none;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        blockquote {
+            border-left: 5px solid #667eea;
+            padding: 15px 25px;
+            margin: 25px 0;
+            background: #f8f9fa;
+            border-radius: 0 8px 8px 0;
+            color: #495057;
+            font-style: italic;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 30px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 14px 18px;
+            text-align: left;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tr:hover {
+            background: #e9ecef;
+            transition: background 0.2s;
+        }
+
+        a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px solid transparent;
+            transition: border-bottom 0.2s;
+        }
+
+        a:hover {
+            border-bottom: 1px solid #667eea;
+        }
+
+        hr {
+            border: none;
+            border-top: 2px solid #e9ecef;
+            margin: 40px 0;
+        }
+
+        strong {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        em {
+            color: #495057;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 25px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.6em;
+            }
+
+            .progress-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .progress-stats {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../navigation.html" class="back-link">&larr; Back to Navigation</a>
+
+        <div class="metadata">
+            <strong>Source:</strong> dev/OOP_Concepts_and_Design_Patterns.md &nbsp;|&nbsp; <strong>Updated:</strong> 2026-11-18 19:44:56
+        </div>
+
+        <!-- PROGRESS TRACKER -->
+        <div class="progress-tracker">
+            <div class="progress-header">
+                <div class="progress-title">
+                    <span>📚</span>
+                    <span>Your Progress</span>
+                </div>
+                <div class="progress-stats">
+                    <span class="progress-percentage" id="progress-pct">0%</span>
+                    <button class="reset-btn" onclick="resetProgress()">Reset</button>
+                    <button class="toggle-progress" onclick="toggleProgressList()">▼ Hide</button>
+                </div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progress-bar" style="width: 0%"></div>
+            </div>
+            <div class="progress-items" id="progress-items">
+                <!-- Checkboxes will be generated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="content">
+<h1 id="oop-concepts-design-patterns">OOP Concepts &amp; Design Patterns</h1>
+<blockquote>
+<p><strong>For 12+ Years Experience</strong>: Core OOP principles, SOLID, and design patterns with real PHP/.NET examples</p>
+</blockquote>
+<hr />
+<h2 id="why-oop-matters-for-staff-engineer-interviews">🎯 Why OOP Matters for Staff Engineer Interviews</h2>
+<p><strong>You use OOP every day at Billtrust:</strong><br />
+- Laravel Service Container = Dependency Injection<br />
+- Eloquent Models = Active Record pattern<br />
+- Controllers = MVC pattern<br />
+- Repository classes = Repository pattern<br />
+- Event listeners = Observer pattern</p>
+<p><strong>Interviewers will ask:</strong><br />
+- "Explain SOLID principles with examples from your work"<br />
+- "What design patterns have you used?"<br />
+- "When do you use Composition over Inheritance?"<br />
+- "Design a system using OOP principles"</p>
+<p><strong>This module:</strong> Translate what you DO into what you SAY in interviews.</p>
+<hr />
+<h2 id="section-1-core-oop-principles">📚 Section 1: Core OOP Principles</h2>
+<h3 id="q1-explain-the-4-pillars-of-oop-with-real-examples"><strong>Q1: Explain the 4 pillars of OOP with real examples</strong></h3>
+<p><strong>Answer:</strong></p>
+<p><strong>1. Encapsulation (Data Hiding)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Billtrust Example: Invoice class</span>
+<span class="x">class Invoice {</span>
+<span class="x">    private $amount;        // Hidden from outside</span>
+<span class="x">    private $customerId;</span>
+<span class="x">    private $status;</span>
+
+<span class="x">    public function __construct($amount, $customerId) {</span>
+<span class="x">        $this-&gt;amount = $amount;</span>
+<span class="x">        $this-&gt;customerId = $customerId;</span>
+<span class="x">        $this-&gt;status = 'draft';</span>
+<span class="x">    }</span>
+
+<span class="x">    // Controlled access via public methods</span>
+<span class="x">    public function getAmount() {</span>
+<span class="x">        return $this-&gt;amount;</span>
+<span class="x">    }</span>
+
+<span class="x">    public function approve() {</span>
+<span class="x">        if ($this-&gt;status === 'draft') {</span>
+<span class="x">            $this-&gt;status = 'approved';</span>
+<span class="x">            $this-&gt;sendNotification();  // Internal logic hidden</span>
+<span class="x">        }</span>
+<span class="x">    }</span>
+
+<span class="x">    private function sendNotification() {</span>
+<span class="x">        // Hidden implementation detail</span>
+<span class="x">        RabbitMQ::publish('invoice.approved', $this-&gt;toArray());</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">// Usage:</span>
+<span class="x">$invoice = new Invoice(100.00, 12345);</span>
+<span class="x">$invoice-&gt;approve();  // Public interface</span>
+<span class="x">// $invoice-&gt;status = 'approved';  ❌ Error: private property</span>
+</code></pre></div>
+
+<p><strong>Why Encapsulation?</strong><br />
+- Prevents invalid state (can't set <code>status</code> directly, must use <code>approve()</code>)<br />
+- Hides complexity (<code>sendNotification</code> is internal)<br />
+- Easier to refactor (change notification logic without breaking callers)</p>
+<hr />
+<p><strong>2. Inheritance (Code Reuse)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Billtrust Example: Base Notification class</span>
+<span class="x">abstract class Notification {</span>
+<span class="x">    protected $customerId;</span>
+<span class="x">    protected $message;</span>
+
+<span class="x">    public function __construct($customerId, $message) {</span>
+<span class="x">        $this-&gt;customerId = $customerId;</span>
+<span class="x">        $this-&gt;message = $message;</span>
+<span class="x">    }</span>
+
+<span class="x">    abstract public function send();  // Subclasses must implement</span>
+
+<span class="x">    protected function log() {</span>
+<span class="x">        Logger::info("Notification sent to customer {$this-&gt;customerId}");</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">class EmailNotification extends Notification {</span>
+<span class="x">    public function send() {</span>
+<span class="x">        SendGrid::send($this-&gt;getCustomerEmail(), $this-&gt;message);</span>
+<span class="x">        $this-&gt;log();  // Inherited method</span>
+<span class="x">    }</span>
+
+<span class="x">    private function getCustomerEmail() {</span>
+<span class="x">        return Customer::find($this-&gt;customerId)-&gt;email;</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">class SMSNotification extends Notification {</span>
+<span class="x">    public function send() {</span>
+<span class="x">        Twilio::send($this-&gt;getCustomerPhone(), $this-&gt;message);</span>
+<span class="x">        $this-&gt;log();  // Inherited method</span>
+<span class="x">    }</span>
+
+<span class="x">    private function getCustomerPhone() {</span>
+<span class="x">        return Customer::find($this-&gt;customerId)-&gt;phone;</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">// Usage:</span>
+<span class="x">$email = new EmailNotification(12345, "Invoice ready");</span>
+<span class="x">$email-&gt;send();  // Sends via SendGrid, logs automatically</span>
+</code></pre></div>
+
+<p><strong>Why Inheritance?</strong><br />
+- DRY: <code>log()</code> method written once, used by all subclasses<br />
+- Polymorphism: Both EmailNotification and SMSNotification are Notifications<br />
+- Extensibility: Add PushNotification without changing existing code</p>
+<hr />
+<p><strong>3. Polymorphism (Many Forms)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Billtrust Example: Payment processing</span>
+<span class="x">interface PaymentProcessor {</span>
+<span class="x">    public function charge($amount, $token);</span>
+<span class="x">}</span>
+
+<span class="x">class StripeProcessor implements PaymentProcessor {</span>
+<span class="x">    public function charge($amount, $token) {</span>
+<span class="x">        return Stripe::charge(['amount' =&gt; $amount, 'source' =&gt; $token]);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">class AuthorizeNetProcessor implements PaymentProcessor {</span>
+<span class="x">    public function charge($amount, $token) {</span>
+<span class="x">        return AuthorizeNet::charge($amount, $token);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">class PaymentService {</span>
+<span class="x">    private $processor;</span>
+
+<span class="x">    public function __construct(PaymentProcessor $processor) {</span>
+<span class="x">        $this-&gt;processor = $processor;  // Accepts ANY PaymentProcessor</span>
+<span class="x">    }</span>
+
+<span class="x">    public function processPayment($amount, $token) {</span>
+<span class="x">        try {</span>
+<span class="x">            $result = $this-&gt;processor-&gt;charge($amount, $token);</span>
+<span class="x">            $this-&gt;logSuccess($result);</span>
+<span class="x">            return $result;</span>
+<span class="x">        } catch (Exception $e) {</span>
+<span class="x">            $this-&gt;logFailure($e);</span>
+<span class="x">            throw $e;</span>
+<span class="x">        }</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">// Usage:</span>
+<span class="x">$service = new PaymentService(new StripeProcessor());</span>
+<span class="x">$service-&gt;processPayment(100.00, 'tok_visa');</span>
+
+<span class="x">// Switch to Authorize.Net without changing PaymentService code:</span>
+<span class="x">$service = new PaymentService(new AuthorizeNetProcessor());</span>
+<span class="x">$service-&gt;processPayment(100.00, 'tok_visa');</span>
+</code></pre></div>
+
+<p><strong>Why Polymorphism?</strong><br />
+- Flexibility: Swap payment processors without changing <code>PaymentService</code><br />
+- Testability: Mock <code>PaymentProcessor</code> in tests<br />
+- Open/Closed: <code>PaymentService</code> closed for modification, open for extension</p>
+<hr />
+<p><strong>4. Abstraction (Hide Complexity)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Billtrust Example: Database abstraction</span>
+<span class="x">// User doesn't need to know SQL details</span>
+<span class="x">class InvoiceRepository {</span>
+<span class="x">    public function findByCustomer($customerId) {</span>
+<span class="x">        // Abstraction: Hide SQL complexity</span>
+<span class="x">        return DB::table('fsiinvoice')</span>
+<span class="x">            -&gt;where('CustomerId', $customerId)</span>
+<span class="x">            -&gt;where('Status', 'approved')</span>
+<span class="x">            -&gt;orderBy('InvoiceDate', 'desc')</span>
+<span class="x">            -&gt;get();</span>
+<span class="x">    }</span>
+
+<span class="x">    public function create($data) {</span>
+<span class="x">        // Abstraction: Hide validation, audit logging</span>
+<span class="x">        $this-&gt;validate($data);</span>
+<span class="x">        $invoice = DB::table('fsiinvoice')-&gt;insert($data);</span>
+<span class="x">        $this-&gt;logAudit('invoice_created', $invoice-&gt;id);</span>
+<span class="x">        return $invoice;</span>
+<span class="x">    }</span>
+
+<span class="x">    private function validate($data) { /* ... */ }</span>
+<span class="x">    private function logAudit($action, $id) { /* ... */ }</span>
+<span class="x">}</span>
+
+<span class="x">// Usage (simple interface, complex implementation hidden):</span>
+<span class="x">$repo = new InvoiceRepository();</span>
+<span class="x">$invoices = $repo-&gt;findByCustomer(12345);</span>
+</code></pre></div>
+
+<p><strong>Why Abstraction?</strong><br />
+- Simplicity: Caller doesn't write SQL<br />
+- Consistency: Validation + audit logging happens automatically<br />
+- Maintainability: Change DB schema, update repository only</p>
+<hr />
+<p><strong>Your Experience:</strong><br />
+"At Billtrust, we use all 4 pillars daily:<br />
+- <strong>Encapsulation</strong>: Invoice status can only change via approved methods, preventing invalid states<br />
+- <strong>Inheritance</strong>: Base Notification class for Email/SMS/Push, sharing logging and retry logic<br />
+- <strong>Polymorphism</strong>: PaymentProcessor interface lets us swap Stripe/Authorize.Net without changing business logic<br />
+- <strong>Abstraction</strong>: Repository pattern hides SQL complexity, ensuring all invoice queries include tenant scoping"</p>
+<hr />
+<h3 id="q2-composition-vs-inheritance-when-to-use-which"><strong>Q2: Composition vs Inheritance — when to use which?</strong></h3>
+<p><strong>Answer:</strong></p>
+<p><strong>Inheritance (IS-A relationship):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">class Vehicle {</span>
+<span class="x">    protected $speed;</span>
+<span class="x">    public function accelerate() { $this-&gt;speed += 10; }</span>
+<span class="x">}</span>
+
+<span class="x">class Car extends Vehicle {</span>
+<span class="x">    // Car IS-A Vehicle</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>Composition (HAS-A relationship):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">class Car {</span>
+<span class="x">    private $engine;  // Car HAS-AN Engine</span>
+
+<span class="x">    public function __construct(Engine $engine) {</span>
+<span class="x">        $this-&gt;engine = $engine;</span>
+<span class="x">    }</span>
+
+<span class="x">    public function start() {</span>
+<span class="x">        $this-&gt;engine-&gt;start();</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">class Engine {</span>
+<span class="x">    public function start() { /* ... */ }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<hr />
+<p><strong>When to Use Inheritance:</strong></p>
+<p>✅ <strong>True IS-A relationship</strong> (Car is a Vehicle, EmailNotification is a Notification)<br />
+✅ <strong>Shared behavior</strong> that belongs to ALL subclasses<br />
+✅ <strong>Polymorphism needed</strong> (treat all subclasses the same via parent type)</p>
+<p><strong>Billtrust Example:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">abstract class BaseController {</span>
+<span class="x">    protected function getUserId() {</span>
+<span class="x">        return Auth::user()-&gt;id;</span>
+<span class="x">    }</span>
+
+<span class="x">    protected function getCustomerId() {</span>
+<span class="x">        return Auth::user()-&gt;customer_id;</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">class InvoiceController extends BaseController {</span>
+<span class="x">    public function index() {</span>
+<span class="x">        $customerId = $this-&gt;getCustomerId();  // Inherited</span>
+<span class="x">        return Invoice::where('customer_id', $customerId)-&gt;get();</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">class PaymentController extends BaseController {</span>
+<span class="x">    public function index() {</span>
+<span class="x">        $customerId = $this-&gt;getCustomerId();  // Inherited</span>
+<span class="x">        return Payment::where('customer_id', $customerId)-&gt;get();</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>Why Inheritance here?</strong><br />
+- InvoiceController IS-A Controller<br />
+- All controllers need <code>getUserId()</code>, <code>getCustomerId()</code><br />
+- Polymorphism: Middleware treats all controllers the same</p>
+<hr />
+<p><strong>When to Use Composition:</strong></p>
+<p>✅ <strong>HAS-A relationship</strong> (Car has an Engine, not "is an Engine")<br />
+✅ <strong>Multiple behaviors</strong> (can't inherit from 2 classes in PHP)<br />
+✅ <strong>Behavior can change at runtime</strong> (swap components)</p>
+<p><strong>Billtrust Example:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// ❌ BAD: Inheritance for behavior</span>
+<span class="x">class InvoiceWithEmail extends Invoice {</span>
+<span class="x">    public function send() { /* email logic */ }</span>
+<span class="x">}</span>
+
+<span class="x">class InvoiceWithSMS extends Invoice {</span>
+<span class="x">    public function send() { /* SMS logic */ }</span>
+<span class="x">}</span>
+
+<span class="x">// What if we need BOTH email AND SMS? Can't inherit from both!</span>
+
+<span class="x">// ✅ GOOD: Composition</span>
+<span class="x">class Invoice {</span>
+<span class="x">    private $notifiers = [];  // HAS-A collection of Notifiers</span>
+
+<span class="x">    public function addNotifier(Notifier $notifier) {</span>
+<span class="x">        $this-&gt;notifiers[] = $notifier;</span>
+<span class="x">    }</span>
+
+<span class="x">    public function send() {</span>
+<span class="x">        foreach ($this-&gt;notifiers as $notifier) {</span>
+<span class="x">            $notifier-&gt;notify($this);</span>
+<span class="x">        }</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">interface Notifier {</span>
+<span class="x">    public function notify(Invoice $invoice);</span>
+<span class="x">}</span>
+
+<span class="x">class EmailNotifier implements Notifier {</span>
+<span class="x">    public function notify(Invoice $invoice) {</span>
+<span class="x">        SendGrid::send($invoice-&gt;getCustomerEmail(), $invoice-&gt;getBody());</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">class SMSNotifier implements Notifier {</span>
+<span class="x">    public function notify(Invoice $invoice) {</span>
+<span class="x">        Twilio::send($invoice-&gt;getCustomerPhone(), $invoice-&gt;getSummary());</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">// Usage (flexible!):</span>
+<span class="x">$invoice = new Invoice();</span>
+<span class="x">$invoice-&gt;addNotifier(new EmailNotifier());</span>
+<span class="x">$invoice-&gt;addNotifier(new SMSNotifier());  // Both!</span>
+<span class="x">$invoice-&gt;send();  // Sends via email AND SMS</span>
+</code></pre></div>
+
+<p><strong>Why Composition here?</strong><br />
+- Flexibility: Can add/remove notifiers at runtime<br />
+- Multiple behaviors: Email + SMS + Push (can't do with inheritance)<br />
+- Single Responsibility: Invoice focuses on invoice logic, Notifiers handle notification</p>
+<hr />
+<p><strong>Rule of Thumb:</strong></p>
+<div class="codehilite"><pre><span></span><code>Prefer Composition over Inheritance
+
+Use Inheritance when:
+  - True IS-A relationship
+  - Shared behavior belongs to ALL subclasses
+  - Polymorphism needed
+
+Use Composition when:
+  - HAS-A relationship
+  - Need multiple behaviors
+  - Behavior can change at runtime
+  - Would violate Single Responsibility Principle
+</code></pre></div>
+
+<p><strong>Your Experience:</strong><br />
+"At Billtrust, we use Composition for notification delivery — an Invoice HAS notifiers (email, SMS, push), not IS-A EmailInvoice. This lets us combine multiple channels without messy inheritance hierarchies. We use Inheritance for controllers and services where true IS-A relationships exist and shared middleware logic applies to all subclasses."</p>
+<hr />
+<h3 id="q3-interface-vs-abstract-class-when-to-use-each"><strong>Q3: Interface vs Abstract Class — when to use each?</strong></h3>
+<p><strong>Answer:</strong></p>
+<p><strong>Interface (Contract Only):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">interface PaymentGateway {</span>
+<span class="x">    public function authorize($amount, $cardToken);</span>
+<span class="x">    public function capture($transactionId);</span>
+<span class="x">    public function refund($transactionId, $amount);</span>
+<span class="x">}</span>
+
+<span class="x">// No implementation, no state, only method signatures</span>
+</code></pre></div>
+
+<p><strong>Abstract Class (Partial Implementation):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">abstract class BasePaymentGateway {</span>
+<span class="x">    protected $apiKey;</span>
+
+<span class="x">    public function __construct($apiKey) {</span>
+<span class="x">        $this-&gt;apiKey = $apiKey;  // Shared state</span>
+<span class="x">    }</span>
+
+<span class="x">    public function authorize($amount, $cardToken) {</span>
+<span class="x">        $this-&gt;logRequest('authorize', $amount);  // Shared behavior</span>
+<span class="x">        return $this-&gt;doAuthorize($amount, $cardToken);  // Delegate to subclass</span>
+<span class="x">    }</span>
+
+<span class="x">    abstract protected function doAuthorize($amount, $cardToken);  // Must implement</span>
+
+<span class="x">    protected function logRequest($action, $amount) {</span>
+<span class="x">        Logger::info("Payment {$action}: {$amount}");</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<hr />
+<p><strong>When to Use Interface:</strong></p>
+<p>✅ <strong>Contract only</strong> (no shared implementation)<br />
+✅ <strong>Multiple inheritance</strong> (class can implement multiple interfaces)<br />
+✅ <strong>Loose coupling</strong> (depends on behavior, not implementation)</p>
+<p><strong>Billtrust Example:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">interface Cacheable {</span>
+<span class="x">    public function getCacheKey();</span>
+<span class="x">    public function getCacheTTL();</span>
+<span class="x">}</span>
+
+<span class="x">interface Auditable {</span>
+<span class="x">    public function getAuditData();</span>
+<span class="x">}</span>
+
+<span class="x">class Invoice implements Cacheable, Auditable {</span>
+<span class="x">    // Can implement BOTH interfaces</span>
+
+<span class="x">    public function getCacheKey() {</span>
+<span class="x">        return "invoice:{$this-&gt;id}";</span>
+<span class="x">    }</span>
+
+<span class="x">    public function getCacheTTL() {</span>
+<span class="x">        return 3600;  // 1 hour</span>
+<span class="x">    }</span>
+
+<span class="x">    public function getAuditData() {</span>
+<span class="x">        return [</span>
+<span class="x">            'invoice_id' =&gt; $this-&gt;id,</span>
+<span class="x">            'amount' =&gt; $this-&gt;amount,</span>
+<span class="x">            'customer_id' =&gt; $this-&gt;customer_id</span>
+<span class="x">        ];</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">// Service depends on interface, not concrete class:</span>
+<span class="x">class CacheService {</span>
+<span class="x">    public function remember(Cacheable $obj) {</span>
+<span class="x">        $key = $obj-&gt;getCacheKey();</span>
+<span class="x">        $ttl = $obj-&gt;getCacheTTL();</span>
+<span class="x">        return Cache::remember($key, $ttl, fn() =&gt; $obj);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">// Works with ANY Cacheable object:</span>
+<span class="x">$cache = new CacheService();</span>
+<span class="x">$cache-&gt;remember($invoice);  // Invoice is Cacheable</span>
+<span class="x">$cache-&gt;remember($customer);  // Customer is Cacheable</span>
+</code></pre></div>
+
+<p><strong>Why Interface here?</strong><br />
+- Multiple behaviors: Invoice is both Cacheable AND Auditable<br />
+- Loose coupling: CacheService doesn't care about Invoice internals<br />
+- Polymorphism: Any Cacheable object works</p>
+<hr />
+<p><strong>When to Use Abstract Class:</strong></p>
+<p>✅ <strong>Shared implementation</strong> (not just contract)<br />
+✅ <strong>Shared state</strong> (properties)<br />
+✅ <strong>Template Method pattern</strong> (shared flow, subclass customizes steps)</p>
+<p><strong>Billtrust Example:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">abstract class BaseReport {</span>
+<span class="x">    protected $customerId;</span>
+<span class="x">    protected $startDate;</span>
+<span class="x">    protected $endDate;</span>
+
+<span class="x">    public function __construct($customerId, $startDate, $endDate) {</span>
+<span class="x">        $this-&gt;customerId = $customerId;</span>
+<span class="x">        $this-&gt;startDate = $startDate;</span>
+<span class="x">        $this-&gt;endDate = $endDate;</span>
+<span class="x">    }</span>
+
+<span class="x">    // Template Method: Shared flow</span>
+<span class="x">    public function generate() {</span>
+<span class="x">        $this-&gt;validateDates();  // Shared</span>
+<span class="x">        $data = $this-&gt;fetchData();  // Subclass-specific</span>
+<span class="x">        $formatted = $this-&gt;formatData($data);  // Subclass-specific</span>
+<span class="x">        $this-&gt;log();  // Shared</span>
+<span class="x">        return $formatted;</span>
+<span class="x">    }</span>
+
+<span class="x">    protected function validateDates() {</span>
+<span class="x">        if ($this-&gt;startDate &gt; $this-&gt;endDate) {</span>
+<span class="x">            throw new InvalidArgumentException("Start date must be before end date");</span>
+<span class="x">        }</span>
+<span class="x">    }</span>
+
+<span class="x">    protected function log() {</span>
+<span class="x">        Logger::info("Report generated for customer {$this-&gt;customerId}");</span>
+<span class="x">    }</span>
+
+<span class="x">    abstract protected function fetchData();  // Must implement</span>
+<span class="x">    abstract protected function formatData($data);  // Must implement</span>
+<span class="x">}</span>
+
+<span class="x">class InvoiceReport extends BaseReport {</span>
+<span class="x">    protected function fetchData() {</span>
+<span class="x">        return DB::table('fsiinvoice')</span>
+<span class="x">            -&gt;where('CustomerId', $this-&gt;customerId)</span>
+<span class="x">            -&gt;whereBetween('InvoiceDate', [$this-&gt;startDate, $this-&gt;endDate])</span>
+<span class="x">            -&gt;get();</span>
+<span class="x">    }</span>
+
+<span class="x">    protected function formatData($data) {</span>
+<span class="x">        return $data-&gt;map(fn($inv) =&gt; [</span>
+<span class="x">            'invoice_number' =&gt; $inv-&gt;InvoiceNumber,</span>
+<span class="x">            'amount' =&gt; $inv-&gt;Amount</span>
+<span class="x">        ]);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">class PaymentReport extends BaseReport {</span>
+<span class="x">    protected function fetchData() {</span>
+<span class="x">        return DB::table('fsipayment')</span>
+<span class="x">            -&gt;where('CustomerId', $this-&gt;customerId)</span>
+<span class="x">            -&gt;whereBetween('PaymentDate', [$this-&gt;startDate, $this-&gt;endDate])</span>
+<span class="x">            -&gt;get();</span>
+<span class="x">    }</span>
+
+<span class="x">    protected function formatData($data) {</span>
+<span class="x">        return $data-&gt;map(fn($pay) =&gt; [</span>
+<span class="x">            'payment_id' =&gt; $pay-&gt;PaymentId,</span>
+<span class="x">            'amount' =&gt; $pay-&gt;Amount</span>
+<span class="x">        ]);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">// Usage:</span>
+<span class="x">$report = new InvoiceReport(12345, '2024-01-01', '2024-01-31');</span>
+<span class="x">$data = $report-&gt;generate();  // Shared flow, custom data fetching</span>
+</code></pre></div>
+
+<p><strong>Why Abstract Class here?</strong><br />
+- Shared state: All reports have <code>customerId</code>, <code>startDate</code>, <code>endDate</code><br />
+- Shared behavior: <code>validateDates()</code>, <code>log()</code>, <code>generate()</code> flow<br />
+- Template Method: <code>generate()</code> defines the flow, subclasses customize steps</p>
+<hr />
+<p><strong>Interface vs Abstract Class:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Interface</th>
+<th>Abstract Class</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Implementation</td>
+<td>None (contract only)</td>
+<td>Partial (shared code)</td>
+</tr>
+<tr>
+<td>State (properties)</td>
+<td>❌ No</td>
+<td>✅ Yes</td>
+</tr>
+<tr>
+<td>Multiple inheritance</td>
+<td>✅ Yes (implement many)</td>
+<td>❌ No (extend one)</td>
+</tr>
+<tr>
+<td>When to use</td>
+<td>Define behavior contract</td>
+<td>Share code + template flow</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Rule of Thumb:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nx">Use</span><span class="w"> </span><span class="nx">Interface</span><span class="w"> </span><span class="nx">when</span><span class="p">:</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="nx">Defining</span><span class="w"> </span><span class="nx">a</span><span class="w"> </span><span class="nx">contract</span><span class="w"> </span><span class="p">(</span><span class="nx">no</span><span class="w"> </span><span class="nx">shared</span><span class="w"> </span><span class="nx">implementation</span><span class="p">)</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="nx">Multiple</span><span class="w"> </span><span class="nx">inheritance</span><span class="w"> </span><span class="nx">needed</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="nx">Loose</span><span class="w"> </span><span class="nx">coupling</span><span class="w"> </span><span class="p">(</span><span class="nx">depend</span><span class="w"> </span><span class="nx">on</span><span class="w"> </span><span class="nx">behavior</span><span class="p">,</span><span class="w"> </span><span class="k">not</span><span class="w"> </span><span class="kd">class</span><span class="p">)</span>
+
+<span class="nx">Use</span><span class="w"> </span><span class="nx">Abstract</span><span class="w"> </span><span class="nx">Class</span><span class="w"> </span><span class="nx">when</span><span class="p">:</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="nx">Sharing</span><span class="w"> </span><span class="nx">code</span><span class="w"> </span><span class="nx">between</span><span class="w"> </span><span class="nx">subclasses</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="nx">Sharing</span><span class="w"> </span><span class="nx">state</span><span class="w"> </span><span class="p">(</span><span class="nx">properties</span><span class="p">)</span>
+<span class="w">  </span><span class="o">-</span><span class="w"> </span><span class="nx">Template</span><span class="w"> </span><span class="nx">Method</span><span class="w"> </span><span class="nx">pattern</span><span class="w"> </span><span class="p">(</span><span class="nx">shared</span><span class="w"> </span><span class="nx">flow</span><span class="p">,</span><span class="w"> </span><span class="nx">custom</span><span class="w"> </span><span class="nx">steps</span><span class="p">)</span>
+</code></pre></div>
+
+<p><strong>Your Experience:</strong><br />
+"At Billtrust, we use Interfaces for cross-cutting concerns like Cacheable, Auditable, Queueable — behaviors that many unrelated classes need. We use Abstract Classes for report generation where all reports share validation, logging, and flow control, but differ in data fetching. This keeps our codebase DRY while maintaining flexibility."</p>
+<hr />
+<h2 id="section-2-solid-principles">📚 Section 2: SOLID Principles</h2>
+<h3 id="q4-explain-solid-with-php-examples-from-your-work"><strong>Q4: Explain SOLID with PHP examples from your work</strong></h3>
+<p><strong>Answer:</strong></p>
+<p><strong>SOLID = 5 principles for maintainable OOP code</strong></p>
+<hr />
+<p><strong>S = Single Responsibility Principle (SRP)</strong></p>
+<p><strong>Definition:</strong> A class should have ONE reason to change.</p>
+<p><strong>❌ Bad (God Object):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">class Invoice {</span>
+<span class="x">    public function calculate() { /* business logic */ }</span>
+<span class="x">    public function saveToDatabase() { /* persistence */ }</span>
+<span class="x">    public function sendEmail() { /* notification */ }</span>
+<span class="x">    public function generatePDF() { /* rendering */ }</span>
+<span class="x">}</span>
+
+<span class="x">// Invoice has 4 reasons to change:</span>
+<span class="x">//   1. Business rules change</span>
+<span class="x">//   2. Database schema changes</span>
+<span class="x">//   3. Email provider changes</span>
+<span class="x">//   4. PDF template changes</span>
+</code></pre></div>
+
+<p><strong>✅ Good (Single Responsibility):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">class Invoice {</span>
+<span class="x">    public function calculate() { /* business logic ONLY */ }</span>
+<span class="x">}</span>
+
+<span class="x">class InvoiceRepository {</span>
+<span class="x">    public function save(Invoice $invoice) { /* persistence ONLY */ }</span>
+<span class="x">}</span>
+
+<span class="x">class InvoiceNotifier {</span>
+<span class="x">    public function sendEmail(Invoice $invoice) { /* notification ONLY */ }</span>
+<span class="x">}</span>
+
+<span class="x">class InvoicePDFGenerator {</span>
+<span class="x">    public function generate(Invoice $invoice) { /* rendering ONLY */ }</span>
+<span class="x">}</span>
+
+<span class="x">// Each class has ONE reason to change</span>
+</code></pre></div>
+
+<hr />
+<p><strong>O = Open/Closed Principle (OCP)</strong></p>
+<p><strong>Definition:</strong> Open for extension, closed for modification.</p>
+<p><strong>❌ Bad (Modifying existing code):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">class PaymentProcessor {</span>
+<span class="x">    public function process($method, $amount) {</span>
+<span class="x">        if ($method === 'stripe') {</span>
+<span class="x">            Stripe::charge($amount);</span>
+<span class="x">        } elseif ($method === 'authorize_net') {</span>
+<span class="x">            AuthorizeNet::charge($amount);</span>
+<span class="x">        } elseif ($method === 'paypal') {  // ← Adding PayPal requires modifying this class</span>
+<span class="x">            PayPal::charge($amount);</span>
+<span class="x">        }</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>✅ Good (Extension without modification):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">interface PaymentGateway {</span>
+<span class="x">    public function charge($amount);</span>
+<span class="x">}</span>
+
+<span class="x">class StripeGateway implements PaymentGateway {</span>
+<span class="x">    public function charge($amount) { Stripe::charge($amount); }</span>
+<span class="x">}</span>
+
+<span class="x">class AuthorizeNetGateway implements PaymentGateway {</span>
+<span class="x">    public function charge($amount) { AuthorizeNet::charge($amount); }</span>
+<span class="x">}</span>
+
+<span class="x">class PayPalGateway implements PaymentGateway {  // ← New class, no modification!</span>
+<span class="x">    public function charge($amount) { PayPal::charge($amount); }</span>
+<span class="x">}</span>
+
+<span class="x">class PaymentProcessor {</span>
+<span class="x">    private $gateway;</span>
+
+<span class="x">    public function __construct(PaymentGateway $gateway) {</span>
+<span class="x">        $this-&gt;gateway = $gateway;</span>
+<span class="x">    }</span>
+
+<span class="x">    public function process($amount) {</span>
+<span class="x">        $this-&gt;gateway-&gt;charge($amount);  // No modification needed!</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<hr />
+<p><strong>L = Liskov Substitution Principle (LSP)</strong></p>
+<p><strong>Definition:</strong> Subclass should be substitutable for parent without breaking behavior.</p>
+<p><strong>❌ Bad (Violates LSP):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">class Bird {</span>
+<span class="x">    public function fly() { /* flying logic */ }</span>
+<span class="x">}</span>
+
+<span class="x">class Penguin extends Bird {</span>
+<span class="x">    public function fly() {</span>
+<span class="x">        throw new Exception("Penguins can't fly!");  // ← Breaks LSP!</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">function makeBirdFly(Bird $bird) {</span>
+<span class="x">    $bird-&gt;fly();  // Crashes if $bird is Penguin</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>✅ Good (Respects LSP):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">interface Bird {</span>
+<span class="x">    public function move();</span>
+<span class="x">}</span>
+
+<span class="x">class FlyingBird implements Bird {</span>
+<span class="x">    public function move() { $this-&gt;fly(); }</span>
+<span class="x">    private function fly() { /* flying logic */ }</span>
+<span class="x">}</span>
+
+<span class="x">class Penguin implements Bird {</span>
+<span class="x">    public function move() { $this-&gt;swim(); }  // No fly() method!</span>
+<span class="x">    private function swim() { /* swimming logic */ }</span>
+<span class="x">}</span>
+
+<span class="x">function makeBirdMove(Bird $bird) {</span>
+<span class="x">    $bird-&gt;move();  // Works for ALL birds</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>Billtrust Example:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// ❌ Bad</span>
+<span class="x">class PaymentGateway {</span>
+<span class="x">    public function refund($transactionId, $amount) { /* refund logic */ }</span>
+<span class="x">}</span>
+
+<span class="x">class BitcoinGateway extends PaymentGateway {</span>
+<span class="x">    public function refund($transactionId, $amount) {</span>
+<span class="x">        throw new Exception("Bitcoin doesn't support refunds!");  // ← Breaks LSP</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">// ✅ Good</span>
+<span class="x">interface RefundableGateway {</span>
+<span class="x">    public function refund($transactionId, $amount);</span>
+<span class="x">}</span>
+
+<span class="x">class StripeGateway implements RefundableGateway {</span>
+<span class="x">    public function refund($transactionId, $amount) { /* refund */ }</span>
+<span class="x">}</span>
+
+<span class="x">class BitcoinGateway {  // Does NOT implement RefundableGateway</span>
+<span class="x">    public function charge($amount) { /* charge only */ }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<hr />
+<p><strong>I = Interface Segregation Principle (ISP)</strong></p>
+<p><strong>Definition:</strong> Don't force classes to implement methods they don't need.</p>
+<p><strong>❌ Bad (Fat Interface):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">interface Worker {</span>
+<span class="x">    public function work();</span>
+<span class="x">    public function eat();</span>
+<span class="x">    public function sleep();</span>
+<span class="x">}</span>
+
+<span class="x">class HumanWorker implements Worker {</span>
+<span class="x">    public function work() { /* ... */ }</span>
+<span class="x">    public function eat() { /* ... */ }</span>
+<span class="x">    public function sleep() { /* ... */ }</span>
+<span class="x">}</span>
+
+<span class="x">class RobotWorker implements Worker {</span>
+<span class="x">    public function work() { /* ... */ }</span>
+<span class="x">    public function eat() { /* Nothing */ }  // ← Robots don't eat!</span>
+<span class="x">    public function sleep() { /* Nothing */ }  // ← Robots don't sleep!</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>✅ Good (Segregated Interfaces):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">interface Workable {</span>
+<span class="x">    public function work();</span>
+<span class="x">}</span>
+
+<span class="x">interface Eatable {</span>
+<span class="x">    public function eat();</span>
+<span class="x">}</span>
+
+<span class="x">interface Sleepable {</span>
+<span class="x">    public function sleep();</span>
+<span class="x">}</span>
+
+<span class="x">class HumanWorker implements Workable, Eatable, Sleepable {</span>
+<span class="x">    public function work() { /* ... */ }</span>
+<span class="x">    public function eat() { /* ... */ }</span>
+<span class="x">    public function sleep() { /* ... */ }</span>
+<span class="x">}</span>
+
+<span class="x">class RobotWorker implements Workable {</span>
+<span class="x">    public function work() { /* ... */ }  // Only implements what it needs!</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>Billtrust Example:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// ❌ Bad</span>
+<span class="x">interface PaymentProcessor {</span>
+<span class="x">    public function authorize($amount);</span>
+<span class="x">    public function capture($transactionId);</span>
+<span class="x">    public function refund($transactionId);</span>
+<span class="x">    public function recurring($amount, $frequency);  // ← Not all gateways support recurring!</span>
+<span class="x">}</span>
+
+<span class="x">// ✅ Good</span>
+<span class="x">interface PaymentProcessor {</span>
+<span class="x">    public function authorize($amount);</span>
+<span class="x">    public function capture($transactionId);</span>
+<span class="x">}</span>
+
+<span class="x">interface RefundableProcessor {</span>
+<span class="x">    public function refund($transactionId);</span>
+<span class="x">}</span>
+
+<span class="x">interface RecurringProcessor {</span>
+<span class="x">    public function recurring($amount, $frequency);</span>
+<span class="x">}</span>
+
+<span class="x">class StripeProcessor implements PaymentProcessor, RefundableProcessor, RecurringProcessor {</span>
+<span class="x">    // Implements all 3 (Stripe supports everything)</span>
+<span class="x">}</span>
+
+<span class="x">class BitcoinProcessor implements PaymentProcessor {</span>
+<span class="x">    // Only implements basic payment (no refunds, no recurring)</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<hr />
+<p><strong>D = Dependency Inversion Principle (DIP)</strong></p>
+<p><strong>Definition:</strong> Depend on abstractions, not concretions.</p>
+<p><strong>❌ Bad (Depends on concrete class):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">class InvoiceService {</span>
+<span class="x">    private $mailer;</span>
+
+<span class="x">    public function __construct() {</span>
+<span class="x">        $this-&gt;mailer = new SendGridMailer();  // ← Hardcoded dependency!</span>
+<span class="x">    }</span>
+
+<span class="x">    public function sendInvoice(Invoice $invoice) {</span>
+<span class="x">        $this-&gt;mailer-&gt;send($invoice-&gt;getEmail(), $invoice-&gt;getBody());</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">// Can't swap SendGrid for SES without modifying InvoiceService</span>
+</code></pre></div>
+
+<p><strong>✅ Good (Depends on abstraction):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">interface Mailer {</span>
+<span class="x">    public function send($to, $body);</span>
+<span class="x">}</span>
+
+<span class="x">class SendGridMailer implements Mailer {</span>
+<span class="x">    public function send($to, $body) { SendGrid::send($to, $body); }</span>
+<span class="x">}</span>
+
+<span class="x">class SESMailer implements Mailer {</span>
+<span class="x">    public function send($to, $body) { AWS_SES::send($to, $body); }</span>
+<span class="x">}</span>
+
+<span class="x">class InvoiceService {</span>
+<span class="x">    private $mailer;</span>
+
+<span class="x">    public function __construct(Mailer $mailer) {  // ← Depends on interface!</span>
+<span class="x">        $this-&gt;mailer = $mailer;</span>
+<span class="x">    }</span>
+
+<span class="x">    public function sendInvoice(Invoice $invoice) {</span>
+<span class="x">        $this-&gt;mailer-&gt;send($invoice-&gt;getEmail(), $invoice-&gt;getBody());</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">// Usage (Laravel DI):</span>
+<span class="x">$service = new InvoiceService(new SendGridMailer());  // Inject dependency</span>
+<span class="x">$service = new InvoiceService(new SESMailer());  // Easy to swap!</span>
+</code></pre></div>
+
+<p><strong>Billtrust Example (Laravel Service Container):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// config/app.php (bind interface to implementation)</span>
+<span class="x">$app-&gt;bind(Mailer::class, SendGridMailer::class);</span>
+
+<span class="x">// Controller (Laravel injects automatically)</span>
+<span class="x">class InvoiceController {</span>
+<span class="x">    public function __construct(private Mailer $mailer) {}  // ← DI!</span>
+
+<span class="x">    public function send(Invoice $invoice) {</span>
+<span class="x">        $this-&gt;mailer-&gt;send($invoice-&gt;getEmail(), $invoice-&gt;getBody());</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">// No `new` keyword! Laravel resolves Mailer → SendGridMailer automatically</span>
+</code></pre></div>
+
+<hr />
+<p><strong>Your Experience:</strong><br />
+"At Billtrust, we apply SOLID daily:<br />
+- <strong>SRP</strong>: Repository pattern separates persistence from business logic<br />
+- <strong>OCP</strong>: Payment gateway interface lets us add new providers without modifying existing code<br />
+- <strong>LSP</strong>: All notification classes (Email, SMS, Push) are interchangeable via the Notifier interface<br />
+- <strong>ISP</strong>: Cacheable, Auditable, Queueable interfaces are small and focused<br />
+- <strong>DIP</strong>: Laravel DI container injects dependencies (Mailer, Cache, DB) so we depend on interfaces, not concrete classes"</p>
+<hr />
+<h3 id="q5-single-responsibility-principle-refactor-a-god-object"><strong>Q5: Single Responsibility Principle — refactor a God Object</strong></h3>
+<p><strong>Answer:</strong></p>
+<p><strong>❌ God Object (Before Refactoring):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">class InvoiceProcessor {</span>
+<span class="x">    public function processInvoice($customerId, $items) {</span>
+<span class="x">        // 1. Validate customer</span>
+<span class="x">        $customer = DB::table('fsicustomer')-&gt;where('CustomerId', $customerId)-&gt;first();</span>
+<span class="x">        if (!$customer) {</span>
+<span class="x">            throw new Exception("Customer not found");</span>
+<span class="x">        }</span>
+
+<span class="x">        // 2. Calculate total</span>
+<span class="x">        $total = 0;</span>
+<span class="x">        foreach ($items as $item) {</span>
+<span class="x">            $total += $item['price'] * $item['quantity'];</span>
+<span class="x">        }</span>
+
+<span class="x">        // 3. Apply discount</span>
+<span class="x">        if ($customer-&gt;DiscountPercent &gt; 0) {</span>
+<span class="x">            $total -= $total * ($customer-&gt;DiscountPercent / 100);</span>
+<span class="x">        }</span>
+
+<span class="x">        // 4. Save to database</span>
+<span class="x">        $invoiceId = DB::table('fsiinvoice')-&gt;insertGetId([</span>
+<span class="x">            'CustomerId' =&gt; $customerId,</span>
+<span class="x">            'Amount' =&gt; $total,</span>
+<span class="x">            'Status' =&gt; 'draft',</span>
+<span class="x">            'InvoiceDate' =&gt; now()</span>
+<span class="x">        ]);</span>
+
+<span class="x">        // 5. Generate PDF</span>
+<span class="x">        $pdf = PDF::loadView('invoice.template', compact('customer', 'items', 'total'));</span>
+<span class="x">        $pdfPath = "invoices/{$invoiceId}.pdf";</span>
+<span class="x">        Storage::put($pdfPath, $pdf-&gt;output());</span>
+
+<span class="x">        // 6. Send email</span>
+<span class="x">        $email = $customer-&gt;Email;</span>
+<span class="x">        SendGrid::send($email, "Your invoice is ready", "Invoice attached", $pdfPath);</span>
+
+<span class="x">        // 7. Log to audit trail</span>
+<span class="x">        DB::table('fsiaudit')-&gt;insert([</span>
+<span class="x">            'EntityId' =&gt; $invoiceId,</span>
+<span class="x">            'Action' =&gt; 'invoice_created',</span>
+<span class="x">            'UserId' =&gt; Auth::id(),</span>
+<span class="x">            'CreatedAt' =&gt; now()</span>
+<span class="x">        ]);</span>
+
+<span class="x">        // 8. Publish event</span>
+<span class="x">        RabbitMQ::publish('invoice.created', ['invoice_id' =&gt; $invoiceId]);</span>
+
+<span class="x">        return $invoiceId;</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">// 8 responsibilities in one method!</span>
+</code></pre></div>
+
+<p><strong>Problems:</strong><br />
+- Changes to discount logic require modifying this class<br />
+- Changes to email provider require modifying this class<br />
+- Changes to PDF template require modifying this class<br />
+- Hard to test (must mock DB, PDF, SendGrid, RabbitMQ all at once)<br />
+- Violates SRP: 8 reasons to change</p>
+<hr />
+<p><strong>✅ Refactored (Single Responsibility per Class):</strong></p>
+<p><strong>1. Customer Validator</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">class CustomerValidator {</span>
+<span class="x">    public function validate($customerId) {</span>
+<span class="x">        $customer = DB::table('fsicustomer')-&gt;where('CustomerId', $customerId)-&gt;first();</span>
+<span class="x">        if (!$customer) {</span>
+<span class="x">            throw new CustomerNotFoundException();</span>
+<span class="x">        }</span>
+<span class="x">        return $customer;</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>2. Invoice Calculator</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">class InvoiceCalculator {</span>
+<span class="x">    public function calculate($items, $discountPercent) {</span>
+<span class="x">        $subtotal = array_reduce($items, fn($sum, $item) =&gt; </span>
+<span class="x">            $sum + ($item['price'] * $item['quantity']), 0);</span>
+
+<span class="x">        $discount = $subtotal * ($discountPercent / 100);</span>
+<span class="x">        return $subtotal - $discount;</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>3. Invoice Repository</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">class InvoiceRepository {</span>
+<span class="x">    public function create($customerId, $amount) {</span>
+<span class="x">        return DB::table('fsiinvoice')-&gt;insertGetId([</span>
+<span class="x">            'CustomerId' =&gt; $customerId,</span>
+<span class="x">            'Amount' =&gt; $amount,</span>
+<span class="x">            'Status' =&gt; 'draft',</span>
+<span class="x">            'InvoiceDate' =&gt; now()</span>
+<span class="x">        ]);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>4. PDF Generator</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">class InvoicePDFGenerator {</span>
+<span class="x">    public function generate($invoice, $customer, $items) {</span>
+<span class="x">        $pdf = PDF::loadView('invoice.template', compact('invoice', 'customer', 'items'));</span>
+<span class="x">        $path = "invoices/{$invoice-&gt;id}.pdf";</span>
+<span class="x">        Storage::put($path, $pdf-&gt;output());</span>
+<span class="x">        return $path;</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>5. Email Notifier</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">class InvoiceEmailNotifier {</span>
+<span class="x">    public function send($customer, $pdfPath) {</span>
+<span class="x">        SendGrid::send(</span>
+<span class="x">            $customer-&gt;Email,</span>
+<span class="x">            "Your invoice is ready",</span>
+<span class="x">            "Invoice attached",</span>
+<span class="x">            $pdfPath</span>
+<span class="x">        );</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>6. Audit Logger</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">class AuditLogger {</span>
+<span class="x">    public function log($entityId, $action) {</span>
+<span class="x">        DB::table('fsiaudit')-&gt;insert([</span>
+<span class="x">            'EntityId' =&gt; $entityId,</span>
+<span class="x">            'Action' =&gt; $action,</span>
+<span class="x">            'UserId' =&gt; Auth::id(),</span>
+<span class="x">            'CreatedAt' =&gt; now()</span>
+<span class="x">        ]);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>7. Event Publisher</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">class EventPublisher {</span>
+<span class="x">    public function publish($event, $data) {</span>
+<span class="x">        RabbitMQ::publish($event, $data);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>8. Orchestrator (puts it all together)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">class InvoiceProcessor {</span>
+<span class="x">    public function __construct(</span>
+<span class="x">        private CustomerValidator $validator,</span>
+<span class="x">        private InvoiceCalculator $calculator,</span>
+<span class="x">        private InvoiceRepository $repository,</span>
+<span class="x">        private InvoicePDFGenerator $pdfGenerator,</span>
+<span class="x">        private InvoiceEmailNotifier $notifier,</span>
+<span class="x">        private AuditLogger $logger,</span>
+<span class="x">        private EventPublisher $publisher</span>
+<span class="x">    ) {}</span>
+
+<span class="x">    public function processInvoice($customerId, $items) {</span>
+<span class="x">        // Each step delegated to a focused class</span>
+<span class="x">        $customer = $this-&gt;validator-&gt;validate($customerId);</span>
+<span class="x">        $total = $this-&gt;calculator-&gt;calculate($items, $customer-&gt;DiscountPercent);</span>
+<span class="x">        $invoiceId = $this-&gt;repository-&gt;create($customerId, $total);</span>
+<span class="x">        $pdfPath = $this-&gt;pdfGenerator-&gt;generate($invoiceId, $customer, $items);</span>
+<span class="x">        $this-&gt;notifier-&gt;send($customer, $pdfPath);</span>
+<span class="x">        $this-&gt;logger-&gt;log($invoiceId, 'invoice_created');</span>
+<span class="x">        $this-&gt;publisher-&gt;publish('invoice.created', ['invoice_id' =&gt; $invoiceId]);</span>
+
+<span class="x">        return $invoiceId;</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>Benefits:</strong><br />
+- ✅ Each class has ONE reason to change<br />
+- ✅ Easy to test: Mock one dependency at a time<br />
+- ✅ Reusable: <code>InvoiceCalculator</code> can be used elsewhere<br />
+- ✅ Maintainable: Change PDF logic without touching email logic</p>
+<hr />
+<p><strong>Your Experience:</strong><br />
+"At Billtrust, we refactored our invoice generation from a 500-line God Object to 7 focused classes following SRP. This made testing easier (we can test discount calculation in isolation), improved reusability (InvoiceCalculator is now used by 3 different services), and reduced bugs (changing PDF templates no longer breaks email sending)."</p>
+<hr />
+<h3 id="q6-dependency-inversion-how-laravel-di-works"><strong>Q6: Dependency Inversion — how Laravel DI works</strong></h3>
+<p><strong>Answer:</strong></p>
+<p><strong>Problem Without DI:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">class InvoiceController {</span>
+<span class="x">    private $mailer;</span>
+
+<span class="x">    public function __construct() {</span>
+<span class="x">        $this-&gt;mailer = new SendGridMailer();  // ← Hardcoded!</span>
+<span class="x">    }</span>
+
+<span class="x">    public function send(Invoice $invoice) {</span>
+<span class="x">        $this-&gt;mailer-&gt;send($invoice-&gt;getEmail(), $invoice-&gt;getBody());</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">// Problems:</span>
+<span class="x">// 1. Can't test (must actually send via SendGrid in tests)</span>
+<span class="x">// 2. Can't swap mailers (tightly coupled to SendGrid)</span>
+<span class="x">// 3. Violates Open/Closed (must modify class to change mailer)</span>
+</code></pre></div>
+
+<hr />
+<p><strong>Solution: Dependency Injection</strong></p>
+<p><strong>Step 1: Define Interface</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">interface Mailer {</span>
+<span class="x">    public function send($to, $subject, $body);</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>Step 2: Implementations</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">class SendGridMailer implements Mailer {</span>
+<span class="x">    public function send($to, $subject, $body) {</span>
+<span class="x">        SendGrid::send($to, $subject, $body);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">class SESMailer implements Mailer {</span>
+<span class="x">    public function send($to, $subject, $body) {</span>
+<span class="x">        AWS_SES::send($to, $subject, $body);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">class FakeMailer implements Mailer {</span>
+<span class="x">    public function send($to, $subject, $body) {</span>
+<span class="x">        // For testing: Store in memory instead of sending</span>
+<span class="x">        $this-&gt;sent[] = compact('to', 'subject', 'body');</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>Step 3: Inject Dependency</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">class InvoiceController {</span>
+<span class="x">    public function __construct(private Mailer $mailer) {}  // ← Injected!</span>
+
+<span class="x">    public function send(Invoice $invoice) {</span>
+<span class="x">        $this-&gt;mailer-&gt;send($invoice-&gt;getEmail(), 'Invoice', $invoice-&gt;getBody());</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>Step 4: Laravel DI Container (Automatic Resolution)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// app/Providers/AppServiceProvider.php</span>
+<span class="x">public function register() {</span>
+<span class="x">    // Bind interface to concrete implementation</span>
+<span class="x">    $this-&gt;app-&gt;bind(Mailer::class, SendGridMailer::class);</span>
+
+<span class="x">    // Or conditional binding:</span>
+<span class="x">    if (config('mail.driver') === 'ses') {</span>
+<span class="x">        $this-&gt;app-&gt;bind(Mailer::class, SESMailer::class);</span>
+<span class="x">    } else {</span>
+<span class="x">        $this-&gt;app-&gt;bind(Mailer::class, SendGridMailer::class);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">// routes/web.php</span>
+<span class="x">Route::get('/send-invoice/{id}', [InvoiceController::class, 'send']);</span>
+
+<span class="x">// Laravel automatically resolves:</span>
+<span class="x">// 1. Sees InvoiceController needs Mailer</span>
+<span class="x">// 2. Looks up binding: Mailer → SendGridMailer</span>
+<span class="x">// 3. Creates new SendGridMailer()</span>
+<span class="x">// 4. Injects into InvoiceController</span>
+<span class="x">// 5. Calls send() method</span>
+<span class="x">// No `new` keyword anywhere!</span>
+</code></pre></div>
+
+<p><strong>Step 5: Testing (Fake Implementation)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// tests/Feature/InvoiceControllerTest.php</span>
+<span class="x">public function test_send_invoice() {</span>
+<span class="x">    // Swap real mailer for fake in tests</span>
+<span class="x">    $this-&gt;app-&gt;bind(Mailer::class, FakeMailer::class);</span>
+
+<span class="x">    $invoice = Invoice::factory()-&gt;create();</span>
+
+<span class="x">    $response = $this-&gt;get("/send-invoice/{$invoice-&gt;id}");</span>
+
+<span class="x">    $response-&gt;assertStatus(200);</span>
+
+<span class="x">    // Assert email was "sent" (stored in FakeMailer)</span>
+<span class="x">    $fake = app(Mailer::class);</span>
+<span class="x">    $this-&gt;assertCount(1, $fake-&gt;sent);</span>
+<span class="x">    $this-&gt;assertEquals($invoice-&gt;email, $fake-&gt;sent[0]['to']);</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<hr />
+<p><strong>Benefits:</strong><br />
+- ✅ Testable: Swap SendGridMailer for FakeMailer in tests<br />
+- ✅ Flexible: Switch from SendGrid to SES without changing InvoiceController<br />
+- ✅ Follows DIP: InvoiceController depends on Mailer interface, not concrete class</p>
+<hr />
+<p><strong>Billtrust Example (Real Code):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// app/Repositories/InvoiceRepository.php</span>
+<span class="x">class InvoiceRepository {</span>
+<span class="x">    public function __construct(private DB $db) {}  // ← Injected!</span>
+
+<span class="x">    public function findByCustomer($customerId) {</span>
+<span class="x">        return $this-&gt;db-&gt;table('fsiinvoice')</span>
+<span class="x">            -&gt;where('CustomerId', $customerId)</span>
+<span class="x">            -&gt;get();</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">// app/Services/InvoiceService.php</span>
+<span class="x">class InvoiceService {</span>
+<span class="x">    public function __construct(</span>
+<span class="x">        private InvoiceRepository $repo,  // ← Injected!</span>
+<span class="x">        private Mailer $mailer,           // ← Injected!</span>
+<span class="x">        private Cache $cache              // ← Injected!</span>
+<span class="x">    ) {}</span>
+
+<span class="x">    public function getInvoices($customerId) {</span>
+<span class="x">        return $this-&gt;cache-&gt;remember("invoices:{$customerId}", 3600, fn() =&gt;</span>
+<span class="x">            $this-&gt;repo-&gt;findByCustomer($customerId)</span>
+<span class="x">        );</span>
+<span class="x">    }</span>
+
+<span class="x">    public function sendInvoice(Invoice $invoice) {</span>
+<span class="x">        $this-&gt;mailer-&gt;send($invoice-&gt;getEmail(), 'Invoice', $invoice-&gt;getBody());</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">// app/Http/Controllers/InvoiceController.php</span>
+<span class="x">class InvoiceController {</span>
+<span class="x">    public function __construct(private InvoiceService $service) {}  // ← Injected!</span>
+
+<span class="x">    public function index() {</span>
+<span class="x">        $invoices = $this-&gt;service-&gt;getInvoices(Auth::user()-&gt;customer_id);</span>
+<span class="x">        return view('invoices.index', compact('invoices'));</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">// Laravel resolves the entire dependency tree automatically:</span>
+<span class="x">// InvoiceController → InvoiceService → InvoiceRepository → DB</span>
+<span class="x">//                                   → Mailer → SendGridMailer</span>
+<span class="x">//                                   → Cache → RedisCache</span>
+</code></pre></div>
+
+<hr />
+<p><strong>Your Experience:</strong><br />
+"At Billtrust, we leverage Laravel's DI container extensively. Our InvoiceService depends on abstract interfaces (Mailer, Cache, DB) rather than concrete classes, making it easy to swap implementations (SendGrid → SES, Redis → Memcached) without changing business logic. In tests, we bind fake implementations to run the full invoice flow without actually sending emails or hitting the database."</p>
+<hr />
+<h2 id="section-3-design-patterns">📚 Section 3: Design Patterns</h2>
+<h3 id="q7-singleton-pattern-when-to-use-and-when-not-to"><strong>Q7: Singleton pattern — when to use (and when NOT to)</strong></h3>
+<p><strong>Answer:</strong></p>
+<p><strong>What is Singleton?</strong><br />
+Ensures only ONE instance of a class exists globally.</p>
+<p><strong>Implementation:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">class DatabaseConnection {</span>
+<span class="x">    private static $instance = null;</span>
+<span class="x">    private $connection;</span>
+
+<span class="x">    // Private constructor prevents direct instantiation</span>
+<span class="x">    private function __construct() {</span>
+<span class="x">        $this-&gt;connection = new PDO(/* connection details */);</span>
+<span class="x">    }</span>
+
+<span class="x">    public static function getInstance() {</span>
+<span class="x">        if (self::$instance === null) {</span>
+<span class="x">            self::$instance = new self();</span>
+<span class="x">        }</span>
+<span class="x">        return self::$instance;</span>
+<span class="x">    }</span>
+
+<span class="x">    public function query($sql) {</span>
+<span class="x">        return $this-&gt;connection-&gt;query($sql);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">// Usage:</span>
+<span class="x">$db1 = DatabaseConnection::getInstance();</span>
+<span class="x">$db2 = DatabaseConnection::getInstance();</span>
+<span class="x">// $db1 === $db2 (same instance!)</span>
+</code></pre></div>
+
+<hr />
+<p><strong>When to Use Singleton:</strong></p>
+<p>✅ <strong>Expensive object</strong> that should only be created once<br />
+✅ <strong>Shared resource</strong> (database connection, file handle, logger)<br />
+✅ <strong>Global configuration</strong> (app settings, feature flags)</p>
+<p><strong>Billtrust Example:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">class Logger {</span>
+<span class="x">    private static $instance = null;</span>
+<span class="x">    private $logFile;</span>
+
+<span class="x">    private function __construct() {</span>
+<span class="x">        $this-&gt;logFile = fopen('/var/log/app.log', 'a');</span>
+<span class="x">    }</span>
+
+<span class="x">    public static function getInstance() {</span>
+<span class="x">        if (self::$instance === null) {</span>
+<span class="x">            self::$instance = new self();</span>
+<span class="x">        }</span>
+<span class="x">        return self::$instance;</span>
+<span class="x">    }</span>
+
+<span class="x">    public function log($message) {</span>
+<span class="x">        fwrite($this-&gt;logFile, "[" . date('Y-m-d H:i:s') . "] {$message}\n");</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">// Usage (all classes log to the same file handle):</span>
+<span class="x">Logger::getInstance()-&gt;log("Invoice created");</span>
+<span class="x">Logger::getInstance()-&gt;log("Payment processed");</span>
+</code></pre></div>
+
+<hr />
+<p><strong>When NOT to Use Singleton:</strong></p>
+<p>❌ <strong>Hard to test</strong> (global state persists across tests)<br />
+❌ <strong>Violates Dependency Inversion</strong> (can't inject mock)<br />
+❌ <strong>Tight coupling</strong> (every class depends on global state)<br />
+❌ <strong>Concurrency issues</strong> (not thread-safe by default)</p>
+<p><strong>Anti-Pattern Example:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">class UserSession {</span>
+<span class="x">    private static $instance = null;</span>
+<span class="x">    private $userId;</span>
+
+<span class="x">    public static function getInstance() {</span>
+<span class="x">        if (self::$instance === null) {</span>
+<span class="x">            self::$instance = new self();</span>
+<span class="x">        }</span>
+<span class="x">        return self::$instance;</span>
+<span class="x">    }</span>
+
+<span class="x">    public function setUserId($userId) {</span>
+<span class="x">        $this-&gt;userId = $userId;</span>
+<span class="x">    }</span>
+
+<span class="x">    public function getUserId() {</span>
+<span class="x">        return $this-&gt;userId;</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">// Usage (bad!):</span>
+<span class="x">class InvoiceController {</span>
+<span class="x">    public function create() {</span>
+<span class="x">        $userId = UserSession::getInstance()-&gt;getUserId();  // ← Global state!</span>
+<span class="x">        // ...</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">// Problems:</span>
+<span class="x">// 1. Can't test InvoiceController without setting up UserSession first</span>
+<span class="x">// 2. Can't mock UserSession (hardcoded getInstance())</span>
+<span class="x">// 3. Tests contaminate each other (global state persists)</span>
+</code></pre></div>
+
+<p><strong>Better Alternative (Dependency Injection):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">class InvoiceController {</span>
+<span class="x">    public function __construct(private User $user) {}  // ← Injected!</span>
+
+<span class="x">    public function create() {</span>
+<span class="x">        $userId = $this-&gt;user-&gt;id;  // No global state!</span>
+<span class="x">        // ...</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">// Laravel injects current user automatically</span>
+</code></pre></div>
+
+<hr />
+<p><strong>Modern Singleton (Laravel Service Container):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Instead of manual singleton:</span>
+<span class="x">class Logger {</span>
+<span class="x">    private static $instance = null;</span>
+<span class="x">    // ...</span>
+<span class="x">}</span>
+
+<span class="x">// Use Laravel's singleton binding:</span>
+<span class="x">$app-&gt;singleton(Logger::class, function () {</span>
+<span class="x">    return new Logger('/var/log/app.log');</span>
+<span class="x">});</span>
+
+<span class="x">// Usage (automatically resolved, testable):</span>
+<span class="x">class InvoiceService {</span>
+<span class="x">    public function __construct(private Logger $logger) {}  // ← Injected!</span>
+
+<span class="x">    public function createInvoice() {</span>
+<span class="x">        $this-&gt;logger-&gt;log("Invoice created");</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">// In tests:</span>
+<span class="x">$this-&gt;app-&gt;singleton(Logger::class, fn() =&gt; new FakeLogger());</span>
+</code></pre></div>
+
+<hr />
+<p><strong>Your Experience:</strong><br />
+"At Billtrust, we avoid manual Singleton implementations because they're hard to test. Instead, we use Laravel's singleton binding for shared resources like database connections and loggers. This gives us the performance benefits of Singleton (single instance) while maintaining testability (we can inject mocks in tests)."</p>
+<hr />
+<h3 id="q8-factory-pattern-how-you-use-it-in-billtrust"><strong>Q8: Factory pattern — how you use it in Billtrust</strong></h3>
+<p><strong>Answer:</strong></p>
+<p><strong>What is Factory Pattern?</strong><br />
+Creates objects without exposing the creation logic.</p>
+<p><strong>Problem:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// ❌ Client code decides which class to instantiate</span>
+<span class="x">class InvoiceService {</span>
+<span class="x">    public function sendNotification(Invoice $invoice, $channel) {</span>
+<span class="x">        if ($channel === 'email') {</span>
+<span class="x">            $notifier = new EmailNotifier();</span>
+<span class="x">        } elseif ($channel === 'sms') {</span>
+<span class="x">            $notifier = new SMSNotifier();</span>
+<span class="x">        } elseif ($channel === 'push') {</span>
+<span class="x">            $notifier = new PushNotifier();</span>
+<span class="x">        }</span>
+
+<span class="x">        $notifier-&gt;send($invoice);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">// Every time we add a channel, we modify this method!</span>
+</code></pre></div>
+
+<hr />
+<p><strong>Solution: Factory Pattern</strong></p>
+<p><strong>Step 1: Common Interface</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">interface Notifier {</span>
+<span class="x">    public function send(Invoice $invoice);</span>
+<span class="x">}</span>
+
+<span class="x">class EmailNotifier implements Notifier {</span>
+<span class="x">    public function send(Invoice $invoice) {</span>
+<span class="x">        SendGrid::send($invoice-&gt;getEmail(), $invoice-&gt;getBody());</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">class SMSNotifier implements Notifier {</span>
+<span class="x">    public function send(Invoice $invoice) {</span>
+<span class="x">        Twilio::send($invoice-&gt;getPhone(), $invoice-&gt;getSummary());</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">class PushNotifier implements Notifier {</span>
+<span class="x">    public function send(Invoice $invoice) {</span>
+<span class="x">        Firebase::send($invoice-&gt;getDeviceToken(), $invoice-&gt;getSummary());</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>Step 2: Factory</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">class NotifierFactory {</span>
+<span class="x">    public static function create($channel): Notifier {</span>
+<span class="x">        return match($channel) {</span>
+<span class="x">            'email' =&gt; new EmailNotifier(),</span>
+<span class="x">            'sms' =&gt; new SMSNotifier(),</span>
+<span class="x">            'push' =&gt; new PushNotifier(),</span>
+<span class="x">            default =&gt; throw new InvalidArgumentException("Unknown channel: {$channel}")</span>
+<span class="x">        };</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>Step 3: Client Code (Clean!)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">class InvoiceService {</span>
+<span class="x">    public function sendNotification(Invoice $invoice, $channel) {</span>
+<span class="x">        $notifier = NotifierFactory::create($channel);  // Factory decides!</span>
+<span class="x">        $notifier-&gt;send($invoice);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">// Adding a new channel? Add to factory, not every client!</span>
+</code></pre></div>
+
+<hr />
+<p><strong>Billtrust Real Example: Payment Gateway Factory</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">interface PaymentGateway {</span>
+<span class="x">    public function authorize($amount, $cardToken);</span>
+<span class="x">    public function capture($transactionId);</span>
+<span class="x">}</span>
+
+<span class="x">class StripeGateway implements PaymentGateway {</span>
+<span class="x">    public function authorize($amount, $cardToken) {</span>
+<span class="x">        return Stripe::charge(['amount' =&gt; $amount, 'source' =&gt; $cardToken]);</span>
+<span class="x">    }</span>
+
+<span class="x">    public function capture($transactionId) {</span>
+<span class="x">        return Stripe::capture($transactionId);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">class AuthorizeNetGateway implements PaymentGateway {</span>
+<span class="x">    public function authorize($amount, $cardToken) {</span>
+<span class="x">        return AuthorizeNet::authorize($amount, $cardToken);</span>
+<span class="x">    }</span>
+
+<span class="x">    public function capture($transactionId) {</span>
+<span class="x">        return AuthorizeNet::capture($transactionId);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">class PaymentGatewayFactory {</span>
+<span class="x">    public static function create($customerPreference): PaymentGateway {</span>
+<span class="x">        // Business logic: Which gateway to use?</span>
+<span class="x">        if ($customerPreference === 'stripe') {</span>
+<span class="x">            return new StripeGateway();</span>
+<span class="x">        } elseif ($customerPreference === 'authorize_net') {</span>
+<span class="x">            return new AuthorizeNetGateway();</span>
+<span class="x">        }</span>
+
+<span class="x">        // Default: Stripe</span>
+<span class="x">        return new StripeGateway();</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">// Usage:</span>
+<span class="x">class PaymentService {</span>
+<span class="x">    public function processPayment($amount, $cardToken, $customerPreference) {</span>
+<span class="x">        $gateway = PaymentGatewayFactory::create($customerPreference);</span>
+<span class="x">        $transaction = $gateway-&gt;authorize($amount, $cardToken);</span>
+
+<span class="x">        if ($transaction-&gt;status === 'authorized') {</span>
+<span class="x">            $gateway-&gt;capture($transaction-&gt;id);</span>
+<span class="x">        }</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<hr />
+<p><strong>Advanced: Abstract Factory (Family of Objects)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Create a full "suite" of payment objects</span>
+<span class="x">interface PaymentGatewayFactory {</span>
+<span class="x">    public function createProcessor(): PaymentProcessor;</span>
+<span class="x">    public function createRefunder(): PaymentRefunder;</span>
+<span class="x">    public function createReporter(): PaymentReporter;</span>
+<span class="x">}</span>
+
+<span class="x">class StripeFactory implements PaymentGatewayFactory {</span>
+<span class="x">    public function createProcessor() { return new StripeProcessor(); }</span>
+<span class="x">    public function createRefunder() { return new StripeRefunder(); }</span>
+<span class="x">    public function createReporter() { return new StripeReporter(); }</span>
+<span class="x">}</span>
+
+<span class="x">class AuthorizeNetFactory implements PaymentGatewayFactory {</span>
+<span class="x">    public function createProcessor() { return new AuthorizeNetProcessor(); }</span>
+<span class="x">    public function createRefunder() { return new AuthorizeNetRefunder(); }</span>
+<span class="x">    public function createReporter() { return new AuthorizeNetReporter(); }</span>
+<span class="x">}</span>
+
+<span class="x">// Usage:</span>
+<span class="x">$factory = new StripeFactory();  // Or AuthorizeNetFactory</span>
+<span class="x">$processor = $factory-&gt;createProcessor();</span>
+<span class="x">$refunder = $factory-&gt;createRefunder();</span>
+<span class="x">$reporter = $factory-&gt;createReporter();</span>
+
+<span class="x">// All 3 objects are "Stripe family" (consistent)</span>
+</code></pre></div>
+
+<hr />
+<p><strong>Your Experience:</strong><br />
+"At Billtrust, we use Factory pattern for payment gateway selection — customers can choose Stripe or Authorize.Net, and PaymentGatewayFactory creates the appropriate gateway based on their preference. This keeps client code clean (no if/else chains) and makes it easy to add new gateways (just add one line to the factory, no changes to PaymentService)."</p>
+<hr />
+<h3 id="q9-q13-more-design-patterns-condensed"><strong>Q9-Q13: More Design Patterns (Condensed)</strong></h3>
+<p>Due to length, I'll summarize the remaining patterns. Let me know if you want any expanded!</p>
+<hr />
+<p><strong>Q9: Observer Pattern (Event-Driven)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Laravel Events</span>
+<span class="x">Event::listen('invoice.created', function($invoice) {</span>
+<span class="x">    // Send email notification</span>
+<span class="x">    Notification::send($invoice-&gt;customer, new InvoiceCreated($invoice));</span>
+<span class="x">});</span>
+
+<span class="x">Event::listen('invoice.created', function($invoice) {</span>
+<span class="x">    // Update analytics</span>
+<span class="x">    Analytics::track('invoice_created', $invoice-&gt;toArray());</span>
+<span class="x">});</span>
+
+<span class="x">Event::listen('invoice.created', function($invoice) {</span>
+<span class="x">    // Check for fraud</span>
+<span class="x">    FraudDetector::analyze($invoice);</span>
+<span class="x">});</span>
+
+<span class="x">// Fire event (all listeners notified):</span>
+<span class="x">Event::fire('invoice.created', $invoice);</span>
+</code></pre></div>
+
+<p><strong>Use at Billtrust:</strong> RabbitMQ event publishing, Laravel event listeners</p>
+<hr />
+<p><strong>Q10: Repository Pattern (Data Access Layer)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">interface InvoiceRepository {</span>
+<span class="x">    public function find($id);</span>
+<span class="x">    public function findByCustomer($customerId);</span>
+<span class="x">    public function create($data);</span>
+<span class="x">}</span>
+
+<span class="x">class EloquentInvoiceRepository implements InvoiceRepository {</span>
+<span class="x">    public function find($id) {</span>
+<span class="x">        return Invoice::find($id);</span>
+<span class="x">    }</span>
+
+<span class="x">    public function findByCustomer($customerId) {</span>
+<span class="x">        return Invoice::where('customer_id', $customerId)-&gt;get();</span>
+<span class="x">    }</span>
+
+<span class="x">    public function create($data) {</span>
+<span class="x">        return Invoice::create($data);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">// Service depends on interface, not Eloquent:</span>
+<span class="x">class InvoiceService {</span>
+<span class="x">    public function __construct(private InvoiceRepository $repo) {}</span>
+
+<span class="x">    public function getInvoices($customerId) {</span>
+<span class="x">        return $this-&gt;repo-&gt;findByCustomer($customerId);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>Use at Billtrust:</strong> All database access goes through repositories</p>
+<hr />
+<p><strong>Q11: Strategy Pattern (Interchangeable Algorithms)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">interface DiscountStrategy {</span>
+<span class="x">    public function calculate($amount);</span>
+<span class="x">}</span>
+
+<span class="x">class PercentageDiscount implements DiscountStrategy {</span>
+<span class="x">    public function __construct(private $percent) {}</span>
+
+<span class="x">    public function calculate($amount) {</span>
+<span class="x">        return $amount * ($this-&gt;percent / 100);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">class FixedDiscount implements DiscountStrategy {</span>
+<span class="x">    public function __construct(private $fixed) {}</span>
+
+<span class="x">    public function calculate($amount) {</span>
+<span class="x">        return min($this-&gt;fixed, $amount);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">class Invoice {</span>
+<span class="x">    private $discountStrategy;</span>
+
+<span class="x">    public function setDiscountStrategy(DiscountStrategy $strategy) {</span>
+<span class="x">        $this-&gt;discountStrategy = $strategy;</span>
+<span class="x">    }</span>
+
+<span class="x">    public function calculateTotal($subtotal) {</span>
+<span class="x">        $discount = $this-&gt;discountStrategy-&gt;calculate($subtotal);</span>
+<span class="x">        return $subtotal - $discount;</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">// Usage:</span>
+<span class="x">$invoice = new Invoice();</span>
+<span class="x">$invoice-&gt;setDiscountStrategy(new PercentageDiscount(10));  // 10% off</span>
+<span class="x">$total = $invoice-&gt;calculateTotal(100);  // $90</span>
+
+<span class="x">$invoice-&gt;setDiscountStrategy(new FixedDiscount(5));  // $5 off</span>
+<span class="x">$total = $invoice-&gt;calculateTotal(100);  // $95</span>
+</code></pre></div>
+
+<p><strong>Use at Billtrust:</strong> Discount calculation, payment method selection</p>
+<hr />
+<p><strong>Q12: Decorator Pattern (Add Behavior Dynamically)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Laravel Middleware is Decorator pattern</span>
+<span class="x">class InvoiceMiddleware {</span>
+<span class="x">    public function handle($request, $next) {</span>
+<span class="x">        // Before</span>
+<span class="x">        Log::info("Processing invoice request");</span>
+
+<span class="x">        $response = $next($request);  // Call next middleware</span>
+
+<span class="x">        // After</span>
+<span class="x">        Log::info("Invoice request completed");</span>
+
+<span class="x">        return $response;</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>Use at Billtrust:</strong> Laravel middleware (auth, logging, caching)</p>
+<hr />
+<p><strong>Q13: Facade Pattern (Simplified Interface)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Complex subsystem:</span>
+<span class="x">class SendGridClient { /* ... */ }</span>
+<span class="x">class EmailValidator { /* ... */ }</span>
+<span class="x">class EmailTemplateEngine { /* ... */ }</span>
+
+<span class="x">// Facade (simple interface):</span>
+<span class="x">class EmailFacade {</span>
+<span class="x">    public static function send($to, $subject, $body) {</span>
+<span class="x">        $validator = new EmailValidator();</span>
+<span class="x">        $validator-&gt;validate($to);</span>
+
+<span class="x">        $template = new EmailTemplateEngine();</span>
+<span class="x">        $html = $template-&gt;render($body);</span>
+
+<span class="x">        $client = new SendGridClient();</span>
+<span class="x">        $client-&gt;send($to, $subject, $html);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">// Usage (simple!):</span>
+<span class="x">EmailFacade::send('user@example.com', 'Invoice', $invoice-&gt;getBody());</span>
+</code></pre></div>
+
+<p><strong>Use at Billtrust:</strong> Laravel Facades (Mail, Cache, DB, Queue)</p>
+<hr />
+<h2 id="practice-plan">🎯 Practice Plan</h2>
+<p><strong>Week 1:</strong><br />
+- [ ] Record yourself explaining SOLID (10 min)<br />
+- [ ] Draw 3 design patterns on paper (Singleton, Factory, Observer)</p>
+<p><strong>Week 2:</strong><br />
+- [ ] Explain OOP with Billtrust examples ("At Billtrust, we use...")<br />
+- [ ] Practice refactoring a God Object</p>
+<p><strong>Interview Day:</strong><br />
+- Have 3 patterns ready to explain with real examples<br />
+- Practice: "SOLID" acronym → expand each principle (2 min total)</p>
+<p>You already USE these patterns daily — now you can explain them! 🚀</p>
+        </div>
+    </div>
+
+    <script>
+        // Progress Tracker JavaScript
+        const STORAGE_KEY = 'course_progress_oop_concepts_and_design_patterns';
+
+        // Extract all H2 and H3 headings from content
+        function extractSections() {
+            const content = document.querySelector('.content');
+            const headings = content.querySelectorAll('h2, h3');
+            const sections = [];
+
+            headings.forEach((heading, index) => {
+                const level = heading.tagName === 'H2' ? 2 : 3;
+                const text = heading.textContent.trim();
+                const id = `section-${index}`;
+
+                // Add ID to heading for linking
+                heading.id = id;
+
+                sections.push({
+                    id: id,
+                    text: text,
+                    level: level
+                });
+            });
+
+            return sections;
+        }
+
+        // Load saved progress from localStorage
+        function loadProgress() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            return saved ? JSON.parse(saved) : {};
+        }
+
+        // Save progress to localStorage
+        function saveProgress(progress) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+        }
+
+        // Calculate progress percentage
+        function calculateProgress() {
+            const checkboxes = document.querySelectorAll('.progress-checkbox');
+            const total = checkboxes.length;
+            if (total === 0) return 0;
+
+            const completed = Array.from(checkboxes).filter(cb => cb.checked).length;
+            return Math.round((completed / total) * 100);
+        }
+
+        // Update progress display
+        function updateProgressDisplay() {
+            const percentage = calculateProgress();
+            document.getElementById('progress-pct').textContent = percentage + '%';
+            document.getElementById('progress-bar').style.width = percentage + '%';
+
+            // Update completed class on items
+            document.querySelectorAll('.progress-item').forEach(item => {
+                const checkbox = item.querySelector('.progress-checkbox');
+                if (checkbox.checked) {
+                    item.classList.add('completed');
+                } else {
+                    item.classList.remove('completed');
+                }
+            });
+        }
+
+        // Toggle checkbox
+        function toggleCheckbox(sectionId) {
+            const checkbox = document.getElementById('cb-' + sectionId);
+            const progress = loadProgress();
+
+            progress[sectionId] = checkbox.checked;
+            saveProgress(progress);
+            updateProgressDisplay();
+        }
+
+        // Reset all progress
+        function resetProgress() {
+            if (confirm('Reset all progress for this page?')) {
+                localStorage.removeItem(STORAGE_KEY);
+                document.querySelectorAll('.progress-checkbox').forEach(cb => {
+                    cb.checked = false;
+                });
+                updateProgressDisplay();
+            }
+        }
+
+        // Toggle progress list visibility
+        function toggleProgressList() {
+            const list = document.getElementById('progress-items');
+            const btn = document.querySelector('.toggle-progress');
+
+            if (list.classList.contains('collapsed')) {
+                list.classList.remove('collapsed');
+                btn.textContent = '▼ Hide';
+            } else {
+                list.classList.add('collapsed');
+                btn.textContent = '▶ Show';
+            }
+        }
+
+        // Initialize progress tracker
+        function initProgressTracker() {
+            const sections = extractSections();
+            const progress = loadProgress();
+            const container = document.getElementById('progress-items');
+
+            if (sections.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No sections found</p>';
+                return;
+            }
+
+            sections.forEach(section => {
+                const item = document.createElement('div');
+                item.className = 'progress-item';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'progress-checkbox';
+                checkbox.id = 'cb-' + section.id;
+                checkbox.checked = progress[section.id] || false;
+                checkbox.onchange = () => toggleCheckbox(section.id);
+
+                const label = document.createElement('label');
+                label.className = 'progress-label';
+                label.htmlFor = 'cb-' + section.id;
+                label.textContent = section.text;
+                label.style.paddingLeft = section.level === 3 ? '20px' : '0';
+                label.onclick = () => {
+                    document.getElementById(section.id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+                };
+
+                item.appendChild(checkbox);
+                item.appendChild(label);
+                container.appendChild(item);
+            });
+
+            updateProgressDisplay();
+        }
+
+        // Run on page load
+        document.addEventListener('DOMContentLoaded', initProgressTracker);
+    </script>
+</body>
+</html>
