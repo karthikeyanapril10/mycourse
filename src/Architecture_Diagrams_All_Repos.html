@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Architecture_Diagrams_All_Repos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 60px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .metadata {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 16px 24px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #666;
+            border-left: 4px solid #667eea;
+        }
+
+        /* PROGRESS TRACKER STYLES */
+        .progress-tracker {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .progress-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-stats {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .progress-percentage {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #764ba2;
+        }
+
+        .progress-bar-container {
+            height: 12px;
+            background: #e9ecef;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+            border-radius: 20px;
+        }
+
+        .reset-btn {
+            padding: 8px 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+
+        .reset-btn:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+        }
+
+        .progress-items {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .progress-items::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .progress-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .progress-item:hover {
+            background: #f8f9fa;
+            transform: translateX(5px);
+        }
+
+        .progress-item.completed {
+            opacity: 0.7;
+        }
+
+        .progress-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .progress-label {
+            cursor: pointer;
+            font-size: 0.95em;
+            line-height: 1.5;
+            color: #495057;
+            flex-grow: 1;
+        }
+
+        .progress-item.completed .progress-label {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .toggle-progress {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .toggle-progress:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .progress-items.collapsed {
+            display: none;
+        }
+
+        /* CONTENT STYLES */
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 4px solid #667eea;
+            font-weight: 700;
+        }
+
+        h2 {
+            color: #764ba2;
+            font-size: 2em;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        h3 {
+            color: #495057;
+            font-size: 1.5em;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        h4 {
+            color: #666;
+            font-size: 1.25em;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        ul, ol {
+            margin: 20px 0;
+            padding-left: 40px;
+        }
+
+        li {
+            margin-bottom: 12px;
+            line-height: 1.7;
+        }
+
+        code {
+            background: #f4f5f7;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #c7254e;
+            border: 1px solid #e1e4e8;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 24px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 25px 0;
+            border: 1px solid #444;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            border: none;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        blockquote {
+            border-left: 5px solid #667eea;
+            padding: 15px 25px;
+            margin: 25px 0;
+            background: #f8f9fa;
+            border-radius: 0 8px 8px 0;
+            color: #495057;
+            font-style: italic;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 30px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 14px 18px;
+            text-align: left;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tr:hover {
+            background: #e9ecef;
+            transition: background 0.2s;
+        }
+
+        a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px solid transparent;
+            transition: border-bottom 0.2s;
+        }
+
+        a:hover {
+            border-bottom: 1px solid #667eea;
+        }
+
+        hr {
+            border: none;
+            border-top: 2px solid #e9ecef;
+            margin: 40px 0;
+        }
+
+        strong {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        em {
+            color: #495057;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 25px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.6em;
+            }
+
+            .progress-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .progress-stats {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../navigation.html" class="back-link">&larr; Back to Navigation</a>
+
+        <div class="metadata">
+            <strong>Source:</strong> dev/Architecture_Diagrams_All_Repos.md &nbsp;|&nbsp; <strong>Updated:</strong> 2026-11-18 19:44:51
+        </div>
+
+        <!-- PROGRESS TRACKER -->
+        <div class="progress-tracker">
+            <div class="progress-header">
+                <div class="progress-title">
+                    <span>📚</span>
+                    <span>Your Progress</span>
+                </div>
+                <div class="progress-stats">
+                    <span class="progress-percentage" id="progress-pct">0%</span>
+                    <button class="reset-btn" onclick="resetProgress()">Reset</button>
+                    <button class="toggle-progress" onclick="toggleProgressList()">▼ Hide</button>
+                </div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progress-bar" style="width: 0%"></div>
+            </div>
+            <div class="progress-items" id="progress-items">
+                <!-- Checkboxes will be generated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="content">
+<h1 id="architecture-diagrams-all-active-repos">🏗️ Architecture Diagrams - All Active Repos</h1>
+<p><strong>Use Mermaid Live Editor to view:</strong> https://mermaid.live</p>
+<hr />
+<h2 id="1-eic-einvoice-connect-customer-payment-portal">1️⃣ <strong>EIC (eInvoice Connect) - Customer Payment Portal</strong></h2>
+<h3 id="high-level-architecture"><strong>High-Level Architecture</strong></h3>
+<div class="codehilite"><pre><span></span><code><span class="n">graph</span><span class="w"> </span><span class="n">TB</span>
+<span class="w">    </span><span class="n">Customer</span><span class="p">[</span><span class="n">Customer</span><span class="w"> </span><span class="n">Browser</span><span class="p">]</span><span class="w"> </span><span class="o">--&gt;|</span><span class="n">HTTPS</span><span class="o">|</span><span class="w"> </span><span class="n">LoadBalancer</span><span class="p">[</span><span class="n">AWS</span><span class="w"> </span><span class="n">Load</span><span class="w"> </span><span class="n">Balancer</span><span class="p">]</span>
+<span class="w">    </span><span class="n">LoadBalancer</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">EIC1</span><span class="p">[</span><span class="n">EIC</span><span class="w"> </span><span class="n">App</span><span class="w"> </span><span class="n">Server</span><span class="w"> </span><span class="mi">1</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">PHP</span><span class="w"> </span><span class="mf">7.4</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Zend</span><span class="w"> </span><span class="n">MVC</span><span class="p">]</span>
+<span class="w">    </span><span class="n">LoadBalancer</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">EIC2</span><span class="p">[</span><span class="n">EIC</span><span class="w"> </span><span class="n">App</span><span class="w"> </span><span class="n">Server</span><span class="w"> </span><span class="mi">2</span><span class="p">]</span>
+
+<span class="w">    </span><span class="n">EIC1</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">Redis</span><span class="p">[(</span><span class="n">Redis</span><span class="w"> </span><span class="n">Cache</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">Session</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Settings</span><span class="p">)]</span>
+<span class="w">    </span><span class="n">EIC2</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">Redis</span>
+
+<span class="w">    </span><span class="n">EIC1</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="o">|</span><span class="n">Stack</span><span class="w"> </span><span class="n">Routing</span><span class="o">|</span><span class="w"> </span><span class="n">BillingMaster</span><span class="p">[(</span><span class="n">billingmaster</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">Stack</span><span class="w"> </span><span class="n">Metadata</span><span class="p">)]</span>
+
+<span class="w">    </span><span class="n">BillingMaster</span><span class="w"> </span><span class="o">--&gt;|</span><span class="n">CustomerId</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">Stack1</span><span class="o">|</span><span class="w"> </span><span class="n">Stack1</span><span class="p">[(</span><span class="n">billingclient1</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">High</span><span class="o">-</span><span class="n">Volume</span><span class="w"> </span><span class="n">Customers</span><span class="p">)]</span>
+<span class="w">    </span><span class="n">BillingMaster</span><span class="w"> </span><span class="o">--&gt;|</span><span class="n">CustomerId</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">Stack2</span><span class="o">|</span><span class="w"> </span><span class="n">Stack2</span><span class="p">[(</span><span class="n">billingclient2</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">Standard</span><span class="w"> </span><span class="n">Customers</span><span class="p">)]</span>
+
+<span class="w">    </span><span class="n">EIC1</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">WCL</span><span class="p">[</span><span class="n">WCL</span><span class="w"> </span><span class="n">API</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">Payment</span><span class="w"> </span><span class="n">Gateway</span><span class="w"> </span><span class="n">Integration</span><span class="p">]</span>
+<span class="w">    </span><span class="n">WCL</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">PaymentGateway</span><span class="p">[</span><span class="n">Stripe</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">PayPal</span><span class="p">]</span>
+
+<span class="w">    </span><span class="n">EIC1</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">CSR</span><span class="p">[</span><span class="n">CSR</span><span class="w"> </span><span class="n">API</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">Settings</span><span class="w"> </span><span class="n">Lookup</span><span class="p">]</span>
+<span class="w">    </span><span class="n">CSR</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">Redis</span>
+
+<span class="w">    </span><span class="n">EIC1</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">SendGrid</span><span class="p">[</span><span class="n">SendGrid</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">Email</span><span class="w"> </span><span class="n">Notifications</span><span class="p">]</span>
+
+<span class="w">    </span><span class="n">style</span><span class="w"> </span><span class="n">EIC1</span><span class="w"> </span><span class="n">fill</span><span class="o">:</span><span class="err">#</span><span class="mi">3</span><span class="n">b82f6</span>
+<span class="w">    </span><span class="n">style</span><span class="w"> </span><span class="n">Stack1</span><span class="w"> </span><span class="n">fill</span><span class="o">:</span><span class="err">#</span><span class="n">ef4444</span>
+<span class="w">    </span><span class="n">style</span><span class="w"> </span><span class="n">Stack2</span><span class="w"> </span><span class="n">fill</span><span class="o">:</span><span class="err">#</span><span class="mi">10</span><span class="n">b981</span>
+</code></pre></div>
+
+<p><strong>One-Liner:</strong></p>
+<blockquote>
+<p>"EIC = Customer-facing portal where users view invoices, make payments, and enable AutoPay — uses database sharding (Stack1 for high-volume, Stack2 for standard) and integrates with WCL for payment processing."</p>
+</blockquote>
+<hr />
+<h3 id="database-sharding-logic"><strong>Database Sharding Logic</strong></h3>
+<div class="codehilite"><pre><span></span><code><span class="n">flowchart</span><span class="w"> </span><span class="n">TD</span>
+<span class="w">    </span><span class="n">Request</span><span class="p">[</span><span class="n">API</span><span class="w"> </span><span class="n">Request</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">GET</span><span class="w"> </span><span class="o">/</span><span class="n">invoices</span><span class="o">?</span><span class="n">customerId</span><span class="o">=</span><span class="mi">12345</span><span class="p">]</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">Routing</span><span class="p">{</span><span class="kr">Lookup</span><span class="w"> </span><span class="n">Customer</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="kr">in</span><span class="w"> </span><span class="n">billingmaster</span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">Routing</span><span class="w"> </span><span class="o">--&gt;|</span><span class="n">billingstack</span><span class="o">=</span><span class="mi">1</span><span class="o">|</span><span class="w"> </span><span class="n">Stack1</span><span class="p">[</span><span class="n">Query</span><span class="w"> </span><span class="n">billingclient1</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">High</span><span class="o">-</span><span class="n">Volume</span><span class="w"> </span><span class="n">Customers</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="mi">500</span><span class="n">K</span><span class="o">+</span><span class="w"> </span><span class="n">invoices</span><span class="o">/</span><span class="n">year</span><span class="p">]</span>
+<span class="w">    </span><span class="n">Routing</span><span class="w"> </span><span class="o">--&gt;|</span><span class="n">billingstack</span><span class="o">=</span><span class="mi">2</span><span class="o">|</span><span class="w"> </span><span class="n">Stack2</span><span class="p">[</span><span class="n">Query</span><span class="w"> </span><span class="n">billingclient2</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">Standard</span><span class="w"> </span><span class="n">Customers</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;&lt;</span><span class="mi">500</span><span class="n">K</span><span class="w"> </span><span class="n">invoices</span><span class="o">/</span><span class="n">year</span><span class="p">]</span>
+
+<span class="w">    </span><span class="n">Stack1</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">Response</span><span class="p">[</span><span class="kr">Return</span><span class="w"> </span><span class="n">Invoices</span><span class="w"> </span><span class="n">JSON</span><span class="p">]</span>
+<span class="w">    </span><span class="n">Stack2</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">Response</span>
+
+<span class="w">    </span><span class="n">style</span><span class="w"> </span><span class="n">Stack1</span><span class="w"> </span><span class="n">fill</span><span class="o">:</span><span class="err">#</span><span class="n">ef4444</span>
+<span class="w">    </span><span class="n">style</span><span class="w"> </span><span class="n">Stack2</span><span class="w"> </span><span class="n">fill</span><span class="o">:</span><span class="err">#</span><span class="mi">10</span><span class="n">b981</span>
+</code></pre></div>
+
+<p><strong>Key Files:</strong><br />
+- <code>ig70/models/DbFactory.php</code> — Stack routing logic<br />
+- <code>ig70/controllers/InvoiceController.php</code> — API endpoints<br />
+- <code>ig70/models/Invoice.php</code> — Data model</p>
+<hr />
+<h2 id="2-cc-client-connect-supplier-admin-portal">2️⃣ <strong>CC (Client Connect) - Supplier Admin Portal</strong></h2>
+<h3 id="high-level-architecture_1"><strong>High-Level Architecture</strong></h3>
+<div class="codehilite"><pre><span></span><code><span class="n">graph</span><span class="w"> </span><span class="n">TB</span>
+<span class="w">    </span><span class="n">Supplier</span><span class="p">[</span><span class="n">Supplier</span><span class="w"> </span><span class="n">Admin</span><span class="p">]</span><span class="w"> </span><span class="o">--&gt;|</span><span class="n">HTTPS</span><span class="o">|</span><span class="w"> </span><span class="n">CC</span><span class="p">[</span><span class="n">CC</span><span class="w"> </span><span class="n">App</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">Laravel</span><span class="w"> </span><span class="mi">9</span><span class="p">]</span>
+
+<span class="w">    </span><span class="n">CC</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">AMAPI</span><span class="p">[</span><span class="n">AMAPI</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">Bulk</span><span class="w"> </span><span class="n">User</span><span class="w"> </span><span class="n">Enrollment</span><span class="p">]</span>
+<span class="w">    </span><span class="n">CC</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">Redis</span><span class="p">[(</span><span class="n">Redis</span><span class="w"> </span><span class="n">Cache</span><span class="p">)]</span>
+<span class="w">    </span><span class="n">CC</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">MySQL</span><span class="p">[(</span><span class="n">billingclient1</span><span class="o">/</span><span class="mi">2</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">Customer</span><span class="w"> </span><span class="n">Data</span><span class="p">)]</span>
+
+<span class="w">    </span><span class="n">AMAPI</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">MySQL</span>
+<span class="w">    </span><span class="n">AMAPI</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">AuditLog</span><span class="p">[(</span><span class="n">fsiAccountAudits</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">Audit</span><span class="w"> </span><span class="n">Trail</span><span class="p">)]</span>
+
+<span class="w">    </span><span class="n">CC</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">SendGrid</span><span class="p">[</span><span class="n">SendGrid</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">Email</span><span class="w"> </span><span class="n">Notifications</span><span class="p">]</span>
+
+<span class="w">    </span><span class="n">CC</span><span class="w"> </span><span class="o">--&gt;|</span><span class="n">Enable</span><span class="w"> </span><span class="n">MPay</span><span class="o">|</span><span class="w"> </span><span class="n">MPay</span><span class="p">[</span><span class="n">MPay</span><span class="w"> </span><span class="n">Service</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">AutoPay</span><span class="w"> </span><span class="n">Management</span><span class="p">]</span>
+
+<span class="w">    </span><span class="n">style</span><span class="w"> </span><span class="n">CC</span><span class="w"> </span><span class="n">fill</span><span class="o">:</span><span class="err">#</span><span class="mi">3</span><span class="n">b82f6</span>
+<span class="w">    </span><span class="n">style</span><span class="w"> </span><span class="n">AMAPI</span><span class="w"> </span><span class="n">fill</span><span class="o">:</span><span class="err">#</span><span class="n">f59e0b</span>
+</code></pre></div>
+
+<p><strong>One-Liner:</strong></p>
+<blockquote>
+<p>"CC = Supplier admin portal where suppliers manage customer accounts, enable MPay (AutoPay), and bulk-onboard users via AMAPI — integrates with EIC for customer-facing workflows."</p>
+</blockquote>
+<p><strong>Key Files:</strong><br />
+- <code>application/cc/Controllers/AccountController.php</code> — Account management<br />
+- <code>application/cc/Controllers/AMAPIController.php</code> — Bulk enrollment<br />
+- <code>application/cc/Models/Account.php</code> — Data model</p>
+<hr />
+<h2 id="3-csr-customer-settings-repository">3️⃣ <strong>CSR (Customer Settings Repository)</strong></h2>
+<h3 id="3-layer-caching-architecture"><strong>3-Layer Caching Architecture</strong></h3>
+<div class="codehilite"><pre><span></span><code><span class="n">flowchart</span><span class="w"> </span><span class="n">LR</span>
+<span class="w">    </span><span class="kr">Service</span><span class="p">[</span><span class="n">Microservice</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="mi">200</span><span class="o">+</span><span class="w"> </span><span class="n">Services</span><span class="p">]</span><span class="w"> </span><span class="o">--&gt;|</span><span class="n">GET</span><span class="w"> </span><span class="o">/</span><span class="n">settings</span><span class="o">/</span><span class="mi">12345</span><span class="o">/</span><span class="n">theme</span><span class="o">|</span><span class="w"> </span><span class="n">CSR</span><span class="p">[</span><span class="n">CSR</span><span class="w"> </span><span class="n">API</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">Laravel</span><span class="w"> </span><span class="mi">10</span><span class="p">]</span>
+
+<span class="w">    </span><span class="n">CSR</span><span class="w"> </span><span class="o">--&gt;|</span><span class="n">Layer</span><span class="w"> </span><span class="mi">1</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;~</span><span class="mi">1</span><span class="n">ms</span><span class="o">|</span><span class="w"> </span><span class="n">APCu</span><span class="p">[(</span><span class="n">APCu</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="kr">In</span><span class="o">-</span><span class="n">Memory</span><span class="w"> </span><span class="n">Cache</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">TTL</span><span class="o">:</span><span class="w"> </span><span class="mi">5</span><span class="w"> </span><span class="nf">min</span><span class="p">)]</span>
+
+<span class="w">    </span><span class="n">APCu</span><span class="w"> </span><span class="o">--&gt;|</span><span class="n">Cache</span><span class="w"> </span><span class="n">Miss</span><span class="o">|</span><span class="w"> </span><span class="n">Layer2</span><span class="p">{</span><span class="n">Check</span><span class="w"> </span><span class="n">Layer</span><span class="w"> </span><span class="mi">2</span><span class="p">}</span>
+<span class="w">    </span><span class="n">Layer2</span><span class="w"> </span><span class="o">--&gt;|~</span><span class="mi">5</span><span class="n">ms</span><span class="o">|</span><span class="w"> </span><span class="n">Redis</span><span class="p">[(</span><span class="n">Redis</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">Centralized</span><span class="w"> </span><span class="n">Cache</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">TTL</span><span class="o">:</span><span class="w"> </span><span class="mi">15</span><span class="w"> </span><span class="nf">min</span><span class="p">)]</span>
+
+<span class="w">    </span><span class="n">Redis</span><span class="w"> </span><span class="o">--&gt;|</span><span class="n">Cache</span><span class="w"> </span><span class="n">Miss</span><span class="o">|</span><span class="w"> </span><span class="n">Layer3</span><span class="p">{</span><span class="n">Check</span><span class="w"> </span><span class="n">Layer</span><span class="w"> </span><span class="mi">3</span><span class="p">}</span>
+<span class="w">    </span><span class="n">Layer3</span><span class="w"> </span><span class="o">--&gt;|~</span><span class="mi">50</span><span class="n">ms</span><span class="o">|</span><span class="w"> </span><span class="n">MySQL</span><span class="p">[(</span><span class="n">MySQL</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">Source</span><span class="w"> </span><span class="kr">of</span><span class="w"> </span><span class="n">Truth</span><span class="p">)]</span>
+
+<span class="w">    </span><span class="n">MySQL</span><span class="w"> </span><span class="o">--&gt;|</span><span class="n">Backfill</span><span class="o">|</span><span class="w"> </span><span class="n">Redis</span>
+<span class="w">    </span><span class="n">Redis</span><span class="w"> </span><span class="o">--&gt;|</span><span class="n">Backfill</span><span class="o">|</span><span class="w"> </span><span class="n">APCu</span>
+<span class="w">    </span><span class="n">APCu</span><span class="w"> </span><span class="o">--&gt;|</span><span class="kr">Return</span><span class="o">|</span><span class="w"> </span><span class="n">Response</span><span class="p">[</span><span class="n">Response</span><span class="o">:</span><span class="w"> </span><span class="s">'dark'</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">p99</span><span class="o">:</span><span class="w"> </span><span class="o">&lt;</span><span class="mi">50</span><span class="n">ms</span><span class="p">]</span>
+
+<span class="w">    </span><span class="n">style</span><span class="w"> </span><span class="n">APCu</span><span class="w"> </span><span class="n">fill</span><span class="o">:</span><span class="err">#</span><span class="mi">10</span><span class="n">b981</span>
+<span class="w">    </span><span class="n">style</span><span class="w"> </span><span class="n">Redis</span><span class="w"> </span><span class="n">fill</span><span class="o">:</span><span class="err">#</span><span class="n">f59e0b</span>
+<span class="w">    </span><span class="n">style</span><span class="w"> </span><span class="n">MySQL</span><span class="w"> </span><span class="n">fill</span><span class="o">:</span><span class="err">#</span><span class="n">ef4444</span>
+</code></pre></div>
+
+<p><strong>Cache Invalidation (Version-Based)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">sequenceDiagram</span>
+<span class="w">    </span><span class="n">participant</span><span class="w"> </span><span class="n">Admin</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="n">Admin</span><span class="w"> </span><span class="n">UI</span>
+<span class="w">    </span><span class="n">participant</span><span class="w"> </span><span class="n">CSR</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="n">CSR</span><span class="w"> </span><span class="n">API</span>
+<span class="w">    </span><span class="n">participant</span><span class="w"> </span><span class="n">Redis</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="n">Redis</span>
+<span class="w">    </span><span class="n">participant</span><span class="w"> </span><span class="n">APCu</span><span class="w"> </span><span class="kr">as</span><span class="w"> </span><span class="n">APCu</span><span class="w"> </span><span class="p">(</span><span class="kr">All</span><span class="w"> </span><span class="n">Servers</span><span class="p">)</span>
+
+<span class="w">    </span><span class="n">Admin</span><span class="o">-&gt;&gt;</span><span class="n">CSR</span><span class="o">:</span><span class="w"> </span><span class="n">PUT</span><span class="w"> </span><span class="o">/</span><span class="n">settings</span><span class="o">/</span><span class="mi">12345</span><span class="o">/</span><span class="n">theme</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">'light'</span>
+<span class="w">    </span><span class="n">CSR</span><span class="o">-&gt;&gt;</span><span class="n">MySQL</span><span class="o">:</span><span class="w"> </span><span class="n">UPDATE</span><span class="w"> </span><span class="n">customer_settings</span><span class="w"> </span><span class="nf">SET</span><span class="w"> </span><span class="n">value</span><span class="o">=</span><span class="s">'light'</span>
+<span class="w">    </span><span class="n">CSR</span><span class="o">-&gt;&gt;</span><span class="n">Redis</span><span class="o">:</span><span class="w"> </span><span class="n">INCR</span><span class="w"> </span><span class="n">settings_version</span><span class="o">:</span><span class="mi">12345</span><span class="w"> </span><span class="p">(</span><span class="n">v1</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">v2</span><span class="p">)</span>
+<span class="w">    </span><span class="n">CSR</span><span class="o">-&gt;&gt;</span><span class="n">Redis</span><span class="o">:</span><span class="w"> </span><span class="n">DEL</span><span class="w"> </span><span class="n">setting</span><span class="o">:</span><span class="mi">12345</span><span class="o">:</span><span class="n">theme</span>
+
+<span class="w">    </span><span class="n">Note</span><span class="w"> </span><span class="n">over</span><span class="w"> </span><span class="n">APCu</span><span class="o">:</span><span class="w"> </span><span class="n">Next</span><span class="w"> </span><span class="n">request</span><span class="w"> </span><span class="n">from</span><span class="w"> </span><span class="n">Server</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">    </span><span class="n">APCu</span><span class="o">--&gt;&gt;</span><span class="n">CSR</span><span class="o">:</span><span class="w"> </span><span class="n">GET</span><span class="w"> </span><span class="o">/</span><span class="n">settings</span><span class="o">/</span><span class="mi">12345</span><span class="o">/</span><span class="n">theme</span>
+<span class="w">    </span><span class="n">APCu</span><span class="o">-&gt;&gt;</span><span class="n">Redis</span><span class="o">:</span><span class="w"> </span><span class="n">Check</span><span class="w"> </span><span class="n">version</span><span class="w"> </span><span class="p">(</span><span class="n">cached</span><span class="o">:</span><span class="w"> </span><span class="n">v1</span><span class="p">,</span><span class="w"> </span><span class="n">Redis</span><span class="o">:</span><span class="w"> </span><span class="n">v2</span><span class="p">)</span>
+<span class="w">    </span><span class="n">Redis</span><span class="o">--&gt;&gt;</span><span class="n">APCu</span><span class="o">:</span><span class="w"> </span><span class="n">Version</span><span class="w"> </span><span class="n">mismatch</span><span class="o">!</span><span class="w"> </span><span class="n">Invalidate</span><span class="w"> </span><span class="n">cache</span>
+<span class="w">    </span><span class="n">APCu</span><span class="o">-&gt;&gt;</span><span class="n">Redis</span><span class="o">:</span><span class="w"> </span><span class="nf">Fetch</span><span class="w"> </span><span class="n">fresh</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="p">(</span><span class="s">'light'</span><span class="p">)</span>
+<span class="w">    </span><span class="n">APCu</span><span class="o">-&gt;&gt;</span><span class="n">APCu</span><span class="o">:</span><span class="w"> </span><span class="kr">Store</span><span class="w"> </span><span class="n">locally</span><span class="w"> </span><span class="n">with</span><span class="w"> </span><span class="n">version</span><span class="w"> </span><span class="n">v2</span>
+</code></pre></div>
+
+<p><strong>One-Liner:</strong></p>
+<blockquote>
+<p>"CSR = Settings microservice serving 200+ downstream services with &lt;50ms p99 latency via 3-layer caching (APCu → Redis → MySQL) and version-based invalidation across all servers."</p>
+</blockquote>
+<p><strong>Key Files:</strong><br />
+- <code>application/csr/Controllers/SettingsController.php</code> — API endpoints<br />
+- <code>application/csr/Services/CacheService.php</code> — 3-layer caching logic<br />
+- <code>application/csr/Models/CustomerSetting.php</code> — Data model</p>
+<hr />
+<h2 id="4-wcl-web-communication-layer-integration-microservice">4️⃣ <strong>WCL (Web Communication Layer) - Integration Microservice</strong></h2>
+<h3 id="high-level-architecture_2"><strong>High-Level Architecture</strong></h3>
+<div class="codehilite"><pre><span></span><code><span class="n">graph</span><span class="w"> </span><span class="n">TB</span>
+<span class="w">    </span><span class="n">EIC</span><span class="p">[</span><span class="n">EIC</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">CC</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">Caller</span><span class="p">]</span><span class="w"> </span><span class="o">--&gt;|</span><span class="n">POST</span><span class="w"> </span><span class="o">/</span><span class="n">integrate</span><span class="o">/</span><span class="n">payment</span><span class="o">|</span><span class="w"> </span><span class="n">WCL</span><span class="p">[</span><span class="n">WCL</span><span class="w"> </span><span class="n">API</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">Phalcon</span><span class="w"> </span><span class="n">MVC</span><span class="p">]</span>
+
+<span class="w">    </span><span class="n">WCL</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">ConnPool</span><span class="p">[</span><span class="n">Connection</span><span class="w"> </span><span class="n">Pool</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="mi">10-100</span><span class="w"> </span><span class="n">Connections</span><span class="p">]</span>
+
+<span class="w">    </span><span class="n">WCL</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">KeyStore</span><span class="p">[</span><span class="n">AWS</span><span class="w"> </span><span class="n">Secrets</span><span class="w"> </span><span class="n">Manager</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">Encrypted</span><span class="w"> </span><span class="n">API</span><span class="w"> </span><span class="n">Keys</span><span class="p">]</span>
+
+<span class="w">    </span><span class="n">WCL</span><span class="w"> </span><span class="o">--&gt;|</span><span class="n">Decrypt</span><span class="w"> </span><span class="n">Key</span><span class="o">|</span><span class="w"> </span><span class="n">EncryptLogic</span><span class="p">[</span><span class="n">AES</span><span class="mi">-256</span><span class="o">-</span><span class="n">GCM</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">Decryption</span><span class="p">]</span>
+<span class="w">    </span><span class="n">EncryptLogic</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">APICall</span><span class="p">[</span><span class="n">External</span><span class="w"> </span><span class="n">API</span><span class="w"> </span><span class="n">Call</span><span class="p">]</span>
+
+<span class="w">    </span><span class="n">APICall</span><span class="w"> </span><span class="o">--&gt;|</span><span class="n">Stripe</span><span class="o">|</span><span class="w"> </span><span class="n">Stripe</span><span class="p">[</span><span class="n">Payment</span><span class="w"> </span><span class="n">Gateway</span><span class="p">]</span>
+<span class="w">    </span><span class="n">APICall</span><span class="w"> </span><span class="o">--&gt;|</span><span class="n">SendGrid</span><span class="o">|</span><span class="w"> </span><span class="n">SendGrid</span><span class="p">[</span><span class="n">Email</span><span class="w"> </span><span class="n">Service</span><span class="p">]</span>
+<span class="w">    </span><span class="n">APICall</span><span class="w"> </span><span class="o">--&gt;|</span><span class="n">Custom</span><span class="o">|</span><span class="w"> </span><span class="n">OtherAPIs</span><span class="p">[</span><span class="n">Other</span><span class="w"> </span><span class="n">Partners</span><span class="p">]</span>
+
+<span class="w">    </span><span class="n">WCL</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">RedisCache</span><span class="p">[(</span><span class="n">Redis</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">TTL</span><span class="o">-</span><span class="n">Based</span><span class="w"> </span><span class="n">Cache</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="mi">30</span><span class="o">-</span><span class="n">min</span><span class="p">)]</span>
+
+<span class="w">    </span><span class="n">style</span><span class="w"> </span><span class="n">WCL</span><span class="w"> </span><span class="n">fill</span><span class="o">:</span><span class="err">#</span><span class="mi">3</span><span class="n">b82f6</span>
+<span class="w">    </span><span class="n">style</span><span class="w"> </span><span class="n">KeyStore</span><span class="w"> </span><span class="n">fill</span><span class="o">:</span><span class="err">#</span><span class="n">f59e0b</span>
+</code></pre></div>
+
+<p><strong>Connection Pooling Logic</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">flowchart</span><span class="w"> </span><span class="n">TD</span>
+<span class="w">    </span><span class="n">Request</span><span class="p">[</span><span class="n">Incoming</span><span class="w"> </span><span class="n">Request</span><span class="p">]</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">CheckPool</span><span class="p">{</span><span class="n">Connection</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">Available</span><span class="o">?</span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">CheckPool</span><span class="w"> </span><span class="o">--&gt;|</span><span class="n">Yes</span><span class="o">|</span><span class="w"> </span><span class="n">ReuseConn</span><span class="p">[</span><span class="n">Reuse</span><span class="w"> </span><span class="n">Existing</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">Connection</span><span class="p">]</span>
+<span class="w">    </span><span class="n">CheckPool</span><span class="w"> </span><span class="o">--&gt;|</span><span class="n">No</span><span class="p">,</span><span class="w"> </span><span class="n">Pool</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">Max</span><span class="o">|</span><span class="w"> </span><span class="n">CreateNew</span><span class="p">[</span><span class="n">Create</span><span class="w"> </span><span class="n">New</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">Connection</span><span class="p">]</span>
+<span class="w">    </span><span class="n">CheckPool</span><span class="w"> </span><span class="o">--&gt;|</span><span class="n">No</span><span class="p">,</span><span class="w"> </span><span class="n">Pool</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Max</span><span class="o">|</span><span class="w"> </span><span class="n">Wait</span><span class="p">[</span><span class="n">Wait</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">Available</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">Connection</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">Timeout</span><span class="o">:</span><span class="w"> </span><span class="mi">5</span><span class="n">s</span><span class="p">]</span>
+
+<span class="w">    </span><span class="n">ReuseConn</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">Execute</span><span class="p">[</span><span class="n">Execute</span><span class="w"> </span><span class="n">API</span><span class="w"> </span><span class="n">Call</span><span class="p">]</span>
+<span class="w">    </span><span class="n">CreateNew</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">Execute</span>
+<span class="w">    </span><span class="n">Wait</span><span class="w"> </span><span class="o">--&gt;|</span><span class="n">Timeout</span><span class="o">|</span><span class="w"> </span><span class="n">Error</span><span class="p">[</span><span class="n">Return</span><span class="w"> </span><span class="mi">503</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">Service</span><span class="w"> </span><span class="n">Unavailable</span><span class="p">]</span>
+<span class="w">    </span><span class="n">Wait</span><span class="w"> </span><span class="o">--&gt;|</span><span class="n">Connection</span><span class="w"> </span><span class="n">Free</span><span class="o">|</span><span class="w"> </span><span class="n">ReuseConn</span>
+
+<span class="w">    </span><span class="n">Execute</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">ReleaseConn</span><span class="p">[</span><span class="n">Release</span><span class="w"> </span><span class="n">Connection</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">Back</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">Pool</span><span class="p">]</span>
+
+<span class="w">    </span><span class="n">style</span><span class="w"> </span><span class="n">Error</span><span class="w"> </span><span class="n">fill</span><span class="o">:</span><span class="err">#</span><span class="n">ef4444</span>
+</code></pre></div>
+
+<p><strong>One-Liner:</strong></p>
+<blockquote>
+<p>"WCL = Integration microservice routing calls to 20+ external APIs (payment gateways, email, etc.) with encrypted key storage (AWS Secrets Manager), connection pooling (prevent exhaustion), and TTL-based caching (reduce redundant calls)."</p>
+</blockquote>
+<p><strong>Key Files:</strong><br />
+- <code>app/controllers/IntegrationController.php</code> — API proxy<br />
+- <code>app/services/ConnectionPool.php</code> — Connection management<br />
+- <code>app/services/EncryptionService.php</code> — Key decryption</p>
+<hr />
+<h2 id="5-mpay-managed-pay-supplier-level-autopay">5️⃣ <strong>MPay (Managed Pay) - Supplier-Level AutoPay</strong></h2>
+<h3 id="idempotency-pattern"><strong>Idempotency Pattern</strong></h3>
+<div class="codehilite"><pre><span></span><code>sequenceDiagram
+    participant Client as EIC/CC Client
+    participant MPay as MPay API
+    participant Redis as Redis (Lock)
+    participant DB as MySQL
+    participant Gateway as Payment Gateway
+
+    Client-&gt;&gt;MPay: POST /charge&lt;br/&gt;Idempotency-Key: uuid-1234
+    MPay-&gt;&gt;DB: SELECT * FROM payment_requests WHERE key='uuid-1234'
+
+    alt Key NOT found (First Request)
+        DB--&gt;&gt;MPay: No record
+        MPay-&gt;&gt;Redis: SETNX lock:uuid-1234 (5-min TTL)
+        Redis--&gt;&gt;MPay: Lock acquired
+        MPay-&gt;&gt;DB: INSERT payment_requests (key, status='PROCESSING')
+        MPay-&gt;&gt;Gateway: Charge $500
+        Gateway--&gt;&gt;MPay: Success (txn_12345)
+        MPay-&gt;&gt;DB: UPDATE payment_requests SET status='COMPLETED', response=txn_12345
+        MPay-&gt;&gt;Redis: DEL lock:uuid-1234
+        MPay--&gt;&gt;Client: 200 OK {transaction_id: txn_12345}
+    else Key found, status='PROCESSING' (Duplicate/Retry)
+        DB--&gt;&gt;MPay: Record exists, status='PROCESSING'
+        MPay--&gt;&gt;Client: 409 Conflict {error: 'Already processing'}
+    else Key found, status='COMPLETED' (Retry after success)
+        DB--&gt;&gt;MPay: Record exists, status='COMPLETED', response=txn_12345
+        MPay--&gt;&gt;Client: 200 OK {transaction_id: txn_12345} (Cached)
+    end
+</code></pre></div>
+
+<p><strong>One-Liner:</strong></p>
+<blockquote>
+<p>"MPay = Supplier-managed AutoPay service with idempotency pattern (Redis lock + DB state machine) preventing duplicate charges — reduced disputes by 80% via SETNX locking and status tracking (PROCESSING → COMPLETED → FAILED)."</p>
+</blockquote>
+<p><strong>Key Files:</strong><br />
+- <code>app/controllers/PaymentController.php</code> — Idempotency logic<br />
+- <code>app/services/PaymentGatewayService.php</code> — Stripe/PayPal integration</p>
+<hr />
+<h2 id="6-amapi-account-management-api-bulk-enrollment">6️⃣ <strong>AMAPI (Account Management API) - Bulk Enrollment</strong></h2>
+<h3 id="bulk-insert-flow"><strong>Bulk Insert Flow</strong></h3>
+<div class="codehilite"><pre><span></span><code><span class="n">flowchart</span><span class="w"> </span><span class="n">TD</span>
+<span class="w">    </span><span class="n">Request</span><span class="p">[</span><span class="n">POST</span><span class="w"> </span><span class="o">/</span><span class="n">bulk</span><span class="o">-</span><span class="n">enroll</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="mi">1000</span><span class="w"> </span><span class="n">accounts</span><span class="p">]</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">Validation</span><span class="p">[</span><span class="n">Pydantic</span><span class="w"> </span><span class="n">Validation</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">Email</span><span class="p">,</span><span class="w"> </span><span class="n">Name</span><span class="p">,</span><span class="w"> </span><span class="n">etc</span><span class="p">.]</span>
+
+<span class="w">    </span><span class="n">Validation</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="nf">Dedup</span><span class="p">{</span><span class="n">Bloom</span><span class="w"> </span><span class="n">Filter</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">Duplicate</span><span class="w"> </span><span class="n">Check</span><span class="p">}</span>
+
+<span class="w">    </span><span class="nf">Dedup</span><span class="w"> </span><span class="o">--&gt;|</span><span class="n">Duplicate</span><span class="o">|</span><span class="w"> </span><span class="kr">Skip</span><span class="p">[</span><span class="kr">Skip</span><span class="w"> </span><span class="n">Account</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="nf">Log</span><span class="w"> </span><span class="n">Warning</span><span class="p">]</span>
+<span class="w">    </span><span class="nf">Dedup</span><span class="w"> </span><span class="o">--&gt;|</span><span class="n">New</span><span class="o">|</span><span class="w"> </span><span class="n">Batch</span><span class="p">[</span><span class="n">Add</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">Batch</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">Size</span><span class="o">:</span><span class="w"> </span><span class="mi">100</span><span class="p">]</span>
+
+<span class="w">    </span><span class="n">Batch</span><span class="w"> </span><span class="o">--&gt;|</span><span class="n">Batch</span><span class="w"> </span><span class="kr">Full</span><span class="o">|</span><span class="w"> </span><span class="n">BulkInsert</span><span class="p">[</span><span class="n">MySQL</span><span class="w"> </span><span class="n">Bulk</span><span class="w"> </span><span class="n">INSERT</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="mi">100</span><span class="w"> </span><span class="n">rows</span><span class="w"> </span><span class="n">at</span><span class="w"> </span><span class="n">once</span><span class="p">]</span>
+<span class="w">    </span><span class="n">BulkInsert</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">Audit</span><span class="p">[</span><span class="n">Write</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">fsiAccountAudits</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">Multi</span><span class="o">-</span><span class="nf">row</span><span class="w"> </span><span class="n">audit</span><span class="p">]</span>
+
+<span class="w">    </span><span class="n">Audit</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">Response</span><span class="p">[</span><span class="kr">Return</span><span class="o">:&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="mi">1000</span><span class="w"> </span><span class="n">created</span><span class="p">,</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="mi">0</span><span class="w"> </span><span class="n">skipped</span><span class="p">,</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;&lt;</span><span class="mi">100</span><span class="n">ms</span><span class="w"> </span><span class="n">total</span><span class="p">]</span>
+
+<span class="w">    </span><span class="n">style</span><span class="w"> </span><span class="n">BulkInsert</span><span class="w"> </span><span class="n">fill</span><span class="o">:</span><span class="err">#</span><span class="mi">10</span><span class="n">b981</span>
+</code></pre></div>
+
+<p><strong>One-Liner:</strong></p>
+<blockquote>
+<p>"AMAPI = Bulk account enrollment API processing 50K+ accounts/month with &lt;100ms per account via batching (100 rows/INSERT), Bloom filter duplicate detection, and multi-layer audit logging (fsiAccountAudits)."</p>
+</blockquote>
+<p><strong>Key Files:</strong><br />
+- <code>app/controllers/BulkEnrollController.php</code> — Batch processing<br />
+- <code>app/services/BloomFilterService.php</code> — Duplicate detection</p>
+<hr />
+<h2 id="7-biscuit-inv-bt-invoicing-ai-ai-assisted-triage">7️⃣ <strong>Biscuit (inv-bt-invoicing-ai) - AI-Assisted Triage</strong></h2>
+<h3 id="claude-ai-skills-architecture"><strong>Claude AI Skills Architecture</strong></h3>
+<div class="codehilite"><pre><span></span><code><span class="nf">graph</span><span class="w"> </span><span class="n">TB</span>
+<span class="w">    </span><span class="n">User</span><span class="p">[</span><span class="n">Karthik</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">NJQRT</span><span class="w"> </span><span class="n">Engineer</span><span class="p">]</span><span class="w"> </span><span class="o">--&gt;|</span><span class="n">Invoke</span><span class="w"> </span><span class="n">Skill</span><span class="o">|</span><span class="w"> </span><span class="n">Claude</span><span class="p">[</span><span class="n">Claude</span><span class="w"> </span><span class="n">Code</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">AI</span><span class="w"> </span><span class="n">Assistant</span><span class="p">]</span>
+
+<span class="w">    </span><span class="n">Claude</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">Skill1</span><span class="p">[</span><span class="o">/</span><span class="n">karthik</span><span class="o">-</span><span class="n">triage</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="kr">Full</span><span class="w"> </span><span class="n">NJQRT</span><span class="w"> </span><span class="n">Workflow</span><span class="p">]</span>
+<span class="w">    </span><span class="n">Claude</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">Skill2</span><span class="p">[</span><span class="o">/</span><span class="n">db</span><span class="o">-</span><span class="n">query</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">Safe</span><span class="w"> </span><span class="n">MySQL</span><span class="w"> </span><span class="n">Gateway</span><span class="p">]</span>
+<span class="w">    </span><span class="n">Claude</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">Skill3</span><span class="p">[</span><span class="o">/</span><span class="n">developer</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">App</span><span class="w"> </span><span class="n">Context</span><span class="w"> </span><span class="n">Loader</span><span class="p">]</span>
+<span class="w">    </span><span class="n">Claude</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">Skill4</span><span class="p">[</span><span class="o">/</span><span class="n">researcher</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">Codebase</span><span class="w"> </span><span class="n">Analysis</span><span class="p">]</span>
+
+<span class="w">    </span><span class="n">Skill1</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">Jira</span><span class="p">[</span><span class="n">Atlassian</span><span class="w"> </span><span class="n">MCP</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="nf">Fetch</span><span class="w"> </span><span class="n">Ticket</span><span class="p">]</span>
+<span class="w">    </span><span class="n">Skill1</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">CodeReview</span><span class="p">[</span><span class="n">GitHub</span><span class="w"> </span><span class="n">MCP</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">PR</span><span class="w"> </span><span class="n">Analysis</span><span class="p">]</span>
+<span class="w">    </span><span class="n">Skill1</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">DB</span><span class="p">[</span><span class="n">MySQL</span><span class="w"> </span><span class="n">MCP</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">Query</span><span class="w"> </span><span class="n">Production</span><span class="p">]</span>
+
+<span class="w">    </span><span class="n">Skill2</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">Gateway</span><span class="p">[</span><span class="n">db</span><span class="o">-</span><span class="n">query</span><span class="p">.</span><span class="n">ps1</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">Docker</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">MySQL</span><span class="w"> </span><span class="n">Client</span><span class="p">]</span>
+<span class="w">    </span><span class="n">Gateway</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">ProdDB</span><span class="p">[(</span><span class="n">Production</span><span class="w"> </span><span class="n">DB</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">Read</span><span class="o">-</span><span class="kr">Only</span><span class="p">)]</span>
+
+<span class="w">    </span><span class="n">Skill3</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">RepoScan</span><span class="p">[</span><span class="kr">Scan</span><span class="w"> </span><span class="n">Repo</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">Find</span><span class="w"> </span><span class="n">Active</span><span class="w"> </span><span class="n">Modules</span><span class="p">]</span>
+<span class="w">    </span><span class="n">Skill4</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">DependencyMap</span><span class="p">[</span><span class="nf">Map</span><span class="w"> </span><span class="n">Dependencies</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">Call</span><span class="w"> </span><span class="nf">Graph</span><span class="p">]</span>
+
+<span class="w">    </span><span class="n">Skill1</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">RCADraft</span><span class="p">[</span><span class="n">Generate</span><span class="w"> </span><span class="n">RCA</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="mi">5</span><span class="o">-</span><span class="n">Field</span><span class="w"> </span><span class="n">Jira</span><span class="w"> </span><span class="n">Template</span><span class="p">]</span>
+
+<span class="w">    </span><span class="n">RCADraft</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">JiraPost</span><span class="p">[</span><span class="n">Post</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">Jira</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">via</span><span class="w"> </span><span class="n">Atlassian</span><span class="w"> </span><span class="n">MCP</span><span class="p">]</span>
+
+<span class="w">    </span><span class="n">style</span><span class="w"> </span><span class="n">Claude</span><span class="w"> </span><span class="n">fill</span><span class="o">:</span><span class="err">#</span><span class="mi">3</span><span class="n">b82f6</span>
+<span class="w">    </span><span class="n">style</span><span class="w"> </span><span class="n">Skill1</span><span class="w"> </span><span class="n">fill</span><span class="o">:</span><span class="err">#</span><span class="n">f59e0b</span>
+</code></pre></div>
+
+<p><strong>Timeline Reconstruction (Security Investigation)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">sequenceDiagram</span>
+<span class="w">    </span><span class="n">participant</span><span class="w"> </span><span class="k">User</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">Karthik</span>
+<span class="w">    </span><span class="n">participant</span><span class="w"> </span><span class="n">Biscuit</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">Biscuit</span><span class="w"> </span><span class="n">AI</span>
+<span class="w">    </span><span class="n">participant</span><span class="w"> </span><span class="n">Datadog</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">Datadog</span><span class="w"> </span><span class="n">MCP</span>
+<span class="w">    </span><span class="n">participant</span><span class="w"> </span><span class="n">Splunk</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">Splunk</span><span class="w"> </span><span class="n">API</span>
+<span class="w">    </span><span class="n">participant</span><span class="w"> </span><span class="n">Pendo</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">Pendo</span><span class="w"> </span><span class="n">MCP</span>
+<span class="w">    </span><span class="n">participant</span><span class="w"> </span><span class="n">SendGrid</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">SendGrid</span><span class="w"> </span><span class="n">API</span>
+<span class="w">    </span><span class="n">participant</span><span class="w"> </span><span class="n">MySQL</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">MySQL</span><span class="w"> </span><span class="n">Audits</span>
+
+<span class="w">    </span><span class="k">User</span><span class="o">-&gt;&gt;</span><span class="nl">Biscuit</span><span class="p">:</span><span class="w"> </span><span class="n">Investigate</span><span class="w"> </span><span class="n">malicious</span><span class="w"> </span><span class="n">actor</span><span class="w"> </span><span class="p">(</span><span class="nl">UserId</span><span class="p">:</span><span class="w"> </span><span class="mi">98765</span><span class="p">)</span>
+
+<span class="w">    </span><span class="n">par</span><span class="w"> </span><span class="n">Parallel</span><span class="w"> </span><span class="nf">Log</span><span class="w"> </span><span class="n">Collection</span>
+<span class="w">        </span><span class="n">Biscuit</span><span class="o">-&gt;&gt;</span><span class="nl">Datadog</span><span class="p">:</span><span class="w"> </span><span class="k">Search</span><span class="w"> </span><span class="n">traces</span><span class="w"> </span><span class="p">(</span><span class="nv">@user</span><span class="p">.</span><span class="nl">id</span><span class="p">:</span><span class="mi">98765</span><span class="p">,</span><span class="w"> </span><span class="nc">timestamp</span><span class="err">:</span><span class="p">...)</span>
+<span class="w">        </span><span class="n">Biscuit</span><span class="o">-&gt;&gt;</span><span class="nl">Splunk</span><span class="p">:</span><span class="w"> </span><span class="k">Search</span><span class="w"> </span><span class="n">audit</span><span class="w"> </span><span class="n">logs</span><span class="w"> </span><span class="p">(</span><span class="nf">user_id</span><span class="o">=</span><span class="mi">98765</span><span class="p">)</span>
+<span class="w">        </span><span class="n">Biscuit</span><span class="o">-&gt;&gt;</span><span class="nl">Pendo</span><span class="p">:</span><span class="w"> </span><span class="k">Fetch</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="n">activity</span><span class="w"> </span><span class="n">events</span>
+<span class="w">        </span><span class="n">Biscuit</span><span class="o">-&gt;&gt;</span><span class="nl">SendGrid</span><span class="p">:</span><span class="w"> </span><span class="k">Fetch</span><span class="w"> </span><span class="n">email</span><span class="w"> </span><span class="n">logs</span><span class="w"> </span><span class="p">(</span><span class="nl">to_email</span><span class="p">:...)</span>
+<span class="w">        </span><span class="n">Biscuit</span><span class="o">-&gt;&gt;</span><span class="nl">MySQL</span><span class="p">:</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">fsiAccountAudits</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">UserId</span><span class="o">=</span><span class="mi">98765</span>
+<span class="w">    </span><span class="k">end</span>
+
+<span class="w">    </span><span class="n">Datadog</span><span class="c1">--&gt;&gt;Biscuit: 6 API calls (login, invoices, bank change, payment, password reset, logout)</span>
+<span class="w">    </span><span class="n">Splunk</span><span class="c1">--&gt;&gt;Biscuit: 2 audit rows (bank account change, password reset token)</span>
+<span class="w">    </span><span class="n">Pendo</span><span class="c1">--&gt;&gt;Biscuit: 5 page views (invoices, settings, payment)</span>
+<span class="w">    </span><span class="n">SendGrid</span><span class="c1">--&gt;&gt;Biscuit: 2 emails (password reset sent, bank change notification)</span>
+<span class="w">    </span><span class="n">MySQL</span><span class="c1">--&gt;&gt;Biscuit: 1 audit row (bank account change, EventUser='attacker')</span>
+
+<span class="w">    </span><span class="n">Biscuit</span><span class="o">-&gt;&gt;</span><span class="nl">Biscuit</span><span class="p">:</span><span class="w"> </span><span class="n">Correlate</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="nc">timestamp</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">Build</span><span class="w"> </span><span class="n">chronological</span><span class="w"> </span><span class="n">timeline</span>
+
+<span class="w">    </span><span class="n">Biscuit</span><span class="c1">--&gt;&gt;User: **Timeline Report:**&lt;br/&gt;08:15 - Login (Tor IP)&lt;br/&gt;08:16 - 50 invoices viewed&lt;br/&gt;08:17 - Bank account changed&lt;br/&gt;08:18 - Password reset&lt;br/&gt;08:20 - Payment blocked&lt;br/&gt;08:22 - Logout</span>
+</code></pre></div>
+
+<p><strong>One-Liner:</strong></p>
+<blockquote>
+<p>"Biscuit = AI-powered NJQRT assistant (Claude skills + FastAPI) automating ticket triage, codebase investigation, timeline reconstruction, and Jira posting — reduced incident resolution time by 40% via parallel log collection from 5 monitoring systems."</p>
+</blockquote>
+<p><strong>Key Files:</strong><br />
+- <code>skills/workflows/karthik-triage/SKILL.md</code> — Triage orchestration<br />
+- <code>skills/utility/db-query/db-query.ps1</code> — Safe MySQL gateway<br />
+- <code>skills/workflows/bt-invoicing-qrt-post/SKILL.md</code> — Jira posting template</p>
+<hr />
+<h2 id="8-payment-repo-pay-workflow-integration-service-net-payment-orchestration">8️⃣ <strong>Payment Repo (pay-workflow-integration-service) - .NET Payment Orchestration</strong></h2>
+<h3 id="high-level-architecture_3"><strong>High-Level Architecture</strong></h3>
+<div class="codehilite"><pre><span></span><code><span class="n">graph</span><span class="w"> </span><span class="n">TB</span>
+<span class="w">    </span><span class="n">EIC</span><span class="p">[</span><span class="n">EIC</span><span class="o">/</span><span class="n">CC</span><span class="o">/</span><span class="n">MPay</span><span class="p">]</span><span class="w"> </span><span class="o">--&gt;|</span><span class="n">REST</span><span class="w"> </span><span class="n">API</span><span class="o">|</span><span class="w"> </span><span class="n">PayAPI</span><span class="p">[</span><span class="n">Payment</span><span class="w"> </span><span class="n">Service</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="p">.</span><span class="n">NET</span><span class="w"> </span><span class="n">Core</span><span class="w"> </span><span class="mi">6</span><span class="p">]</span>
+
+<span class="w">    </span><span class="n">PayAPI</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">RabbitMQ</span><span class="p">[</span><span class="n">RabbitMQ</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">Async</span><span class="w"> </span><span class="n">Workers</span><span class="p">]</span>
+
+<span class="w">    </span><span class="n">RabbitMQ</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">ChargeWorker</span><span class="p">[</span><span class="n">Charge</span><span class="w"> </span><span class="n">Worker</span><span class="p">]</span>
+<span class="w">    </span><span class="n">RabbitMQ</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">RefundWorker</span><span class="p">[</span><span class="n">Refund</span><span class="w"> </span><span class="n">Worker</span><span class="p">]</span>
+<span class="w">    </span><span class="n">RabbitMQ</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">WebhookWorker</span><span class="p">[</span><span class="n">Webhook</span><span class="w"> </span><span class="n">Worker</span><span class="p">]</span>
+
+<span class="w">    </span><span class="n">ChargeWorker</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="o">|</span><span class="n">ACH</span><span class="o">/</span><span class="n">Credit</span><span class="w"> </span><span class="n">Card</span><span class="o">|</span><span class="w"> </span><span class="n">Stripe</span><span class="p">[</span><span class="n">Stripe</span><span class="w"> </span><span class="n">Gateway</span><span class="p">]</span>
+<span class="w">    </span><span class="n">ChargeWorker</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="o">|</span><span class="n">ACH</span><span class="o">/</span><span class="n">Credit</span><span class="w"> </span><span class="n">Card</span><span class="o">|</span><span class="w"> </span><span class="n">PayPal</span><span class="p">[</span><span class="n">PayPal</span><span class="w"> </span><span class="n">Gateway</span><span class="p">]</span>
+
+<span class="w">    </span><span class="n">RefundWorker</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">Stripe</span>
+<span class="w">    </span><span class="n">RefundWorker</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">PayPal</span>
+
+<span class="w">    </span><span class="n">WebhookWorker</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="o">|</span><span class="n">Verify</span><span class="w"> </span><span class="n">HMAC</span><span class="o">|</span><span class="w"> </span><span class="n">SigValidation</span><span class="p">[</span><span class="n">Signature</span><span class="w"> </span><span class="n">Validation</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">HMAC</span><span class="o">-</span><span class="n">SHA256</span><span class="p">]</span>
+
+<span class="w">    </span><span class="n">PayAPI</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">MySQL</span><span class="p">[(</span><span class="n">billingclient1</span><span class="o">/</span><span class="mi">2</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">Payment</span><span class="w"> </span><span class="n">Records</span><span class="p">)]</span>
+
+<span class="w">    </span><span class="n">PayAPI</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">Datadog</span><span class="p">[</span><span class="n">Datadog</span><span class="w"> </span><span class="n">APM</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">Traces</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Metrics</span><span class="p">]</span>
+
+<span class="w">    </span><span class="n">style</span><span class="w"> </span><span class="n">PayAPI</span><span class="w"> </span><span class="n">fill</span><span class="o">:</span><span class="err">#</span><span class="mi">3</span><span class="n">b82f6</span>
+<span class="w">    </span><span class="n">style</span><span class="w"> </span><span class="n">RabbitMQ</span><span class="w"> </span><span class="n">fill</span><span class="o">:</span><span class="err">#</span><span class="n">f59e0b</span>
+</code></pre></div>
+
+<p><strong>Webhook Signature Validation Flow</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">flowchart</span><span class="w"> </span><span class="n">TD</span>
+<span class="w">    </span><span class="n">Webhook</span><span class="p">[</span><span class="n">POST</span><span class="w"> </span><span class="o">/</span><span class="n">webhooks</span><span class="o">/</span><span class="n">stripe</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">X</span><span class="o">-</span><span class="n">Stripe</span><span class="o">-</span><span class="n">Signature</span><span class="o">:</span><span class="w"> </span><span class="p">...]</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">Extract</span><span class="p">[</span><span class="n">Extract</span><span class="w"> </span><span class="n">Headers</span><span class="o">:&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">timestamp</span><span class="p">,</span><span class="w"> </span><span class="n">signature</span><span class="p">]</span>
+
+<span class="w">    </span><span class="n">Extract</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">BuildPayload</span><span class="p">[</span><span class="n">Build</span><span class="w"> </span><span class="n">Signed</span><span class="w"> </span><span class="n">Payload</span><span class="o">:&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">timestamp</span><span class="p">.</span><span class="n">body</span><span class="p">]</span>
+
+<span class="w">    </span><span class="n">BuildPayload</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">HMAC</span><span class="p">[</span><span class="n">Compute</span><span class="w"> </span><span class="n">HMAC</span><span class="o">-</span><span class="n">SHA256</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">Key</span><span class="o">:</span><span class="w"> </span><span class="n">webhook_secret</span><span class="p">]</span>
+
+<span class="w">    </span><span class="n">HMAC</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">Compare</span><span class="p">{</span><span class="n">Signature</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">Match</span><span class="o">?</span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">Compare</span><span class="w"> </span><span class="o">--&gt;|</span><span class="n">Yes</span><span class="o">|</span><span class="w"> </span><span class="n">Process</span><span class="p">[</span><span class="n">Process</span><span class="w"> </span><span class="n">Webhook</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">Update</span><span class="w"> </span><span class="n">Payment</span><span class="w"> </span><span class="n">Status</span><span class="p">]</span>
+<span class="w">    </span><span class="n">Compare</span><span class="w"> </span><span class="o">--&gt;|</span><span class="n">No</span><span class="o">|</span><span class="w"> </span><span class="n">Reject</span><span class="p">[</span><span class="n">Return</span><span class="w"> </span><span class="mi">401</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span><span class="n">Invalid</span><span class="w"> </span><span class="n">Signature</span><span class="p">]</span>
+
+<span class="w">    </span><span class="n">Process</span><span class="w"> </span><span class="o">--&gt;</span><span class="w"> </span><span class="n">Response</span><span class="p">[</span><span class="n">Return</span><span class="w"> </span><span class="mi">200</span><span class="w"> </span><span class="n">OK</span><span class="p">]</span>
+
+<span class="w">    </span><span class="n">style</span><span class="w"> </span><span class="n">Reject</span><span class="w"> </span><span class="n">fill</span><span class="o">:</span><span class="err">#</span><span class="n">ef4444</span>
+<span class="w">    </span><span class="n">style</span><span class="w"> </span><span class="n">Process</span><span class="w"> </span><span class="n">fill</span><span class="o">:</span><span class="err">#</span><span class="mi">10</span><span class="n">b981</span>
+</code></pre></div>
+
+<p><strong>One-Liner:</strong></p>
+<blockquote>
+<p>"Payment repo = .NET Core microservice orchestrating ACH/credit card charges via Stripe/PayPal with async workers (RabbitMQ), webhook HMAC validation (prevent replay attacks), and Datadog APM tracing — you debugged cross-team issues via Claude AI code analysis."</p>
+</blockquote>
+<p><strong>Key Files:</strong><br />
+- <code>PaymentService/Controllers/PaymentController.cs</code> — API endpoints<br />
+- <code>PaymentService/Services/StripeService.cs</code> — Stripe integration<br />
+- <code>PaymentService/Workers/ChargeWorker.cs</code> — Async payment processing<br />
+- <code>PaymentService/Services/WebhookValidator.cs</code> — HMAC signature validation</p>
+<hr />
+<h2 id="for-interviews-architecture-questions">🎯 <strong>For Interviews: Architecture Questions</strong></h2>
+<p><strong>Q: "Explain EIC's database sharding strategy."</strong></p>
+<blockquote>
+<p>"EIC uses 2-stack sharding: <code>billingclient1</code> for high-volume customers (500K+ invoices/year) and <code>billingclient2</code> for standard customers. Routing logic queries <code>billingmaster.BillingStack</code> column to determine which MySQL instance to hit — prevents hot-spotting on a single database and allows independent scaling."</p>
+</blockquote>
+<p><strong>Q: "How does CSR achieve &lt;50ms p99 latency serving 200+ microservices?"</strong></p>
+<blockquote>
+<p>"3-layer caching: APCu (in-memory, 5-min TTL, ~1ms) → Redis (centralized, 15-min TTL, ~5ms) → MySQL (source of truth, ~50ms). Version-based invalidation ensures all servers invalidate stale APCu caches when settings change — INCR <code>settings_version</code> in Redis, next request checks version mismatch and refreshes."</p>
+</blockquote>
+<p><strong>Q: "What's the idempotency pattern in MPay?"</strong></p>
+<blockquote>
+<p>"Redis SETNX lock + MySQL state machine. Client sends <code>Idempotency-Key: uuid-1234</code> → (1) Check DB for existing request, (2) If not found, acquire Redis lock, (3) INSERT with status='PROCESSING', (4) Call payment gateway, (5) UPDATE status='COMPLETED', (6) Release lock. Duplicate requests return cached result or 409 Conflict if still processing — reduced disputes 80%."</p>
+</blockquote>
+<p><strong>Q: "How does Biscuit (AI assistant) reconstruct timelines for security investigations?"</strong></p>
+<blockquote>
+<p>"Parallel log collection from 5 sources (Datadog, Splunk, Pendo, SendGrid, MySQL audits) using their respective APIs/MCPs, then correlate events by timestamp to build a chronological timeline. For example: 08:15 Login (Datadog) → 08:16 Invoices viewed (Pendo) → 08:17 Bank changed (MySQL audit) → 08:18 Password reset (SendGrid) → 08:20 Payment blocked (Datadog) → customer report generated in &lt;60 minutes."</p>
+</blockquote>
+<hr />
+<p><strong>NEXT:</strong> Interactive HTML course pages with quizzes + flashcards!</p>
+        </div>
+    </div>
+
+    <script>
+        // Progress Tracker JavaScript
+        const STORAGE_KEY = 'course_progress_architecture_diagrams_all_repos';
+
+        // Extract all H2 and H3 headings from content
+        function extractSections() {
+            const content = document.querySelector('.content');
+            const headings = content.querySelectorAll('h2, h3');
+            const sections = [];
+
+            headings.forEach((heading, index) => {
+                const level = heading.tagName === 'H2' ? 2 : 3;
+                const text = heading.textContent.trim();
+                const id = `section-${index}`;
+
+                // Add ID to heading for linking
+                heading.id = id;
+
+                sections.push({
+                    id: id,
+                    text: text,
+                    level: level
+                });
+            });
+
+            return sections;
+        }
+
+        // Load saved progress from localStorage
+        function loadProgress() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            return saved ? JSON.parse(saved) : {};
+        }
+
+        // Save progress to localStorage
+        function saveProgress(progress) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+        }
+
+        // Calculate progress percentage
+        function calculateProgress() {
+            const checkboxes = document.querySelectorAll('.progress-checkbox');
+            const total = checkboxes.length;
+            if (total === 0) return 0;
+
+            const completed = Array.from(checkboxes).filter(cb => cb.checked).length;
+            return Math.round((completed / total) * 100);
+        }
+
+        // Update progress display
+        function updateProgressDisplay() {
+            const percentage = calculateProgress();
+            document.getElementById('progress-pct').textContent = percentage + '%';
+            document.getElementById('progress-bar').style.width = percentage + '%';
+
+            // Update completed class on items
+            document.querySelectorAll('.progress-item').forEach(item => {
+                const checkbox = item.querySelector('.progress-checkbox');
+                if (checkbox.checked) {
+                    item.classList.add('completed');
+                } else {
+                    item.classList.remove('completed');
+                }
+            });
+        }
+
+        // Toggle checkbox
+        function toggleCheckbox(sectionId) {
+            const checkbox = document.getElementById('cb-' + sectionId);
+            const progress = loadProgress();
+
+            progress[sectionId] = checkbox.checked;
+            saveProgress(progress);
+            updateProgressDisplay();
+        }
+
+        // Reset all progress
+        function resetProgress() {
+            if (confirm('Reset all progress for this page?')) {
+                localStorage.removeItem(STORAGE_KEY);
+                document.querySelectorAll('.progress-checkbox').forEach(cb => {
+                    cb.checked = false;
+                });
+                updateProgressDisplay();
+            }
+        }
+
+        // Toggle progress list visibility
+        function toggleProgressList() {
+            const list = document.getElementById('progress-items');
+            const btn = document.querySelector('.toggle-progress');
+
+            if (list.classList.contains('collapsed')) {
+                list.classList.remove('collapsed');
+                btn.textContent = '▼ Hide';
+            } else {
+                list.classList.add('collapsed');
+                btn.textContent = '▶ Show';
+            }
+        }
+
+        // Initialize progress tracker
+        function initProgressTracker() {
+            const sections = extractSections();
+            const progress = loadProgress();
+            const container = document.getElementById('progress-items');
+
+            if (sections.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No sections found</p>';
+                return;
+            }
+
+            sections.forEach(section => {
+                const item = document.createElement('div');
+                item.className = 'progress-item';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'progress-checkbox';
+                checkbox.id = 'cb-' + section.id;
+                checkbox.checked = progress[section.id] || false;
+                checkbox.onchange = () => toggleCheckbox(section.id);
+
+                const label = document.createElement('label');
+                label.className = 'progress-label';
+                label.htmlFor = 'cb-' + section.id;
+                label.textContent = section.text;
+                label.style.paddingLeft = section.level === 3 ? '20px' : '0';
+                label.onclick = () => {
+                    document.getElementById(section.id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+                };
+
+                item.appendChild(checkbox);
+                item.appendChild(label);
+                container.appendChild(item);
+            });
+
+            updateProgressDisplay();
+        }
+
+        // Run on page load
+        document.addEventListener('DOMContentLoaded', initProgressTracker);
+    </script>
+</body>
+</html>

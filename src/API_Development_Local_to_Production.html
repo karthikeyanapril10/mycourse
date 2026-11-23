@@ -1,0 +1,2057 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API_Development_Local_to_Production</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 60px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .metadata {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 16px 24px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #666;
+            border-left: 4px solid #667eea;
+        }
+
+        /* PROGRESS TRACKER STYLES */
+        .progress-tracker {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .progress-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-stats {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .progress-percentage {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #764ba2;
+        }
+
+        .progress-bar-container {
+            height: 12px;
+            background: #e9ecef;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+            border-radius: 20px;
+        }
+
+        .reset-btn {
+            padding: 8px 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+
+        .reset-btn:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+        }
+
+        .progress-items {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .progress-items::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .progress-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .progress-item:hover {
+            background: #f8f9fa;
+            transform: translateX(5px);
+        }
+
+        .progress-item.completed {
+            opacity: 0.7;
+        }
+
+        .progress-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .progress-label {
+            cursor: pointer;
+            font-size: 0.95em;
+            line-height: 1.5;
+            color: #495057;
+            flex-grow: 1;
+        }
+
+        .progress-item.completed .progress-label {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .toggle-progress {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .toggle-progress:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .progress-items.collapsed {
+            display: none;
+        }
+
+        /* CONTENT STYLES */
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 4px solid #667eea;
+            font-weight: 700;
+        }
+
+        h2 {
+            color: #764ba2;
+            font-size: 2em;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        h3 {
+            color: #495057;
+            font-size: 1.5em;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        h4 {
+            color: #666;
+            font-size: 1.25em;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        ul, ol {
+            margin: 20px 0;
+            padding-left: 40px;
+        }
+
+        li {
+            margin-bottom: 12px;
+            line-height: 1.7;
+        }
+
+        code {
+            background: #f4f5f7;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #c7254e;
+            border: 1px solid #e1e4e8;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 24px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 25px 0;
+            border: 1px solid #444;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            border: none;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        blockquote {
+            border-left: 5px solid #667eea;
+            padding: 15px 25px;
+            margin: 25px 0;
+            background: #f8f9fa;
+            border-radius: 0 8px 8px 0;
+            color: #495057;
+            font-style: italic;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 30px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 14px 18px;
+            text-align: left;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tr:hover {
+            background: #e9ecef;
+            transition: background 0.2s;
+        }
+
+        a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px solid transparent;
+            transition: border-bottom 0.2s;
+        }
+
+        a:hover {
+            border-bottom: 1px solid #667eea;
+        }
+
+        hr {
+            border: none;
+            border-top: 2px solid #e9ecef;
+            margin: 40px 0;
+        }
+
+        strong {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        em {
+            color: #495057;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 25px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.6em;
+            }
+
+            .progress-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .progress-stats {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../navigation.html" class="back-link">&larr; Back to Navigation</a>
+
+        <div class="metadata">
+            <strong>Source:</strong> dev/API_Development_Local_to_Production.md &nbsp;|&nbsp; <strong>Updated:</strong> 2026-11-18 19:44:51
+        </div>
+
+        <!-- PROGRESS TRACKER -->
+        <div class="progress-tracker">
+            <div class="progress-header">
+                <div class="progress-title">
+                    <span>📚</span>
+                    <span>Your Progress</span>
+                </div>
+                <div class="progress-stats">
+                    <span class="progress-percentage" id="progress-pct">0%</span>
+                    <button class="reset-btn" onclick="resetProgress()">Reset</button>
+                    <button class="toggle-progress" onclick="toggleProgressList()">▼ Hide</button>
+                </div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progress-bar" style="width: 0%"></div>
+            </div>
+            <div class="progress-items" id="progress-items">
+                <!-- Checkboxes will be generated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="content">
+<h1 id="api-development-local-to-production">API Development: Local to Production</h1>
+<blockquote>
+<p><strong>Complete journey of building and deploying a REST API with Docker</strong></p>
+</blockquote>
+<hr />
+<h2 id="table-of-contents">Table of Contents</h2>
+<ol>
+<li><a href="#overview">Overview: The Complete Journey</a></li>
+<li><a href="#stage-1-local-development">Stage 1: Local Development</a></li>
+<li><a href="#stage-2-testing">Stage 2: Testing (Unit → Integration → E2E)</a></li>
+<li><a href="#stage-3-cicd-pipeline">Stage 3: CI/CD Pipeline</a></li>
+<li><a href="#stage-4-staging-deployment">Stage 4: Staging Deployment</a></li>
+<li><a href="#stage-5-production-deployment">Stage 5: Production Deployment</a></li>
+<li><a href="#stage-6-monitoring--rollback">Stage 6: Monitoring &amp; Rollback</a></li>
+<li><a href="#interview-talking-points">Interview Talking Points</a></li>
+</ol>
+<hr />
+<h1 id="overview">Overview</h1>
+<h2 id="the-complete-journey">The Complete Journey</h2>
+<div class="codehilite"><pre><span></span><code><span class="nv">Local</span><span class="w"> </span><span class="nv">Dev</span><span class="w"> </span><span class="ss">(</span><span class="nv">Docker</span><span class="w"> </span><span class="nv">Compose</span><span class="ss">)</span>
+<span class="w">  </span>↓
+<span class="nv">Unit</span><span class="w"> </span><span class="nv">Tests</span><span class="w"> </span><span class="ss">(</span><span class="nv">Jest</span><span class="o">/</span><span class="nv">pytest</span><span class="ss">)</span>
+<span class="w">  </span>↓
+<span class="nv">Integration</span><span class="w"> </span><span class="nv">Tests</span><span class="w"> </span><span class="ss">(</span><span class="nv">Testcontainers</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nv">Real</span><span class="w"> </span><span class="nv">DB</span><span class="ss">)</span>
+<span class="w">  </span>↓
+<span class="nv">E2E</span><span class="w"> </span><span class="nv">Tests</span><span class="w"> </span><span class="ss">(</span><span class="nv">Cypress</span><span class="w"> </span><span class="nv">against</span><span class="w"> </span><span class="nv">test</span><span class="w"> </span><span class="nv">environment</span><span class="ss">)</span>
+<span class="w">  </span>↓
+<span class="nv">CI</span><span class="o">/</span><span class="nv">CD</span><span class="w"> </span><span class="nv">Pipeline</span><span class="w"> </span><span class="ss">(</span><span class="nv">GitHub</span><span class="w"> </span><span class="nv">Actions</span>:<span class="w"> </span><span class="nv">lint</span><span class="w"> </span>→<span class="w"> </span><span class="nv">test</span><span class="w"> </span>→<span class="w"> </span><span class="nv">build</span><span class="w"> </span>→<span class="w"> </span><span class="nv">scan</span><span class="ss">)</span>
+<span class="w">  </span>↓
+<span class="nv">Staging</span><span class="w"> </span><span class="nv">Deployment</span><span class="w"> </span><span class="ss">(</span><span class="nv">ECS</span><span class="o">/</span><span class="nv">EKS</span>,<span class="w"> </span><span class="nv">staging</span>.<span class="nv">example</span>.<span class="nv">com</span><span class="ss">)</span>
+<span class="w">  </span>↓
+<span class="nv">Smoke</span><span class="w"> </span><span class="nv">Tests</span><span class="w"> </span><span class="ss">(</span><span class="nv">Automated</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nv">Manual</span><span class="w"> </span><span class="nv">QA</span><span class="ss">)</span>
+<span class="w">  </span>↓
+<span class="nv">Production</span><span class="w"> </span><span class="nv">Deployment</span><span class="w"> </span><span class="ss">(</span><span class="nv">Blue</span><span class="o">-</span><span class="nv">Green</span><span class="w"> </span><span class="nv">or</span><span class="w"> </span><span class="nv">Canary</span><span class="ss">)</span>
+<span class="w">  </span>↓
+<span class="nv">Monitoring</span><span class="w"> </span><span class="ss">(</span><span class="nv">Datadog</span>,<span class="w"> </span><span class="nv">Rollback</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="nv">needed</span><span class="ss">)</span>
+</code></pre></div>
+
+<hr />
+<h1 id="stage-1-local-development">Stage 1: Local Development</h1>
+<h2 id="goal">Goal</h2>
+<p>Run the entire application stack on your laptop: API, database, Redis, and any background workers.</p>
+<hr />
+<h2 id="project-structure">Project Structure</h2>
+<div class="codehilite"><pre><span></span><code><span class="nx">my</span><span class="o">-</span><span class="kn">api</span><span class="o">/</span>
+<span class="err">├──</span><span class="w"> </span><span class="nx">src</span><span class="o">/</span>
+<span class="err">│</span><span class="w">   </span><span class="err">├──</span><span class="w"> </span><span class="nx">app</span><span class="p">.</span><span class="nx">js</span><span class="w">                 </span><span class="err">#</span><span class="w"> </span><span class="nx">Express</span><span class="w"> </span><span class="nx">app</span>
+<span class="err">│</span><span class="w">   </span><span class="err">├──</span><span class="w"> </span><span class="nx">routes</span><span class="o">/</span>
+<span class="err">│</span><span class="w">   </span><span class="err">│</span><span class="w">   </span><span class="err">├──</span><span class="w"> </span><span class="nx">users</span><span class="p">.</span><span class="nx">js</span>
+<span class="err">│</span><span class="w">   </span><span class="err">│</span><span class="w">   </span><span class="err">└──</span><span class="w"> </span><span class="nx">posts</span><span class="p">.</span><span class="nx">js</span>
+<span class="err">│</span><span class="w">   </span><span class="err">├──</span><span class="w"> </span><span class="nx">models</span><span class="o">/</span>
+<span class="err">│</span><span class="w">   </span><span class="err">│</span><span class="w">   </span><span class="err">├──</span><span class="w"> </span><span class="nx">User</span><span class="p">.</span><span class="nx">js</span>
+<span class="err">│</span><span class="w">   </span><span class="err">│</span><span class="w">   </span><span class="err">└──</span><span class="w"> </span><span class="nx">Post</span><span class="p">.</span><span class="nx">js</span>
+<span class="err">│</span><span class="w">   </span><span class="err">├──</span><span class="w"> </span><span class="nx">services</span><span class="o">/</span>
+<span class="err">│</span><span class="w">   </span><span class="err">│</span><span class="w">   </span><span class="err">└──</span><span class="w"> </span><span class="nx">emailService</span><span class="p">.</span><span class="nx">js</span>
+<span class="err">│</span><span class="w">   </span><span class="err">└──</span><span class="w"> </span><span class="nx">utils</span><span class="o">/</span>
+<span class="err">│</span><span class="w">       </span><span class="err">└──</span><span class="w"> </span><span class="nx">logger</span><span class="p">.</span><span class="nx">js</span>
+<span class="err">├──</span><span class="w"> </span><span class="nx">tests</span><span class="o">/</span>
+<span class="err">│</span><span class="w">   </span><span class="err">├──</span><span class="w"> </span><span class="nx">unit</span><span class="o">/</span>
+<span class="err">│</span><span class="w">   </span><span class="err">├──</span><span class="w"> </span><span class="nx">integration</span><span class="o">/</span>
+<span class="err">│</span><span class="w">   </span><span class="err">└──</span><span class="w"> </span><span class="nx">e2e</span><span class="o">/</span>
+<span class="err">├──</span><span class="w"> </span><span class="nx">Dockerfile</span>
+<span class="err">├──</span><span class="w"> </span><span class="nx">docker</span><span class="o">-</span><span class="nx">compose</span><span class="p">.</span><span class="nx">yml</span>
+<span class="err">├──</span><span class="w"> </span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">example</span>
+<span class="err">├──</span><span class="w"> </span><span class="kn">package</span><span class="p">.</span><span class="nx">json</span>
+<span class="err">└──</span><span class="w"> </span><span class="nx">README</span><span class="p">.</span><span class="nx">md</span>
+</code></pre></div>
+
+<hr />
+<h2 id="docker-compose-setup">Docker Compose Setup</h2>
+<h3 id="docker-composeyml"><code>docker-compose.yml</code></h3>
+<div class="codehilite"><pre><span></span><code><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="s">'3.8'</span>
+
+<span class="nt">services</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># API Server</span>
+<span class="w">  </span><span class="nt">api</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">build</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">context</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.</span>
+<span class="w">      </span><span class="nt">dockerfile</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Dockerfile</span>
+<span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"3000:3000"</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">NODE_ENV</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">development</span>
+<span class="w">      </span><span class="nt">DB_HOST</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgres</span>
+<span class="w">      </span><span class="nt">DB_PORT</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5432</span>
+<span class="w">      </span><span class="nt">DB_NAME</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myapp_dev</span>
+<span class="w">      </span><span class="nt">DB_USER</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgres</span>
+<span class="w">      </span><span class="nt">DB_PASSWORD</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgres</span>
+<span class="w">      </span><span class="nt">REDIS_HOST</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">redis</span>
+<span class="w">      </span><span class="nt">REDIS_PORT</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">6379</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./src:/app/src</span><span class="w">       </span><span class="c1"># Hot reload: changes reflected instantly</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./node_modules:/app/node_modules</span>
+<span class="w">    </span><span class="nt">depends_on</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgres</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">redis</span>
+<span class="w">    </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">npm run dev</span><span class="w">      </span><span class="c1"># Uses nodemon for hot reload</span>
+
+<span class="w">  </span><span class="c1"># PostgreSQL Database</span>
+<span class="w">  </span><span class="nt">postgres</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgres:15-alpine</span>
+<span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"5432:5432"</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">POSTGRES_USER</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgres</span>
+<span class="w">      </span><span class="nt">POSTGRES_PASSWORD</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgres</span>
+<span class="w">      </span><span class="nt">POSTGRES_DB</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myapp_dev</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgres_data:/var/lib/postgresql/data</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./init.sql:/docker-entrypoint-initdb.d/init.sql</span><span class="w">  </span><span class="c1"># Run schema on startup</span>
+
+<span class="w">  </span><span class="c1"># Redis Cache</span>
+<span class="w">  </span><span class="nt">redis</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">redis:7-alpine</span>
+<span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"6379:6379"</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">redis_data:/data</span>
+
+<span class="w">  </span><span class="c1"># Background Worker (Optional)</span>
+<span class="w">  </span><span class="nt">worker</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">build</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">context</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.</span>
+<span class="w">      </span><span class="nt">dockerfile</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Dockerfile</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">NODE_ENV</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">development</span>
+<span class="w">      </span><span class="nt">DB_HOST</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgres</span>
+<span class="w">      </span><span class="nt">REDIS_HOST</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">redis</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./src:/app/src</span>
+<span class="w">    </span><span class="nt">depends_on</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgres</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">redis</span>
+<span class="w">    </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">npm run worker</span>
+
+<span class="nt">volumes</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">postgres_data</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">redis_data</span><span class="p">:</span>
+</code></pre></div>
+
+<hr />
+<h2 id="dockerfile">Dockerfile</h2>
+<div class="codehilite"><pre><span></span><code><span class="c"># Stage 1: Base image</span>
+<span class="k">FROM</span><span class="w"> </span><span class="s">node:18-alpine</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="s">base</span>
+<span class="k">WORKDIR</span><span class="w"> </span><span class="s">/app</span>
+<span class="k">COPY</span><span class="w"> </span>package*.json<span class="w"> </span>./
+<span class="k">RUN</span><span class="w"> </span>npm<span class="w"> </span>ci<span class="w"> </span>--only<span class="o">=</span>production
+
+<span class="c"># Stage 2: Development (with devDependencies)</span>
+<span class="k">FROM</span><span class="w"> </span><span class="s">node:18-alpine</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="s">development</span>
+<span class="k">WORKDIR</span><span class="w"> </span><span class="s">/app</span>
+<span class="k">COPY</span><span class="w"> </span>package*.json<span class="w"> </span>./
+<span class="k">RUN</span><span class="w"> </span>npm<span class="w"> </span>ci<span class="w">  </span>#<span class="w"> </span>Install<span class="w"> </span>all<span class="w"> </span>dependencies<span class="w"> </span><span class="o">(</span>including<span class="w"> </span>devDependencies<span class="o">)</span>
+<span class="k">COPY</span><span class="w"> </span>.<span class="w"> </span>.
+<span class="k">CMD</span><span class="w"> </span><span class="p">[</span><span class="s2">"npm"</span><span class="p">,</span><span class="w"> </span><span class="s2">"run"</span><span class="p">,</span><span class="w"> </span><span class="s2">"dev"</span><span class="p">]</span>
+
+<span class="c"># Stage 3: Production (optimized)</span>
+<span class="k">FROM</span><span class="w"> </span><span class="s">base</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="s">production</span>
+<span class="k">COPY</span><span class="w"> </span>.<span class="w"> </span>.
+<span class="k">CMD</span><span class="w"> </span><span class="p">[</span><span class="s2">"node"</span><span class="p">,</span><span class="w"> </span><span class="s2">"src/app.js"</span><span class="p">]</span>
+</code></pre></div>
+
+<hr />
+<h2 id="running-locally">Running Locally</h2>
+<h3 id="1-start-all-services">1. <strong>Start all services:</strong></h3>
+<div class="codehilite"><pre><span></span><code>docker-compose<span class="w"> </span>up<span class="w"> </span>-d
+</code></pre></div>
+
+<p><strong>What happens:</strong><br />
+1. Docker Compose reads <code>docker-compose.yml</code><br />
+2. Builds <code>api</code> image (if not cached)<br />
+3. Pulls <code>postgres:15-alpine</code> and <code>redis:7-alpine</code> images<br />
+4. Creates network <code>my-api_default</code> (all services can talk to each other)<br />
+5. Starts 3 containers:<br />
+   - <code>api</code> → runs on <code>localhost:3000</code><br />
+   - <code>postgres</code> → runs on <code>localhost:5432</code><br />
+   - <code>redis</code> → runs on <code>localhost:6379</code><br />
+6. Runs <code>init.sql</code> to create database schema</p>
+<h3 id="2-check-logs">2. <strong>Check logs:</strong></h3>
+<div class="codehilite"><pre><span></span><code>docker-compose<span class="w"> </span>logs<span class="w"> </span>-f<span class="w"> </span>api
+
+<span class="c1"># Output:</span>
+<span class="c1"># api_1 | &gt; my-api@1.0.0 dev</span>
+<span class="c1"># api_1 | &gt; nodemon src/app.js</span>
+<span class="c1"># api_1 | </span>
+<span class="c1"># api_1 | [nodemon] 2.0.20</span>
+<span class="c1"># api_1 | [nodemon] watching: *.*</span>
+<span class="c1"># api_1 | Server listening on port 3000</span>
+<span class="c1"># api_1 | Connected to PostgreSQL</span>
+<span class="c1"># api_1 | Connected to Redis</span>
+</code></pre></div>
+
+<h3 id="3-test-api">3. <strong>Test API:</strong></h3>
+<div class="codehilite"><pre><span></span><code>curl<span class="w"> </span>http://localhost:3000/api/users
+
+<span class="c1"># Response:</span>
+<span class="o">{</span>
+<span class="w">  </span><span class="s2">"users"</span>:<span class="w"> </span><span class="o">[</span>
+<span class="w">    </span><span class="o">{</span><span class="s2">"id"</span>:<span class="w"> </span><span class="m">1</span>,<span class="w"> </span><span class="s2">"name"</span>:<span class="w"> </span><span class="s2">"John Doe"</span>,<span class="w"> </span><span class="s2">"email"</span>:<span class="w"> </span><span class="s2">"john@example.com"</span><span class="o">}</span>
+<span class="w">  </span><span class="o">]</span>
+<span class="o">}</span>
+</code></pre></div>
+
+<h3 id="4-hot-reload-make-a-code-change">4. <strong>Hot Reload (Make a code change):</strong></h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Edit src/routes/users.js</span>
+<span class="c1"># Add a console.log("Fetching users...")</span>
+
+<span class="c1"># Check logs:</span>
+docker-compose<span class="w"> </span>logs<span class="w"> </span>-f<span class="w"> </span>api
+
+<span class="c1"># Output:</span>
+<span class="c1"># api_1 | [nodemon] restarting due to changes...</span>
+<span class="c1"># api_1 | [nodemon] starting `node src/app.js`</span>
+<span class="c1"># api_1 | Server listening on port 3000</span>
+<span class="c1"># api_1 | Fetching users...</span>
+</code></pre></div>
+
+<p><strong>Changes reflected instantly</strong> without rebuilding the image!</p>
+<hr />
+<h2 id="what-happens-under-the-hood">What Happens Under the Hood</h2>
+<h3 id="docker-networks">Docker Networks</h3>
+<div class="codehilite"><pre><span></span><code>docker<span class="w"> </span>network<span class="w"> </span>ls
+
+<span class="c1"># Output:</span>
+<span class="c1"># NETWORK ID     NAME                MODE</span>
+<span class="c1"># abc123         my-api_default      bridge</span>
+</code></pre></div>
+
+<p>All services (<code>api</code>, <code>postgres</code>, <code>redis</code>) are on the same network.<br />
+Inside the <code>api</code> container, you can reach:<br />
+- PostgreSQL: <code>postgres:5432</code> (not <code>localhost:5432</code>)<br />
+- Redis: <code>redis:6379</code> (not <code>localhost:6379</code>)</p>
+<h3 id="volumes">Volumes</h3>
+<div class="codehilite"><pre><span></span><code>docker<span class="w"> </span>volume<span class="w"> </span>ls
+
+<span class="c1"># Output:</span>
+<span class="c1"># VOLUME NAME</span>
+<span class="c1"># my-api_postgres_data</span>
+<span class="c1"># my-api_redis_data</span>
+</code></pre></div>
+
+<p><strong>Purpose:</strong><br />
+- Data persists even if containers are stopped/removed<br />
+- Delete container → data still exists<br />
+- Delete volume → data is lost</p>
+<hr />
+<h2 id="common-issues-fixes">Common Issues &amp; Fixes</h2>
+<h3 id="issue-1-port-already-in-use">Issue 1: <strong>Port already in use</strong></h3>
+<div class="codehilite"><pre><span></span><code><span class="nx">Error</span><span class="p">:</span><span class="w"> </span><span class="nx">bind</span><span class="p">:</span><span class="w"> </span><span class="nx">address</span><span class="w"> </span><span class="nx">already</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="nx">use</span>
+</code></pre></div>
+
+<p><strong>Fix:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Check what's using port 3000</span>
+lsof<span class="w"> </span>-i<span class="w"> </span>:3000
+
+<span class="c1"># Kill the process</span>
+<span class="nb">kill</span><span class="w"> </span>-9<span class="w"> </span>&lt;PID&gt;
+
+<span class="c1"># Or change port in docker-compose.yml</span>
+ports:
+<span class="w">  </span>-<span class="w"> </span><span class="s2">"3001:3000"</span><span class="w">  </span><span class="c1"># Host port 3001 → Container port 3000</span>
+</code></pre></div>
+
+<h3 id="issue-2-database-connection-refused">Issue 2: <strong>Database connection refused</strong></h3>
+<div class="codehilite"><pre><span></span><code><span class="nv">Error</span>:<span class="w"> </span><span class="k">connect</span><span class="w"> </span><span class="nv">ECONNREFUSED</span><span class="w"> </span><span class="nv">postgres</span>:<span class="mi">5432</span>
+</code></pre></div>
+
+<p><strong>Fix:</strong><br />
+- Check <code>depends_on</code> in docker-compose.yml<br />
+- PostgreSQL might not be ready yet (race condition)<br />
+- Add retry logic in app.js:</p>
+<div class="codehilite"><pre><span></span><code><span class="kd">const</span><span class="w"> </span><span class="nx">connectDB</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="p">(</span><span class="nx">retries</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">5</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="nx">retries</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mf">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">await</span><span class="w"> </span><span class="nx">db</span><span class="p">.</span><span class="nx">connect</span><span class="p">();</span>
+<span class="w">      </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'Connected to PostgreSQL'</span><span class="p">);</span>
+<span class="w">      </span><span class="k">return</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="nx">err</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`DB connection failed. Retrying... (</span><span class="si">${</span><span class="nx">retries</span><span class="si">}</span><span class="sb"> left)`</span><span class="p">);</span>
+<span class="w">      </span><span class="nx">retries</span><span class="o">--</span><span class="p">;</span>
+<span class="w">      </span><span class="k">await</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nb">Promise</span><span class="p">(</span><span class="nx">resolve</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">setTimeout</span><span class="p">(</span><span class="nx">resolve</span><span class="p">,</span><span class="w"> </span><span class="mf">2000</span><span class="p">));</span><span class="w">  </span><span class="c1">// Wait 2 seconds</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="k">throw</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="ne">Error</span><span class="p">(</span><span class="s1">'Could not connect to PostgreSQL'</span><span class="p">);</span>
+<span class="p">};</span>
+</code></pre></div>
+
+<h3 id="issue-3-changes-not-reflected-hot-reload-not-working">Issue 3: <strong>Changes not reflected (hot reload not working)</strong></h3>
+<div class="codehilite"><pre><span></span><code># Changes made but container still serves old code
+</code></pre></div>
+
+<p><strong>Fix:</strong><br />
+- Check volumes in docker-compose.yml:</p>
+<div class="codehilite"><pre><span></span><code><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./src:/app/src</span><span class="w">  </span><span class="c1"># Must mount source directory</span>
+</code></pre></div>
+
+<ul>
+<li>Restart containers:</li>
+</ul>
+<div class="codehilite"><pre><span></span><code>docker-compose<span class="w"> </span>restart<span class="w"> </span>api
+</code></pre></div>
+
+<hr />
+<h1 id="stage-2-testing">Stage 2: Testing</h1>
+<h2 id="overview_1">Overview</h2>
+<p>Three types of tests, run in order:</p>
+<ol>
+<li><strong>Unit Tests</strong> (fast, isolated)</li>
+<li><strong>Integration Tests</strong> (medium, real database)</li>
+<li><strong>E2E Tests</strong> (slow, full stack)</li>
+</ol>
+<hr />
+<h2 id="21-unit-tests">2.1 Unit Tests</h2>
+<h3 id="goal_1">Goal</h3>
+<p>Test individual functions in isolation (no database, no external services).</p>
+<h3 id="example-testing-a-service-function">Example: Testing a Service Function</h3>
+<p><strong>File:</strong> <code>src/services/userService.js</code></p>
+<div class="codehilite"><pre><span></span><code><span class="kd">const</span><span class="w"> </span><span class="nx">bcrypt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">require</span><span class="p">(</span><span class="s1">'bcrypt'</span><span class="p">);</span>
+
+<span class="kd">class</span><span class="w"> </span><span class="nx">UserService</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">async</span><span class="w"> </span><span class="nx">hashPassword</span><span class="p">(</span><span class="nx">password</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">bcrypt</span><span class="p">.</span><span class="nx">hash</span><span class="p">(</span><span class="nx">password</span><span class="p">,</span><span class="w"> </span><span class="mf">10</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="k">async</span><span class="w"> </span><span class="nx">validatePassword</span><span class="p">(</span><span class="nx">password</span><span class="p">,</span><span class="w"> </span><span class="nx">hash</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">bcrypt</span><span class="p">.</span><span class="nx">compare</span><span class="p">(</span><span class="nx">password</span><span class="p">,</span><span class="w"> </span><span class="nx">hash</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="nx">formatUser</span><span class="p">(</span><span class="nx">user</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="nx">user</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span>
+<span class="w">      </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="nx">user</span><span class="p">.</span><span class="nx">name</span><span class="p">,</span>
+<span class="w">      </span><span class="nx">email</span><span class="o">:</span><span class="w"> </span><span class="nx">user</span><span class="p">.</span><span class="nx">email</span><span class="p">,</span>
+<span class="w">      </span><span class="c1">// Don't expose password_hash</span>
+<span class="w">    </span><span class="p">};</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">UserService</span><span class="p">();</span>
+</code></pre></div>
+
+<p><strong>Test:</strong> <code>tests/unit/userService.test.js</code></p>
+<div class="codehilite"><pre><span></span><code><span class="kd">const</span><span class="w"> </span><span class="nx">userService</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">require</span><span class="p">(</span><span class="s1">'../../src/services/userService'</span><span class="p">);</span>
+
+<span class="nx">describe</span><span class="p">(</span><span class="s1">'UserService'</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">describe</span><span class="p">(</span><span class="s1">'hashPassword'</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">it</span><span class="p">(</span><span class="s1">'should hash a password'</span><span class="p">,</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">password</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'mySecretPassword'</span><span class="p">;</span>
+<span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">hash</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">userService</span><span class="p">.</span><span class="nx">hashPassword</span><span class="p">(</span><span class="nx">password</span><span class="p">);</span>
+
+<span class="w">      </span><span class="nx">expect</span><span class="p">(</span><span class="nx">hash</span><span class="p">).</span><span class="nx">toBeTruthy</span><span class="p">();</span>
+<span class="w">      </span><span class="nx">expect</span><span class="p">(</span><span class="nx">hash</span><span class="p">).</span><span class="nx">not</span><span class="p">.</span><span class="nx">toBe</span><span class="p">(</span><span class="nx">password</span><span class="p">);</span><span class="w">  </span><span class="c1">// Not plaintext</span>
+<span class="w">      </span><span class="nx">expect</span><span class="p">(</span><span class="nx">hash</span><span class="p">.</span><span class="nx">length</span><span class="p">).</span><span class="nx">toBeGreaterThan</span><span class="p">(</span><span class="mf">50</span><span class="p">);</span><span class="w">  </span><span class="c1">// bcrypt hashes are long</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="nx">describe</span><span class="p">(</span><span class="s1">'validatePassword'</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">it</span><span class="p">(</span><span class="s1">'should return true for correct password'</span><span class="p">,</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">password</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'mySecretPassword'</span><span class="p">;</span>
+<span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">hash</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">userService</span><span class="p">.</span><span class="nx">hashPassword</span><span class="p">(</span><span class="nx">password</span><span class="p">);</span>
+
+<span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">isValid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">userService</span><span class="p">.</span><span class="nx">validatePassword</span><span class="p">(</span><span class="nx">password</span><span class="p">,</span><span class="w"> </span><span class="nx">hash</span><span class="p">);</span>
+<span class="w">      </span><span class="nx">expect</span><span class="p">(</span><span class="nx">isValid</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="nx">it</span><span class="p">(</span><span class="s1">'should return false for incorrect password'</span><span class="p">,</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">password</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'mySecretPassword'</span><span class="p">;</span>
+<span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">hash</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">userService</span><span class="p">.</span><span class="nx">hashPassword</span><span class="p">(</span><span class="nx">password</span><span class="p">);</span>
+
+<span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">isValid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">userService</span><span class="p">.</span><span class="nx">validatePassword</span><span class="p">(</span><span class="s1">'wrongPassword'</span><span class="p">,</span><span class="w"> </span><span class="nx">hash</span><span class="p">);</span>
+<span class="w">      </span><span class="nx">expect</span><span class="p">(</span><span class="nx">isValid</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="nx">describe</span><span class="p">(</span><span class="s1">'formatUser'</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">it</span><span class="p">(</span><span class="s1">'should not expose password_hash'</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="mf">1</span><span class="p">,</span>
+<span class="w">        </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s1">'John Doe'</span><span class="p">,</span>
+<span class="w">        </span><span class="nx">email</span><span class="o">:</span><span class="w"> </span><span class="s1">'john@example.com'</span><span class="p">,</span>
+<span class="w">        </span><span class="nx">password_hash</span><span class="o">:</span><span class="w"> </span><span class="s1">'hashed_password_here'</span>
+<span class="w">      </span><span class="p">};</span>
+
+<span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">formatted</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">userService</span><span class="p">.</span><span class="nx">formatUser</span><span class="p">(</span><span class="nx">user</span><span class="p">);</span>
+
+<span class="w">      </span><span class="nx">expect</span><span class="p">(</span><span class="nx">formatted</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">({</span>
+<span class="w">        </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="mf">1</span><span class="p">,</span>
+<span class="w">        </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s1">'John Doe'</span><span class="p">,</span>
+<span class="w">        </span><span class="nx">email</span><span class="o">:</span><span class="w"> </span><span class="s1">'john@example.com'</span>
+<span class="w">      </span><span class="p">});</span>
+<span class="w">      </span><span class="nx">expect</span><span class="p">(</span><span class="nx">formatted</span><span class="p">.</span><span class="nx">password_hash</span><span class="p">).</span><span class="nx">toBeUndefined</span><span class="p">();</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">});</span>
+</code></pre></div>
+
+<p><strong>Run:</strong></p>
+<div class="codehilite"><pre><span></span><code>npm<span class="w"> </span><span class="nb">test</span>
+
+<span class="c1"># Output:</span>
+<span class="c1"># PASS  tests/unit/userService.test.js</span>
+<span class="c1">#   UserService</span>
+<span class="c1">#     hashPassword</span>
+<span class="c1">#       ✓ should hash a password (45ms)</span>
+<span class="c1">#     validatePassword</span>
+<span class="c1">#       ✓ should return true for correct password (40ms)</span>
+<span class="c1">#       ✓ should return false for incorrect password (38ms)</span>
+<span class="c1">#     formatUser</span>
+<span class="c1">#       ✓ should not expose password_hash (2ms)</span>
+<span class="c1"># </span>
+<span class="c1"># Test Suites: 1 passed, 1 total</span>
+<span class="c1"># Tests:       4 passed, 4 total</span>
+<span class="c1"># Time:        1.234s</span>
+</code></pre></div>
+
+<hr />
+<h2 id="22-integration-tests">2.2 Integration Tests</h2>
+<h3 id="goal_2">Goal</h3>
+<p>Test API endpoints with a <strong>real database</strong> (not mocked).</p>
+<h3 id="setup-testcontainers">Setup: Testcontainers</h3>
+<p><strong>What is Testcontainers?</strong><br />
+- Spins up a real PostgreSQL container for tests<br />
+- Each test suite gets a fresh database<br />
+- Container is destroyed after tests finish</p>
+<p><strong>File:</strong> <code>tests/integration/users.test.js</code></p>
+<div class="codehilite"><pre><span></span><code><span class="kd">const</span><span class="w"> </span><span class="nx">request</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">require</span><span class="p">(</span><span class="s1">'supertest'</span><span class="p">);</span>
+<span class="kd">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">GenericContainer</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">require</span><span class="p">(</span><span class="s1">'testcontainers'</span><span class="p">);</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">app</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">require</span><span class="p">(</span><span class="s1">'../../src/app'</span><span class="p">);</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">db</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">require</span><span class="p">(</span><span class="s1">'../../src/db'</span><span class="p">);</span>
+
+<span class="nx">describe</span><span class="p">(</span><span class="s1">'Users API (Integration)'</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">let</span><span class="w"> </span><span class="nx">postgresContainer</span><span class="p">;</span>
+<span class="w">  </span><span class="kd">let</span><span class="w"> </span><span class="nx">dbClient</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">// Before all tests: Start PostgreSQL container</span>
+<span class="w">  </span><span class="nx">beforeAll</span><span class="p">(</span><span class="k">async</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">postgresContainer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">GenericContainer</span><span class="p">(</span><span class="s1">'postgres:15-alpine'</span><span class="p">)</span>
+<span class="w">      </span><span class="p">.</span><span class="nx">withEnvironment</span><span class="p">({</span>
+<span class="w">        </span><span class="nx">POSTGRES_USER</span><span class="o">:</span><span class="w"> </span><span class="s1">'test'</span><span class="p">,</span>
+<span class="w">        </span><span class="nx">POSTGRES_PASSWORD</span><span class="o">:</span><span class="w"> </span><span class="s1">'test'</span><span class="p">,</span>
+<span class="w">        </span><span class="nx">POSTGRES_DB</span><span class="o">:</span><span class="w"> </span><span class="s1">'test_db'</span>
+<span class="w">      </span><span class="p">})</span>
+<span class="w">      </span><span class="p">.</span><span class="nx">withExposedPorts</span><span class="p">(</span><span class="mf">5432</span><span class="p">)</span>
+<span class="w">      </span><span class="p">.</span><span class="nx">start</span><span class="p">();</span>
+
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">host</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">postgresContainer</span><span class="p">.</span><span class="nx">getHost</span><span class="p">();</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">port</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">postgresContainer</span><span class="p">.</span><span class="nx">getMappedPort</span><span class="p">(</span><span class="mf">5432</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Connect to test database</span>
+<span class="w">    </span><span class="nx">dbClient</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">db</span><span class="p">.</span><span class="nx">connect</span><span class="p">({</span>
+<span class="w">      </span><span class="nx">host</span><span class="p">,</span>
+<span class="w">      </span><span class="nx">port</span><span class="p">,</span>
+<span class="w">      </span><span class="nx">user</span><span class="o">:</span><span class="w"> </span><span class="s1">'test'</span><span class="p">,</span>
+<span class="w">      </span><span class="nx">password</span><span class="o">:</span><span class="w"> </span><span class="s1">'test'</span><span class="p">,</span>
+<span class="w">      </span><span class="nx">database</span><span class="o">:</span><span class="w"> </span><span class="s1">'test_db'</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="c1">// Run schema migration</span>
+<span class="w">    </span><span class="k">await</span><span class="w"> </span><span class="nx">dbClient</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="sb">`</span>
+<span class="sb">      CREATE TABLE users (</span>
+<span class="sb">        id SERIAL PRIMARY KEY,</span>
+<span class="sb">        name VARCHAR(255) NOT NULL,</span>
+<span class="sb">        email VARCHAR(255) UNIQUE NOT NULL,</span>
+<span class="sb">        password_hash VARCHAR(255) NOT NULL,</span>
+<span class="sb">        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP</span>
+<span class="sb">      );</span>
+<span class="sb">    `</span><span class="p">);</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="c1">// After all tests: Stop container</span>
+<span class="w">  </span><span class="nx">afterAll</span><span class="p">(</span><span class="k">async</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">await</span><span class="w"> </span><span class="nx">dbClient</span><span class="p">.</span><span class="nx">end</span><span class="p">();</span>
+<span class="w">    </span><span class="k">await</span><span class="w"> </span><span class="nx">postgresContainer</span><span class="p">.</span><span class="nx">stop</span><span class="p">();</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="c1">// Before each test: Clear data</span>
+<span class="w">  </span><span class="nx">beforeEach</span><span class="p">(</span><span class="k">async</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">await</span><span class="w"> </span><span class="nx">dbClient</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="s1">'TRUNCATE TABLE users CASCADE'</span><span class="p">);</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="nx">describe</span><span class="p">(</span><span class="s1">'POST /api/users'</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">it</span><span class="p">(</span><span class="s1">'should create a new user'</span><span class="p">,</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">request</span><span class="p">(</span><span class="nx">app</span><span class="p">)</span>
+<span class="w">        </span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="s1">'/api/users'</span><span class="p">)</span>
+<span class="w">        </span><span class="p">.</span><span class="nx">send</span><span class="p">({</span>
+<span class="w">          </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s1">'John Doe'</span><span class="p">,</span>
+<span class="w">          </span><span class="nx">email</span><span class="o">:</span><span class="w"> </span><span class="s1">'john@example.com'</span><span class="p">,</span>
+<span class="w">          </span><span class="nx">password</span><span class="o">:</span><span class="w"> </span><span class="s1">'password123'</span>
+<span class="w">        </span><span class="p">})</span>
+<span class="w">        </span><span class="p">.</span><span class="nx">expect</span><span class="p">(</span><span class="mf">201</span><span class="p">);</span>
+
+<span class="w">      </span><span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">body</span><span class="p">).</span><span class="nx">toMatchObject</span><span class="p">({</span>
+<span class="w">        </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="nx">expect</span><span class="p">.</span><span class="nx">any</span><span class="p">(</span><span class="nb">Number</span><span class="p">),</span>
+<span class="w">        </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s1">'John Doe'</span><span class="p">,</span>
+<span class="w">        </span><span class="nx">email</span><span class="o">:</span><span class="w"> </span><span class="s1">'john@example.com'</span>
+<span class="w">      </span><span class="p">});</span>
+<span class="w">      </span><span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">password_hash</span><span class="p">).</span><span class="nx">toBeUndefined</span><span class="p">();</span><span class="w">  </span><span class="c1">// Not exposed</span>
+
+<span class="w">      </span><span class="c1">// Verify in database</span>
+<span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">dbClient</span><span class="p">.</span><span class="nx">query</span><span class="p">(</span><span class="s1">'SELECT * FROM users WHERE email = $1'</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="s1">'john@example.com'</span><span class="p">]);</span>
+<span class="w">      </span><span class="nx">expect</span><span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">rows</span><span class="p">.</span><span class="nx">length</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="mf">1</span><span class="p">);</span>
+<span class="w">      </span><span class="nx">expect</span><span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">rows</span><span class="p">[</span><span class="mf">0</span><span class="p">].</span><span class="nx">name</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="s1">'John Doe'</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="nx">it</span><span class="p">(</span><span class="s1">'should return 400 for duplicate email'</span><span class="p">,</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Create first user</span>
+<span class="w">      </span><span class="k">await</span><span class="w"> </span><span class="nx">request</span><span class="p">(</span><span class="nx">app</span><span class="p">)</span>
+<span class="w">        </span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="s1">'/api/users'</span><span class="p">)</span>
+<span class="w">        </span><span class="p">.</span><span class="nx">send</span><span class="p">({</span>
+<span class="w">          </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s1">'John Doe'</span><span class="p">,</span>
+<span class="w">          </span><span class="nx">email</span><span class="o">:</span><span class="w"> </span><span class="s1">'john@example.com'</span><span class="p">,</span>
+<span class="w">          </span><span class="nx">password</span><span class="o">:</span><span class="w"> </span><span class="s1">'password123'</span>
+<span class="w">        </span><span class="p">})</span>
+<span class="w">        </span><span class="p">.</span><span class="nx">expect</span><span class="p">(</span><span class="mf">201</span><span class="p">);</span>
+
+<span class="w">      </span><span class="c1">// Try to create duplicate</span>
+<span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">request</span><span class="p">(</span><span class="nx">app</span><span class="p">)</span>
+<span class="w">        </span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="s1">'/api/users'</span><span class="p">)</span>
+<span class="w">        </span><span class="p">.</span><span class="nx">send</span><span class="p">({</span>
+<span class="w">          </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s1">'Jane Doe'</span><span class="p">,</span>
+<span class="w">          </span><span class="nx">email</span><span class="o">:</span><span class="w"> </span><span class="s1">'john@example.com'</span><span class="p">,</span><span class="w">  </span><span class="c1">// Duplicate email</span>
+<span class="w">          </span><span class="nx">password</span><span class="o">:</span><span class="w"> </span><span class="s1">'password123'</span>
+<span class="w">        </span><span class="p">})</span>
+<span class="w">        </span><span class="p">.</span><span class="nx">expect</span><span class="p">(</span><span class="mf">400</span><span class="p">);</span>
+
+<span class="w">      </span><span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">error</span><span class="p">).</span><span class="nx">toContain</span><span class="p">(</span><span class="s1">'already exists'</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="nx">describe</span><span class="p">(</span><span class="s1">'GET /api/users/:id'</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">it</span><span class="p">(</span><span class="s1">'should return user by id'</span><span class="p">,</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="c1">// Create user</span>
+<span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">createResponse</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">request</span><span class="p">(</span><span class="nx">app</span><span class="p">)</span>
+<span class="w">        </span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="s1">'/api/users'</span><span class="p">)</span>
+<span class="w">        </span><span class="p">.</span><span class="nx">send</span><span class="p">({</span>
+<span class="w">          </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s1">'John Doe'</span><span class="p">,</span>
+<span class="w">          </span><span class="nx">email</span><span class="o">:</span><span class="w"> </span><span class="s1">'john@example.com'</span><span class="p">,</span>
+<span class="w">          </span><span class="nx">password</span><span class="o">:</span><span class="w"> </span><span class="s1">'password123'</span>
+<span class="w">        </span><span class="p">});</span>
+
+<span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">userId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">createResponse</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
+
+<span class="w">      </span><span class="c1">// Fetch user</span>
+<span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">request</span><span class="p">(</span><span class="nx">app</span><span class="p">)</span>
+<span class="w">        </span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="sb">`/api/users/</span><span class="si">${</span><span class="nx">userId</span><span class="si">}</span><span class="sb">`</span><span class="p">)</span>
+<span class="w">        </span><span class="p">.</span><span class="nx">expect</span><span class="p">(</span><span class="mf">200</span><span class="p">);</span>
+
+<span class="w">      </span><span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">body</span><span class="p">).</span><span class="nx">toMatchObject</span><span class="p">({</span>
+<span class="w">        </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="nx">userId</span><span class="p">,</span>
+<span class="w">        </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s1">'John Doe'</span><span class="p">,</span>
+<span class="w">        </span><span class="nx">email</span><span class="o">:</span><span class="w"> </span><span class="s1">'john@example.com'</span>
+<span class="w">      </span><span class="p">});</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="nx">it</span><span class="p">(</span><span class="s1">'should return 404 for non-existent user'</span><span class="p">,</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="nx">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">request</span><span class="p">(</span><span class="nx">app</span><span class="p">)</span>
+<span class="w">        </span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'/api/users/999999'</span><span class="p">)</span>
+<span class="w">        </span><span class="p">.</span><span class="nx">expect</span><span class="p">(</span><span class="mf">404</span><span class="p">);</span>
+
+<span class="w">      </span><span class="nx">expect</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">error</span><span class="p">).</span><span class="nx">toContain</span><span class="p">(</span><span class="s1">'not found'</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">});</span>
+</code></pre></div>
+
+<p><strong>Run:</strong></p>
+<div class="codehilite"><pre><span></span><code>npm<span class="w"> </span>run<span class="w"> </span>test:integration
+
+<span class="c1"># Output:</span>
+<span class="c1"># Starting PostgreSQL container...</span>
+<span class="c1"># Container started: postgres:15-alpine (port 32768)</span>
+<span class="c1"># Running schema migrations...</span>
+<span class="c1"># </span>
+<span class="c1"># PASS  tests/integration/users.test.js</span>
+<span class="c1">#   Users API (Integration)</span>
+<span class="c1">#     POST /api/users</span>
+<span class="c1">#       ✓ should create a new user (234ms)</span>
+<span class="c1">#       ✓ should return 400 for duplicate email (189ms)</span>
+<span class="c1">#     GET /api/users/:id</span>
+<span class="c1">#       ✓ should return user by id (145ms)</span>
+<span class="c1">#       ✓ should return 404 for non-existent user (98ms)</span>
+<span class="c1"># </span>
+<span class="c1"># Stopping PostgreSQL container...</span>
+<span class="c1"># </span>
+<span class="c1"># Test Suites: 1 passed, 1 total</span>
+<span class="c1"># Tests:       4 passed, 4 total</span>
+<span class="c1"># Time:        12.456s</span>
+</code></pre></div>
+
+<p><strong>What happened:</strong><br />
+1. Testcontainers pulled <code>postgres:15-alpine</code> image<br />
+2. Started container on random port (32768)<br />
+3. Connected to it, ran schema migration<br />
+4. Ran 4 tests<br />
+5. Stopped and removed container</p>
+<hr />
+<h2 id="23-end-to-end-e2e-tests">2.3 End-to-End (E2E) Tests</h2>
+<h3 id="goal_3">Goal</h3>
+<p>Test the <strong>entire application flow</strong> from frontend → API → database → response.</p>
+<h3 id="setup-cypress">Setup: Cypress</h3>
+<p><strong>File:</strong> <code>cypress/e2e/user-registration.cy.js</code></p>
+<div class="codehilite"><pre><span></span><code><span class="nx">describe</span><span class="p">(</span><span class="s1">'User Registration Flow'</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">beforeEach</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Reset database before each test</span>
+<span class="w">    </span><span class="nx">cy</span><span class="p">.</span><span class="nx">task</span><span class="p">(</span><span class="s1">'db:reset'</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Visit homepage</span>
+<span class="w">    </span><span class="nx">cy</span><span class="p">.</span><span class="nx">visit</span><span class="p">(</span><span class="s1">'http://localhost:3000'</span><span class="p">);</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="nx">it</span><span class="p">(</span><span class="s1">'should register a new user'</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Click "Sign Up" button</span>
+<span class="w">    </span><span class="nx">cy</span><span class="p">.</span><span class="nx">contains</span><span class="p">(</span><span class="s1">'Sign Up'</span><span class="p">).</span><span class="nx">click</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// Fill form</span>
+<span class="w">    </span><span class="nx">cy</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'[data-testid="name-input"]'</span><span class="p">).</span><span class="nx">type</span><span class="p">(</span><span class="s1">'John Doe'</span><span class="p">);</span>
+<span class="w">    </span><span class="nx">cy</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'[data-testid="email-input"]'</span><span class="p">).</span><span class="nx">type</span><span class="p">(</span><span class="s1">'john@example.com'</span><span class="p">);</span>
+<span class="w">    </span><span class="nx">cy</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'[data-testid="password-input"]'</span><span class="p">).</span><span class="nx">type</span><span class="p">(</span><span class="s1">'password123'</span><span class="p">);</span>
+<span class="w">    </span><span class="nx">cy</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'[data-testid="confirm-password-input"]'</span><span class="p">).</span><span class="nx">type</span><span class="p">(</span><span class="s1">'password123'</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Submit form</span>
+<span class="w">    </span><span class="nx">cy</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'[data-testid="submit-button"]'</span><span class="p">).</span><span class="nx">click</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// Assert: Redirected to dashboard</span>
+<span class="w">    </span><span class="nx">cy</span><span class="p">.</span><span class="nx">url</span><span class="p">().</span><span class="nx">should</span><span class="p">(</span><span class="s1">'include'</span><span class="p">,</span><span class="w"> </span><span class="s1">'/dashboard'</span><span class="p">);</span>
+<span class="w">    </span><span class="nx">cy</span><span class="p">.</span><span class="nx">contains</span><span class="p">(</span><span class="s1">'Welcome, John Doe'</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Assert: User exists in database</span>
+<span class="w">    </span><span class="nx">cy</span><span class="p">.</span><span class="nx">task</span><span class="p">(</span><span class="s1">'db:query'</span><span class="p">,</span><span class="w"> </span><span class="s1">'SELECT * FROM users WHERE email = $1'</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="s1">'john@example.com'</span><span class="p">])</span>
+<span class="w">      </span><span class="p">.</span><span class="nx">then</span><span class="p">((</span><span class="nx">result</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">expect</span><span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">rows</span><span class="p">.</span><span class="nx">length</span><span class="p">).</span><span class="nx">to</span><span class="p">.</span><span class="nx">equal</span><span class="p">(</span><span class="mf">1</span><span class="p">);</span>
+<span class="w">        </span><span class="nx">expect</span><span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">rows</span><span class="p">[</span><span class="mf">0</span><span class="p">].</span><span class="nx">name</span><span class="p">).</span><span class="nx">to</span><span class="p">.</span><span class="nx">equal</span><span class="p">(</span><span class="s1">'John Doe'</span><span class="p">);</span>
+<span class="w">      </span><span class="p">});</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="nx">it</span><span class="p">(</span><span class="s1">'should show error for duplicate email'</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Pre-seed user</span>
+<span class="w">    </span><span class="nx">cy</span><span class="p">.</span><span class="nx">task</span><span class="p">(</span><span class="s1">'db:seed'</span><span class="p">,</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nx">table</span><span class="o">:</span><span class="w"> </span><span class="s1">'users'</span><span class="p">,</span>
+<span class="w">      </span><span class="nx">data</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s1">'Existing User'</span><span class="p">,</span><span class="w"> </span><span class="nx">email</span><span class="o">:</span><span class="w"> </span><span class="s1">'john@example.com'</span><span class="p">,</span><span class="w"> </span><span class="nx">password_hash</span><span class="o">:</span><span class="w"> </span><span class="s1">'hashed'</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="c1">// Try to register with duplicate email</span>
+<span class="w">    </span><span class="nx">cy</span><span class="p">.</span><span class="nx">contains</span><span class="p">(</span><span class="s1">'Sign Up'</span><span class="p">).</span><span class="nx">click</span><span class="p">();</span>
+<span class="w">    </span><span class="nx">cy</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'[data-testid="email-input"]'</span><span class="p">).</span><span class="nx">type</span><span class="p">(</span><span class="s1">'john@example.com'</span><span class="p">);</span>
+<span class="w">    </span><span class="nx">cy</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'[data-testid="password-input"]'</span><span class="p">).</span><span class="nx">type</span><span class="p">(</span><span class="s1">'password123'</span><span class="p">);</span>
+<span class="w">    </span><span class="nx">cy</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'[data-testid="submit-button"]'</span><span class="p">).</span><span class="nx">click</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// Assert: Error message shown</span>
+<span class="w">    </span><span class="nx">cy</span><span class="p">.</span><span class="nx">contains</span><span class="p">(</span><span class="s1">'Email already exists'</span><span class="p">).</span><span class="nx">should</span><span class="p">(</span><span class="s1">'be.visible'</span><span class="p">);</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">});</span>
+</code></pre></div>
+
+<p><strong>Run:</strong></p>
+<div class="codehilite"><pre><span></span><code>npx<span class="w"> </span>cypress<span class="w"> </span>run
+
+<span class="c1"># Output:</span>
+<span class="c1"># Starting Cypress...</span>
+<span class="c1"># </span>
+<span class="c1"># Running: user-registration.cy.js (1 of 1)</span>
+<span class="c1">#   User Registration Flow</span>
+<span class="c1">#     ✓ should register a new user (1234ms)</span>
+<span class="c1">#     ✓ should show error for duplicate email (567ms)</span>
+<span class="c1"># </span>
+<span class="c1"># Tests:  2 passed, 2 total</span>
+<span class="c1"># Time:   3.456s</span>
+</code></pre></div>
+
+<hr />
+<h2 id="testing-summary">Testing Summary</h2>
+<table>
+<thead>
+<tr>
+<th>Test Type</th>
+<th>Speed</th>
+<th>Database</th>
+<th>Scope</th>
+<th>When to Run</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Unit</strong></td>
+<td>Fast (&lt; 1s)</td>
+<td>Mocked</td>
+<td>Individual functions</td>
+<td>Every code change (pre-commit)</td>
+</tr>
+<tr>
+<td><strong>Integration</strong></td>
+<td>Medium (10-30s)</td>
+<td>Real (Testcontainers)</td>
+<td>API endpoints</td>
+<td>Before PR merge</td>
+</tr>
+<tr>
+<td><strong>E2E</strong></td>
+<td>Slow (1-5 min)</td>
+<td>Real (test environment)</td>
+<td>Full user flows</td>
+<td>Nightly or pre-deployment</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h1 id="stage-3-cicd-pipeline">Stage 3: CI/CD Pipeline</h1>
+<h2 id="goal_4">Goal</h2>
+<p>Automatically run tests, build Docker image, scan for vulnerabilities, and deploy on every git push.</p>
+<hr />
+<h2 id="github-actions-workflow">GitHub Actions Workflow</h2>
+<p><strong>File:</strong> <code>.github/workflows/ci-cd.yml</code></p>
+<div class="codehilite"><pre><span></span><code><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CI/CD Pipeline</span>
+
+<span class="nt">on</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">push</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">branches</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">main</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">develop</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">pull_request</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">branches</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">main</span><span class="p p-Indicator">]</span>
+
+<span class="nt">jobs</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># Job 1: Lint &amp; Code Quality</span>
+<span class="w">  </span><span class="nt">lint</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">runs-on</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ubuntu-latest</span>
+<span class="w">    </span><span class="nt">steps</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/checkout@v3</span>
+
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Setup Node.js</span>
+<span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/setup-node@v3</span>
+<span class="w">        </span><span class="nt">with</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">node-version</span><span class="p">:</span><span class="w"> </span><span class="s">'18'</span>
+
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Install dependencies</span>
+<span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">npm ci</span>
+
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Run ESLint</span>
+<span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">npm run lint</span>
+
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Check code formatting (Prettier)</span>
+<span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">npm run format:check</span>
+
+<span class="w">  </span><span class="c1"># Job 2: Unit Tests</span>
+<span class="w">  </span><span class="nt">unit-tests</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">runs-on</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ubuntu-latest</span>
+<span class="w">    </span><span class="nt">steps</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/checkout@v3</span>
+
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Setup Node.js</span>
+<span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/setup-node@v3</span>
+<span class="w">        </span><span class="nt">with</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">node-version</span><span class="p">:</span><span class="w"> </span><span class="s">'18'</span>
+
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Install dependencies</span>
+<span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">npm ci</span>
+
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Run unit tests</span>
+<span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">npm run test:unit</span>
+
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Upload coverage</span>
+<span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">codecov/codecov-action@v3</span>
+<span class="w">        </span><span class="nt">with</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">files</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./coverage/lcov.info</span>
+
+<span class="w">  </span><span class="c1"># Job 3: Integration Tests</span>
+<span class="w">  </span><span class="nt">integration-tests</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">runs-on</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ubuntu-latest</span>
+<span class="w">    </span><span class="nt">services</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">postgres</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgres:15-alpine</span>
+<span class="w">        </span><span class="nt">env</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">POSTGRES_USER</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test</span>
+<span class="w">          </span><span class="nt">POSTGRES_PASSWORD</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test</span>
+<span class="w">          </span><span class="nt">POSTGRES_DB</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test_db</span>
+<span class="w">        </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5432:5432</span>
+<span class="w">        </span><span class="nt">options</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;-</span>
+<span class="w">          </span><span class="no">--health-cmd pg_isready</span>
+<span class="w">          </span><span class="no">--health-interval 10s</span>
+<span class="w">          </span><span class="no">--health-timeout 5s</span>
+<span class="w">          </span><span class="no">--health-retries 5</span>
+<span class="w">    </span><span class="nt">steps</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/checkout@v3</span>
+
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Setup Node.js</span>
+<span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/setup-node@v3</span>
+<span class="w">        </span><span class="nt">with</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">node-version</span><span class="p">:</span><span class="w"> </span><span class="s">'18'</span>
+
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Install dependencies</span>
+<span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">npm ci</span>
+
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Run integration tests</span>
+<span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">npm run test:integration</span>
+<span class="w">        </span><span class="nt">env</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">DB_HOST</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">localhost</span>
+<span class="w">          </span><span class="nt">DB_PORT</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5432</span>
+<span class="w">          </span><span class="nt">DB_USER</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test</span>
+<span class="w">          </span><span class="nt">DB_PASSWORD</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test</span>
+<span class="w">          </span><span class="nt">DB_NAME</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test_db</span>
+
+<span class="w">  </span><span class="c1"># Job 4: Build Docker Image</span>
+<span class="w">  </span><span class="nt">build</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">runs-on</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ubuntu-latest</span>
+<span class="w">    </span><span class="nt">needs</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">lint</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">unit-tests</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">integration-tests</span><span class="p p-Indicator">]</span><span class="w">  </span><span class="c1"># Only run if tests pass</span>
+<span class="w">    </span><span class="nt">steps</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/checkout@v3</span>
+
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Set up Docker Buildx</span>
+<span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">docker/setup-buildx-action@v2</span>
+
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Login to Docker Hub</span>
+<span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">docker/login-action@v2</span>
+<span class="w">        </span><span class="nt">with</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ secrets.DOCKER_USERNAME }}</span>
+<span class="w">          </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ secrets.DOCKER_PASSWORD }}</span>
+
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Build and push Docker image</span>
+<span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">docker/build-push-action@v4</span>
+<span class="w">        </span><span class="nt">with</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">context</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.</span>
+<span class="w">          </span><span class="nt">push</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">          </span><span class="nt">tags</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">            </span><span class="no">myapp/api:${{ github.sha }}</span>
+<span class="w">            </span><span class="no">myapp/api:latest</span>
+<span class="w">          </span><span class="nt">cache-from</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">type=registry,ref=myapp/api:buildcache</span>
+<span class="w">          </span><span class="nt">cache-to</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">type=registry,ref=myapp/api:buildcache,mode=max</span>
+
+<span class="w">  </span><span class="c1"># Job 5: Security Scan (Checkmarx)</span>
+<span class="w">  </span><span class="nt">security-scan</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">runs-on</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ubuntu-latest</span>
+<span class="w">    </span><span class="nt">needs</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">build</span>
+<span class="w">    </span><span class="nt">steps</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/checkout@v3</span>
+
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Run Checkmarx Scan</span>
+<span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">          </span><span class="no">docker run --rm \</span>
+<span class="w">            </span><span class="no">-v $(pwd):/app \</span>
+<span class="w">            </span><span class="no">checkmarx/cx-cli:latest scan \</span>
+<span class="w">            </span><span class="no">--project-name my-api \</span>
+<span class="w">            </span><span class="no">--source-location /app \</span>
+<span class="w">            </span><span class="no">--severity-threshold HIGH</span>
+
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Upload scan results</span>
+<span class="w">        </span><span class="nt">if</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">failure()</span>
+<span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/upload-artifact@v3</span>
+<span class="w">        </span><span class="nt">with</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">checkmarx-results</span>
+<span class="w">          </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./checkmarx-results.xml</span>
+
+<span class="w">  </span><span class="c1"># Job 6: Deploy to Staging</span>
+<span class="w">  </span><span class="nt">deploy-staging</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">runs-on</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ubuntu-latest</span>
+<span class="w">    </span><span class="nt">needs</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">build</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">security-scan</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">if</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">github.ref == 'refs/heads/develop'</span><span class="w">  </span><span class="c1"># Only deploy develop branch</span>
+<span class="w">    </span><span class="nt">steps</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deploy to ECS (Staging)</span>
+<span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">          </span><span class="no">aws ecs update-service \</span>
+<span class="w">            </span><span class="no">--cluster my-api-staging \</span>
+<span class="w">            </span><span class="no">--service my-api-service \</span>
+<span class="w">            </span><span class="no">--force-new-deployment \</span>
+<span class="w">            </span><span class="no">--region us-east-1</span>
+<span class="w">        </span><span class="nt">env</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">AWS_ACCESS_KEY_ID</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ secrets.AWS_ACCESS_KEY_ID }}</span>
+<span class="w">          </span><span class="nt">AWS_SECRET_ACCESS_KEY</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ secrets.AWS_SECRET_ACCESS_KEY }}</span>
+
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Wait for deployment</span>
+<span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">          </span><span class="no">aws ecs wait services-stable \</span>
+<span class="w">            </span><span class="no">--cluster my-api-staging \</span>
+<span class="w">            </span><span class="no">--services my-api-service</span>
+
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Run smoke tests</span>
+<span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">          </span><span class="no">curl https://staging.myapp.com/health | grep '"status":"healthy"'</span>
+</code></pre></div>
+
+<hr />
+<h2 id="what-happens-on-git-push">What Happens on Git Push</h2>
+<div class="codehilite"><pre><span></span><code>git<span class="w"> </span>add<span class="w"> </span>.
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">"feat: add user registration endpoint"</span>
+git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>develop
+</code></pre></div>
+
+<p><strong>GitHub Actions workflow triggers:</strong></p>
+<p><strong>Minute 0-1:</strong> Lint + Unit Tests + Integration Tests (parallel)<br />
+<strong>Minute 1-3:</strong> Build Docker image (only if tests pass)<br />
+<strong>Minute 3-5:</strong> Security scan (Checkmarx)<br />
+<strong>Minute 5-7:</strong> Deploy to staging (ECS)<br />
+<strong>Minute 7-8:</strong> Smoke tests (curl /health endpoint)</p>
+<p><strong>If any step fails → entire pipeline stops.</strong></p>
+<hr />
+<h2 id="pipeline-stages-explained">Pipeline Stages Explained</h2>
+<h3 id="stage-1-lint-eslint-prettier">Stage 1: <strong>Lint (ESLint + Prettier)</strong></h3>
+<p><strong>What it does:</strong><br />
+- Checks code style (indentation, semicolons, quotes)<br />
+- Catches common bugs (unused variables, unreachable code)</p>
+<p><strong>Example failure:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Error:</span>
+src/routes/users.js:45:7
+<span class="w">  </span>error<span class="w">  </span><span class="s1">'userId'</span><span class="w"> </span>is<span class="w"> </span>assigned<span class="w"> </span>a<span class="w"> </span>value<span class="w"> </span>but<span class="w"> </span>never<span class="w"> </span>used<span class="w">  </span>no-unused-vars
+
+✖<span class="w"> </span><span class="m">1</span><span class="w"> </span>problem<span class="w"> </span><span class="o">(</span><span class="m">1</span><span class="w"> </span>error,<span class="w"> </span><span class="m">0</span><span class="w"> </span>warnings<span class="o">)</span>
+</code></pre></div>
+
+<hr />
+<h3 id="stage-2-unit-tests">Stage 2: <strong>Unit Tests</strong></h3>
+<p><strong>What it does:</strong><br />
+- Runs all <code>tests/unit/**/*.test.js</code> files<br />
+- Generates code coverage report (uploaded to Codecov)</p>
+<p><strong>Example output:</strong></p>
+<div class="codehilite"><pre><span></span><code>Test<span class="w"> </span>Suites:<span class="w"> </span><span class="m">10</span><span class="w"> </span>passed,<span class="w"> </span><span class="m">10</span><span class="w"> </span>total
+Tests:<span class="w">       </span><span class="m">87</span><span class="w"> </span>passed,<span class="w"> </span><span class="m">87</span><span class="w"> </span>total
+Coverage:<span class="w">    </span><span class="m">85</span>.3%<span class="w"> </span>statements
+<span class="w">             </span><span class="m">78</span>.1%<span class="w"> </span>branches
+<span class="w">             </span><span class="m">91</span>.2%<span class="w"> </span>functions
+<span class="w">             </span><span class="m">84</span>.9%<span class="w"> </span>lines
+</code></pre></div>
+
+<hr />
+<h3 id="stage-3-integration-tests">Stage 3: <strong>Integration Tests</strong></h3>
+<p><strong>What it does:</strong><br />
+- Spins up PostgreSQL service container<br />
+- Runs all <code>tests/integration/**/*.test.js</code> files<br />
+- Tests API endpoints against real database</p>
+<p><strong>Example output:</strong></p>
+<div class="codehilite"><pre><span></span><code>Starting<span class="w"> </span>PostgreSQL<span class="w"> </span>service...
+PostgreSQL<span class="w"> </span>healthy<span class="w"> </span>on<span class="w"> </span>localhost:5432
+Running<span class="w"> </span>integration<span class="w"> </span>tests...
+Test<span class="w"> </span>Suites:<span class="w"> </span><span class="m">5</span><span class="w"> </span>passed,<span class="w"> </span><span class="m">5</span><span class="w"> </span>total
+Tests:<span class="w">       </span><span class="m">34</span><span class="w"> </span>passed,<span class="w"> </span><span class="m">34</span><span class="w"> </span>total
+</code></pre></div>
+
+<hr />
+<h3 id="stage-4-build-docker-image">Stage 4: <strong>Build Docker Image</strong></h3>
+<p><strong>What it does:</strong><br />
+- Builds Docker image from <code>Dockerfile</code><br />
+- Tags with git commit SHA (e.g., <code>myapp/api:a1b2c3d</code>)<br />
+- Pushes to Docker Hub</p>
+<p><strong>Example output:</strong></p>
+<div class="codehilite"><pre><span></span><code>Building<span class="w"> </span>image<span class="w"> </span>myapp/api:a1b2c3d...
+Step<span class="w"> </span><span class="m">1</span>/8<span class="w"> </span>:<span class="w"> </span>FROM<span class="w"> </span>node:18-alpine
+Step<span class="w"> </span><span class="m">2</span>/8<span class="w"> </span>:<span class="w"> </span>WORKDIR<span class="w"> </span>/app
+Step<span class="w"> </span><span class="m">3</span>/8<span class="w"> </span>:<span class="w"> </span>COPY<span class="w"> </span>package*.json<span class="w"> </span>./
+Step<span class="w"> </span><span class="m">4</span>/8<span class="w"> </span>:<span class="w"> </span>RUN<span class="w"> </span>npm<span class="w"> </span>ci<span class="w"> </span>--only<span class="o">=</span>production
+Step<span class="w"> </span><span class="m">5</span>/8<span class="w"> </span>:<span class="w"> </span>COPY<span class="w"> </span>.<span class="w"> </span>.
+Step<span class="w"> </span><span class="m">6</span>/8<span class="w"> </span>:<span class="w"> </span>CMD<span class="w"> </span><span class="o">[</span><span class="s2">"node"</span>,<span class="w"> </span><span class="s2">"src/app.js"</span><span class="o">]</span>
+Successfully<span class="w"> </span>built<span class="w"> </span>abc123def456
+Successfully<span class="w"> </span>tagged<span class="w"> </span>myapp/api:a1b2c3d
+Pushing<span class="w"> </span>to<span class="w"> </span>Docker<span class="w"> </span>Hub...
+✓<span class="w"> </span>Push<span class="w"> </span><span class="nb">complete</span><span class="w"> </span><span class="o">(</span><span class="m">1</span>.2<span class="w"> </span>GB<span class="o">)</span>
+</code></pre></div>
+
+<hr />
+<h3 id="stage-5-security-scan-checkmarx">Stage 5: <strong>Security Scan (Checkmarx)</strong></h3>
+<p><strong>What it does:</strong><br />
+- Scans code for vulnerabilities (SQL injection, XSS, hardcoded secrets)<br />
+- Fails pipeline if HIGH/CRITICAL findings</p>
+<p><strong>Example failure:</strong></p>
+<div class="codehilite"><pre><span></span><code>Checkmarx<span class="w"> </span>Scan<span class="w"> </span>Results:
+<span class="w">  </span>CRITICAL:<span class="w"> </span>SQL<span class="w"> </span>Injection<span class="w"> </span><span class="k">in</span><span class="w"> </span>src/routes/users.js:78
+<span class="w">  </span>HIGH:<span class="w"> </span>Hardcoded<span class="w"> </span>password<span class="w"> </span><span class="k">in</span><span class="w"> </span>src/config.js:12
+
+✖<span class="w"> </span>Pipeline<span class="w"> </span>failed<span class="w"> </span>due<span class="w"> </span>to<span class="w"> </span>security<span class="w"> </span>findings
+</code></pre></div>
+
+<hr />
+<h3 id="stage-6-deploy-to-staging">Stage 6: <strong>Deploy to Staging</strong></h3>
+<p><strong>What it does:</strong><br />
+- Updates ECS service to use new Docker image<br />
+- Waits for deployment to stabilize (health checks pass)<br />
+- Runs smoke test (curl /health endpoint)</p>
+<p><strong>Example output:</strong></p>
+<div class="codehilite"><pre><span></span><code>Updating<span class="w"> </span>ECS<span class="w"> </span>service<span class="w"> </span>my-api-staging...
+Deployment<span class="w"> </span>started:<span class="w"> </span>ecs-svc-123456
+Waiting<span class="w"> </span><span class="k">for</span><span class="w"> </span>tasks<span class="w"> </span>to<span class="w"> </span>reach<span class="w"> </span>RUNNING<span class="w"> </span>state...
+Task<span class="w"> </span>arn:aws:ecs:us-east-1:123:task/abc123<span class="w"> </span>is<span class="w"> </span>RUNNING
+Health<span class="w"> </span>check<span class="w"> </span>passed:<span class="w"> </span><span class="m">3</span>/3<span class="w"> </span>targets<span class="w"> </span>healthy
+Running<span class="w"> </span>smoke<span class="w"> </span>test...
+✓<span class="w"> </span>https://staging.myapp.com/health<span class="w"> </span>→<span class="w"> </span><span class="m">200</span><span class="w"> </span>OK
+</code></pre></div>
+
+<hr />
+<h1 id="stage-4-staging-deployment">Stage 4: Staging Deployment</h1>
+<h2 id="goal_5">Goal</h2>
+<p>Deploy to a <strong>production-like environment</strong> for manual QA testing.</p>
+<hr />
+<h2 id="staging-environment">Staging Environment</h2>
+<div class="codehilite"><pre><span></span><code>staging.myapp.com
+  ↓
+AWS ECS (Elastic Container Service)
+  ↓
+3 ECS Tasks (containers running myapp/api:a1b2c3d)
+  ↓
+RDS PostgreSQL (db-staging.xxx.rds.amazonaws.com)
+  ↓
+ElastiCache Redis (redis-staging.xxx.cache.amazonaws.com)
+</code></pre></div>
+
+<hr />
+<h2 id="ecs-task-definition">ECS Task Definition</h2>
+<p><strong>File:</strong> <code>ecs-task-definition.json</code></p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">"family"</span><span class="p">:</span><span class="w"> </span><span class="s2">"my-api-staging"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"networkMode"</span><span class="p">:</span><span class="w"> </span><span class="s2">"awsvpc"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"requiresCompatibilities"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"FARGATE"</span><span class="p">],</span>
+<span class="w">  </span><span class="nt">"cpu"</span><span class="p">:</span><span class="w"> </span><span class="s2">"512"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"memory"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1024"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"containerDefinitions"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"api"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"image"</span><span class="p">:</span><span class="w"> </span><span class="s2">"myapp/api:a1b2c3d"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"portMappings"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">          </span><span class="nt">"containerPort"</span><span class="p">:</span><span class="w"> </span><span class="mi">3000</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">"protocol"</span><span class="p">:</span><span class="w"> </span><span class="s2">"tcp"</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">      </span><span class="p">],</span>
+<span class="w">      </span><span class="nt">"environment"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"NODE_ENV"</span><span class="p">,</span><span class="w"> </span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"staging"</span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"DB_HOST"</span><span class="p">,</span><span class="w"> </span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"db-staging.xxx.rds.amazonaws.com"</span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"DB_PORT"</span><span class="p">,</span><span class="w"> </span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"5432"</span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"DB_NAME"</span><span class="p">,</span><span class="w"> </span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"myapp_staging"</span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"REDIS_HOST"</span><span class="p">,</span><span class="w"> </span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"redis-staging.xxx.cache.amazonaws.com"</span><span class="p">}</span>
+<span class="w">      </span><span class="p">],</span>
+<span class="w">      </span><span class="nt">"secrets"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"DB_PASSWORD"</span><span class="p">,</span><span class="w"> </span><span class="nt">"valueFrom"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:aws:ssm:us-east-1:123:parameter/staging/db-password"</span><span class="p">}</span>
+<span class="w">      </span><span class="p">],</span>
+<span class="w">      </span><span class="nt">"logConfiguration"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"logDriver"</span><span class="p">:</span><span class="w"> </span><span class="s2">"awslogs"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"options"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="nt">"awslogs-group"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/ecs/my-api-staging"</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">"awslogs-region"</span><span class="p">:</span><span class="w"> </span><span class="s2">"us-east-1"</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">"awslogs-stream-prefix"</span><span class="p">:</span><span class="w"> </span><span class="s2">"api"</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">"healthCheck"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"command"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"CMD-SHELL"</span><span class="p">,</span><span class="w"> </span><span class="s2">"curl -f http://localhost:3000/health || exit 1"</span><span class="p">],</span>
+<span class="w">        </span><span class="nt">"interval"</span><span class="p">:</span><span class="w"> </span><span class="mi">30</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"timeout"</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"retries"</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"startPeriod"</span><span class="p">:</span><span class="w"> </span><span class="mi">60</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<hr />
+<h2 id="deployment-process">Deployment Process</h2>
+<h3 id="1-ecs-updates-task-definition">1. <strong>ECS updates task definition:</strong></h3>
+<div class="codehilite"><pre><span></span><code>aws<span class="w"> </span>ecs<span class="w"> </span>register-task-definition<span class="w"> </span>--cli-input-json<span class="w"> </span>file://ecs-task-definition.json
+</code></pre></div>
+
+<p><strong>Output:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">"taskDefinition"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"taskDefinitionArn"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:aws:ecs:us-east-1:123:task-definition/my-api-staging:42"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"revision"</span><span class="p">:</span><span class="w"> </span><span class="mi">42</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="2-ecs-updates-service">2. <strong>ECS updates service:</strong></h3>
+<div class="codehilite"><pre><span></span><code>aws<span class="w"> </span>ecs<span class="w"> </span>update-service<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--cluster<span class="w"> </span>my-api-staging<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--service<span class="w"> </span>my-api-service<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--task-definition<span class="w"> </span>my-api-staging:42<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--force-new-deployment
+</code></pre></div>
+
+<p><strong>What happens:</strong><br />
+1. ECS starts 3 new tasks (containers) with revision 42<br />
+2. Waits for health checks to pass (3/3 healthy)<br />
+3. Stops old tasks (containers) with revision 41<br />
+4. Deployment complete (rolling update, zero downtime)</p>
+<hr />
+<h2 id="smoke-tests-automated">Smoke Tests (Automated)</h2>
+<p><strong>File:</strong> <code>scripts/smoke-test.sh</code></p>
+<div class="codehilite"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+
+<span class="nv">BASE_URL</span><span class="o">=</span><span class="s2">"https://staging.myapp.com"</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">"Running smoke tests..."</span>
+
+<span class="c1"># Test 1: Health endpoint</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">"1. Testing /health..."</span>
+curl<span class="w"> </span>-f<span class="w"> </span><span class="nv">$BASE_URL</span>/health<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s1">'"status":"healthy"'</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">exit</span><span class="w"> </span><span class="m">1</span>
+
+<span class="c1"># Test 2: Create user</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">"2. Testing POST /api/users..."</span>
+curl<span class="w"> </span>-f<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span><span class="nv">$BASE_URL</span>/api/users<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">"Content-Type: application/json"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s1">'{"name":"Test User","email":"test@example.com","password":"test123"}'</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s1">'"id"'</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">exit</span><span class="w"> </span><span class="m">1</span>
+
+<span class="c1"># Test 3: Fetch user</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">"3. Testing GET /api/users/:id..."</span>
+curl<span class="w"> </span>-f<span class="w"> </span><span class="nv">$BASE_URL</span>/api/users/1<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s1">'"email":"test@example.com"'</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">exit</span><span class="w"> </span><span class="m">1</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">"✓ All smoke tests passed"</span>
+</code></pre></div>
+
+<p><strong>Run:</strong></p>
+<div class="codehilite"><pre><span></span><code>./scripts/smoke-test.sh
+
+<span class="c1"># Output:</span>
+<span class="c1"># Running smoke tests...</span>
+<span class="c1"># 1. Testing /health...</span>
+<span class="c1"># {"status":"healthy"}</span>
+<span class="c1"># 2. Testing POST /api/users...</span>
+<span class="c1"># {"id":1,"name":"Test User","email":"test@example.com"}</span>
+<span class="c1"># 3. Testing GET /api/users/:id...</span>
+<span class="c1"># {"id":1,"name":"Test User","email":"test@example.com"}</span>
+<span class="c1"># ✓ All smoke tests passed</span>
+</code></pre></div>
+
+<hr />
+<h2 id="manual-qa-testing">Manual QA Testing</h2>
+<p><strong>QA Checklist:</strong><br />
+- [ ] Can create new user<br />
+- [ ] Can login with correct password<br />
+- [ ] Cannot login with wrong password<br />
+- [ ] Can update user profile<br />
+- [ ] Can delete user<br />
+- [ ] API returns 404 for non-existent resources<br />
+- [ ] API returns 400 for invalid input<br />
+- [ ] API returns 500 errors with proper error messages</p>
+<hr />
+<h1 id="stage-5-production-deployment">Stage 5: Production Deployment</h1>
+<h2 id="goal_6">Goal</h2>
+<p>Deploy to production with <strong>zero downtime</strong> and <strong>rollback capability</strong>.</p>
+<hr />
+<h2 id="deployment-strategies">Deployment Strategies</h2>
+<h3 id="option-1-blue-green-deployment">Option 1: <strong>Blue-Green Deployment</strong></h3>
+<p><strong>How it works:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">Current</span><span class="w"> </span><span class="n">state</span><span class="p">:</span>
+<span class="w">  </span><span class="n">BLUE</span><span class="w"> </span><span class="n">environment</span><span class="w"> </span><span class="p">(</span><span class="n">live</span><span class="p">,</span><span class="w"> </span><span class="n">serving</span><span class="w"> </span><span class="n">traffic</span><span class="p">)</span>
+<span class="w">  </span><span class="n">GREEN</span><span class="w"> </span><span class="n">environment</span><span class="w"> </span><span class="p">(</span><span class="n">idle</span><span class="p">)</span>
+
+<span class="n">Deployment</span><span class="p">:</span>
+<span class="w">  </span><span class="mf">1.</span><span class="w"> </span><span class="n">Deploy</span><span class="w"> </span><span class="n">new</span><span class="w"> </span><span class="n">version</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">GREEN</span><span class="w"> </span><span class="n">environment</span>
+<span class="w">  </span><span class="mf">2.</span><span class="w"> </span><span class="n">Run</span><span class="w"> </span><span class="n">smoke</span><span class="w"> </span><span class="n">tests</span><span class="w"> </span><span class="n">on</span><span class="w"> </span><span class="n">GREEN</span>
+<span class="w">  </span><span class="mf">3.</span><span class="w"> </span><span class="n">Switch</span><span class="w"> </span><span class="nb">load</span><span class="w"> </span><span class="n">balancer</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">GREEN</span><span class="w"> </span><span class="p">(</span><span class="n">instant</span><span class="w"> </span><span class="n">cutover</span><span class="p">)</span>
+<span class="w">  </span><span class="mf">4.</span><span class="w"> </span><span class="n">Monitor</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="n">minutes</span>
+<span class="w">  </span><span class="mf">5.</span><span class="w"> </span><span class="n">If</span><span class="w"> </span><span class="n">OK</span><span class="p">:</span><span class="w"> </span><span class="n">Keep</span><span class="w"> </span><span class="n">GREEN</span><span class="p">,</span><span class="w"> </span><span class="n">shut</span><span class="w"> </span><span class="n">down</span><span class="w"> </span><span class="n">BLUE</span>
+<span class="w">     </span><span class="n">If</span><span class="w"> </span><span class="n">ERROR</span><span class="p">:</span><span class="w"> </span><span class="n">Switch</span><span class="w"> </span><span class="n">back</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">BLUE</span><span class="w"> </span><span class="p">(</span><span class="n">instant</span><span class="w"> </span><span class="n">rollback</span><span class="p">)</span>
+</code></pre></div>
+
+<p><strong>Example:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Step 1: Deploy to GREEN</span>
+aws<span class="w"> </span>ecs<span class="w"> </span>update-service<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--cluster<span class="w"> </span>my-api-prod<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--service<span class="w"> </span>my-api-green<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--task-definition<span class="w"> </span>my-api-prod:43
+
+<span class="c1"># Step 2: Wait for healthy</span>
+aws<span class="w"> </span>ecs<span class="w"> </span><span class="nb">wait</span><span class="w"> </span>services-stable<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--cluster<span class="w"> </span>my-api-prod<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--services<span class="w"> </span>my-api-green
+
+<span class="c1"># Step 3: Switch load balancer</span>
+aws<span class="w"> </span>elbv2<span class="w"> </span>modify-listener<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--listener-arn<span class="w"> </span>arn:aws:elasticloadbalancing:us-east-1:123:listener/app/my-api-lb/abc/def<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--default-actions<span class="w"> </span><span class="nv">Type</span><span class="o">=</span>forward,TargetGroupArn<span class="o">=</span>arn:aws:elasticloadbalancing:us-east-1:123:targetgroup/my-api-green
+
+<span class="c1"># Step 4: Monitor for 10 minutes</span>
+sleep<span class="w"> </span><span class="m">600</span>
+
+<span class="c1"># Step 5: Shut down BLUE</span>
+aws<span class="w"> </span>ecs<span class="w"> </span>update-service<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--cluster<span class="w"> </span>my-api-prod<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--service<span class="w"> </span>my-api-blue<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--desired-count<span class="w"> </span><span class="m">0</span>
+</code></pre></div>
+
+<hr />
+<h3 id="option-2-canary-deployment-instagrams-approach">Option 2: <strong>Canary Deployment</strong> (Instagram's Approach)</h3>
+<p><strong>How it works:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nv">Phase</span><span class="w"> </span><span class="mi">1</span>:<span class="w"> </span><span class="mi">5</span><span class="o">%</span><span class="w"> </span><span class="nv">traffic</span><span class="w"> </span><span class="nv">to</span><span class="w"> </span><span class="nv">new</span><span class="w"> </span><span class="nv">version</span>,<span class="w"> </span><span class="mi">95</span><span class="o">%</span><span class="w"> </span><span class="nv">to</span><span class="w"> </span><span class="nv">old</span><span class="w"> </span><span class="nv">version</span><span class="w"> </span><span class="ss">(</span><span class="mi">10</span><span class="w"> </span><span class="nv">min</span><span class="ss">)</span>
+<span class="nv">Phase</span><span class="w"> </span><span class="mi">2</span>:<span class="w"> </span><span class="mi">25</span><span class="o">%</span><span class="w"> </span><span class="nv">traffic</span><span class="w"> </span><span class="nv">to</span><span class="w"> </span><span class="nv">new</span><span class="w"> </span><span class="nv">version</span>,<span class="w"> </span><span class="mi">75</span><span class="o">%</span><span class="w"> </span><span class="nv">to</span><span class="w"> </span><span class="nv">old</span><span class="w"> </span><span class="nv">version</span><span class="w"> </span><span class="ss">(</span><span class="mi">10</span><span class="w"> </span><span class="nv">min</span><span class="ss">)</span>
+<span class="nv">Phase</span><span class="w"> </span><span class="mi">3</span>:<span class="w"> </span><span class="mi">50</span><span class="o">%</span><span class="w"> </span><span class="nv">traffic</span><span class="w"> </span><span class="nv">to</span><span class="w"> </span><span class="nv">new</span><span class="w"> </span><span class="nv">version</span>,<span class="w"> </span><span class="mi">50</span><span class="o">%</span><span class="w"> </span><span class="nv">to</span><span class="w"> </span><span class="nv">old</span><span class="w"> </span><span class="nv">version</span><span class="w"> </span><span class="ss">(</span><span class="mi">10</span><span class="w"> </span><span class="nv">min</span><span class="ss">)</span>
+<span class="nv">Phase</span><span class="w"> </span><span class="mi">4</span>:<span class="w"> </span><span class="mi">100</span><span class="o">%</span><span class="w"> </span><span class="nv">traffic</span><span class="w"> </span><span class="nv">to</span><span class="w"> </span><span class="nv">new</span><span class="w"> </span><span class="nv">version</span>
+
+<span class="k">If</span><span class="w"> </span><span class="nv">errors</span><span class="w"> </span><span class="nv">spike</span><span class="w"> </span><span class="nv">at</span><span class="w"> </span><span class="nv">any</span><span class="w"> </span><span class="nv">phase</span><span class="w"> </span>→<span class="w"> </span><span class="nv">rollback</span><span class="w"> </span><span class="nv">instantly</span>
+</code></pre></div>
+
+<p><strong>Example (AWS App Mesh):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">appmesh.k8s.aws/v1beta2</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">VirtualService</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-api</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">routes</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">canary-route</span>
+<span class="w">      </span><span class="nt">http</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">match</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">prefix</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/</span>
+<span class="w">        </span><span class="nt">action</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">weightedTargets</span><span class="p">:</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">virtualNodeRef</span><span class="p">:</span>
+<span class="w">                </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-api-v1</span>
+<span class="w">              </span><span class="nt">weight</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">95</span><span class="w">  </span><span class="c1"># Old version</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">virtualNodeRef</span><span class="p">:</span>
+<span class="w">                </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-api-v2</span>
+<span class="w">              </span><span class="nt">weight</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span><span class="w">   </span><span class="c1"># New version (canary)</span>
+</code></pre></div>
+
+<p><strong>Gradually shift weights:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Phase 1: 5% canary</span>
+kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>canary-5.yaml
+sleep<span class="w"> </span><span class="m">600</span><span class="w">  </span><span class="c1"># Monitor for 10 min</span>
+
+<span class="c1"># Phase 2: 25% canary</span>
+kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>canary-25.yaml
+sleep<span class="w"> </span><span class="m">600</span>
+
+<span class="c1"># Phase 3: 50% canary</span>
+kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>canary-50.yaml
+sleep<span class="w"> </span><span class="m">600</span>
+
+<span class="c1"># Phase 4: 100% canary</span>
+kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>canary-100.yaml
+</code></pre></div>
+
+<hr />
+<h2 id="production-deployment-checklist">Production Deployment Checklist</h2>
+<p><strong>Before deployment:</strong><br />
+- [ ] All tests pass (unit, integration, E2E)<br />
+- [ ] Security scan clean (no HIGH/CRITICAL findings)<br />
+- [ ] Staging deployment successful<br />
+- [ ] Manual QA sign-off<br />
+- [ ] Database migrations tested (if any)<br />
+- [ ] Rollback plan documented<br />
+- [ ] On-call engineer notified</p>
+<p><strong>During deployment:</strong><br />
+- [ ] Monitor error rate (Datadog dashboard)<br />
+- [ ] Monitor latency (p50, p95, p99)<br />
+- [ ] Check logs for new errors<br />
+- [ ] Verify health checks pass</p>
+<p><strong>After deployment:</strong><br />
+- [ ] Smoke tests pass<br />
+- [ ] Manual verification (critical flows)<br />
+- [ ] Monitor for 1 hour<br />
+- [ ] Update release notes<br />
+- [ ] Notify stakeholders</p>
+<hr />
+<h1 id="stage-6-monitoring-rollback">Stage 6: Monitoring &amp; Rollback</h1>
+<h2 id="goal_7">Goal</h2>
+<p>Detect issues quickly and rollback if needed.</p>
+<hr />
+<h2 id="monitoring-dashboard-datadog">Monitoring Dashboard (Datadog)</h2>
+<p><strong>Key Metrics:</strong></p>
+<ol>
+<li>
+<p><strong>Request Rate</strong> (requests/sec)<br />
+   - Baseline: 1,000/sec<br />
+   - Alert if drops below 500/sec (50% drop)</p>
+</li>
+<li>
+<p><strong>Error Rate</strong> (5xx errors / total requests)<br />
+   - Baseline: 0.1%<br />
+   - Alert if exceeds 1%</p>
+</li>
+<li>
+<p><strong>Latency</strong> (p95, p99)<br />
+   - Baseline: p95 = 200ms, p99 = 500ms<br />
+   - Alert if p95 &gt; 500ms or p99 &gt; 1000ms</p>
+</li>
+<li>
+<p><strong>Database Connections</strong><br />
+   - Baseline: 50 connections<br />
+   - Alert if exceeds 100 connections (pool exhaustion)</p>
+</li>
+<li>
+<p><strong>Memory Usage</strong><br />
+   - Baseline: 400 MB<br />
+   - Alert if exceeds 800 MB (potential memory leak)</p>
+</li>
+</ol>
+<hr />
+<h2 id="alerting-rules">Alerting Rules</h2>
+<p><strong>PagerDuty alert triggers when:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nt">alerts</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">High Error Rate</span>
+<span class="w">    </span><span class="nt">condition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">error_rate &gt; 1% for 5 minutes</span>
+<span class="w">    </span><span class="nt">severity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CRITICAL</span>
+<span class="w">    </span><span class="nt">action</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Page on-call engineer</span>
+
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">High Latency</span>
+<span class="w">    </span><span class="nt">condition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">p95_latency &gt; 500ms for 10 minutes</span>
+<span class="w">    </span><span class="nt">severity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">WARNING</span>
+<span class="w">    </span><span class="nt">action</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Slack notification</span>
+
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Service Down</span>
+<span class="w">    </span><span class="nt">condition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">health_check_failures &gt; 3 in 2 minutes</span>
+<span class="w">    </span><span class="nt">severity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CRITICAL</span>
+<span class="w">    </span><span class="nt">action</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Page on-call engineer + auto-rollback</span>
+</code></pre></div>
+
+<hr />
+<h2 id="rollback-process">Rollback Process</h2>
+<h3 id="manual-rollback-blue-green">Manual Rollback (Blue-Green)</h3>
+<p><strong>Scenario:</strong> New version deployed to production, error rate spiked to 5%</p>
+<p><strong>Action:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># 1. Switch load balancer back to BLUE (old version)</span>
+aws<span class="w"> </span>elbv2<span class="w"> </span>modify-listener<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--listener-arn<span class="w"> </span>arn:aws:elasticloadbalancing:us-east-1:123:listener/app/my-api-lb/abc/def<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--default-actions<span class="w"> </span><span class="nv">Type</span><span class="o">=</span>forward,TargetGroupArn<span class="o">=</span>arn:aws:elasticloadbalancing:us-east-1:123:targetgroup/my-api-blue
+
+<span class="c1"># 2. Verify error rate drops</span>
+<span class="c1"># Check Datadog: error_rate should drop from 5% → 0.1% within 1 minute</span>
+
+<span class="c1"># 3. Post-mortem</span>
+<span class="c1"># Investigate why new version had high error rate</span>
+<span class="c1"># Fix bug, deploy to staging, re-test, deploy to prod again</span>
+</code></pre></div>
+
+<p><strong>Rollback time:</strong> &lt; 1 minute (instant cutover)</p>
+<hr />
+<h3 id="auto-rollback-cicd">Auto-Rollback (CI/CD)</h3>
+<p><strong>GitHub Actions workflow:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nt">jobs</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">deploy-prod</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">runs-on</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ubuntu-latest</span>
+<span class="w">    </span><span class="nt">steps</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deploy to production</span>
+<span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./deploy-prod.sh</span>
+
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Wait 5 minutes</span>
+<span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sleep 300</span>
+
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Check error rate</span>
+<span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">          </span><span class="no">ERROR_RATE=$(curl -s https://api.datadoghq.com/api/v1/query?query=error_rate | jq '.series[0].pointlist[-1][1]')</span>
+<span class="w">          </span><span class="no">if (( $(echo "$ERROR_RATE &gt; 1.0" | bc -l) )); then</span>
+<span class="w">            </span><span class="no">echo "ERROR: Error rate is $ERROR_RATE% (threshold: 1%)"</span>
+<span class="w">            </span><span class="no">echo "Initiating auto-rollback..."</span>
+<span class="w">            </span><span class="no">./rollback.sh</span>
+<span class="w">            </span><span class="no">exit 1</span>
+<span class="w">          </span><span class="no">fi</span>
+<span class="w">          </span><span class="no">echo "✓ Error rate is $ERROR_RATE% (healthy)"</span>
+</code></pre></div>
+
+<hr />
+<h2 id="logs-cloudwatch-logs">Logs (CloudWatch Logs)</h2>
+<p><strong>Viewing logs:</strong></p>
+<div class="codehilite"><pre><span></span><code>aws<span class="w"> </span>logs<span class="w"> </span>tail<span class="w"> </span>/ecs/my-api-prod<span class="w"> </span>--follow
+
+<span class="c1"># Output:</span>
+<span class="c1"># 2026-11-20T10:00:01 [INFO] Server started on port 3000</span>
+<span class="c1"># 2026-11-20T10:00:05 [INFO] GET /api/users/123 200 45ms</span>
+<span class="c1"># 2026-11-20T10:00:12 [ERROR] POST /api/users 500 123ms</span>
+<span class="c1">#   Error: Duplicate key violation</span>
+<span class="c1">#   at UserService.createUser (src/services/userService.js:45)</span>
+<span class="c1"># 2026-11-20T10:00:15 [INFO] GET /health 200 2ms</span>
+</code></pre></div>
+
+<hr />
+<h1 id="interview-talking-points">Interview Talking Points</h1>
+<h2 id="2-minute-answer-walk-me-through-deploying-an-api-from-local-to-production">2-Minute Answer: "Walk me through deploying an API from local to production"</h2>
+<p><strong>Your Answer:</strong></p>
+<p>"I'll walk through the <strong>6-stage journey</strong> from local dev to production:</p>
+<p><strong>Stage 1: Local Development (Docker Compose)</strong><br />
+- Run entire stack on laptop: API, PostgreSQL, Redis in Docker Compose<br />
+- Hot reload via volume mounts: code changes reflected instantly<br />
+- Benefit: Consistent environment (dev = prod)</p>
+<p><strong>Stage 2: Testing (3 layers)</strong><br />
+- <strong>Unit tests</strong> (Jest): Fast, isolated function tests<br />
+- <strong>Integration tests</strong> (Testcontainers): Spin up real PostgreSQL, test API endpoints<br />
+- <strong>E2E tests</strong> (Cypress): Full user flows, run against test environment</p>
+<p><strong>Stage 3: CI/CD Pipeline (GitHub Actions)</strong><br />
+- 6-job workflow: Lint → Unit → Integration → Build Docker image → Security scan (Checkmarx) → Deploy<br />
+- If any step fails → pipeline stops<br />
+- Build time: 5-7 minutes</p>
+<p><strong>Stage 4: Staging Deployment (AWS ECS)</strong><br />
+- Deploy to production-like environment (staging.myapp.com)<br />
+- Automated smoke tests: health check, create user, fetch user<br />
+- Manual QA: Test critical flows</p>
+<p><strong>Stage 5: Production Deployment (Blue-Green)</strong><br />
+- Deploy new version to GREEN environment<br />
+- Run smoke tests<br />
+- Switch load balancer (instant cutover)<br />
+- Monitor for 10 minutes, rollback if errors spike</p>
+<p><strong>Stage 6: Monitoring (Datadog + PagerDuty)</strong><br />
+- Track error rate, latency, database connections<br />
+- Alert if error rate &gt; 1% → auto-rollback<br />
+- Rollback time: &lt; 1 minute</p>
+<p><strong>At Billtrust</strong>, we use similar workflows: Docker for local dev, GitHub Actions for CI/CD, ECS for deployment. I've deployed 50+ production changes with zero rollback incidents using this approach."</p>
+<hr />
+<h2 id="common-interview-questions">Common Interview Questions</h2>
+<h3 id="q1-why-use-docker-compose-for-local-development">Q1: "Why use Docker Compose for local development?"</h3>
+<p><strong>Answer:</strong><br />
+"Three reasons:</p>
+<ol>
+<li><strong>Consistent environment:</strong> Dev = Staging = Prod (same PostgreSQL version, same Node version)</li>
+<li><strong>Easy onboarding:</strong> New developer runs <code>docker-compose up</code>, entire stack ready in 2 minutes</li>
+<li><strong>Isolation:</strong> Multiple projects don't conflict (each has its own PostgreSQL on different port)"</li>
+</ol>
+<hr />
+<h3 id="q2-whats-the-difference-between-blue-green-and-canary-deployment">Q2: "What's the difference between blue-green and canary deployment?"</h3>
+<p><strong>Answer:</strong><br />
+"<strong>Blue-Green:</strong><br />
+- Two environments (BLUE = old, GREEN = new)<br />
+- Deploy to GREEN, test, then instant cutover (100% → 0%)<br />
+- Benefit: Instant rollback<br />
+- Used when: Confidence in new version is high</p>
+<p><strong>Canary:</strong><br />
+- Gradual rollout: 5% → 25% → 50% → 100%<br />
+- Monitor at each phase, rollback if errors spike<br />
+- Benefit: Limits blast radius (only 5% users affected if bug)<br />
+- Used when: Risky changes, want to test with small traffic first</p>
+<p>At Billtrust, we use <strong>blue-green</strong> for most changes, <strong>canary</strong> for major version upgrades."</p>
+<hr />
+<h3 id="q3-how-do-you-handle-database-migrations-in-production">Q3: "How do you handle database migrations in production?"</h3>
+<p><strong>Answer:</strong><br />
+"Two-phase deployment:</p>
+<p><strong>Phase 1: Additive change (safe):</strong><br />
+1. Add new column (nullable)<br />
+2. Deploy code that writes to both old + new column<br />
+3. Backfill data for new column<br />
+4. Deploy code that reads from new column</p>
+<p><strong>Phase 2: Cleanup (after verification):</strong><br />
+5. Remove code that writes to old column<br />
+6. Drop old column</p>
+<p><strong>Key:</strong> Never drop column in same deployment as code change. Always give yourself a rollback window.</p>
+<p>At Billtrust, I've executed 200+ production DDL/DML changes with 100% success rate using this pattern."</p>
+<hr />
+<h2 id="summary">Summary</h2>
+<table>
+<thead>
+<tr>
+<th>Stage</th>
+<th>Purpose</th>
+<th>Time</th>
+<th>Rollback Time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Local Dev</strong></td>
+<td>Fast iteration</td>
+<td>Instant (hot reload)</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td><strong>Testing</strong></td>
+<td>Catch bugs early</td>
+<td>1-5 min</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td><strong>CI/CD</strong></td>
+<td>Automate everything</td>
+<td>5-7 min</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td><strong>Staging</strong></td>
+<td>Manual QA</td>
+<td>10-30 min</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td><strong>Production</strong></td>
+<td>Serve users</td>
+<td>10-30 min</td>
+<td>&lt; 1 min (blue-green)</td>
+</tr>
+<tr>
+<td><strong>Monitoring</strong></td>
+<td>Detect issues</td>
+<td>Continuous</td>
+<td>Auto-rollback if error rate &gt; 1%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>You're ready to explain the full API lifecycle in interviews!</strong> 🎯</p>
+        </div>
+    </div>
+
+    <script>
+        // Progress Tracker JavaScript
+        const STORAGE_KEY = 'course_progress_api_development_local_to_production';
+
+        // Extract all H2 and H3 headings from content
+        function extractSections() {
+            const content = document.querySelector('.content');
+            const headings = content.querySelectorAll('h2, h3');
+            const sections = [];
+
+            headings.forEach((heading, index) => {
+                const level = heading.tagName === 'H2' ? 2 : 3;
+                const text = heading.textContent.trim();
+                const id = `section-${index}`;
+
+                // Add ID to heading for linking
+                heading.id = id;
+
+                sections.push({
+                    id: id,
+                    text: text,
+                    level: level
+                });
+            });
+
+            return sections;
+        }
+
+        // Load saved progress from localStorage
+        function loadProgress() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            return saved ? JSON.parse(saved) : {};
+        }
+
+        // Save progress to localStorage
+        function saveProgress(progress) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+        }
+
+        // Calculate progress percentage
+        function calculateProgress() {
+            const checkboxes = document.querySelectorAll('.progress-checkbox');
+            const total = checkboxes.length;
+            if (total === 0) return 0;
+
+            const completed = Array.from(checkboxes).filter(cb => cb.checked).length;
+            return Math.round((completed / total) * 100);
+        }
+
+        // Update progress display
+        function updateProgressDisplay() {
+            const percentage = calculateProgress();
+            document.getElementById('progress-pct').textContent = percentage + '%';
+            document.getElementById('progress-bar').style.width = percentage + '%';
+
+            // Update completed class on items
+            document.querySelectorAll('.progress-item').forEach(item => {
+                const checkbox = item.querySelector('.progress-checkbox');
+                if (checkbox.checked) {
+                    item.classList.add('completed');
+                } else {
+                    item.classList.remove('completed');
+                }
+            });
+        }
+
+        // Toggle checkbox
+        function toggleCheckbox(sectionId) {
+            const checkbox = document.getElementById('cb-' + sectionId);
+            const progress = loadProgress();
+
+            progress[sectionId] = checkbox.checked;
+            saveProgress(progress);
+            updateProgressDisplay();
+        }
+
+        // Reset all progress
+        function resetProgress() {
+            if (confirm('Reset all progress for this page?')) {
+                localStorage.removeItem(STORAGE_KEY);
+                document.querySelectorAll('.progress-checkbox').forEach(cb => {
+                    cb.checked = false;
+                });
+                updateProgressDisplay();
+            }
+        }
+
+        // Toggle progress list visibility
+        function toggleProgressList() {
+            const list = document.getElementById('progress-items');
+            const btn = document.querySelector('.toggle-progress');
+
+            if (list.classList.contains('collapsed')) {
+                list.classList.remove('collapsed');
+                btn.textContent = '▼ Hide';
+            } else {
+                list.classList.add('collapsed');
+                btn.textContent = '▶ Show';
+            }
+        }
+
+        // Initialize progress tracker
+        function initProgressTracker() {
+            const sections = extractSections();
+            const progress = loadProgress();
+            const container = document.getElementById('progress-items');
+
+            if (sections.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No sections found</p>';
+                return;
+            }
+
+            sections.forEach(section => {
+                const item = document.createElement('div');
+                item.className = 'progress-item';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'progress-checkbox';
+                checkbox.id = 'cb-' + section.id;
+                checkbox.checked = progress[section.id] || false;
+                checkbox.onchange = () => toggleCheckbox(section.id);
+
+                const label = document.createElement('label');
+                label.className = 'progress-label';
+                label.htmlFor = 'cb-' + section.id;
+                label.textContent = section.text;
+                label.style.paddingLeft = section.level === 3 ? '20px' : '0';
+                label.onclick = () => {
+                    document.getElementById(section.id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+                };
+
+                item.appendChild(checkbox);
+                item.appendChild(label);
+                container.appendChild(item);
+            });
+
+            updateProgressDisplay();
+        }
+
+        // Run on page load
+        document.addEventListener('DOMContentLoaded', initProgressTracker);
+    </script>
+</body>
+</html>

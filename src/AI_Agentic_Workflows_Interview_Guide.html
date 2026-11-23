@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI_Agentic_Workflows_Interview_Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 60px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .metadata {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 16px 24px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #666;
+            border-left: 4px solid #667eea;
+        }
+
+        /* PROGRESS TRACKER STYLES */
+        .progress-tracker {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .progress-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-stats {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .progress-percentage {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #764ba2;
+        }
+
+        .progress-bar-container {
+            height: 12px;
+            background: #e9ecef;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+            border-radius: 20px;
+        }
+
+        .reset-btn {
+            padding: 8px 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+
+        .reset-btn:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+        }
+
+        .progress-items {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .progress-items::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .progress-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .progress-item:hover {
+            background: #f8f9fa;
+            transform: translateX(5px);
+        }
+
+        .progress-item.completed {
+            opacity: 0.7;
+        }
+
+        .progress-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .progress-label {
+            cursor: pointer;
+            font-size: 0.95em;
+            line-height: 1.5;
+            color: #495057;
+            flex-grow: 1;
+        }
+
+        .progress-item.completed .progress-label {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .toggle-progress {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .toggle-progress:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .progress-items.collapsed {
+            display: none;
+        }
+
+        /* CONTENT STYLES */
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 4px solid #667eea;
+            font-weight: 700;
+        }
+
+        h2 {
+            color: #764ba2;
+            font-size: 2em;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        h3 {
+            color: #495057;
+            font-size: 1.5em;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        h4 {
+            color: #666;
+            font-size: 1.25em;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        ul, ol {
+            margin: 20px 0;
+            padding-left: 40px;
+        }
+
+        li {
+            margin-bottom: 12px;
+            line-height: 1.7;
+        }
+
+        code {
+            background: #f4f5f7;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #c7254e;
+            border: 1px solid #e1e4e8;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 24px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 25px 0;
+            border: 1px solid #444;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            border: none;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        blockquote {
+            border-left: 5px solid #667eea;
+            padding: 15px 25px;
+            margin: 25px 0;
+            background: #f8f9fa;
+            border-radius: 0 8px 8px 0;
+            color: #495057;
+            font-style: italic;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 30px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 14px 18px;
+            text-align: left;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tr:hover {
+            background: #e9ecef;
+            transition: background 0.2s;
+        }
+
+        a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px solid transparent;
+            transition: border-bottom 0.2s;
+        }
+
+        a:hover {
+            border-bottom: 1px solid #667eea;
+        }
+
+        hr {
+            border: none;
+            border-top: 2px solid #e9ecef;
+            margin: 40px 0;
+        }
+
+        strong {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        em {
+            color: #495057;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 25px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.6em;
+            }
+
+            .progress-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .progress-stats {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../navigation.html" class="back-link">&larr; Back to Navigation</a>
+
+        <div class="metadata">
+            <strong>Source:</strong> dev/AI_Agentic_Workflows_Interview_Guide.md &nbsp;|&nbsp; <strong>Updated:</strong> 2026-11-18 19:44:50
+        </div>
+
+        <!-- PROGRESS TRACKER -->
+        <div class="progress-tracker">
+            <div class="progress-header">
+                <div class="progress-title">
+                    <span>📚</span>
+                    <span>Your Progress</span>
+                </div>
+                <div class="progress-stats">
+                    <span class="progress-percentage" id="progress-pct">0%</span>
+                    <button class="reset-btn" onclick="resetProgress()">Reset</button>
+                    <button class="toggle-progress" onclick="toggleProgressList()">▼ Hide</button>
+                </div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progress-bar" style="width: 0%"></div>
+            </div>
+            <div class="progress-items" id="progress-items">
+                <!-- Checkboxes will be generated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="content">
+<h1 id="ai-agentic-workflows-interview-talking-points">AI Agentic Workflows - Interview Talking Points</h1>
+<h2 id="why-this-makes-you-stand-out">🎯 Why This Makes You Stand Out</h2>
+<p>AI agentic workflows are cutting-edge (2024-2026 technology). Most engineers are just using Copilot for autocomplete. You're building <strong>multi-agent orchestration systems</strong> that automate complex investigative workflows. This positions you as:</p>
+<ul>
+<li><strong>Early adopter</strong> of transformative technology</li>
+<li><strong>Systems thinker</strong> (not just tool user)</li>
+<li><strong>Automation innovator</strong> (built workflows, not just used them)</li>
+<li><strong>Business value driver</strong> (40% faster incident resolution)</li>
+</ul>
+<hr />
+<h2 id="what-are-ai-agentic-workflows">📖 What Are AI Agentic Workflows?</h2>
+<p><strong>Simple explanation:</strong><br />
+"AI agentic workflows are systems where multiple AI agents work together to solve complex tasks that require multiple steps, tool use, and decision-making. Each agent is specialized for a specific task, and they can call tools, query databases, read code, and collaborate to produce verified results."</p>
+<p><strong>Technical explanation:</strong><br />
+"I've built multi-agent orchestration systems using Claude API and the Model Context Protocol (MCP). Each agent has access to specific tools—Jira API, GitHub API, database query engines, static analysis tools like Checkmarx—and they follow systematic investigation frameworks. For example, my incident triage workflow spawns 4-5 specialized agents in parallel: one reads the ticket and correlates with past cases, one searches the codebase for relevant functions, one queries the database to verify data state, one checks logs in Datadog/Splunk, and a final agent synthesizes all findings into both technical and business-facing summaries."</p>
+<hr />
+<h2 id="your-actual-implementation-be-specific">🛠️ Your Actual Implementation (Be Specific)</h2>
+<h3 id="system-architecture">System Architecture</h3>
+<p><strong>Components:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">Investigation</span><span class="w"> </span><span class="n">Request</span><span class="w"> </span><span class="p">(</span><span class="n">Jira</span><span class="w"> </span><span class="n">ticket</span><span class="p">)</span>
+<span class="w">         </span><span class="err">↓</span>
+<span class="n">Main</span><span class="w"> </span><span class="n">Orchestration</span><span class="w"> </span><span class="n">Agent</span>
+<span class="w">         </span><span class="err">↓</span>
+<span class="w">    </span><span class="err">┌────┴────┬─────────┬──────────┐</span>
+<span class="w">    </span><span class="err">↓</span><span class="w">         </span><span class="err">↓</span><span class="w">         </span><span class="err">↓</span><span class="w">          </span><span class="err">↓</span>
+<span class="n">Research</span><span class="w">  </span><span class="n">Database</span><span class="w">  </span><span class="n">Code</span><span class="w">      </span><span class="n">Log</span>
+<span class="n">Agent</span><span class="w">     </span><span class="n">Agent</span><span class="w">     </span><span class="n">Agent</span><span class="w">     </span><span class="n">Agent</span>
+<span class="w">    </span><span class="err">↓</span><span class="w">         </span><span class="err">↓</span><span class="w">         </span><span class="err">↓</span><span class="w">          </span><span class="err">↓</span>
+<span class="n">Parallel</span><span class="w"> </span><span class="n">execution</span><span class="w"> </span><span class="n">with</span><span class="w"> </span><span class="k">tool</span><span class="w"> </span><span class="n">use</span>
+<span class="w">    </span><span class="err">↓</span><span class="w">         </span><span class="err">↓</span><span class="w">         </span><span class="err">↓</span><span class="w">          </span><span class="err">↓</span>
+<span class="n">Results</span><span class="w"> </span><span class="n">aggregated</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">verified</span>
+<span class="w">         </span><span class="err">↓</span>
+<span class="n">Synthesis</span><span class="w"> </span><span class="n">Agent</span>
+<span class="w">         </span><span class="err">↓</span>
+<span class="n">Output</span><span class="p">:</span><span class="w"> </span><span class="n">Technical</span><span class="w"> </span><span class="n">Summary</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Business</span><span class="w"> </span><span class="n">Summary</span>
+</code></pre></div>
+
+<p><strong>Tools each agent can access:</strong><br />
+- <strong>Jira Agent:</strong> <code>getJiraIssue</code>, <code>searchJiraIssues</code>, <code>getComments</code><br />
+- <strong>Database Agent:</strong> <code>executeQuery</code> (via secure gateway), schema introspection<br />
+- <strong>Code Agent:</strong> <code>readFile</code>, <code>grep</code>, <code>gitBlame</code>, <code>gitLog</code><br />
+- <strong>Log Agent:</strong> Datadog API, Splunk API<br />
+- <strong>Security Agent:</strong> Checkmarx API, <code>triggerScan</code>, <code>listFindings</code></p>
+<p><strong>Verification layer:</strong><br />
+Every finding must have:<br />
+1. <strong>Code proof</strong> - actual lines read from files<br />
+2. <strong>Data proof</strong> - actual query results<br />
+3. <strong>No speculation</strong> - if uncertain, agent says "unverified" explicitly</p>
+<hr />
+<h2 id="real-world-use-cases-you-built">💡 Real-World Use Cases You Built</h2>
+<h3 id="1-incident-triage-agent-system">1. Incident Triage Agent System</h3>
+<p><strong>Problem:</strong><br />
+Manual incident triage took 2-4 hours per ticket. Required:<br />
+- Reading ticket + all comments + linked cases<br />
+- Searching codebase for relevant code<br />
+- Querying database to verify data state<br />
+- Checking logs for errors<br />
+- Correlating across multiple systems<br />
+- Writing technical + business summaries</p>
+<p><strong>Your AI Solution:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">Main</span><span class="w"> </span><span class="n">Triage</span><span class="w"> </span><span class="n">Agent</span>
+<span class="w">  </span><span class="err">↓</span>
+<span class="n">Spawns</span><span class="w"> </span><span class="mh">5</span><span class="w"> </span><span class="n">parallel</span><span class="w"> </span><span class="nl">agents:</span>
+<span class="mf">1.</span><span class="w"> </span><span class="n">Ticket</span><span class="w"> </span><span class="n">Context</span><span class="w"> </span><span class="n">Agent</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="n">Reads</span><span class="w"> </span><span class="n">Jira</span><span class="w"> </span><span class="n">ticket</span><span class="p">,</span><span class="w"> </span><span class="n">comments</span><span class="p">,</span><span class="w"> </span><span class="n">linked</span><span class="w"> </span><span class="n">issues</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="n">Searches</span><span class="w"> </span><span class="n">Confluence</span><span class="o">/</span><span class="n">KB</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">related</span><span class="w"> </span><span class="n">functionality</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="nl">Outputs:</span><span class="w"> </span><span class="n">ticket</span><span class="w"> </span><span class="n">summary</span><span class="p">,</span><span class="w"> </span><span class="n">related</span><span class="w"> </span><span class="n">cases</span>
+
+<span class="mf">2.</span><span class="w"> </span><span class="n">Code</span><span class="w"> </span><span class="n">Research</span><span class="w"> </span><span class="n">Agent</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="n">Greps</span><span class="w"> </span><span class="n">codebase</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">error</span><span class="w"> </span><span class="n">messages</span><span class="p">,</span><span class="w"> </span><span class="k">function</span><span class="w"> </span><span class="n">names</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="n">Reads</span><span class="w"> </span><span class="n">relevant</span><span class="w"> </span><span class="n">files</span><span class="w"> </span><span class="k">end</span><span class="o">-</span><span class="n">to</span><span class="o">-</span><span class="k">end</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="n">Traces</span><span class="w"> </span><span class="n">execution</span><span class="w"> </span><span class="n">path</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="nl">Outputs:</span><span class="w"> </span><span class="n">relevant</span><span class="w"> </span><span class="n">code</span><span class="w"> </span><span class="n">locations</span><span class="p">,</span><span class="w"> </span><span class="n">call</span><span class="w"> </span><span class="n">chain</span>
+
+<span class="mf">3.</span><span class="w"> </span><span class="n">Database</span><span class="w"> </span><span class="n">Validation</span><span class="w"> </span><span class="n">Agent</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="n">Constructs</span><span class="w"> </span><span class="n">safe</span><span class="w"> </span><span class="n">SQL</span><span class="w"> </span><span class="n">queries</span><span class="w"> </span><span class="p">(</span><span class="n">parameterized</span><span class="p">)</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="n">Executes</span><span class="w"> </span><span class="n">against</span><span class="w"> </span><span class="n">correct</span><span class="w"> </span><span class="n">environment</span><span class="o">/</span><span class="n">stack</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="n">Validates</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="n">state</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="nl">Outputs:</span><span class="w"> </span><span class="n">query</span><span class="w"> </span><span class="n">results</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="n">inconsistencies</span><span class="w"> </span><span class="n">found</span>
+
+<span class="mf">4.</span><span class="w"> </span><span class="n">Log</span><span class="w"> </span><span class="n">Analysis</span><span class="w"> </span><span class="n">Agent</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="n">Queries</span><span class="w"> </span><span class="n">Datadog</span><span class="o">/</span><span class="n">Splunk</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">timeframe</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="n">Correlates</span><span class="w"> </span><span class="n">errors</span><span class="w"> </span><span class="n">with</span><span class="w"> </span><span class="n">customer</span><span class="o">/</span><span class="n">account</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="nl">Outputs:</span><span class="w"> </span><span class="n">error</span><span class="w"> </span><span class="n">patterns</span><span class="p">,</span><span class="w"> </span><span class="n">frequency</span><span class="p">,</span><span class="w"> </span><span class="n">scope</span>
+
+<span class="mf">5.</span><span class="w"> </span><span class="n">Synthesis</span><span class="w"> </span><span class="n">Agent</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="n">Aggregates</span><span class="w"> </span><span class="n">all</span><span class="w"> </span><span class="n">findings</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="n">Runs</span><span class="w"> </span><span class="n">RC</span><span class="o">-</span><span class="mh">5</span><span class="w"> </span><span class="n">verification</span><span class="w"> </span><span class="p">(</span><span class="n">your</span><span class="w"> </span><span class="n">root</span><span class="w"> </span><span class="n">cause</span><span class="w"> </span><span class="n">framework</span><span class="p">)</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="n">Generates</span><span class="w"> </span><span class="n">dual</span><span class="w"> </span><span class="n">summaries</span><span class="w"> </span><span class="p">(</span><span class="n">technical</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">business</span><span class="p">)</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="n">Posts</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">Jira</span><span class="w"> </span><span class="n">Development</span><span class="w"> </span><span class="n">subtask</span>
+</code></pre></div>
+
+<p><strong>Results:</strong><br />
+- Reduced average triage time: 3 hours → 1.5 hours (50%)<br />
+- Increased accuracy: No guessing, every claim verified with code/data<br />
+- Documented 500+ incident patterns in reusable workflows<br />
+- Mean time to resolution down 40% overall</p>
+<p><strong>Business Value:</strong><br />
+- Faster customer issue resolution<br />
+- Fewer escalations<br />
+- Better quality root cause analysis (no speculation)<br />
+- Knowledge capture (workflows become documentation)</p>
+<hr />
+<h3 id="2-automated-code-review-agent">2. Automated Code Review Agent</h3>
+<p><strong>Problem:</strong><br />
+Manual code review across 8 microservices:<br />
+- Security vulnerabilities (SQL injection, XSS)<br />
+- Architectural compliance (multi-tenant safety)<br />
+- Performance issues (N+1 queries, missing indexes)<br />
+- PCI/HIPAA compliance checks<br />
+Each PR took 45-60 minutes to review thoroughly.</p>
+<p><strong>Your AI Solution:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">Code</span><span class="w"> </span><span class="n">Review</span><span class="w"> </span><span class="n">Orchestration</span><span class="w"> </span><span class="n">Agent</span>
+<span class="w">  </span><span class="err">↓</span>
+<span class="n">Parallel</span><span class="w"> </span><span class="n">review</span><span class="w"> </span><span class="nl">agents:</span>
+
+<span class="mf">1.</span><span class="w"> </span><span class="n">Security</span><span class="w"> </span><span class="n">Agent</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="n">Checkmarx</span><span class="w"> </span><span class="n">API</span><span class="w"> </span><span class="n">scan</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="n">OWASP</span><span class="w"> </span><span class="n">Top</span><span class="w"> </span><span class="mh">10</span><span class="w"> </span><span class="n">checks</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="n">SQL</span><span class="w"> </span><span class="n">injection</span><span class="w"> </span><span class="n">pattern</span><span class="w"> </span><span class="n">detection</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="n">XSS</span><span class="w"> </span><span class="n">vulnerability</span><span class="w"> </span><span class="n">detection</span>
+
+<span class="mf">2.</span><span class="w"> </span><span class="n">Architecture</span><span class="w"> </span><span class="n">Agent</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="n">Multi</span><span class="o">-</span><span class="n">tenant</span><span class="w"> </span><span class="n">scoping</span><span class="w"> </span><span class="n">check</span><span class="w"> </span><span class="p">(</span><span class="n">every</span><span class="w"> </span><span class="n">query</span><span class="w"> </span><span class="n">filters</span><span class="w"> </span><span class="n">by</span><span class="w"> </span><span class="n">CustomerId</span><span class="o">?</span><span class="p">)</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="n">Microservice</span><span class="w"> </span><span class="n">boundary</span><span class="w"> </span><span class="n">validation</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="n">Database</span><span class="w"> </span><span class="n">connection</span><span class="w"> </span><span class="n">routing</span><span class="w"> </span><span class="p">(</span><span class="n">correct</span><span class="w"> </span><span class="n">stack</span><span class="o">?</span><span class="p">)</span>
+
+<span class="mf">3.</span><span class="w"> </span><span class="n">Performance</span><span class="w"> </span><span class="n">Agent</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="n">N</span><span class="o">+</span><span class="mh">1</span><span class="w"> </span><span class="n">query</span><span class="w"> </span><span class="n">detection</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="n">Missing</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="n">identification</span><span class="w"> </span><span class="p">(</span><span class="n">EXPLAIN</span><span class="w"> </span><span class="n">simulation</span><span class="p">)</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="n">Large</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="n">set</span><span class="w"> </span><span class="n">warnings</span>
+
+<span class="mf">4.</span><span class="w"> </span><span class="n">Compliance</span><span class="w"> </span><span class="n">Agent</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="n">PCI</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="n">logging</span><span class="w"> </span><span class="n">check</span><span class="w"> </span><span class="p">(</span><span class="n">no</span><span class="w"> </span><span class="n">credit</span><span class="w"> </span><span class="n">card</span><span class="w"> </span><span class="n">numbers</span><span class="w"> </span><span class="n">in</span><span class="w"> </span><span class="n">logs</span><span class="p">)</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="n">HIPAA</span><span class="w"> </span><span class="n">PHI</span><span class="w"> </span><span class="n">exposure</span><span class="w"> </span><span class="n">check</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="n">Audit</span><span class="w"> </span><span class="n">trail</span><span class="w"> </span><span class="n">verification</span>
+
+<span class="mf">5.</span><span class="w"> </span><span class="n">Test</span><span class="w"> </span><span class="n">Coverage</span><span class="w"> </span><span class="n">Agent</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="n">Identifies</span><span class="w"> </span><span class="n">changed</span><span class="w"> </span><span class="n">code</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="n">Checks</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">corresponding</span><span class="w"> </span><span class="n">test</span><span class="w"> </span><span class="n">updates</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="n">Flags</span><span class="w"> </span><span class="n">missing</span><span class="w"> </span><span class="n">regression</span><span class="w"> </span><span class="n">tests</span>
+</code></pre></div>
+
+<p><strong>Output:</strong><br />
+- Findings ranked by severity (Critical/High/Medium)<br />
+- Each with: file:line, explanation, suggested fix<br />
+- Regression analysis table (what could break)<br />
+- Verdict: Approve / Request Changes</p>
+<p><strong>Results:</strong><br />
+- Review time: 45 min → 15 min (human just validates findings)<br />
+- Security findings before merge: 60% increase<br />
+- Zero PCI/HIPAA violations post-deployment<br />
+- Standards adopted across 5 teams</p>
+<hr />
+<h3 id="3-database-dmlddl-validation-agent">3. Database DML/DDL Validation Agent</h3>
+<p><strong>Problem:</strong><br />
+Production database changes (DML/DDL) are high-risk:<br />
+- Wrong database/environment<br />
+- Missing WHERE clause (could update all rows)<br />
+- No rollback script<br />
+- Affected Records count mismatch<br />
+- PCI/HIPAA data exposure</p>
+<p><strong>Your AI Solution:</strong></p>
+<div class="codehilite"><pre><span></span><code>DML Review Agent
+  ↓
+Validation checks:
+
+1. Safety Agent
+   <span class="k">-</span> Parses SQL AST
+   <span class="k">-</span> Checks: USE statement matches target
+   <span class="k">-</span> Checks: UPDATE/DELETE has WHERE clause
+   <span class="k">-</span> Checks: No TRUNCATE/DROP on permanent tables
+   <span class="k">-</span> Checks: No PCI data in SELECT results
+
+2. Data Verification Agent
+   <span class="k">-</span> Runs COUNT(*) with WHERE clause
+   <span class="k">-</span> Compares to "Affected Records" field in Jira
+   <span class="k">-</span> Runs pre-check SELECT to verify data
+   <span class="k">-</span> Validates against actual customer/account data
+
+3. Rollback Generation Agent
+   <span class="k">-</span> Generates reverse SQL automatically
+   <span class="k">-</span> Tests rollback in staging
+   <span class="k">-</span> Saves as .txt file (per convention)
+
+4. Compliance Agent
+   <span class="k">-</span> Checks Cloud Service Type matches environment
+   <span class="k">-</span> Validates Apply Date is reasonable
+   <span class="k">-</span> Ensures Source From = Engineering
+</code></pre></div>
+
+<p><strong>Output:</strong><br />
+- Checklist table (✅/❌ per check)<br />
+- Live query results (data verification)<br />
+- Rollback script (tested)<br />
+- Verdict: Approve / Request Changes</p>
+<p><strong>Results:</strong><br />
+- 200+ production database changes with 100% success rate<br />
+- Zero rollback incidents<br />
+- Zero wrong-database incidents<br />
+- Auto-blocks unsafe SQL patterns</p>
+<hr />
+<h2 id="technical-deep-dive-questions-be-ready">🎓 Technical Deep Dive Questions (Be Ready)</h2>
+<h3 id="q-how-do-you-handle-hallucinations-in-ai-agents">Q: How do you handle hallucinations in AI agents?</h3>
+<p><strong>Your Answer:</strong><br />
+"I've implemented a strict verification protocol. Every finding an agent produces must have either <strong>code proof</strong> (actual lines read from files with file:line references) or <strong>data proof</strong> (actual query results from live databases). If an agent can't verify a claim, it must explicitly label it as 'unverified hypothesis' in the output—it's never allowed to present speculation as fact.</p>
+<p>For example, if an agent says 'Function X causes error Y,' it must show:<br />
+1. The actual code from Function X (lines read this session)<br />
+2. The execution path that reaches the error (traced through code)<br />
+3. The exact error signature match (from logs or exception handler)</p>
+<p>If any of those can't be proven, the agent says 'hypothesis: X might cause Y, but I haven't verified Z.'</p>
+<p>Additionally, I use <strong>adversarial verification</strong>: for critical findings, I spawn multiple independent agents to verify from different angles. If they disagree, that's flagged for human review."</p>
+<hr />
+<h3 id="q-whats-your-prompt-engineering-approach">Q: What's your prompt engineering approach?</h3>
+<p><strong>Your Answer:</strong><br />
+"I use several patterns depending on the task:</p>
+<p><strong>1. Chain-of-thought for complex reasoning:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nv">You</span><span class="w"> </span><span class="nv">are</span><span class="w"> </span><span class="nv">analyzing</span><span class="w"> </span><span class="nv">a</span><span class="w"> </span><span class="nv">production</span><span class="w"> </span><span class="nv">incident</span>.<span class="w"> </span><span class="nv">Think</span><span class="w"> </span><span class="nv">through</span><span class="w"> </span><span class="nv">this</span><span class="w"> </span><span class="nv">systematically</span>:
+<span class="mi">1</span>.<span class="w"> </span><span class="nv">What</span><span class="w"> </span><span class="nv">does</span><span class="w"> </span><span class="nv">the</span><span class="w"> </span><span class="nv">ticket</span><span class="w"> </span><span class="nv">say</span><span class="w"> </span><span class="nv">the</span><span class="w"> </span><span class="nv">user</span><span class="w"> </span><span class="nv">experienced</span>?
+<span class="mi">2</span>.<span class="w"> </span><span class="nv">What</span><span class="w"> </span><span class="nv">code</span><span class="w"> </span><span class="nv">paths</span><span class="w"> </span><span class="nv">could</span><span class="w"> </span><span class="nv">produce</span><span class="w"> </span><span class="nv">that</span><span class="w"> </span><span class="nv">behavior</span>?
+<span class="mi">3</span>.<span class="w"> </span><span class="k">For</span><span class="w"> </span><span class="nv">each</span><span class="w"> </span><span class="nv">path</span>,<span class="w"> </span><span class="nv">what</span><span class="w"> </span><span class="nv">data</span><span class="w"> </span><span class="nv">state</span><span class="w"> </span><span class="nv">would</span><span class="w"> </span><span class="nv">be</span><span class="w"> </span><span class="nv">required</span>?
+<span class="mi">4</span>.<span class="w"> </span><span class="nv">Which</span><span class="w"> </span><span class="nv">path</span><span class="w"> </span><span class="nv">matches</span><span class="w"> </span><span class="nv">the</span><span class="w"> </span><span class="nv">evidence</span><span class="w"> </span><span class="nv">we</span><span class="w"> </span><span class="nv">have</span>?
+<span class="mi">5</span>.<span class="w"> </span><span class="nv">What</span><span class="w"> </span><span class="nv">would</span><span class="w"> </span><span class="nv">confirm</span><span class="w"> </span><span class="nv">or</span><span class="w"> </span><span class="nv">rule</span><span class="w"> </span><span class="nv">out</span><span class="w"> </span><span class="nv">each</span><span class="w"> </span><span class="nv">path</span>?
+</code></pre></div>
+
+<p><strong>2. Structured output for machine-readable results:</strong><br />
+I force agents to output JSON with a specific schema:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">"findings"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"severity"</span><span class="p">:</span><span class="w"> </span><span class="s2">"HIGH"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"file"</span><span class="p">:</span><span class="w"> </span><span class="s2">"src/Controller.php"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"line"</span><span class="p">:</span><span class="w"> </span><span class="mi">142</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"issue"</span><span class="p">:</span><span class="w"> </span><span class="s2">"SQL injection vulnerability"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"evidence"</span><span class="p">:</span><span class="w"> </span><span class="s2">"User input concatenated into query"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"recommendation"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Use parameterized query"</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong>3. Tool use with clear contracts:</strong><br />
+Each tool has strict input/output validation. Agents learn through examples:</p>
+<div class="codehilite"><pre><span></span><code>To query the database:
+- Tool: executeQuery
+- Input: { "environment": "prod", "database": "billingclient1", "query": "SELECT ..." }
+- Always use parameterized queries
+- Output: { "rows": [...], "rowCount": N }
+</code></pre></div>
+
+<p><strong>4. Retrieval-augmented generation (RAG):</strong><br />
+Before answering, agents search our knowledge base (50+ docs):<br />
+- Architecture guides (multi-tenant patterns, AC vs UC model)<br />
+- Coding standards (security, PCI/HIPAA compliance)<br />
+- Past incident patterns<br />
+This grounds answers in our actual architecture, not generic knowledge."</p>
+<hr />
+<h3 id="q-how-do-you-orchestrate-multiple-agents">Q: How do you orchestrate multiple agents?</h3>
+<p><strong>Your Answer:</strong><br />
+"I use two patterns:</p>
+<p><strong>1. Parallel execution</strong> when agents are independent:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">triage_incident</span><span class="p">(</span><span class="n">ticket_id</span><span class="p">):</span>
+    <span class="c1"># Launch all agents in parallel</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span>
+        <span class="n">ticket_agent</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">ticket_id</span><span class="p">),</span>
+        <span class="n">code_agent</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">error_message</span><span class="p">),</span>
+        <span class="n">database_agent</span><span class="o">.</span><span class="n">verify</span><span class="p">(</span><span class="n">customer_id</span><span class="p">),</span>
+        <span class="n">log_agent</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">timeframe</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Synthesis agent combines results</span>
+    <span class="k">return</span> <span class="n">synthesis_agent</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+</code></pre></div>
+
+<p>This reduces wall-clock time dramatically (4 agents × 5 min = 5 min total, not 20 min).</p>
+<p><strong>2. Sequential with handoff</strong> when output of one feeds the next:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">code_review_workflow</span><span class="p">(</span><span class="n">pr_id</span><span class="p">):</span>
+    <span class="c1"># First: scan for security issues</span>
+    <span class="n">security_findings</span> <span class="o">=</span> <span class="k">await</span> <span class="n">security_agent</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="n">pr_id</span><span class="p">)</span>
+
+    <span class="c1"># Then: only deep-dive files with findings</span>
+    <span class="n">detailed_review</span> <span class="o">=</span> <span class="k">await</span> <span class="n">review_agent</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span>
+        <span class="n">files</span><span class="o">=</span><span class="n">security_findings</span><span class="o">.</span><span class="n">flagged_files</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Finally: generate report</span>
+    <span class="k">return</span> <span class="n">report_agent</span><span class="o">.</span><span class="n">synthesize</span><span class="p">(</span><span class="n">security_findings</span><span class="p">,</span> <span class="n">detailed_review</span><span class="p">)</span>
+</code></pre></div>
+
+<p>I also use <strong>error recovery</strong>: if an agent fails (API timeout, tool error), the orchestrator retries with backoff or routes to a fallback agent. Critical findings get <strong>adversarial verification</strong> from a second independent agent before being reported."</p>
+<hr />
+<h3 id="q-what-about-cost-management-with-llm-apis">Q: What about cost management with LLM APIs?</h3>
+<p><strong>Your Answer:</strong><br />
+"Cost is a key concern. I've implemented several optimizations:</p>
+<p><strong>1. Prompt caching:</strong><br />
+Our architectural docs, coding standards, and database schemas are passed as system context. Claude's prompt caching means we only pay once per 5-minute window for that context (~500K tokens), not on every request. This saves ~90% on context costs.</p>
+<p><strong>2. Right-sizing models:</strong><br />
+- Simple tasks (SQL validation, checklist verification): Use cheaper/faster models<br />
+- Complex reasoning (root cause analysis, security review): Use most capable model<br />
+- No one-size-fits-all</p>
+<p><strong>3. Tool use over context bloat:</strong><br />
+Instead of stuffing entire files into context:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">Agent</span><span class="o">:</span><span class="w"> </span><span class="k">Use</span><span class="w"> </span><span class="n n-Quoted">`grep`</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">find</span><span class="w"> </span><span class="k">function</span><span class="w"> </span><span class="k">definition</span>
+<span class="n">Agent</span><span class="o">:</span><span class="w"> </span><span class="k">Use</span><span class="w"> </span><span class="n n-Quoted">`readFile`</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="k">read</span><span class="w"> </span><span class="n">just</span><span class="w"> </span><span class="n">that</span><span class="w"> </span><span class="k">function</span>
+<span class="n">Agent</span><span class="o">:</span><span class="w"> </span><span class="k">Use</span><span class="w"> </span><span class="n n-Quoted">`executeQuery`</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">verify</span><span class="w"> </span><span class="k">data</span>
+</code></pre></div>
+
+<p>This keeps context small and focused.</p>
+<p><strong>4. Async processing:</strong><br />
+Long-running investigations run in the background. Users get a notification when complete, not blocking on a 5-minute analysis.</p>
+<p><strong>5. Human-in-the-loop:</strong><br />
+For non-critical tasks, agents draft recommendations and wait for approval before executing. Saves wasted API calls on rejected approaches.</p>
+<p><strong>Typical costs:</strong><br />
+- Incident triage: $0.50-1.50 per ticket (vs 3 hours of engineer time)<br />
+- Code review: $0.30-0.80 per PR (vs 45 min of engineer time)<br />
+- ROI is massive even at full API pricing."</p>
+<hr />
+<h3 id="q-how-do-you-measure-success-of-ai-agents">Q: How do you measure success of AI agents?</h3>
+<p><strong>Your Answer:</strong><br />
+"I track both quantitative and qualitative metrics:</p>
+<p><strong>Quantitative:</strong><br />
+- <strong>Time savings:</strong> MTTR reduced by 40% (3 hours → 1.8 hours average)<br />
+- <strong>Accuracy:</strong> Zero PCI/HIPAA violations post-deployment (vs 2-3/year previously)<br />
+- <strong>Volume:</strong> 500+ incidents triaged with AI assistance<br />
+- <strong>Cost:</strong> $0.50-1.50 per ticket vs $150 in engineer time (3 hrs × $50/hr)<br />
+- <strong>Security:</strong> 60% more vulnerabilities caught pre-merge</p>
+<p><strong>Qualitative:</strong><br />
+- <strong>Knowledge capture:</strong> 50+ investigation workflows documented (reusable)<br />
+- <strong>Consistency:</strong> Same verification protocol every time (no shortcuts when tired)<br />
+- <strong>Learning:</strong> New engineers onboard faster (workflows teach the process)<br />
+- <strong>Confidence:</strong> Business stakeholders trust AI-generated summaries (dual-audience output)</p>
+<p><strong>A/B comparison:</strong><br />
+I occasionally run manual-only triage vs AI-assisted on similar tickets:<br />
+- AI-assisted: Found root cause 15% faster, with code/data proof<br />
+- Manual: More prone to speculation ('probably X'), less thorough data verification</p>
+<p><strong>Failure analysis:</strong><br />
+I also track where AI agents fail or require human correction:<br />
+- Tool errors (API timeouts): 5% of runs<br />
+- Unverifiable hypotheses: 10% (flagged as such, not presented as fact)<br />
+- Human override on severity: 8% (agent said 'Medium', human escalated to 'High')</p>
+<p>This feedback loop improves prompts and verification protocols over time."</p>
+<hr />
+<h2 id="your-2-minute-ai-elevator-pitch">🎤 Your 2-Minute AI Elevator Pitch</h2>
+<p><em>"In a production environment, I pioneered AI agentic workflows for production support and code review. Instead of just using AI as a chatbot, I built multi-agent orchestration systems where specialized agents work in parallel—one searches the codebase, one queries the database, one analyzes logs, one checks security—and synthesize their findings into verified root cause analysis.</em></p>
+<p><em>The key innovation is the verification layer: every finding must have code proof or data proof. No speculation, no hallucinations making it to the output. If an agent can't verify something, it says so explicitly.</em></p>
+<p><em>The business impact has been significant: 40% reduction in mean time to resolution, zero compliance violations, and we've documented 500+ incident patterns in reusable workflows. Code reviews that used to take 45 minutes now take 15, with 60% more security findings caught before merge.</em></p>
+<p><em>I'm excited about this space because we're just scratching the surface. The next evolution is agents that not only investigate but also propose and validate fixes, running them through staging environments before human review."</em></p>
+<hr />
+<h2 id="red-flags-to-avoid">🚩 Red Flags to Avoid</h2>
+<p><strong>Don't:</strong><br />
+- ❌ Claim AI "does everything" (you orchestrate, verify, guide)<br />
+- ❌ Ignore hallucination risks (address proactively)<br />
+- ❌ Oversell accuracy (mention failure modes transparently)<br />
+- ❌ Use buzzwords without specifics ("transformative synergy")<br />
+- ❌ Say it replaces engineers (it's augmentation, not replacement)</p>
+<p><strong>Do:</strong><br />
+- ✅ Show concrete examples from your work<br />
+- ✅ Quantify business impact (40% faster, 60% more findings)<br />
+- ✅ Explain technical architecture (agents, tools, orchestration)<br />
+- ✅ Acknowledge limitations and how you mitigate them<br />
+- ✅ Position as force multiplier, not replacement</p>
+<hr />
+<h2 id="future-vision-show-forward-thinking">🔮 Future Vision (Show Forward Thinking)</h2>
+<p><em>"Where I see this going in the next 2-3 years:</em></p>
+<p><strong>1. Autonomous fix generation:</strong><br />
+Agents that not only identify bugs but generate the fix, run tests in staging, and submit PRs for human review.</p>
+<p><strong>2. Self-improving systems:</strong><br />
+Agents learn from past incidents. If Investigation A and Investigation B followed similar patterns, the agent recognizes that and speeds up Investigation C.</p>
+<p><strong>3. Proactive monitoring:</strong><br />
+Instead of reacting to incidents, agents continuously monitor for anomalies—unusual error rates, slow queries, security scan findings—and investigate before customers are impacted.</p>
+<p><strong>4. Domain-specific agents:</strong><br />
+Rather than general-purpose code assistants, agents deeply specialized in payment processing, authentication flows, database optimization—trained on our specific architecture and patterns.</p>
+<p><strong>5. Collaborative human-AI teams:</strong><br />
+Not 'AI replaces humans' but 'AI handles the mechanical verification, humans focus on creative problem-solving and business judgment.'</p>
+<p><em>This is why I'm excited about roles that are pushing the boundaries of AI in engineering—not just using tools, but building the tools that make teams more effective."</em></p>
+<hr />
+<h2 id="technical-terms-to-know">📚 Technical Terms to Know</h2>
+<ul>
+<li><strong>Agentic AI:</strong> AI systems that can take actions, use tools, and make decisions autonomously</li>
+<li><strong>Multi-agent orchestration:</strong> Coordinating multiple specialized AI agents to solve complex tasks</li>
+<li><strong>Tool use / Function calling:</strong> AI's ability to invoke APIs, run code, query databases</li>
+<li><strong>Prompt engineering:</strong> Crafting prompts to elicit desired behavior from LLMs</li>
+<li><strong>RAG (Retrieval-Augmented Generation):</strong> Combining LLM reasoning with knowledge base retrieval</li>
+<li><strong>Chain-of-thought:</strong> Prompting technique where AI explains reasoning step-by-step</li>
+<li><strong>Structured output:</strong> Forcing AI to return JSON/XML instead of freeform text</li>
+<li><strong>Adversarial verification:</strong> Multiple independent agents validate same finding</li>
+<li><strong>MCP (Model Context Protocol):</strong> Standard for connecting LLMs to external tools/data sources</li>
+<li><strong>Prompt caching:</strong> Reusing expensive context across multiple requests to save cost</li>
+<li><strong>Few-shot learning:</strong> Providing examples in the prompt to guide behavior</li>
+<li><strong>System prompt:</strong> Instructions that persist across conversation, defining agent's role</li>
+</ul>
+<hr />
+<h2 id="questions-to-ask-interviewers">🎯 Questions to Ask Interviewers</h2>
+<p><strong>About their AI strategy:</strong><br />
+1. "Is your team exploring AI-assisted development workflows? If so, what approaches are you taking?"<br />
+2. "What's your vision for AI in your engineering organization over the next 2 years?"<br />
+3. "Are there opportunities to pioneer AI initiatives, or is there already a dedicated AI team?"</p>
+<p><strong>Technical curiosity:</strong><br />
+4. "What tools and APIs does your engineering team currently integrate with? (Jira, GitHub, monitoring, etc.)"<br />
+5. "How do you currently handle incident triage and code review at scale?"<br />
+6. "Would there be opportunities to build automation around repetitive engineering tasks?"</p>
+<p><strong>Show you're thinking ahead:</strong><br />
+7. "What are the biggest time sinks for your engineering team that could benefit from automation?"</p>
+<hr />
+<p><strong>Remember:</strong> AI agentic workflows are NEW (2024-2026). Most companies are exploring, not implementing. Your hands-on experience building multi-agent systems puts you in the top 1% of engineers. Own that expertise confidently.</p>
+<hr />
+<p>Good luck! 🚀</p>
+        </div>
+    </div>
+
+    <script>
+        // Progress Tracker JavaScript
+        const STORAGE_KEY = 'course_progress_ai_agentic_workflows_interview_guide';
+
+        // Extract all H2 and H3 headings from content
+        function extractSections() {
+            const content = document.querySelector('.content');
+            const headings = content.querySelectorAll('h2, h3');
+            const sections = [];
+
+            headings.forEach((heading, index) => {
+                const level = heading.tagName === 'H2' ? 2 : 3;
+                const text = heading.textContent.trim();
+                const id = `section-${index}`;
+
+                // Add ID to heading for linking
+                heading.id = id;
+
+                sections.push({
+                    id: id,
+                    text: text,
+                    level: level
+                });
+            });
+
+            return sections;
+        }
+
+        // Load saved progress from localStorage
+        function loadProgress() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            return saved ? JSON.parse(saved) : {};
+        }
+
+        // Save progress to localStorage
+        function saveProgress(progress) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+        }
+
+        // Calculate progress percentage
+        function calculateProgress() {
+            const checkboxes = document.querySelectorAll('.progress-checkbox');
+            const total = checkboxes.length;
+            if (total === 0) return 0;
+
+            const completed = Array.from(checkboxes).filter(cb => cb.checked).length;
+            return Math.round((completed / total) * 100);
+        }
+
+        // Update progress display
+        function updateProgressDisplay() {
+            const percentage = calculateProgress();
+            document.getElementById('progress-pct').textContent = percentage + '%';
+            document.getElementById('progress-bar').style.width = percentage + '%';
+
+            // Update completed class on items
+            document.querySelectorAll('.progress-item').forEach(item => {
+                const checkbox = item.querySelector('.progress-checkbox');
+                if (checkbox.checked) {
+                    item.classList.add('completed');
+                } else {
+                    item.classList.remove('completed');
+                }
+            });
+        }
+
+        // Toggle checkbox
+        function toggleCheckbox(sectionId) {
+            const checkbox = document.getElementById('cb-' + sectionId);
+            const progress = loadProgress();
+
+            progress[sectionId] = checkbox.checked;
+            saveProgress(progress);
+            updateProgressDisplay();
+        }
+
+        // Reset all progress
+        function resetProgress() {
+            if (confirm('Reset all progress for this page?')) {
+                localStorage.removeItem(STORAGE_KEY);
+                document.querySelectorAll('.progress-checkbox').forEach(cb => {
+                    cb.checked = false;
+                });
+                updateProgressDisplay();
+            }
+        }
+
+        // Toggle progress list visibility
+        function toggleProgressList() {
+            const list = document.getElementById('progress-items');
+            const btn = document.querySelector('.toggle-progress');
+
+            if (list.classList.contains('collapsed')) {
+                list.classList.remove('collapsed');
+                btn.textContent = '▼ Hide';
+            } else {
+                list.classList.add('collapsed');
+                btn.textContent = '▶ Show';
+            }
+        }
+
+        // Initialize progress tracker
+        function initProgressTracker() {
+            const sections = extractSections();
+            const progress = loadProgress();
+            const container = document.getElementById('progress-items');
+
+            if (sections.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No sections found</p>';
+                return;
+            }
+
+            sections.forEach(section => {
+                const item = document.createElement('div');
+                item.className = 'progress-item';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'progress-checkbox';
+                checkbox.id = 'cb-' + section.id;
+                checkbox.checked = progress[section.id] || false;
+                checkbox.onchange = () => toggleCheckbox(section.id);
+
+                const label = document.createElement('label');
+                label.className = 'progress-label';
+                label.htmlFor = 'cb-' + section.id;
+                label.textContent = section.text;
+                label.style.paddingLeft = section.level === 3 ? '20px' : '0';
+                label.onclick = () => {
+                    document.getElementById(section.id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+                };
+
+                item.appendChild(checkbox);
+                item.appendChild(label);
+                container.appendChild(item);
+            });
+
+            updateProgressDisplay();
+        }
+
+        // Run on page load
+        document.addEventListener('DOMContentLoaded', initProgressTracker);
+    </script>
+</body>
+</html>

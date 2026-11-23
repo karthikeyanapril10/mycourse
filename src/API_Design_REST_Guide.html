@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API_Design_REST_Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 60px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .metadata {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 16px 24px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #666;
+            border-left: 4px solid #667eea;
+        }
+
+        /* PROGRESS TRACKER STYLES */
+        .progress-tracker {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .progress-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-stats {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .progress-percentage {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #764ba2;
+        }
+
+        .progress-bar-container {
+            height: 12px;
+            background: #e9ecef;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+            border-radius: 20px;
+        }
+
+        .reset-btn {
+            padding: 8px 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+
+        .reset-btn:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+        }
+
+        .progress-items {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .progress-items::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .progress-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .progress-item:hover {
+            background: #f8f9fa;
+            transform: translateX(5px);
+        }
+
+        .progress-item.completed {
+            opacity: 0.7;
+        }
+
+        .progress-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .progress-label {
+            cursor: pointer;
+            font-size: 0.95em;
+            line-height: 1.5;
+            color: #495057;
+            flex-grow: 1;
+        }
+
+        .progress-item.completed .progress-label {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .toggle-progress {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .toggle-progress:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .progress-items.collapsed {
+            display: none;
+        }
+
+        /* CONTENT STYLES */
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 4px solid #667eea;
+            font-weight: 700;
+        }
+
+        h2 {
+            color: #764ba2;
+            font-size: 2em;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        h3 {
+            color: #495057;
+            font-size: 1.5em;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        h4 {
+            color: #666;
+            font-size: 1.25em;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        ul, ol {
+            margin: 20px 0;
+            padding-left: 40px;
+        }
+
+        li {
+            margin-bottom: 12px;
+            line-height: 1.7;
+        }
+
+        code {
+            background: #f4f5f7;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #c7254e;
+            border: 1px solid #e1e4e8;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 24px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 25px 0;
+            border: 1px solid #444;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            border: none;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        blockquote {
+            border-left: 5px solid #667eea;
+            padding: 15px 25px;
+            margin: 25px 0;
+            background: #f8f9fa;
+            border-radius: 0 8px 8px 0;
+            color: #495057;
+            font-style: italic;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 30px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 14px 18px;
+            text-align: left;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tr:hover {
+            background: #e9ecef;
+            transition: background 0.2s;
+        }
+
+        a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px solid transparent;
+            transition: border-bottom 0.2s;
+        }
+
+        a:hover {
+            border-bottom: 1px solid #667eea;
+        }
+
+        hr {
+            border: none;
+            border-top: 2px solid #e9ecef;
+            margin: 40px 0;
+        }
+
+        strong {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        em {
+            color: #495057;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 25px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.6em;
+            }
+
+            .progress-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .progress-stats {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../navigation.html" class="back-link">&larr; Back to Navigation</a>
+
+        <div class="metadata">
+            <strong>Source:</strong> dev/API_Design_REST_Guide.md &nbsp;|&nbsp; <strong>Updated:</strong> 2026-11-18 19:44:50
+        </div>
+
+        <!-- PROGRESS TRACKER -->
+        <div class="progress-tracker">
+            <div class="progress-header">
+                <div class="progress-title">
+                    <span>📚</span>
+                    <span>Your Progress</span>
+                </div>
+                <div class="progress-stats">
+                    <span class="progress-percentage" id="progress-pct">0%</span>
+                    <button class="reset-btn" onclick="resetProgress()">Reset</button>
+                    <button class="toggle-progress" onclick="toggleProgressList()">▼ Hide</button>
+                </div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progress-bar" style="width: 0%"></div>
+            </div>
+            <div class="progress-items" id="progress-items">
+                <!-- Checkboxes will be generated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="content">
+<h1 id="api-design-rest-best-practices-guide">API Design &amp; REST Best Practices Guide</h1>
+<p><strong>For Senior Software Engineer Interviews</strong></p>
+<p>Your competitive advantage: <strong>Multi-tenant API experience</strong> (10,000+ customers, rate limiting, versioning, authentication at scale)</p>
+<hr />
+<h2 id="rest-fundamentals">REST Fundamentals</h2>
+<h3 id="resources-http-methods">Resources &amp; HTTP Methods</h3>
+<div class="codehilite"><pre><span></span><code>Resource: Invoice
+URL: /api/invoices
+
+GET    /api/invoices        List all invoices
+GET    /api/invoices/123    Get specific invoice
+POST   /api/invoices        Create new invoice
+PUT    /api/invoices/123    Update entire invoice (replace)
+PATCH  /api/invoices/123    Partial update
+DELETE /api/invoices/123    Delete invoice
+</code></pre></div>
+
+<p><strong>Idempotent:</strong><br />
+- GET, PUT, DELETE → Same request twice = same result<br />
+- POST → Creates new resource each time (NOT idempotent)</p>
+<hr />
+<h2 id="url-design">URL Design</h2>
+<h3 id="good-api-urls">Good API URLs</h3>
+<div class="codehilite"><pre><span></span><code>✅ GOOD:
+GET /api/customers/123/invoices
+GET /api/invoices?customer_id=123&amp;status=unpaid
+POST /api/invoices/123/payments
+DELETE /api/customers/123
+
+❌ BAD:
+GET /api/getCustomerInvoices?id=123  # Verb in URL
+POST /api/invoice/delete/123         # DELETE in POST
+GET /api/Customers/123               # Inconsistent casing
+</code></pre></div>
+
+<p><strong>Rules:</strong><br />
+- Nouns, not verbs<br />
+- Plural resource names (<code>/invoices</code> not <code>/invoice</code>)<br />
+- Lowercase, hyphen-separated (<code>/payment-methods</code> not <code>/paymentMethods</code>)<br />
+- Nested for relationships (<code>/customers/123/invoices</code>)<br />
+- Query params for filtering (<code>?status=unpaid&amp;limit=20</code>)</p>
+<hr />
+<h2 id="versioning">Versioning</h2>
+<h3 id="3-approaches">3 Approaches</h3>
+<p><strong>1. URL Versioning (Recommended)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nv">GET</span><span class="w"> </span><span class="o">/</span><span class="nv">api</span><span class="o">/</span><span class="nv">v1</span><span class="o">/</span><span class="nv">invoices</span>
+<span class="nv">GET</span><span class="w"> </span><span class="o">/</span><span class="nv">api</span><span class="o">/</span><span class="nv">v2</span><span class="o">/</span><span class="nv">invoices</span>
+
+✅<span class="w"> </span><span class="nv">Pros</span>:<span class="w"> </span><span class="nv">Clear</span>,<span class="w"> </span><span class="nv">easy</span><span class="w"> </span><span class="nv">to</span><span class="w"> </span><span class="nv">cache</span>
+❌<span class="w"> </span><span class="nv">Cons</span>:<span class="w"> </span><span class="nv">Multiple</span><span class="w"> </span><span class="nv">URLs</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="nv">same</span><span class="w"> </span><span class="nv">resource</span>
+</code></pre></div>
+
+<p><strong>2. Header Versioning</strong></p>
+<div class="codehilite"><pre><span></span><code>GET /api/invoices
+Headers: Accept: application/vnd.Enterprise SaaS Company.v2+json
+
+✅ Pros: Clean URLs
+❌ Cons: Harder to test (can't paste in browser)
+</code></pre></div>
+
+<p><strong>3. Query Parameter</strong></p>
+<div class="codehilite"><pre><span></span><code>GET /api/invoices?version=2
+
+❌ Not recommended (mixes versioning with filtering)
+</code></pre></div>
+
+<p><strong>Your Production API:</strong></p>
+<div class="codehilite"><pre><span></span><code>/api/v1/invoices  (original)
+/api/v2/invoices  (added pagination, changed date format)
+/api/v3/invoices  (added filtering, breaking change)
+
+# v1 still works (backward compatibility)
+</code></pre></div>
+
+<hr />
+<h2 id="authentication-authorization">Authentication &amp; Authorization</h2>
+<h3 id="jwt-json-web-token">JWT (JSON Web Token)</h3>
+<p><strong>Flow:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="mf">1.</span><span class="w"> </span><span class="nb">POS</span><span class="n">T</span><span class="w"> </span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="nb">log</span><span class="n">in</span>
+<span class="w">   </span><span class="n">Body</span><span class="p">:</span><span class="w"> </span><span class="err">{</span><span class="n">email</span><span class="p">,</span><span class="w"> </span><span class="n">password</span><span class="err">}</span>
+<span class="w">   </span><span class="n">Response</span><span class="p">:</span><span class="w"> </span><span class="err">{</span><span class="kr">to</span><span class="n">ken</span><span class="p">:</span><span class="w"> </span><span class="s">"eyJhbGciOiJIUzI1..."</span><span class="err">}</span>
+
+<span class="mf">2.</span><span class="w"> </span><span class="kr">GET</span><span class="w"> </span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">invoices</span>
+<span class="w">   </span><span class="n">Header</span><span class="p">:</span><span class="w"> </span><span class="n">Authorization</span><span class="p">:</span><span class="w"> </span><span class="n">Bearer</span><span class="w"> </span><span class="n">eyJhbGciOiJIUzI1</span><span class="mf">...</span>
+
+<span class="mf">3.</span><span class="w"> </span><span class="n">Server</span><span class="w"> </span><span class="nb">val</span><span class="n">idates</span><span class="w"> </span><span class="kr">to</span><span class="n">ken</span><span class="p">:</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="n">Signature</span><span class="w"> </span><span class="nb">val</span><span class="n">id</span><span class="err">?</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="ow">Not</span><span class="w"> </span><span class="nb">exp</span><span class="n">ired</span><span class="err">?</span>
+<span class="w">   </span><span class="o">-</span><span class="w"> </span><span class="n">User</span><span class="w"> </span><span class="n">has</span><span class="w"> </span><span class="n">permission</span><span class="err">?</span>
+</code></pre></div>
+
+<p><strong>JWT Structure:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9</span><span class="o">.</span><span class="w">  </span><span class="c1"># Header</span>
+<span class="n">eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4iLCJpYXQiOjE1MTYyMzkwMjJ9</span><span class="o">.</span><span class="w">  </span><span class="c1"># Payload</span>
+<span class="n">SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c</span><span class="w">  </span><span class="c1"># Signature</span>
+
+<span class="n">Decoded</span><span class="w"> </span><span class="n">Payload</span><span class="p">:</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="s2">"sub"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1234567890"</span><span class="p">,</span><span class="w">     </span><span class="c1"># User ID</span>
+<span class="w">  </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"John"</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"customer_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cust_123"</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"role"</span><span class="p">:</span><span class="w"> </span><span class="s2">"admin"</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"iat"</span><span class="p">:</span><span class="w"> </span><span class="mi">1516239022</span><span class="p">,</span><span class="w">       </span><span class="c1"># Issued at</span>
+<span class="w">  </span><span class="s2">"exp"</span><span class="p">:</span><span class="w"> </span><span class="mi">1516242622</span><span class="w">        </span><span class="c1"># Expires at (1 hour)</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong>Laravel Implementation:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// Generate token</span>
+<span class="x">$token = JWTAuth::fromUser($user);</span>
+
+<span class="x">// Validate token (middleware)</span>
+<span class="x">public function handle($request, Closure $next) {</span>
+<span class="x">    try {</span>
+<span class="x">        $user = JWTAuth::parseToken()-&gt;authenticate();</span>
+<span class="x">    } catch (Exception $e) {</span>
+<span class="x">        return response()-&gt;json(['error' =&gt; 'Unauthorized'], 401);</span>
+<span class="x">    }</span>
+
+<span class="x">    // Add user to request</span>
+<span class="x">    $request-&gt;user = $user;</span>
+<span class="x">    return $next($request);</span>
+<span class="x">}</span>
+
+<span class="x">// Access in controller</span>
+<span class="x">public function getInvoices(Request $request) {</span>
+<span class="x">    $customerId = $request-&gt;user-&gt;customer_id;</span>
+<span class="x">    return Invoice::where('customer_id', $customerId)-&gt;get();</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<hr />
+<h2 id="rate-limiting">Rate Limiting</h2>
+<h3 id="prevent-abuse">Prevent Abuse</h3>
+<div class="codehilite"><pre><span></span><code>X-RateLimit-Limit: 1000       # Max requests per hour
+X-RateLimit-Remaining: 950    # Requests left
+X-RateLimit-Reset: 1699000000 # Unix timestamp when resets
+</code></pre></div>
+
+<p><strong>Algorithm: Token Bucket</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">class RateLimiter {</span>
+<span class="x">    private $redis;</span>
+
+<span class="x">    public function allow($userId, $limit = 1000, $window = 3600) {</span>
+<span class="x">        $key = "rate_limit:$userId";</span>
+<span class="x">        $current = $this-&gt;redis-&gt;get($key) ?? 0;</span>
+
+<span class="x">        if ($current &gt;= $limit) {</span>
+<span class="x">            return false; // Rate limited</span>
+<span class="x">        }</span>
+
+<span class="x">        // Increment counter</span>
+<span class="x">        $this-&gt;redis-&gt;incr($key);</span>
+<span class="x">        $this-&gt;redis-&gt;expire($key, $window); // 1-hour window</span>
+
+<span class="x">        return true;</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">// Middleware</span>
+<span class="x">if (!$rateLimiter-&gt;allow($userId, 1000, 3600)) {</span>
+<span class="x">    return response()-&gt;json([</span>
+<span class="x">        'error' =&gt; 'Rate limit exceeded',</span>
+<span class="x">        'retry_after' =&gt; 3600</span>
+<span class="x">    ], 429);</span>
+<span class="x">}</span>
+</code></pre></div>
+
+<p><strong>Production Limits:</strong><br />
+- Free tier: 100 requests/hour<br />
+- Pro tier: 1,000 requests/hour<br />
+- Enterprise: 10,000 requests/hour</p>
+<hr />
+<h2 id="pagination">Pagination</h2>
+<h3 id="3-approaches_1">3 Approaches</h3>
+<p><strong>1. Offset-Based (Simple)</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nx">GET</span><span class="w"> </span><span class="o">/</span><span class="kn">api</span><span class="o">/</span><span class="nx">invoices</span><span class="p">?</span><span class="nx">limit</span><span class="p">=</span><span class="mi">20</span><span class="o">&amp;</span><span class="nx">offset</span><span class="p">=</span><span class="mi">40</span>
+
+<span class="nx">Response</span><span class="p">:</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="s">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="o">...</span><span class="mi">20</span><span class="w"> </span><span class="nx">invoices</span><span class="o">...</span><span class="p">],</span>
+<span class="w">  </span><span class="s">"pagination"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="s">"total"</span><span class="p">:</span><span class="w"> </span><span class="mi">1000</span><span class="p">,</span>
+<span class="w">    </span><span class="s">"limit"</span><span class="p">:</span><span class="w"> </span><span class="mi">20</span><span class="p">,</span>
+<span class="w">    </span><span class="s">"offset"</span><span class="p">:</span><span class="w"> </span><span class="mi">40</span><span class="p">,</span>
+<span class="w">    </span><span class="s">"next"</span><span class="p">:</span><span class="w"> </span><span class="s">"/api/invoices?limit=20&amp;offset=60"</span><span class="p">,</span>
+<span class="w">    </span><span class="s">"previous"</span><span class="p">:</span><span class="w"> </span><span class="s">"/api/invoices?limit=20&amp;offset=20"</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="err">✅</span><span class="w"> </span><span class="nx">Pros</span><span class="p">:</span><span class="w"> </span><span class="nx">Simple</span><span class="p">,</span><span class="w"> </span><span class="nx">can</span><span class="w"> </span><span class="nx">jump</span><span class="w"> </span><span class="nx">to</span><span class="w"> </span><span class="nx">page</span><span class="w"> </span><span class="mi">5</span>
+<span class="err">❌</span><span class="w"> </span><span class="nx">Cons</span><span class="p">:</span><span class="w"> </span><span class="nx">Slow</span><span class="w"> </span><span class="nx">on</span><span class="w"> </span><span class="nx">large</span><span class="w"> </span><span class="nx">offsets</span><span class="p">,</span><span class="w"> </span><span class="nx">inconsistent</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="nx">data</span><span class="w"> </span><span class="nx">changes</span>
+</code></pre></div>
+
+<p><strong>2. Cursor-Based (Fast, Consistent)</strong></p>
+<div class="codehilite"><pre><span></span><code>GET /api/invoices?limit=20&amp;cursor=eyJpZCI6MTIzfQ==
+
+Response:
+{
+  "data": [...20 invoices...],
+  "pagination": {
+    "next_cursor": "eyJpZCI6MTQzfQ==",
+    "has_more": true
+  }
+}
+
+Cursor = base64({id: 143})  # ID of last item
+
+✅ Pros: Fast, consistent
+❌ Cons: Can't jump to specific page
+</code></pre></div>
+
+<p><strong>3. Keyset Pagination (Best for Time-Series)</strong></p>
+<div class="codehilite"><pre><span></span><code>GET /api/invoices?limit=20&amp;created_after=2026-11-15T10:00:00Z
+
+✅ Pros: Very fast (index on created_at)
+✅ Cons: Only forward pagination
+</code></pre></div>
+
+<hr />
+<h2 id="error-handling">Error Handling</h2>
+<h3 id="standard-http-status-codes">Standard HTTP Status Codes</h3>
+<div class="codehilite"><pre><span></span><code><span class="mf">2</span><span class="n">xx</span><span class="w"> </span><span class="n">Success</span>
+<span class="mf">200</span><span class="w"> </span><span class="n">OK</span><span class="w">                 </span><span class="kr">GET</span><span class="p">,</span><span class="w"> </span><span class="n">PUT</span><span class="p">,</span><span class="w"> </span><span class="n">PATCH</span><span class="w"> </span><span class="n">successful</span>
+<span class="mf">201</span><span class="w"> </span><span class="n">Created</span><span class="w">            </span><span class="nb">POS</span><span class="n">T</span><span class="w"> </span><span class="n">successful</span><span class="p">,</span><span class="w"> </span><span class="n">resource</span><span class="w"> </span><span class="n">created</span>
+<span class="mf">204</span><span class="w"> </span><span class="n">No</span><span class="w"> </span><span class="kr">Cont</span><span class="n">ent</span><span class="w">         </span><span class="n">DELETE</span><span class="w"> </span><span class="n">successful</span>
+
+<span class="mf">4</span><span class="n">xx</span><span class="w"> </span><span class="n">Client</span><span class="w"> </span><span class="n">Errors</span>
+<span class="mf">400</span><span class="w"> </span><span class="n">Bad</span><span class="w"> </span><span class="n">Request</span><span class="w">        </span><span class="n">Invalid</span><span class="w"> </span><span class="n">JSON</span><span class="p">,</span><span class="w"> </span><span class="n">missing</span><span class="w"> </span><span class="n">required</span><span class="w"> </span><span class="n">field</span>
+<span class="mf">401</span><span class="w"> </span><span class="n">Unauthorized</span><span class="w">       </span><span class="n">No</span><span class="w"> </span><span class="n">auth</span><span class="w"> </span><span class="kr">to</span><span class="n">ken</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="n">invalid</span><span class="w"> </span><span class="kr">to</span><span class="n">ken</span>
+<span class="mf">403</span><span class="w"> </span><span class="kr">For</span><span class="n">bidden</span><span class="w">          </span><span class="nb">Val</span><span class="n">id</span><span class="w"> </span><span class="kr">to</span><span class="n">ken</span><span class="p">,</span><span class="w"> </span><span class="n">no</span><span class="w"> </span><span class="n">permission</span>
+<span class="mf">404</span><span class="w"> </span><span class="ow">Not</span><span class="w"> </span><span class="n">Found</span><span class="w">          </span><span class="n">Resource</span><span class="w"> </span><span class="n">doesn</span><span class="err">'</span><span class="n">t</span><span class="w"> </span><span class="n">exist</span>
+<span class="mf">409</span><span class="w"> </span><span class="n">Conflict</span><span class="w">           </span><span class="n">Duplicate</span><span class="w"> </span><span class="n">resource</span><span class="p">,</span><span class="w"> </span><span class="n">version</span><span class="w"> </span><span class="n">conflict</span>
+<span class="mf">422</span><span class="w"> </span><span class="n">Unprocessable</span><span class="w">      </span><span class="nb">Val</span><span class="n">idation</span><span class="w"> </span><span class="n">failed</span>
+<span class="mf">429</span><span class="w"> </span><span class="kr">To</span><span class="n">o</span><span class="w"> </span><span class="n">Many</span><span class="w"> </span><span class="n">Requests</span><span class="w">  </span><span class="n">Rate</span><span class="w"> </span><span class="n">limit</span><span class="w"> </span><span class="n">exceeded</span>
+
+<span class="mf">5</span><span class="n">xx</span><span class="w"> </span><span class="n">Server</span><span class="w"> </span><span class="n">Errors</span>
+<span class="mf">500</span><span class="w"> </span><span class="nb">Int</span><span class="n">ernal</span><span class="w"> </span><span class="n">Server</span><span class="w">    </span><span class="n">Unhandled</span><span class="w"> </span><span class="n">exception</span>
+<span class="mf">502</span><span class="w"> </span><span class="n">Bad</span><span class="w"> </span><span class="n">Gateway</span><span class="w">        </span><span class="n">Upstream</span><span class="w"> </span><span class="n">service</span><span class="w"> </span><span class="n">down</span>
+<span class="mf">503</span><span class="w"> </span><span class="n">Service</span><span class="w"> </span><span class="n">Unavailable</span><span class="w"> </span><span class="n">Maintenance</span><span class="w"> </span><span class="n">mode</span>
+<span class="mf">504</span><span class="w"> </span><span class="n">Gateway</span><span class="w"> </span><span class="n">Timeout</span><span class="w">    </span><span class="n">Upstream</span><span class="w"> </span><span class="n">service</span><span class="w"> </span><span class="n">timeout</span>
+</code></pre></div>
+
+<h3 id="error-response-format">Error Response Format</h3>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">"error"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"INVOICE_NOT_FOUND"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Invoice with ID 12345 does not exist"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"details"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"invoice_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"12345"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"customer_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"cust_789"</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">"timestamp"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2026-11-16T10:30:00Z"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"request_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"req_abc123"</span><span class="w">  </span><span class="err">#</span><span class="w"> </span><span class="err">For</span><span class="w"> </span><span class="err">suppor</span><span class="kc">t</span><span class="err">/debuggi</span><span class="kc">n</span><span class="err">g</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong>Validation Errors:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">"error"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"VALIDATION_FAILED"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Invalid request data"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"fields"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"email"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"Invalid email format"</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">"amount"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"Must be greater than 0"</span><span class="p">]</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<hr />
+<h2 id="filtering-sorting-searching">Filtering, Sorting, Searching</h2>
+<div class="codehilite"><pre><span></span><code><span class="gh">#</span> Filtering
+GET /api/invoices?status=unpaid&amp;customer_id=123
+
+<span class="gh">#</span> Sorting
+GET /api/invoices?sort=-created_at,amount
+<span class="gh">#</span> - prefix = descending
+
+<span class="gh">#</span> Searching
+GET /api/invoices?q=INV-12345
+
+<span class="gh">#</span> Field selection (sparse fieldsets)
+GET /api/invoices?fields=id,amount,status
+<span class="gh">#</span> Returns only specified fields (saves bandwidth)
+
+<span class="gh">#</span> Expand related resources
+GET /api/invoices?include=customer,payments
+<span class="gh">#</span> Embeds customer and payments in response
+</code></pre></div>
+
+<hr />
+<h2 id="your-production-api-use-cases">Your Production API Use Cases</h2>
+<h3 id="1-invoice-api">1. Invoice API</h3>
+<p><strong>Endpoints:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="x">// List invoices</span>
+<span class="x">GET /api/v1/invoices?customer_id=123&amp;status=unpaid&amp;limit=20</span>
+
+<span class="x">Response:</span>
+<span class="x">{</span>
+<span class="x">  "data": [</span>
+<span class="x">    {</span>
+<span class="x">      "id": "inv_123",</span>
+<span class="x">      "invoice_number": "INV-12345",</span>
+<span class="x">      "customer_id": "cust_789",</span>
+<span class="x">      "amount": 1500.00,</span>
+<span class="x">      "currency": "USD",</span>
+<span class="x">      "status": "unpaid",</span>
+<span class="x">      "due_date": "2026-12-01",</span>
+<span class="x">      "created_at": "2026-11-01T10:00:00Z",</span>
+<span class="x">      "pdf_url": "https://s3.amazonaws.com/invoices/inv_123.pdf"</span>
+<span class="x">    }</span>
+<span class="x">  ],</span>
+<span class="x">  "pagination": {</span>
+<span class="x">    "total": 150,</span>
+<span class="x">    "limit": 20,</span>
+<span class="x">    "offset": 0,</span>
+<span class="x">    "next": "/api/v1/invoices?offset=20"</span>
+<span class="x">  }</span>
+<span class="x">}</span>
+
+<span class="x">// Create invoice</span>
+<span class="x">POST /api/v1/invoices</span>
+<span class="x">{</span>
+<span class="x">  "customer_id": "cust_789",</span>
+<span class="x">  "line_items": [</span>
+<span class="x">    {"description": "Service A", "amount": 1000.00},</span>
+<span class="x">    {"description": "Service B", "amount": 500.00}</span>
+<span class="x">  ],</span>
+<span class="x">  "due_date": "2026-12-01"</span>
+<span class="x">}</span>
+
+<span class="x">Response: 201 Created</span>
+<span class="x">{</span>
+<span class="x">  "id": "inv_124",</span>
+<span class="x">  "invoice_number": "INV-12346",</span>
+<span class="x">  "status": "draft",</span>
+<span class="x">  "amount": 1500.00</span>
+<span class="x">}</span>
+
+<span class="x">// Get single invoice</span>
+<span class="x">GET /api/v1/invoices/inv_123</span>
+
+<span class="x">// Update invoice</span>
+<span class="x">PATCH /api/v1/invoices/inv_123</span>
+<span class="x">{</span>
+<span class="x">  "status": "sent"</span>
+<span class="x">}</span>
+
+<span class="x">// Delete invoice (soft delete)</span>
+<span class="x">DELETE /api/v1/invoices/inv_123</span>
+</code></pre></div>
+
+<h3 id="2-multi-tenant-scoping">2. Multi-Tenant Scoping</h3>
+<div class="codehilite"><pre><span></span><code><span class="x">// Middleware: Ensure user only sees their customer's data</span>
+<span class="x">class TenantScopeMiddleware {</span>
+<span class="x">    public function handle($request, Closure $next) {</span>
+<span class="x">        $user = $request-&gt;user;</span>
+<span class="x">        $customerId = $user-&gt;customer_id;</span>
+
+<span class="x">        // Add global scope to all queries</span>
+<span class="x">        Invoice::addGlobalScope('tenant', function ($query) use ($customerId) {</span>
+<span class="x">            $query-&gt;where('customer_id', $customerId);</span>
+<span class="x">        });</span>
+
+<span class="x">        return $next($request);</span>
+<span class="x">    }</span>
+<span class="x">}</span>
+
+<span class="x">// Now this is safe (can't access other customers):</span>
+<span class="x">Invoice::all()  # Auto-scoped to customer_id</span>
+</code></pre></div>
+
+<hr />
+<h2 id="interview-questions-answers">Interview Questions &amp; Answers</h2>
+<h3 id="q1-design-a-restful-api-for-a-blogging-platform-what-endpoints-would-you-create">Q1: "Design a RESTful API for a blogging platform. What endpoints would you create?"</h3>
+<p><strong>Your Answer:</strong></p>
+<blockquote>
+<p><em>"Here's how I'd design it:</em></p>
+<p><strong>Resources: Posts, Comments, Users</strong></p>
+<p><strong>Posts:</strong><br />
+<code>GET    /api/v1/posts              List all posts
+GET    /api/v1/posts/123          Get specific post
+POST   /api/v1/posts              Create new post
+PUT    /api/v1/posts/123          Update entire post
+PATCH  /api/v1/posts/123          Partial update (e.g., just title)
+DELETE /api/v1/posts/123          Delete post</code></p>
+<p><strong>Comments (Nested Resource):</strong><br />
+<code>GET    /api/v1/posts/123/comments          List comments on post
+POST   /api/v1/posts/123/comments          Add comment to post
+DELETE /api/v1/comments/456                Delete specific comment</code></p>
+<p><strong>Filtering &amp; Pagination:</strong><br />
+<code>GET /api/v1/posts?author_id=789&amp;status=published&amp;limit=20&amp;offset=0
+GET /api/v1/posts?sort=-created_at  # Newest first
+GET /api/v1/posts?q=kubernetes      # Search</code></p>
+<p><strong>Authentication:</strong><br />
+```<br />
+POST /api/v1/auth/login<br />
+Body: {email, password}<br />
+Response: {token: "eyJhbGc..."}</p>
+<p>All endpoints require:<br />
+Header: Authorization: Bearer eyJhbGc...<br />
+```</p>
+<p><strong>Example Request:</strong><br />
+```<br />
+POST /api/v1/posts<br />
+Headers:<br />
+  Authorization: Bearer eyJhbGc...<br />
+  Content-Type: application/json<br />
+Body:<br />
+{<br />
+  "title": "My First Post",<br />
+  "content": "Hello world!",<br />
+  "tags": ["tech", "api"],<br />
+  "status": "draft"<br />
+}</p>
+<p>Response: 201 Created<br />
+{<br />
+  "id": "post_123",<br />
+  "title": "My First Post",<br />
+  "author_id": "user_456",<br />
+  "created_at": "2026-11-16T10:30:00Z",<br />
+  "url": "/api/v1/posts/post_123"<br />
+}<br />
+```</p>
+<p><strong>Versioning:</strong> /api/v1 in URL (easy to deprecate v1, launch v2)*</p>
+<p><strong>Rate Limiting:</strong> 1000 requests/hour per user*</p>
+<p><strong>Error Handling:</strong><br />
+<code>json
+{
+  "error": {
+    "code": "POST_NOT_FOUND",
+    "message": "Post with ID post_123 does not exist"
+  }
+}</code>"*</p>
+</blockquote>
+<hr />
+<h3 id="q2-how-do-you-handle-versioning-in-apis-when-do-you-increment-the-version">Q2: "How do you handle versioning in APIs? When do you increment the version?"</h3>
+<p><strong>Your Answer:</strong></p>
+<blockquote>
+<p><em>"In a production environment, we use URL versioning (<code>/api/v1</code>, <code>/api/v2</code>) because it's explicit and easy to cache.</em></p>
+<p><strong>When to Increment Version:</strong></p>
+<p><strong>Breaking Changes (Require New Version):</strong><br />
+<em>- Removing a field from response</em><br />
+<em>- Changing field type (string → number)</em><br />
+<em>- Changing field name (<code>invoice_id</code> → <code>id</code>)</em><br />
+<em>- Changing date format (ISO 8601 → Unix timestamp)</em><br />
+<em>- Removing an endpoint</em><br />
+<em>- Changing authentication method</em></p>
+<p><strong>Non-Breaking Changes (Same Version):</strong><br />
+<em>- Adding new optional fields to request</em><br />
+<em>- Adding new fields to response (clients ignore unknown fields)</em><br />
+<em>- Adding new endpoints</em><br />
+<em>- Making required field optional</em></p>
+<p><strong>Example:</strong></p>
+<p><strong>v1 Response:</strong><br />
+<code>json
+{
+  "invoice_id": "INV-123",
+  "amount": "1500.00",
+  "created": "11/16/2026"
+}</code></p>
+<p><strong>v2 Response (Breaking Changes):</strong><br />
+<code>json
+{
+  "id": "inv_123",              # Renamed
+  "amount": 1500.00,             # Changed to number
+  "created_at": "2026-11-16T10:30:00Z"  # ISO 8601
+}</code></p>
+<p><strong>Both versions live simultaneously:</strong><br />
+<code>GET /api/v1/invoices/123  # Old clients (still works)
+GET /api/v2/invoices/123  # New clients</code></p>
+<p><strong>Deprecation Strategy:</strong><br />
+<em>1. Launch v2</em><br />
+<em>2. Email customers: "v1 deprecated, migrate to v2 by Dec 1"</em><br />
+<em>3. Add warning header to v1 responses:</em><br />
+<code>Sunset: Sat, 01 Dec 2026 00:00:00 GMT
+Warning: 299 - "API v1 is deprecated, use v2"</code><br />
+<em>4. After 6 months, shut down v1</em></p>
+<p><strong>Code Implementation:</strong><br />
+```php<br />
+// routes/api.php<br />
+Route::prefix('v1')-&gt;group(function () {<br />
+    Route::get('/invoices', [InvoiceControllerV1::class, 'index']);<br />
+});</p>
+<p>Route::prefix('v2')-&gt;group(function () {<br />
+    Route::get('/invoices', [InvoiceControllerV2::class, 'index']);<br />
+});<br />
+```</p>
+<p>*<em>Key Rule: Never break existing clients. Always backward compatible OR new version."</em></p>
+</blockquote>
+<hr />
+<h3 id="q3-how-would-you-implement-rate-limiting-for-an-api">Q3: "How would you implement rate limiting for an API?"</h3>
+<p><strong>Your Answer:</strong></p>
+<blockquote>
+<p><em>"In a production environment, I'd use the token bucket algorithm with Redis:</em></p>
+<p><strong>Algorithm:</strong><br />
+<em>- Each user gets a bucket with N tokens (e.g., 1000)</em><br />
+<em>- Each request consumes 1 token</em><br />
+<em>- Bucket refills at rate R (e.g., 1000 tokens/hour)</em><br />
+<em>- If bucket empty → 429 Too Many Requests</em></p>
+<p><strong>Implementation (Laravel + Redis):</strong><br />
+```php<br />
+class RateLimitMiddleware {<br />
+    public function handle($request, Closure $next) {<br />
+        $userId = $request-&gt;user-&gt;id;<br />
+        $limit = $this-&gt;getUserLimit($userId);  # 100, 1000, or 10000<br />
+        $window = 3600; # 1 hour</p>
+<div class="codehilite"><pre><span></span><code><span class="w">    </span><span class="o">$</span><span class="nt">key</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"rate_limit:$userId"</span><span class="o">;</span>
+<span class="w">    </span><span class="o">$</span><span class="nt">current</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nt">Redis</span><span class="p">::</span><span class="nd">get</span><span class="o">($</span><span class="nt">key</span><span class="o">)</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="nt">0</span><span class="o">;</span>
+
+<span class="w">    </span><span class="nt">if</span><span class="w"> </span><span class="o">($</span><span class="nt">current</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="o">$</span><span class="nt">limit</span><span class="o">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="err">return</span><span class="w"> </span><span class="err">response()-&gt;json(</span><span class="cp">[</span>
+<span class="w">            </span><span class="s1">'error'</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="s1">'Rate limit exceeded'</span><span class="p">,</span>
+<span class="w">            </span><span class="s1">'retry_after'</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nx">Redis</span><span class="p">::</span><span class="nl">ttl</span><span class="p">(</span><span class="nv">$key</span><span class="p">)</span>
+<span class="w">        </span><span class="cp">]</span><span class="err">,</span><span class="w"> </span><span class="err">429)-&gt;withHeaders(</span><span class="cp">[</span>
+<span class="w">            </span><span class="s1">'X-RateLimit-Limit'</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nv">$limit</span><span class="p">,</span>
+<span class="w">            </span><span class="s1">'X-RateLimit-Remaining'</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">            </span><span class="s1">'X-RateLimit-Reset'</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nx">time</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">Redis</span><span class="p">::</span><span class="nl">ttl</span><span class="p">(</span><span class="nv">$key</span><span class="p">)</span>
+<span class="w">        </span><span class="cp">]</span><span class="err">)</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="o">//</span><span class="w"> </span><span class="nt">Increment</span>
+<span class="w">    </span><span class="nt">Redis</span><span class="p">::</span><span class="nd">incr</span><span class="o">($</span><span class="nt">key</span><span class="o">);</span>
+<span class="w">    </span><span class="nt">Redis</span><span class="p">::</span><span class="nd">expire</span><span class="o">($</span><span class="nt">key</span><span class="o">,</span><span class="w"> </span><span class="o">$</span><span class="nt">window</span><span class="o">);</span>
+
+<span class="w">    </span><span class="o">$</span><span class="nt">remaining</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">$</span><span class="nt">limit</span><span class="w"> </span><span class="nt">-</span><span class="w"> </span><span class="o">$</span><span class="nt">current</span><span class="w"> </span><span class="nt">-</span><span class="w"> </span><span class="nt">1</span><span class="o">;</span>
+
+<span class="w">    </span><span class="o">//</span><span class="w"> </span><span class="nt">Add</span><span class="w"> </span><span class="nt">headers</span><span class="w"> </span><span class="nt">to</span><span class="w"> </span><span class="nt">response</span>
+<span class="w">    </span><span class="o">$</span><span class="nt">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">$</span><span class="nt">next</span><span class="o">($</span><span class="nt">request</span><span class="o">);</span>
+<span class="w">    </span><span class="o">$</span><span class="nt">response-</span><span class="o">&gt;</span><span class="nt">withHeaders</span><span class="o">(</span><span class="cp">[</span>
+<span class="w">        </span><span class="s1">'X-RateLimit-Limit'</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nv">$limit</span><span class="p">,</span>
+<span class="w">        </span><span class="s1">'X-RateLimit-Remaining'</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nv">$remaining</span><span class="p">,</span>
+<span class="w">        </span><span class="s1">'X-RateLimit-Reset'</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nx">time</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">Redis</span><span class="p">::</span><span class="nl">ttl</span><span class="p">(</span><span class="nv">$key</span><span class="p">)</span>
+<span class="w">    </span><span class="cp">]</span><span class="o">);</span>
+
+<span class="w">    </span><span class="nt">return</span><span class="w"> </span><span class="o">$</span><span class="nt">response</span><span class="o">;</span>
+<span class="err">}</span>
+
+<span class="nt">private</span><span class="w"> </span><span class="nt">function</span><span class="w"> </span><span class="nt">getUserLimit</span><span class="o">($</span><span class="nt">userId</span><span class="o">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="err">$plan</span><span class="w"> </span><span class="err">=</span><span class="w"> </span><span class="n">User</span><span class="p">:</span><span class="o">:</span><span class="nf">find</span><span class="p">(</span><span class="err">$</span><span class="n">userId</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">subscription_plan</span><span class="p">;</span>
+<span class="w">    </span><span class="err">return</span><span class="w"> </span><span class="err">match($plan)</span><span class="w"> </span><span class="err">{</span>
+<span class="w">        </span><span class="err">'free'</span><span class="w"> </span><span class="err">=&gt;</span><span class="w"> </span><span class="err">100,</span>
+<span class="w">        </span><span class="err">'pro'</span><span class="w"> </span><span class="err">=&gt;</span><span class="w"> </span><span class="err">1000,</span>
+<span class="w">        </span><span class="err">'enterprise'</span><span class="w"> </span><span class="err">=&gt;</span><span class="w"> </span><span class="err">10000</span>
+<span class="w">    </span><span class="p">}</span><span class="o">;</span>
+<span class="err">}</span>
+</code></pre></div>
+
+<p>}<br />
+```</p>
+<p><strong>Response Headers:</strong><br />
+<code>HTTP/1.1 200 OK
+X-RateLimit-Limit: 1000
+X-RateLimit-Remaining: 950
+X-RateLimit-Reset: 1699000000</code></p>
+<p><strong>When Exceeded:</strong><br />
+```<br />
+HTTP/1.1 429 Too Many Requests<br />
+X-RateLimit-Limit: 1000<br />
+X-RateLimit-Remaining: 0<br />
+X-RateLimit-Reset: 1699000000<br />
+Retry-After: 3600</p>
+<p>{<br />
+  "error": "Rate limit exceeded. Try again in 1 hour."<br />
+}<br />
+```</p>
+<p><strong>Per-Endpoint Limits:</strong><br />
+```php<br />
+// Heavy endpoint (reports): 10/hour<br />
+Route::get('/reports', [ReportController::class, 'index'])<br />
+    -&gt;middleware('rate_limit:10,3600');</p>
+<p>// Light endpoint: 1000/hour<br />
+Route::get('/invoices', [InvoiceController::class, 'index'])<br />
+    -&gt;middleware('rate_limit:1000,3600');<br />
+```</p>
+<p><strong>Monitoring:</strong><br />
+<em>- Track users hitting limits (indicate plan upgrade needed)</em><br />
+<em>- Alert if global rate limit breached (DDoS?)</em>"*</p>
+</blockquote>
+<hr />
+<h2 id="summary-your-api-design-expertise">Summary: Your API Design Expertise</h2>
+<p><strong>When Asked About APIs:</strong></p>
+<blockquote>
+<p><em>"In a production environment, I designed and maintained RESTful APIs serving 10,000+ customers. We use URL versioning (/api/v1, /api/v2) with backward compatibility — never break existing clients.</em></p>
+<p><em>Authentication is JWT-based with 1-hour expiration. Rate limiting via Redis token bucket — 100/hour free tier, 1000/hour pro, 10000/hour enterprise. All responses include X-RateLimit headers.</em></p>
+<p><em>For multi-tenancy, we use middleware global scopes to ensure customers only access their own data. Pagination is cursor-based for performance on large datasets.</em></p>
+<p><em>Error responses follow RFC 7807 (application/problem+json) with structured error codes, human-readable messages, and request IDs for support. All 4xx/5xx responses are logged to CloudWatch with full request context for debugging."</em></p>
+</blockquote>
+<hr />
+<p><strong>API Design expertise complete!</strong> 🌐</p>
+<p>Creating final guide (Microservices)...</p>
+        </div>
+    </div>
+
+    <script>
+        // Progress Tracker JavaScript
+        const STORAGE_KEY = 'course_progress_api_design_rest_guide';
+
+        // Extract all H2 and H3 headings from content
+        function extractSections() {
+            const content = document.querySelector('.content');
+            const headings = content.querySelectorAll('h2, h3');
+            const sections = [];
+
+            headings.forEach((heading, index) => {
+                const level = heading.tagName === 'H2' ? 2 : 3;
+                const text = heading.textContent.trim();
+                const id = `section-${index}`;
+
+                // Add ID to heading for linking
+                heading.id = id;
+
+                sections.push({
+                    id: id,
+                    text: text,
+                    level: level
+                });
+            });
+
+            return sections;
+        }
+
+        // Load saved progress from localStorage
+        function loadProgress() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            return saved ? JSON.parse(saved) : {};
+        }
+
+        // Save progress to localStorage
+        function saveProgress(progress) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+        }
+
+        // Calculate progress percentage
+        function calculateProgress() {
+            const checkboxes = document.querySelectorAll('.progress-checkbox');
+            const total = checkboxes.length;
+            if (total === 0) return 0;
+
+            const completed = Array.from(checkboxes).filter(cb => cb.checked).length;
+            return Math.round((completed / total) * 100);
+        }
+
+        // Update progress display
+        function updateProgressDisplay() {
+            const percentage = calculateProgress();
+            document.getElementById('progress-pct').textContent = percentage + '%';
+            document.getElementById('progress-bar').style.width = percentage + '%';
+
+            // Update completed class on items
+            document.querySelectorAll('.progress-item').forEach(item => {
+                const checkbox = item.querySelector('.progress-checkbox');
+                if (checkbox.checked) {
+                    item.classList.add('completed');
+                } else {
+                    item.classList.remove('completed');
+                }
+            });
+        }
+
+        // Toggle checkbox
+        function toggleCheckbox(sectionId) {
+            const checkbox = document.getElementById('cb-' + sectionId);
+            const progress = loadProgress();
+
+            progress[sectionId] = checkbox.checked;
+            saveProgress(progress);
+            updateProgressDisplay();
+        }
+
+        // Reset all progress
+        function resetProgress() {
+            if (confirm('Reset all progress for this page?')) {
+                localStorage.removeItem(STORAGE_KEY);
+                document.querySelectorAll('.progress-checkbox').forEach(cb => {
+                    cb.checked = false;
+                });
+                updateProgressDisplay();
+            }
+        }
+
+        // Toggle progress list visibility
+        function toggleProgressList() {
+            const list = document.getElementById('progress-items');
+            const btn = document.querySelector('.toggle-progress');
+
+            if (list.classList.contains('collapsed')) {
+                list.classList.remove('collapsed');
+                btn.textContent = '▼ Hide';
+            } else {
+                list.classList.add('collapsed');
+                btn.textContent = '▶ Show';
+            }
+        }
+
+        // Initialize progress tracker
+        function initProgressTracker() {
+            const sections = extractSections();
+            const progress = loadProgress();
+            const container = document.getElementById('progress-items');
+
+            if (sections.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No sections found</p>';
+                return;
+            }
+
+            sections.forEach(section => {
+                const item = document.createElement('div');
+                item.className = 'progress-item';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'progress-checkbox';
+                checkbox.id = 'cb-' + section.id;
+                checkbox.checked = progress[section.id] || false;
+                checkbox.onchange = () => toggleCheckbox(section.id);
+
+                const label = document.createElement('label');
+                label.className = 'progress-label';
+                label.htmlFor = 'cb-' + section.id;
+                label.textContent = section.text;
+                label.style.paddingLeft = section.level === 3 ? '20px' : '0';
+                label.onclick = () => {
+                    document.getElementById(section.id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+                };
+
+                item.appendChild(checkbox);
+                item.appendChild(label);
+                container.appendChild(item);
+            });
+
+            updateProgressDisplay();
+        }
+
+        // Run on page load
+        document.addEventListener('DOMContentLoaded', initProgressTracker);
+    </script>
+</body>
+</html>

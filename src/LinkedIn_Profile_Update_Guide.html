@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkedIn_Profile_Update_Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 60px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .metadata {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 16px 24px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #666;
+            border-left: 4px solid #667eea;
+        }
+
+        /* PROGRESS TRACKER STYLES */
+        .progress-tracker {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .progress-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-stats {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .progress-percentage {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #764ba2;
+        }
+
+        .progress-bar-container {
+            height: 12px;
+            background: #e9ecef;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+            border-radius: 20px;
+        }
+
+        .reset-btn {
+            padding: 8px 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+
+        .reset-btn:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+        }
+
+        .progress-items {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .progress-items::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .progress-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .progress-item:hover {
+            background: #f8f9fa;
+            transform: translateX(5px);
+        }
+
+        .progress-item.completed {
+            opacity: 0.7;
+        }
+
+        .progress-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .progress-label {
+            cursor: pointer;
+            font-size: 0.95em;
+            line-height: 1.5;
+            color: #495057;
+            flex-grow: 1;
+        }
+
+        .progress-item.completed .progress-label {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .toggle-progress {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .toggle-progress:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .progress-items.collapsed {
+            display: none;
+        }
+
+        /* CONTENT STYLES */
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 4px solid #667eea;
+            font-weight: 700;
+        }
+
+        h2 {
+            color: #764ba2;
+            font-size: 2em;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        h3 {
+            color: #495057;
+            font-size: 1.5em;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        h4 {
+            color: #666;
+            font-size: 1.25em;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        ul, ol {
+            margin: 20px 0;
+            padding-left: 40px;
+        }
+
+        li {
+            margin-bottom: 12px;
+            line-height: 1.7;
+        }
+
+        code {
+            background: #f4f5f7;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #c7254e;
+            border: 1px solid #e1e4e8;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 24px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 25px 0;
+            border: 1px solid #444;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            border: none;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        blockquote {
+            border-left: 5px solid #667eea;
+            padding: 15px 25px;
+            margin: 25px 0;
+            background: #f8f9fa;
+            border-radius: 0 8px 8px 0;
+            color: #495057;
+            font-style: italic;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 30px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 14px 18px;
+            text-align: left;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tr:hover {
+            background: #e9ecef;
+            transition: background 0.2s;
+        }
+
+        a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px solid transparent;
+            transition: border-bottom 0.2s;
+        }
+
+        a:hover {
+            border-bottom: 1px solid #667eea;
+        }
+
+        hr {
+            border: none;
+            border-top: 2px solid #e9ecef;
+            margin: 40px 0;
+        }
+
+        strong {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        em {
+            color: #495057;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 25px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.6em;
+            }
+
+            .progress-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .progress-stats {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../navigation.html" class="back-link">&larr; Back to Navigation</a>
+
+        <div class="metadata">
+            <strong>Source:</strong> dev/LinkedIn_Profile_Update_Guide.md &nbsp;|&nbsp; <strong>Updated:</strong> 2026-11-18 19:44:55
+        </div>
+
+        <!-- PROGRESS TRACKER -->
+        <div class="progress-tracker">
+            <div class="progress-header">
+                <div class="progress-title">
+                    <span>📚</span>
+                    <span>Your Progress</span>
+                </div>
+                <div class="progress-stats">
+                    <span class="progress-percentage" id="progress-pct">0%</span>
+                    <button class="reset-btn" onclick="resetProgress()">Reset</button>
+                    <button class="toggle-progress" onclick="toggleProgressList()">▼ Hide</button>
+                </div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progress-bar" style="width: 0%"></div>
+            </div>
+            <div class="progress-items" id="progress-items">
+                <!-- Checkboxes will be generated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="content">
+<h1 id="linkedin-profile-update-guide">LinkedIn Profile Update Guide</h1>
+<p><strong>Goal:</strong> Match your ATS-optimized resume + Optimize for LinkedIn algorithm + Attract recruiters in Chennai/Bengaluru</p>
+<hr />
+<h2 id="linkedin-vs-resume-differences">🎯 LinkedIn vs Resume Differences</h2>
+<table>
+<thead>
+<tr>
+<th>Element</th>
+<th>Resume</th>
+<th>LinkedIn</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Tone</strong></td>
+<td>Formal, concise</td>
+<td>Conversational, detailed</td>
+</tr>
+<tr>
+<td><strong>Length</strong></td>
+<td>2 pages max</td>
+<td>Unlimited</td>
+</tr>
+<tr>
+<td><strong>Keywords</strong></td>
+<td>Optimized for ATS</td>
+<td>Optimized for LinkedIn search</td>
+</tr>
+<tr>
+<td><strong>Personality</strong></td>
+<td>Professional</td>
+<td>Professional + Personal brand</td>
+</tr>
+<tr>
+<td><strong>Updates</strong></td>
+<td>Static</td>
+<td>Dynamic (posts, articles)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="section-by-section-updates">📝 Section-by-Section Updates</h2>
+<h3 id="1-profile-photo"><strong>1. Profile Photo</strong> 🖼️</h3>
+<p><strong>Current Status:</strong> [Check if you have one]</p>
+<p><strong>Requirements:</strong><br />
+- Professional headshot (not casual selfie)<br />
+- Clear face, smiling, good lighting<br />
+- Plain/blurred background<br />
+- Business casual attire<br />
+- High resolution (400x400 minimum)</p>
+<p><strong>WHY:</strong> Profiles with photos get <strong>21x more views</strong></p>
+<p><strong>Quick Fix:</strong> Use your phone camera + natural light + solid wall background</p>
+<hr />
+<h3 id="2-background-banner"><strong>2. Background Banner</strong> 🎨</h3>
+<p><strong>Current Status:</strong> [Likely default blue]</p>
+<p><strong>Recommendation:</strong> Custom banner with your tech stack</p>
+<p><strong>Option 1 - DIY Banner (Canva):</strong><br />
+- Go to Canva.com → "LinkedIn Banner"<br />
+- Text: "Senior Full-Stack Engineer | PHP • Python • React.js • AWS"<br />
+- Add tech logos: PHP, Python, React, AWS, Kubernetes<br />
+- Color scheme: Professional blue/white</p>
+<p><strong>Option 2 - Simple Gradient:</strong><br />
+- Any professional gradient (blue → navy)<br />
+- Looks clean, no text needed</p>
+<p><strong>WHY:</strong> Profiles with custom banners look more established</p>
+<hr />
+<h3 id="3-headline-220-characters-most-important"><strong>3. Headline</strong> (220 characters) — MOST IMPORTANT ⭐</h3>
+<p><strong>Current LinkedIn Headline:</strong></p>
+<div class="codehilite"><pre><span></span><code>[Your current headline - likely "Production Support Engineer at Future Focus"]
+</code></pre></div>
+
+<p><strong>NEW Headline (Copy-Paste This):</strong></p>
+<div class="codehilite"><pre><span></span><code>Senior Full-Stack Engineer | 12+ Yrs | PHP/Laravel • Python/FastAPI • React.js | AWS • Kubernetes | Fintech/Payments | Technical Lead | Bengaluru
+</code></pre></div>
+
+<p><strong>Why This Works:</strong><br />
+- ✅ "Senior Full-Stack Engineer" = Primary keyword<br />
+- ✅ "12+ Yrs" = Experience level (recruiters filter by this)<br />
+- ✅ Tech stack keywords (PHP, Python, React, AWS)<br />
+- ✅ "Fintech/Payments" = Domain expertise<br />
+- ✅ "Technical Lead" = Leadership signal<br />
+- ✅ "Bengaluru" = Location for local recruiters</p>
+<p><strong>Alternative (More Leadership-Focused):</strong></p>
+<div class="codehilite"><pre><span></span><code>Technical Lead | Senior Full-Stack Engineer | 12+ Yrs Building Scalable SaaS • PHP/Laravel • Python/FastAPI • React.js • AWS/Kubernetes • Bengaluru
+</code></pre></div>
+
+<hr />
+<h3 id="4-about-section-2600-characters"><strong>4. About Section</strong> (2,600 characters)</h3>
+<p><strong>Structure:</strong><br />
+1. Opening hook (1-2 sentences)<br />
+2. What you do (2-3 sentences)<br />
+3. Key achievements (3 bullet points)<br />
+4. Tech stack (1 sentence)<br />
+5. What you're looking for (1 sentence)<br />
+6. Call to action</p>
+<p><strong>Copy-Paste This Template (Customize the [brackets]):</strong></p>
+<div class="codehilite"><pre><span></span><code>I'm a Senior Full-Stack Engineer with 12+ years architecting scalable systems that serve millions of users.
+
+I specialize in building high-performance web applications, REST APIs, and microservices using PHP/Laravel, Python/FastAPI, and React.js. My focus is on production reliability, performance optimization, and leading technical teams to deliver business-critical features on time.
+
+𝗞𝗲𝘆 𝗔𝗰𝗵𝗶𝗲𝘃𝗲𝗺𝗲𝗻𝘁𝘀:
+• Led production systems serving 10,000+ users with 99.9% uptime SLA
+• Reduced API latency by 40% and MTTR by 40% through optimization and automation
+• Architected microservices handling 1M+ monthly transactions across multi-cloud environments
+• Mentored 3 junior developers and established engineering best practices adopted team-wide
+• Reduced AWS infrastructure costs by 20% through rightsizing and Reserved Instances
+
+𝗧𝗲𝗰𝗵 𝗦𝘁𝗮𝗰𝗸:
+Backend: PHP (12+ yrs), Laravel, Phalcon, Python, FastAPI
+Frontend: React.js, JavaScript (ES6+)
+Cloud &amp; DevOps: AWS (RDS, S3, EC2, Lambda), Kubernetes, Docker, CI/CD
+Databases: MySQL, PostgreSQL, Redis, Memcached
+Observability: Datadog APM, Splunk, CloudWatch
+
+𝗗𝗼𝗺𝗮𝗶𝗻 𝗘𝘅𝗽𝗲𝗿𝘁𝗶𝘀𝗲:
+Fintech/Payments, Multi-tenant SaaS, Enterprise Billing Platforms, PCI Compliance
+
+𝗖𝘂𝗿𝗿𝗲𝗻𝘁𝗹𝘆:
+Open to Senior Engineer / Lead Engineer / Staff Engineer roles in Bengaluru and Chennai where I can drive technical architecture and mentor engineering teams.
+
+📧 Reach out: karthikeyanapril10@gmail.com
+</code></pre></div>
+
+<p><strong>LinkedIn Formatting Tips:</strong><br />
+- Use <strong>bold</strong> with 𝗕𝗼𝗹𝗱 𝗧𝗲𝘅𝘁 generator (search "LinkedIn bold text generator")<br />
+- Use bullet points (•) not dashes (-)<br />
+- Use emojis sparingly (just a few like 📧)<br />
+- Break into short paragraphs for readability</p>
+<hr />
+<h3 id="5-featured-section"><strong>5. Featured Section</strong> 📌</h3>
+<p><strong>What to Add:</strong><br />
+1. Your GitHub profile<br />
+2. Medium/Dev.to articles (if you have them)<br />
+3. Certifications (AWS, etc.)<br />
+4. Projects you've built</p>
+<p><strong>How to Add:</strong><br />
+1. LinkedIn Profile → Click "Add profile section"<br />
+2. Select "Featured"<br />
+3. Add external link → Paste GitHub URL<br />
+4. Add title: "GitHub Portfolio - Full-Stack Projects"</p>
+<p><strong>Example Featured Items:</strong><br />
+- GitHub: github.com/[your-username]<br />
+- AWS Certification (when you get it)<br />
+- Technical blog post</p>
+<hr />
+<h3 id="6-experience-section"><strong>6. Experience Section</strong> 💼</h3>
+<p><strong>CRITICAL:</strong> Must match your resume <strong>exactly</strong> (dates, titles, company names)</p>
+<p><strong>For Each Job:</strong></p>
+<ol>
+<li><strong>Job Title:</strong> Same as resume</li>
+<li><strong>Company Name:</strong> Same as resume</li>
+<li><strong>Dates:</strong> Same as resume (Month Year - Month Year)</li>
+<li><strong>Description:</strong> Copy from resume, but you can add MORE detail on LinkedIn</li>
+</ol>
+<p><strong>LinkedIn-Specific Tips:</strong><br />
+- Add 1-2 extra bullets not in resume (LinkedIn has more space)<br />
+- Use first-person ("I led...") or drop "I" ("Led...")<br />
+- Add media: Screenshots of dashboards, architecture diagrams, certificates</p>
+<p><strong>Example (Production Support Engineer role):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">Production</span><span class="w"> </span><span class="n">Support</span><span class="w"> </span><span class="n">Engineer</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">Systems</span><span class="w"> </span><span class="n">Reliability</span>
+<span class="n">Future</span><span class="w"> </span><span class="n">Focus</span><span class="w"> </span><span class="n">Info</span><span class="w"> </span><span class="n">Tech</span><span class="w"> </span><span class="n">Pvt</span><span class="w"> </span><span class="n">Ltd</span>
+<span class="n">Aug</span><span class="w"> </span><span class="mi">2024</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">Nov</span><span class="w"> </span><span class="mi">2026</span><span class="w"> </span><span class="err">•</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="n">yrs</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="n">mos</span><span class="w"> </span><span class="err">•</span><span class="w"> </span><span class="n">Bengaluru</span>
+
+<span class="n">Led</span><span class="w"> </span><span class="n">production</span><span class="w"> </span><span class="n">incident</span><span class="w"> </span><span class="n">response</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">mission</span><span class="o">-</span><span class="n">critical</span><span class="w"> </span><span class="n">PHP</span><span class="w"> </span><span class="n">applications</span><span class="w"> </span><span class="n">serving</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="mi">000</span><span class="o">+</span><span class="w"> </span><span class="n">users</span><span class="p">,</span><span class="w"> </span><span class="n">achieving</span><span class="w"> </span><span class="mf">99.9</span><span class="o">%</span><span class="w"> </span><span class="n">uptime</span><span class="w"> </span><span class="n">SLA</span><span class="o">.</span>
+
+<span class="n">Key</span><span class="w"> </span><span class="n">Contributions</span><span class="p">:</span>
+<span class="err">•</span><span class="w"> </span><span class="n">Reduced</span><span class="w"> </span><span class="n">API</span><span class="w"> </span><span class="n">latency</span><span class="w"> </span><span class="n">by</span><span class="w"> </span><span class="mi">40</span><span class="o">%</span><span class="w"> </span><span class="n">through</span><span class="w"> </span><span class="n">Redis</span><span class="o">/</span><span class="n">Memcached</span><span class="w"> </span><span class="n">optimization</span><span class="w"> </span><span class="ow">and</span><span class="w"> </span><span class="n">MySQL</span><span class="w"> </span><span class="n">query</span><span class="w"> </span><span class="n">tuning</span><span class="w"> </span><span class="n">on</span><span class="w"> </span><span class="n">AWS</span><span class="w"> </span><span class="n">RDS</span>
+<span class="err">•</span><span class="w"> </span><span class="n">Decreased</span><span class="w"> </span><span class="n">Mean</span><span class="w"> </span><span class="n">Time</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">Resolution</span><span class="w"> </span><span class="p">(</span><span class="n">MTTR</span><span class="p">)</span><span class="w"> </span><span class="n">by</span><span class="w"> </span><span class="mi">40</span><span class="o">%</span><span class="w"> </span><span class="n">using</span><span class="w"> </span><span class="n">Datadog</span><span class="w"> </span><span class="n">APM</span><span class="w"> </span><span class="n">trace</span><span class="w"> </span><span class="n">analysis</span><span class="w"> </span><span class="ow">and</span><span class="w"> </span><span class="n">automated</span><span class="w"> </span><span class="nb">log</span><span class="w"> </span><span class="n">correlation</span>
+<span class="err">•</span><span class="w"> </span><span class="n">Optimized</span><span class="w"> </span><span class="n">AWS</span><span class="w"> </span><span class="n">RDS</span><span class="w"> </span><span class="n">MySQL</span><span class="w"> </span><span class="n">read</span><span class="w"> </span><span class="n">overhead</span><span class="p">,</span><span class="w"> </span><span class="n">reducing</span><span class="w"> </span><span class="n">database</span><span class="w"> </span><span class="nb">load</span><span class="w"> </span><span class="n">by</span><span class="w"> </span><span class="mi">35</span><span class="o">%</span><span class="w"> </span><span class="n">through</span><span class="w"> </span><span class="n">connection</span><span class="w"> </span><span class="n">pooling</span><span class="w"> </span><span class="ow">and</span><span class="w"> </span><span class="n">indexing</span>
+<span class="err">•</span><span class="w"> </span><span class="n">Conducted</span><span class="w"> </span><span class="n">root</span><span class="w"> </span><span class="n">cause</span><span class="w"> </span><span class="n">analysis</span><span class="w"> </span><span class="p">(</span><span class="n">RCA</span><span class="p">)</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">production</span><span class="w"> </span><span class="n">incidents</span><span class="p">,</span><span class="w"> </span><span class="n">documenting</span><span class="w"> </span><span class="n">findings</span><span class="w"> </span><span class="ow">and</span><span class="w"> </span><span class="n">implementing</span><span class="w"> </span><span class="n">preventive</span><span class="w"> </span><span class="n">measures</span>
+<span class="err">•</span><span class="w"> </span><span class="n">Collaborated</span><span class="w"> </span><span class="n">with</span><span class="w"> </span><span class="n">product</span><span class="w"> </span><span class="n">teams</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">translate</span><span class="w"> </span><span class="n">technical</span><span class="w"> </span><span class="n">issues</span><span class="w"> </span><span class="n">into</span><span class="w"> </span><span class="n">business</span><span class="o">-</span><span class="n">friendly</span><span class="w"> </span><span class="n">impact</span><span class="w"> </span><span class="n">assessments</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">stakeholders</span>
+<span class="err">•</span><span class="w"> </span><span class="n">Applied</span><span class="w"> </span><span class="n">AI</span><span class="o">-</span><span class="n">assisted</span><span class="w"> </span><span class="n">code</span><span class="w"> </span><span class="n">review</span><span class="w"> </span><span class="ow">and</span><span class="w"> </span><span class="n">debugging</span><span class="w"> </span><span class="n">workflows</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">accelerate</span><span class="w"> </span><span class="n">incident</span><span class="w"> </span><span class="n">resolution</span>
+
+<span class="n">Technologies</span><span class="p">:</span><span class="w"> </span><span class="n">PHP</span><span class="p">,</span><span class="w"> </span><span class="n">Laravel</span><span class="p">,</span><span class="w"> </span><span class="n">MySQL</span><span class="p">,</span><span class="w"> </span><span class="n">AWS</span><span class="w"> </span><span class="n">RDS</span><span class="p">,</span><span class="w"> </span><span class="n">Redis</span><span class="p">,</span><span class="w"> </span><span class="n">Memcached</span><span class="p">,</span><span class="w"> </span><span class="n">Datadog</span><span class="w"> </span><span class="n">APM</span><span class="p">,</span><span class="w"> </span><span class="n">Splunk</span><span class="p">,</span><span class="w"> </span><span class="n">Docker</span><span class="p">,</span><span class="w"> </span><span class="n">Git</span>
+</code></pre></div>
+
+<p><strong>Repeat for all 4 jobs from your resume</strong></p>
+<hr />
+<h3 id="7-skills-section"><strong>7. Skills Section</strong> 🛠️</h3>
+<p><strong>How LinkedIn Skills Work:</strong><br />
+- Recruiters search by skills (e.g., "PHP Bengaluru")<br />
+- You can have <strong>50 skills max</strong><br />
+- Top <strong>3 skills</strong> appear on profile preview<br />
+- Endorsements help ranking</p>
+<p><strong>Your Top 50 Skills (in priority order):</strong></p>
+<p><strong>Top 10 (Pin These):</strong><br />
+1. PHP<br />
+2. Laravel<br />
+3. Python<br />
+4. FastAPI<br />
+5. React.js<br />
+6. MySQL<br />
+7. AWS<br />
+8. Kubernetes<br />
+9. REST APIs<br />
+10. Microservices</p>
+<p><strong>Next 20 (Core Skills):</strong><br />
+11. Docker<br />
+12. Redis<br />
+13. PostgreSQL<br />
+14. Git<br />
+15. CI/CD<br />
+16. JavaScript<br />
+17. HTML5<br />
+18. CSS3<br />
+19. Jenkins<br />
+20. Agile Methodologies<br />
+21. Scrum<br />
+22. Code Review<br />
+23. Technical Leadership<br />
+24. Mentoring<br />
+25. System Architecture<br />
+26. API Design<br />
+27. Database Design<br />
+28. Performance Optimization<br />
+29. Incident Management<br />
+30. Root Cause Analysis</p>
+<p><strong>Next 20 (Supporting Skills):</strong><br />
+31. Datadog<br />
+32. Splunk<br />
+33. CloudWatch<br />
+34. RabbitMQ<br />
+35. Kafka<br />
+36. Elasticsearch<br />
+37. MongoDB<br />
+38. Memcached<br />
+39. Phalcon<br />
+40. Zend Framework<br />
+41. Payment Gateways<br />
+42. Razorpay<br />
+43. PCI Compliance<br />
+44. Multi-tenant Architecture<br />
+45. SaaS<br />
+46. Fintech<br />
+47. Technical Documentation<br />
+48. Sprint Planning<br />
+49. Cloud Computing<br />
+50. DevOps</p>
+<p><strong>How to Add/Reorder:</strong><br />
+1. LinkedIn Profile → Skills section → Click pencil icon<br />
+2. Drag to reorder (top 3 are most visible)<br />
+3. Click "Add skill" for missing ones</p>
+<p><strong>Ask for Endorsements:</strong><br />
+- Message 10 former colleagues: "Hey [Name], would you mind endorsing me for PHP and Laravel on LinkedIn? Happy to return the favor!"</p>
+<hr />
+<h3 id="8-certifications-section"><strong>8. Certifications Section</strong> 📜</h3>
+<p><strong>Add These:</strong></p>
+<p><strong>Current:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nv">MySQL</span><span class="w"> </span><span class="nv">Database</span><span class="w"> </span><span class="nv">Administration</span>
+<span class="nv">Issued</span>:<span class="w"> </span>[<span class="nv">Date</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="nv">you</span><span class="w"> </span><span class="nv">have</span><span class="w"> </span><span class="nv">it</span>]
+<span class="nv">No</span><span class="w"> </span><span class="nv">expiration</span><span class="w"> </span><span class="nv">date</span>
+</code></pre></div>
+
+<p><strong>In Progress:</strong></p>
+<div class="codehilite"><pre><span></span><code>AWS Certified Solutions Architect - Associate
+Amazon Web Services (AWS)
+Expected: Q1 2027
+License: [Add after passing]
+</code></pre></div>
+
+<p><strong>How to Add:</strong><br />
+1. Profile → Add profile section → Certifications<br />
+2. Fill in: Name, Issuing Organization, Issue Date, Credential ID (if applicable)</p>
+<hr />
+<h3 id="9-education-section"><strong>9. Education Section</strong> 🎓</h3>
+<p><strong>Copy from Resume:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">Master</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="k">System</span><span class="w"> </span><span class="n">Management</span>
+<span class="n">University</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="n">Madras</span>
+<span class="n">Graduation</span><span class="w"> </span><span class="nf">Year</span><span class="err">:</span><span class="w"> </span><span class="o">[</span><span class="n">Year</span><span class="o">]</span>
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code><span class="n">Bachelor</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="n">Engineering</span><span class="w"> </span><span class="p">(</span><span class="n">B</span><span class="p">.</span><span class="n">E</span><span class="p">.),</span><span class="w"> </span><span class="n">Electronics</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">Communication</span><span class="w"> </span><span class="n">Engineering</span>
+<span class="n">University</span><span class="w"> </span><span class="n">College</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="n">Engineering</span><span class="p">,</span><span class="w"> </span><span class="n">Ariyalur</span>
+<span class="n">Graduation</span><span class="w"> </span><span class="nf">Year</span><span class="err">:</span><span class="w"> </span><span class="o">[</span><span class="n">Year</span><span class="o">]</span>
+</code></pre></div>
+
+<hr />
+<h3 id="10-open-to-work-badge"><strong>10. Open to Work Badge</strong> 🟢</h3>
+<p><strong>CRITICAL: Turn This On</strong></p>
+<ol>
+<li>Click "Open to" button (below profile photo)</li>
+<li>Select "Finding a new job"</li>
+<li>Job titles:<br />
+   - Senior Software Engineer<br />
+   - Lead Software Engineer<br />
+   - Technical Lead<br />
+   - Staff Engineer<br />
+   - Senior Full-Stack Developer</li>
+<li>Locations:<br />
+   - Bengaluru, Karnataka, India<br />
+   - Chennai, Tamil Nadu, India</li>
+<li>Start date: Immediately</li>
+<li><strong>Visibility:</strong> "All LinkedIn members" (gets you 2x more recruiter views)</li>
+<li>Click "Add to profile"</li>
+</ol>
+<p><strong>Why:</strong> Recruiters filter by "Open to Work" badge — you get <strong>2x more InMail messages</strong></p>
+<hr />
+<h3 id="11-creator-mode"><strong>11. Creator Mode</strong> 🎨</h3>
+<p><strong>Turn This ON:</strong></p>
+<ol>
+<li>Profile → Resources → Creator mode → Turn on</li>
+<li>Add 5 topics you talk about:<br />
+   - Software Engineering<br />
+   - Full-Stack Development<br />
+   - Cloud Computing<br />
+   - System Architecture<br />
+   - Technical Leadership</li>
+</ol>
+<p><strong>Why:</strong><br />
+- "Follow" button instead of "Connect" (grows followers)<br />
+- Your posts appear in more feeds<br />
+- Analytics dashboard</p>
+<hr />
+<h3 id="12-custom-linkedin-url"><strong>12. Custom LinkedIn URL</strong> 🔗</h3>
+<p><strong>Current:</strong> linkedin.com/in/karthikeyan-sekar-714a6185 ✅ (Already good!)</p>
+<p><strong>Best Practice:</strong> Keep it! (Already has your name)</p>
+<hr />
+<h2 id="linkedin-profile-checklist">📊 LinkedIn Profile Checklist</h2>
+<p><strong>Before Publishing:</strong><br />
+- [ ] Profile photo uploaded (professional headshot)<br />
+- [ ] Custom background banner (tech stack or gradient)<br />
+- [ ] Headline updated (220 chars, keywords-rich)<br />
+- [ ] About section rewritten (2,600 chars, achievements)<br />
+- [ ] All 4 jobs match resume exactly (titles, dates, bullets)<br />
+- [ ] Skills section has 50 skills (PHP, Laravel, Python top 3)<br />
+- [ ] Certifications added (MySQL current, AWS in progress)<br />
+- [ ] Education matches resume<br />
+- [ ] "Open to Work" badge ON (All LinkedIn members)<br />
+- [ ] Creator mode ON<br />
+- [ ] Featured section has 1-2 links (GitHub, articles)</p>
+<hr />
+<h2 id="post-update-actions">🚀 Post-Update Actions</h2>
+<h3 id="week-1-optimize"><strong>Week 1: Optimize</strong></h3>
+<ul>
+<li>[ ] Ask 10 colleagues for skill endorsements (PHP, Laravel, Python)</li>
+<li>[ ] Get 5 recommendations (request from managers/colleagues)</li>
+<li>[ ] Join 5 LinkedIn groups:</li>
+<li>PHP Developers India</li>
+<li>Python Developers India</li>
+<li>AWS User Group Bangalore</li>
+<li>React Developers India</li>
+<li>Bengaluru Software Engineers</li>
+</ul>
+<h3 id="week-2-engage"><strong>Week 2: Engage</strong></h3>
+<ul>
+<li>[ ] Post 1 technical insight (e.g., "5 ways I reduced API latency by 40%")</li>
+<li>[ ] Comment on 10 posts in your feed (builds visibility)</li>
+<li>[ ] Share 1 article about PHP/Python/React</li>
+</ul>
+<h3 id="week-3-network"><strong>Week 3: Network</strong></h3>
+<ul>
+<li>[ ] Connect with 20 recruiters in Bengaluru/Chennai</li>
+<li>Search: "Technical Recruiter Bengaluru"</li>
+<li>Send personalized connection request</li>
+<li>[ ] Connect with 10 engineers at target companies</li>
+<li>Razorpay, Swiggy, Flipkart, Freshworks, Zoho, PayPal</li>
+</ul>
+<h3 id="week-4-content"><strong>Week 4: Content</strong></h3>
+<ul>
+<li>[ ] Write 1 LinkedIn article (500 words)</li>
+<li>Ideas: "My Journey from PHP to Full-Stack", "How I Optimized a Multi-Tenant SaaS Platform"</li>
+<li>[ ] Post about AWS certification progress (when you start)</li>
+<li>[ ] Share a project you built (with GitHub link)</li>
+</ul>
+<hr />
+<h2 id="sample-connection-request-messages">💬 Sample Connection Request Messages</h2>
+<p><strong>To Recruiters:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">Hi</span><span class="w"> </span><span class="p">[</span><span class="n">Name</span><span class="p">],</span>
+
+<span class="n">I</span><span class="err">'</span><span class="n">m</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="n">Senior</span><span class="w"> </span><span class="n">Full</span><span class="o">-</span><span class="n">Stack</span><span class="w"> </span><span class="n">Engineer</span><span class="w"> </span><span class="n">with</span><span class="w"> </span><span class="mi">12</span><span class="o">+</span><span class="w"> </span><span class="n">years</span><span class="w"> </span><span class="n">experience</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">PHP</span><span class="o">/</span><span class="n">Laravel</span><span class="p">,</span><span class="w"> </span><span class="n">Python</span><span class="o">/</span><span class="n">FastAPI</span><span class="p">,</span><span class="w"> </span><span class="n">and</span><span class="w"> </span><span class="n">React</span><span class="p">.</span><span class="n">js</span><span class="p">.</span><span class="w"> </span><span class="n">Currently</span><span class="w"> </span><span class="n">exploring</span><span class="w"> </span><span class="n">Senior</span><span class="w"> </span><span class="n">Engineer</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">Lead</span><span class="w"> </span><span class="n">roles</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">Bengaluru</span><span class="p">.</span>
+
+<span class="n">Would</span><span class="w"> </span><span class="n">love</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">connect</span><span class="w"> </span><span class="n">and</span><span class="w"> </span><span class="n">learn</span><span class="w"> </span><span class="n">about</span><span class="w"> </span><span class="n">opportunities</span><span class="w"> </span><span class="n">at</span><span class="w"> </span><span class="p">[</span><span class="n">Company</span><span class="w"> </span><span class="n">Name</span><span class="p">].</span>
+
+<span class="n">Best</span><span class="p">,</span>
+<span class="n">Karthik</span>
+</code></pre></div>
+
+<p><strong>To Engineers at Target Companies:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="n">Hi</span><span class="w"> </span><span class="o">[</span><span class="n">Name</span><span class="o">]</span><span class="p">,</span>
+
+<span class="n">I</span><span class="w"> </span><span class="n">noticed</span><span class="w"> </span><span class="n">we</span><span class="w"> </span><span class="k">both</span><span class="w"> </span><span class="k">work</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="o">[</span><span class="n">PHP/Full-Stack/similar tech</span><span class="o">]</span><span class="p">.</span><span class="w"> </span><span class="n">I</span><span class="s1">'m exploring opportunities in Bengaluru and would love to learn more about your experience at [Company].</span>
+
+<span class="s1">Let'</span><span class="n">s</span><span class="w"> </span><span class="k">connect</span><span class="err">!</span>
+
+<span class="n">Best</span><span class="p">,</span>
+<span class="n">Karthik</span>
+</code></pre></div>
+
+<hr />
+<h2 id="linkedin-profile-strength-meter">📈 LinkedIn Profile Strength Meter</h2>
+<p><strong>Goal: "All-Star" Profile (Top 1%)</strong></p>
+<p><strong>Your Score After Update:</strong> ~95% (All-Star)</p>
+<p><strong>What Makes All-Star:</strong><br />
+- ✅ Profile photo<br />
+- ✅ Headline (50+ chars)<br />
+- ✅ About summary (40+ words)<br />
+- ✅ Current position with description<br />
+- ✅ 2+ past positions<br />
+- ✅ Education<br />
+- ✅ Skills (3+)<br />
+- ✅ 50+ connections</p>
+<p><strong>Missing (Optional):</strong><br />
+- ⚠️ Recommendations (0/3+) → Request these!</p>
+<hr />
+<h2 id="recruiter-search-optimization">🎯 Recruiter Search Optimization</h2>
+<p><strong>Recruiters Search For:</strong><br />
+1. "Senior Software Engineer Bengaluru" → Your headline<br />
+2. "PHP Laravel 12 years" → Your skills + headline<br />
+3. "Technical Lead Python" → Your headline + about<br />
+4. "Full-Stack Engineer AWS" → Your headline + skills</p>
+<p><strong>Test Your Profile:</strong><br />
+1. Open Incognito browser<br />
+2. LinkedIn search: "Senior Full-Stack Engineer Bengaluru PHP"<br />
+3. Check if you appear in results (after 24 hours of update)</p>
+<hr />
+<h2 id="linkedin-mobile-app-tips">📱 LinkedIn Mobile App Tips</h2>
+<ol>
+<li><strong>Respond Fast:</strong> Recruiters message on mobile — install app, enable notifications</li>
+<li><strong>Quick Apply:</strong> Many jobs have "Easy Apply" — use it with your updated resume</li>
+<li><strong>Daily Habit:</strong> Spend 15 min/day:<br />
+   - React to 5 posts<br />
+   - Comment on 2 posts<br />
+   - Send 3 connection requests</li>
+</ol>
+<hr />
+<h2 id="common-linkedin-mistakes-to-avoid">⚠️ Common LinkedIn Mistakes to Avoid</h2>
+<ol>
+<li>
+<p>❌ Headline = Current job title only ("Production Support Engineer")<br />
+   - ✅ FIX: Add skills + years + location</p>
+</li>
+<li>
+<p>❌ About section = Resume copy-paste<br />
+   - ✅ FIX: Make it conversational, add personality</p>
+</li>
+<li>
+<p>❌ No profile photo<br />
+   - ✅ FIX: Any professional photo &gt; no photo</p>
+</li>
+<li>
+<p>❌ Skills randomly ordered<br />
+   - ✅ FIX: Top 3 = most important keywords (PHP, Laravel, Python)</p>
+</li>
+<li>
+<p>❌ Not asking for recommendations<br />
+   - ✅ FIX: Message 3 former managers/colleagues today</p>
+</li>
+<li>
+<p>❌ Zero activity (no posts, no comments)<br />
+   - ✅ FIX: Comment on 1 post/day minimum</p>
+</li>
+</ol>
+<hr />
+<h2 id="bonus-linkedin-headline-ab-test">🎁 Bonus: LinkedIn Headline A/B Test</h2>
+<p><strong>After 2 weeks, try this variation and see which gets more profile views:</strong></p>
+<p><strong>Version A (Current):</strong></p>
+<div class="codehilite"><pre><span></span><code>Senior Full-Stack Engineer | 12+ Yrs | PHP/Laravel • Python/FastAPI • React.js | AWS • Kubernetes | Technical Lead | Bengaluru
+</code></pre></div>
+
+<p><strong>Version B (Results-Focused):</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="nv">Led</span><span class="w"> </span><span class="nv">Teams</span><span class="w"> </span><span class="nv">Delivering</span><span class="w"> </span><span class="mi">99</span>.<span class="mi">9</span><span class="o">%</span><span class="w"> </span><span class="k">Uptime</span><span class="w"> </span><span class="nv">SaaS</span><span class="w"> </span>•<span class="w"> </span><span class="nv">Senior</span><span class="w"> </span><span class="nv">Full</span><span class="o">-</span><span class="nv">Stack</span><span class="w"> </span><span class="nv">Engineer</span><span class="w"> </span>•<span class="w"> </span><span class="nv">PHP</span><span class="o">/</span><span class="nv">Laravel</span><span class="w"> </span>•<span class="w"> </span><span class="nv">Python</span><span class="o">/</span><span class="nv">FastAPI</span><span class="w"> </span>•<span class="w"> </span><span class="nv">React</span>.<span class="nv">js</span><span class="w"> </span>•<span class="w"> </span><span class="nv">AWS</span><span class="o">/</span><span class="nv">K8s</span><span class="w"> </span>•<span class="w"> </span><span class="nv">Bengaluru</span>
+</code></pre></div>
+
+<p><strong>Check LinkedIn Analytics:</strong><br />
+- Profile → Dashboard → Profile views<br />
+- Compare Week 1-2 (Headline A) vs Week 3-4 (Headline B)<br />
+- Keep the one with more views</p>
+<hr />
+<h2 id="summary">✅ Summary</h2>
+<p><strong>Your Updated LinkedIn Profile Will Have:</strong><br />
+- ✅ Professional photo + custom banner<br />
+- ✅ Keyword-rich headline (220 chars)<br />
+- ✅ Achievement-focused About section<br />
+- ✅ 4 jobs with metrics (matching resume)<br />
+- ✅ 50 skills (top 3 pinned: PHP, Laravel, Python)<br />
+- ✅ Open to Work badge ON<br />
+- ✅ Creator mode ON<br />
+- ✅ All-Star profile strength (95%+)</p>
+<p><strong>Expected Results (Within 30 Days):</strong><br />
+- 📈 Profile views: 50-100/week (up from ~10/week)<br />
+- 📧 InMail messages: 3-5/week from recruiters<br />
+- 🤝 Connection requests: 10-15/week<br />
+- 🎯 Interview requests: 2-3 (if you're applying actively)</p>
+<hr />
+<p><strong>Update your profile NOW, then come back for the next step: Creating your job application tracking sheet!</strong></p>
+        </div>
+    </div>
+
+    <script>
+        // Progress Tracker JavaScript
+        const STORAGE_KEY = 'course_progress_linkedin_profile_update_guide';
+
+        // Extract all H2 and H3 headings from content
+        function extractSections() {
+            const content = document.querySelector('.content');
+            const headings = content.querySelectorAll('h2, h3');
+            const sections = [];
+
+            headings.forEach((heading, index) => {
+                const level = heading.tagName === 'H2' ? 2 : 3;
+                const text = heading.textContent.trim();
+                const id = `section-${index}`;
+
+                // Add ID to heading for linking
+                heading.id = id;
+
+                sections.push({
+                    id: id,
+                    text: text,
+                    level: level
+                });
+            });
+
+            return sections;
+        }
+
+        // Load saved progress from localStorage
+        function loadProgress() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            return saved ? JSON.parse(saved) : {};
+        }
+
+        // Save progress to localStorage
+        function saveProgress(progress) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+        }
+
+        // Calculate progress percentage
+        function calculateProgress() {
+            const checkboxes = document.querySelectorAll('.progress-checkbox');
+            const total = checkboxes.length;
+            if (total === 0) return 0;
+
+            const completed = Array.from(checkboxes).filter(cb => cb.checked).length;
+            return Math.round((completed / total) * 100);
+        }
+
+        // Update progress display
+        function updateProgressDisplay() {
+            const percentage = calculateProgress();
+            document.getElementById('progress-pct').textContent = percentage + '%';
+            document.getElementById('progress-bar').style.width = percentage + '%';
+
+            // Update completed class on items
+            document.querySelectorAll('.progress-item').forEach(item => {
+                const checkbox = item.querySelector('.progress-checkbox');
+                if (checkbox.checked) {
+                    item.classList.add('completed');
+                } else {
+                    item.classList.remove('completed');
+                }
+            });
+        }
+
+        // Toggle checkbox
+        function toggleCheckbox(sectionId) {
+            const checkbox = document.getElementById('cb-' + sectionId);
+            const progress = loadProgress();
+
+            progress[sectionId] = checkbox.checked;
+            saveProgress(progress);
+            updateProgressDisplay();
+        }
+
+        // Reset all progress
+        function resetProgress() {
+            if (confirm('Reset all progress for this page?')) {
+                localStorage.removeItem(STORAGE_KEY);
+                document.querySelectorAll('.progress-checkbox').forEach(cb => {
+                    cb.checked = false;
+                });
+                updateProgressDisplay();
+            }
+        }
+
+        // Toggle progress list visibility
+        function toggleProgressList() {
+            const list = document.getElementById('progress-items');
+            const btn = document.querySelector('.toggle-progress');
+
+            if (list.classList.contains('collapsed')) {
+                list.classList.remove('collapsed');
+                btn.textContent = '▼ Hide';
+            } else {
+                list.classList.add('collapsed');
+                btn.textContent = '▶ Show';
+            }
+        }
+
+        // Initialize progress tracker
+        function initProgressTracker() {
+            const sections = extractSections();
+            const progress = loadProgress();
+            const container = document.getElementById('progress-items');
+
+            if (sections.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No sections found</p>';
+                return;
+            }
+
+            sections.forEach(section => {
+                const item = document.createElement('div');
+                item.className = 'progress-item';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'progress-checkbox';
+                checkbox.id = 'cb-' + section.id;
+                checkbox.checked = progress[section.id] || false;
+                checkbox.onchange = () => toggleCheckbox(section.id);
+
+                const label = document.createElement('label');
+                label.className = 'progress-label';
+                label.htmlFor = 'cb-' + section.id;
+                label.textContent = section.text;
+                label.style.paddingLeft = section.level === 3 ? '20px' : '0';
+                label.onclick = () => {
+                    document.getElementById(section.id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+                };
+
+                item.appendChild(checkbox);
+                item.appendChild(label);
+                container.appendChild(item);
+            });
+
+            updateProgressDisplay();
+        }
+
+        // Run on page load
+        document.addEventListener('DOMContentLoaded', initProgressTracker);
+    </script>
+</body>
+</html>

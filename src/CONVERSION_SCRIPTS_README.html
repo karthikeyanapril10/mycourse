@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CONVERSION_SCRIPTS_README</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 60px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .back-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .metadata {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 16px 24px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #666;
+            border-left: 4px solid #667eea;
+        }
+
+        /* PROGRESS TRACKER STYLES */
+        .progress-tracker {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .progress-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-stats {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .progress-percentage {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #764ba2;
+        }
+
+        .progress-bar-container {
+            height: 12px;
+            background: #e9ecef;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+            border-radius: 20px;
+        }
+
+        .reset-btn {
+            padding: 8px 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+
+        .reset-btn:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+        }
+
+        .progress-items {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .progress-items::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .progress-items::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .progress-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .progress-item:hover {
+            background: #f8f9fa;
+            transform: translateX(5px);
+        }
+
+        .progress-item.completed {
+            opacity: 0.7;
+        }
+
+        .progress-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .progress-label {
+            cursor: pointer;
+            font-size: 0.95em;
+            line-height: 1.5;
+            color: #495057;
+            flex-grow: 1;
+        }
+
+        .progress-item.completed .progress-label {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .toggle-progress {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .toggle-progress:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .progress-items.collapsed {
+            display: none;
+        }
+
+        /* CONTENT STYLES */
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 4px solid #667eea;
+            font-weight: 700;
+        }
+
+        h2 {
+            color: #764ba2;
+            font-size: 2em;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        h3 {
+            color: #495057;
+            font-size: 1.5em;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        h4 {
+            color: #666;
+            font-size: 1.25em;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        ul, ol {
+            margin: 20px 0;
+            padding-left: 40px;
+        }
+
+        li {
+            margin-bottom: 12px;
+            line-height: 1.7;
+        }
+
+        code {
+            background: #f4f5f7;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #c7254e;
+            border: 1px solid #e1e4e8;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 24px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 25px 0;
+            border: 1px solid #444;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            border: none;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        blockquote {
+            border-left: 5px solid #667eea;
+            padding: 15px 25px;
+            margin: 25px 0;
+            background: #f8f9fa;
+            border-radius: 0 8px 8px 0;
+            color: #495057;
+            font-style: italic;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 30px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 14px 18px;
+            text-align: left;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tr:hover {
+            background: #e9ecef;
+            transition: background 0.2s;
+        }
+
+        a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px solid transparent;
+            transition: border-bottom 0.2s;
+        }
+
+        a:hover {
+            border-bottom: 1px solid #667eea;
+        }
+
+        hr {
+            border: none;
+            border-top: 2px solid #e9ecef;
+            margin: 40px 0;
+        }
+
+        strong {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        em {
+            color: #495057;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 25px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            h2 {
+                font-size: 1.6em;
+            }
+
+            .progress-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .progress-stats {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../navigation.html" class="back-link">&larr; Back to Navigation</a>
+
+        <div class="metadata">
+            <strong>Source:</strong> dev/CONVERSION_SCRIPTS_README.md &nbsp;|&nbsp; <strong>Updated:</strong> 2026-11-18 19:44:53
+        </div>
+
+        <!-- PROGRESS TRACKER -->
+        <div class="progress-tracker">
+            <div class="progress-header">
+                <div class="progress-title">
+                    <span>📚</span>
+                    <span>Your Progress</span>
+                </div>
+                <div class="progress-stats">
+                    <span class="progress-percentage" id="progress-pct">0%</span>
+                    <button class="reset-btn" onclick="resetProgress()">Reset</button>
+                    <button class="toggle-progress" onclick="toggleProgressList()">▼ Hide</button>
+                </div>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progress-bar" style="width: 0%"></div>
+            </div>
+            <div class="progress-items" id="progress-items">
+                <!-- Checkboxes will be generated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="content">
+<h1 id="markdown-html-conversion-scripts">🔄 Markdown ↔ HTML Conversion Scripts</h1>
+<p><strong>Location:</strong> <code>C:\Users\kasekar\GH\Course\</code><br />
+<strong>Created:</strong> November 16, 2026</p>
+<hr />
+<h2 id="what-these-scripts-do">📋 <strong>What These Scripts Do</strong></h2>
+<h3 id="1-convert-md-to-htmlps1"><strong>1. <code>convert-md-to-html.ps1</code></strong></h3>
+<ul>
+<li>Converts all <code>.md</code> files → <code>.html</code> files</li>
+<li>Creates beautiful HTML versions with styling</li>
+<li>Preserves original <code>.md</code> files (doesn't delete them)</li>
+<li>Adds "Back to Navigation" link to each HTML page</li>
+</ul>
+<h3 id="2-convert-html-to-mdps1"><strong>2. <code>convert-html-to-md.ps1</code></strong></h3>
+<ul>
+<li>Converts HTML files → <code>.md</code> files for editing</li>
+<li>Excludes navigation/resume HTMLs (index.html, navigation.html, resume HTMLs)</li>
+<li>Useful for editing HTML content back to markdown</li>
+<li>Preserves original <code>.html</code> files</li>
+</ul>
+<hr />
+<h2 id="how-to-use">🚀 <strong>How to Use</strong></h2>
+<h3 id="convert-all-markdown-to-html"><strong>Convert All Markdown to HTML</strong></h3>
+<div class="codehilite"><pre><span></span><code><span class="c"># Preview what will be converted (doesn't actually convert)</span>
+<span class="p">.\</span><span class="nb">convert-md</span><span class="n">-to-html</span><span class="p">.</span><span class="n">ps1</span> <span class="n">-Preview</span>
+
+<span class="c"># Convert all .md files to .html</span>
+<span class="p">.\</span><span class="nb">convert-md</span><span class="n">-to-html</span><span class="p">.</span><span class="n">ps1</span>
+
+<span class="c"># Convert and overwrite existing HTML files</span>
+<span class="p">.\</span><span class="nb">convert-md</span><span class="n">-to-html</span><span class="p">.</span><span class="n">ps1</span> <span class="n">-Overwrite</span>
+</code></pre></div>
+
+<p><strong>Result:</strong> All 37 markdown files become HTML files with beautiful styling</p>
+<hr />
+<h3 id="convert-html-back-to-markdown"><strong>Convert HTML Back to Markdown</strong></h3>
+<div class="codehilite"><pre><span></span><code><span class="c"># Preview what will be converted</span>
+<span class="p">.\</span><span class="nb">convert-html</span><span class="n">-to-md</span><span class="p">.</span><span class="n">ps1</span> <span class="n">-Preview</span>
+
+<span class="c"># Convert HTML files to .md (excludes index.html, navigation.html, resume HTMLs)</span>
+<span class="p">.\</span><span class="nb">convert-html</span><span class="n">-to-md</span><span class="p">.</span><span class="n">ps1</span>
+
+<span class="c"># Convert and overwrite existing .md files</span>
+<span class="p">.\</span><span class="nb">convert-html</span><span class="n">-to-md</span><span class="p">.</span><span class="n">ps1</span> <span class="n">-Overwrite</span>
+</code></pre></div>
+
+<p><strong>Result:</strong> HTML content files are converted back to markdown for editing</p>
+<hr />
+<h2 id="current-folder-status">📊 <strong>Current Folder Status</strong></h2>
+<p><strong>Before conversion:</strong><br />
+- 37 <code>.md</code> files (content)<br />
+- 4 <code>.html</code> files (index.html, navigation.html, 2 resume HTMLs)<br />
+- 2 <code>.pdf</code> files (final resumes)</p>
+<p><strong>After running <code>convert-md-to-html.ps1</code>:</strong><br />
+- 37 <code>.md</code> files (original content, preserved)<br />
+- 41 <code>.html</code> files (4 original + 37 new from conversion)<br />
+- 2 <code>.pdf</code> files (unchanged)</p>
+<p><strong>Total:</strong> 80 files (37 md + 41 html + 2 pdf)</p>
+<hr />
+<h2 id="use-cases">🎯 <strong>Use Cases</strong></h2>
+<h3 id="use-case-1-create-html-version-of-entire-course"><strong>Use Case 1: Create HTML Version of Entire Course</strong></h3>
+<p><strong>Why:</strong> Browse all course content as HTML pages (better formatting, clickable links)</p>
+<div class="codehilite"><pre><span></span><code><span class="c"># Convert all markdown to HTML</span>
+<span class="p">.\</span><span class="nb">convert-md</span><span class="n">-to-html</span><span class="p">.</span><span class="n">ps1</span>
+
+<span class="c"># Result: Every .md file now has a matching .html file</span>
+<span class="c"># Open navigation.html → Click any file → Opens as beautiful HTML</span>
+</code></pre></div>
+
+<hr />
+<h3 id="use-case-2-edit-content-and-re-generate-html"><strong>Use Case 2: Edit Content and Re-Generate HTML</strong></h3>
+<p><strong>Why:</strong> You want to update content but view it as HTML</p>
+<div class="codehilite"><pre><span></span><code><span class="c"># 1. Edit a markdown file</span>
+<span class="n">code</span> <span class="s2">"Technical_Interview_QA_Resume_Projects.md"</span>
+
+<span class="c"># 2. Re-convert just that file to HTML</span>
+<span class="p">.\</span><span class="nb">convert-md</span><span class="n">-to-html</span><span class="p">.</span><span class="n">ps1</span> <span class="n">-Overwrite</span>
+
+<span class="c"># 3. Refresh your browser to see updated HTML</span>
+</code></pre></div>
+
+<hr />
+<h3 id="use-case-3-convert-html-back-to-markdown-for-editing"><strong>Use Case 3: Convert HTML Back to Markdown for Editing</strong></h3>
+<p><strong>Why:</strong> Someone sent you HTML and you want to edit it as markdown</p>
+<div class="codehilite"><pre><span></span><code><span class="c"># Convert HTML content files back to markdown</span>
+<span class="p">.\</span><span class="nb">convert-html</span><span class="n">-to-md</span><span class="p">.</span><span class="n">ps1</span> <span class="n">-Overwrite</span>
+
+<span class="c"># Edit the markdown</span>
+<span class="n">code</span> <span class="s2">"SomeFile.md"</span>
+
+<span class="c"># Re-convert to HTML when done</span>
+<span class="p">.\</span><span class="nb">convert-md</span><span class="n">-to-html</span><span class="p">.</span><span class="n">ps1</span> <span class="n">-Overwrite</span>
+</code></pre></div>
+
+<hr />
+<h2 id="html-styling">🎨 <strong>HTML Styling</strong></h2>
+<p>Each converted HTML file includes:<br />
+- ✅ Beautiful gradient background<br />
+- ✅ Responsive container (max-width: 1000px)<br />
+- ✅ Syntax highlighting for code blocks<br />
+- ✅ Table styling (alternating row colors)<br />
+- ✅ "Back to Navigation" link<br />
+- ✅ Mobile-friendly layout</p>
+<p><strong>Preview:</strong> Open any converted HTML file to see the styling</p>
+<hr />
+<h2 id="important-notes">⚠️ <strong>Important Notes</strong></h2>
+<h3 id="what-gets-excluded-from-html-md-conversion"><strong>What Gets Excluded from HTML → MD Conversion?</strong></h3>
+<p>These files are <strong>skipped</strong> (they're not content files):<br />
+- <code>index.html</code> (interactive dashboard)<br />
+- <code>navigation.html</code> (file browser)<br />
+- <code>Karthikeyan_Sekar_Resume_Beautiful.html</code> (resume)<br />
+- <code>Karthikeyan_Sekar_Resume_ATS_Optimized.html</code> (resume)</p>
+<h3 id="limitations-of-basic-conversion"><strong>Limitations of Basic Conversion</strong></h3>
+<p>The scripts use <strong>basic markdown/HTML conversion</strong>:<br />
+- ✅ Handles: headers, bold, italic, links, lists, code, tables<br />
+- ⚠️ May struggle with: complex nested structures, custom HTML/CSS, embedded images</p>
+<p><strong>For better conversion, install Pandoc:</strong></p>
+<div class="codehilite"><pre><span></span><code><span class="c"># Install pandoc (one-time setup)</span>
+<span class="n">winget</span> <span class="n">install</span> <span class="n">pandoc</span>
+
+<span class="c"># Convert with pandoc (much better quality)</span>
+<span class="n">pandoc</span> <span class="n">input</span><span class="p">.</span><span class="nb">md </span><span class="n">-o</span> <span class="n">output</span><span class="p">.</span><span class="n">html</span>
+<span class="n">pandoc</span> <span class="n">input</span><span class="p">.</span><span class="n">html</span> <span class="n">-o</span> <span class="n">output</span><span class="p">.</span><span class="nb">md</span>
+</code></pre></div>
+
+<hr />
+<h2 id="file-organization-after-conversion">📁 <strong>File Organization After Conversion</strong></h2>
+<div class="codehilite"><pre><span></span><code>C:\Users\kasekar\GH\Course\
+├── 📄 Markdown Files (.md)
+│   ├── START_HERE.md
+│   ├── Industry_Expectations_12Plus_Years.md
+│   ├── NJQRT_Work_Context_Last_2.5_Years.md
+│   ├── Technical_Interview_QA_Resume_Projects.md
+│   └── ... (37 total)
+│
+├── 🌐 HTML Files (.html)
+│   ├── index.html ⭐ (interactive dashboard)
+│   ├── navigation.html ⭐ (file browser)
+│   ├── START_HERE.html (converted from .md)
+│   ├── Industry_Expectations_12Plus_Years.html (converted from .md)
+│   └── ... (41 total)
+│
+├── 📄 PDF Files (.pdf)
+│   ├── Karthikeyan SEKAR - AI-First Senior Full-Stack Engineer.pdf
+│   └── Karthikeyan_Sekar_AI-First_FullStack_Engineer.pdf
+│
+└── 🔧 Scripts
+    ├── convert-md-to-html.ps1
+    ├── convert-html-to-md.ps1
+    ├── CONVERSION_SCRIPTS_README.md (this file)
+    └── ANALYSIS_Unwanted_Files.md
+</code></pre></div>
+
+<hr />
+<h2 id="quick-reference">🎯 <strong>Quick Reference</strong></h2>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Command</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Preview MD → HTML</strong></td>
+<td><code>.\convert-md-to-html.ps1 -Preview</code></td>
+</tr>
+<tr>
+<td><strong>Convert MD → HTML</strong></td>
+<td><code>.\convert-md-to-html.ps1</code></td>
+</tr>
+<tr>
+<td><strong>Overwrite existing HTML</strong></td>
+<td><code>.\convert-md-to-html.ps1 -Overwrite</code></td>
+</tr>
+<tr>
+<td><strong>Preview HTML → MD</strong></td>
+<td><code>.\convert-html-to-md.ps1 -Preview</code></td>
+</tr>
+<tr>
+<td><strong>Convert HTML → MD</strong></td>
+<td><code>.\convert-html-to-md.ps1</code></td>
+</tr>
+<tr>
+<td><strong>Overwrite existing MD</strong></td>
+<td><code>.\convert-html-to-md.ps1 -Overwrite</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="pro-tips">💡 <strong>Pro Tips</strong></h2>
+<ol>
+<li><strong>Always preview first</strong> (<code>-Preview</code>) to see what will be converted</li>
+<li><strong>Keep both .md and .html</strong> (disk space is cheap, flexibility is valuable)</li>
+<li><strong>Edit markdown, not HTML</strong> (easier to maintain)</li>
+<li><strong>Re-convert after editing</strong> (keep HTML versions in sync)</li>
+<li><strong>Use Pandoc for production</strong> (better quality than basic conversion)</li>
+</ol>
+<hr />
+<h2 id="troubleshooting">🆘 <strong>Troubleshooting</strong></h2>
+<h3 id="script-wont-run"><strong>Script won't run?</strong></h3>
+<div class="codehilite"><pre><span></span><code><span class="c"># Enable script execution (run once)</span>
+<span class="nb">Set-ExecutionPolicy</span> <span class="n">-ExecutionPolicy</span> <span class="n">RemoteSigned</span> <span class="n">-Scope</span> <span class="n">CurrentUser</span>
+
+<span class="c"># Then try again</span>
+<span class="p">.\</span><span class="nb">convert-md</span><span class="n">-to-html</span><span class="p">.</span><span class="n">ps1</span>
+</code></pre></div>
+
+<h3 id="html-looks-broken"><strong>HTML looks broken?</strong></h3>
+<ul>
+<li>Complex markdown features (nested lists, tables) may need manual cleanup</li>
+<li>Use Pandoc for better conversion: <code>pandoc input.md -o output.html</code></li>
+</ul>
+<h3 id="want-to-convert-just-one-file"><strong>Want to convert just one file?</strong></h3>
+<p>Edit the script and add a <code>-Name</code> parameter, or just manually run:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">pandoc</span> <span class="s2">"Technical_Interview_QA_Resume_Projects.md"</span> <span class="n">-o</span> <span class="s2">"Technical_Interview_QA_Resume_Projects.html"</span>
+</code></pre></div>
+
+<hr />
+<h2 id="need-help">📞 <strong>Need Help?</strong></h2>
+<ul>
+<li>Read script comments: Both scripts have detailed inline comments</li>
+<li>Check output messages: Scripts tell you exactly what they're doing</li>
+<li>Use <code>-Preview</code> first: See what will happen before it happens</li>
+</ul>
+<hr />
+<p><strong>Happy converting! 🚀</strong></p>
+        </div>
+    </div>
+
+    <script>
+        // Progress Tracker JavaScript
+        const STORAGE_KEY = 'course_progress_conversion_scripts_readme';
+
+        // Extract all H2 and H3 headings from content
+        function extractSections() {
+            const content = document.querySelector('.content');
+            const headings = content.querySelectorAll('h2, h3');
+            const sections = [];
+
+            headings.forEach((heading, index) => {
+                const level = heading.tagName === 'H2' ? 2 : 3;
+                const text = heading.textContent.trim();
+                const id = `section-${index}`;
+
+                // Add ID to heading for linking
+                heading.id = id;
+
+                sections.push({
+                    id: id,
+                    text: text,
+                    level: level
+                });
+            });
+
+            return sections;
+        }
+
+        // Load saved progress from localStorage
+        function loadProgress() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            return saved ? JSON.parse(saved) : {};
+        }
+
+        // Save progress to localStorage
+        function saveProgress(progress) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+        }
+
+        // Calculate progress percentage
+        function calculateProgress() {
+            const checkboxes = document.querySelectorAll('.progress-checkbox');
+            const total = checkboxes.length;
+            if (total === 0) return 0;
+
+            const completed = Array.from(checkboxes).filter(cb => cb.checked).length;
+            return Math.round((completed / total) * 100);
+        }
+
+        // Update progress display
+        function updateProgressDisplay() {
+            const percentage = calculateProgress();
+            document.getElementById('progress-pct').textContent = percentage + '%';
+            document.getElementById('progress-bar').style.width = percentage + '%';
+
+            // Update completed class on items
+            document.querySelectorAll('.progress-item').forEach(item => {
+                const checkbox = item.querySelector('.progress-checkbox');
+                if (checkbox.checked) {
+                    item.classList.add('completed');
+                } else {
+                    item.classList.remove('completed');
+                }
+            });
+        }
+
+        // Toggle checkbox
+        function toggleCheckbox(sectionId) {
+            const checkbox = document.getElementById('cb-' + sectionId);
+            const progress = loadProgress();
+
+            progress[sectionId] = checkbox.checked;
+            saveProgress(progress);
+            updateProgressDisplay();
+        }
+
+        // Reset all progress
+        function resetProgress() {
+            if (confirm('Reset all progress for this page?')) {
+                localStorage.removeItem(STORAGE_KEY);
+                document.querySelectorAll('.progress-checkbox').forEach(cb => {
+                    cb.checked = false;
+                });
+                updateProgressDisplay();
+            }
+        }
+
+        // Toggle progress list visibility
+        function toggleProgressList() {
+            const list = document.getElementById('progress-items');
+            const btn = document.querySelector('.toggle-progress');
+
+            if (list.classList.contains('collapsed')) {
+                list.classList.remove('collapsed');
+                btn.textContent = '▼ Hide';
+            } else {
+                list.classList.add('collapsed');
+                btn.textContent = '▶ Show';
+            }
+        }
+
+        // Initialize progress tracker
+        function initProgressTracker() {
+            const sections = extractSections();
+            const progress = loadProgress();
+            const container = document.getElementById('progress-items');
+
+            if (sections.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">No sections found</p>';
+                return;
+            }
+
+            sections.forEach(section => {
+                const item = document.createElement('div');
+                item.className = 'progress-item';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'progress-checkbox';
+                checkbox.id = 'cb-' + section.id;
+                checkbox.checked = progress[section.id] || false;
+                checkbox.onchange = () => toggleCheckbox(section.id);
+
+                const label = document.createElement('label');
+                label.className = 'progress-label';
+                label.htmlFor = 'cb-' + section.id;
+                label.textContent = section.text;
+                label.style.paddingLeft = section.level === 3 ? '20px' : '0';
+                label.onclick = () => {
+                    document.getElementById(section.id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+                };
+
+                item.appendChild(checkbox);
+                item.appendChild(label);
+                container.appendChild(item);
+            });
+
+            updateProgressDisplay();
+        }
+
+        // Run on page load
+        document.addEventListener('DOMContentLoaded', initProgressTracker);
+    </script>
+</body>
+</html>
